@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Content and template-residue guards
+        run: |
+          python scripts/check_content_standards.py
+          python scripts/check_template_residue.py
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Type-check and build
+        working-directory: frontend
+        run: |
+          npm ci --legacy-peer-deps
+          npm run build

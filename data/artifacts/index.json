@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "cases": [
+    {
+      "slug": "crsbr-field",
+      "title": "CrSBr, field-driven reversal",
+      "category": "real-material-field",
+      "material": "crsbr",
+      "material_name": "CrSBr",
+      "includes_biaxial": true
+    },
+    {
+      "slug": "fe3gete2-field",
+      "title": "Fe3GeTe2, field-driven reversal",
+      "category": "real-material-field",
+      "material": "fe3gete2",
+      "material_name": "Fe3GeTe2",
+      "includes_biaxial": false
+    },
+    {
+      "slug": "fe3gate2-field",
+      "title": "Fe3GaTe2, field-driven reversal",
+      "category": "real-material-field",
+      "material": "fe3gate2",
+      "material_name": "Fe3GaTe2",
+      "includes_biaxial": false
+    },
+    {
+      "slug": "cri3-field",
+      "title": "CrI3, field-driven reversal",
+      "category": "real-material-field",
+      "material": "cri3",
+      "material_name": "CrI3",
+      "includes_biaxial": false
+    },
+    {
+      "slug": "cr2ge2te6-floor",
+      "title": "Cr2Ge2Te6, the low-damping floor",
+      "category": "damping-extreme",
+      "material": "cr2ge2te6",
+      "material_name": "Cr2Ge2Te6",
+      "includes_biaxial": false
+    },
+    {
+      "slug": "feps3-negative-control",
+      "title": "FePS3, negative control",
+      "category": "negative-control",
+      "material": "feps3",
+      "material_name": "FePS3",
+      "includes_biaxial": false
+    }
+  ],
+  "categories": {
+    "real-material-field": [
+      "crsbr-field",
+      "fe3gete2-field",
+      "fe3gate2-field",
+      "cri3-field"
+    ],
+    "damping-extreme": [
+      "cr2ge2te6-floor"
+    ],
+    "negative-control": [
+      "feps3-negative-control"
+    ]
+  }
+}

@@ -1,0 +1,177 @@
+/* Product styles layered over the shared shell. The shell owns tokens (--color-*), header and footer;
+   this file styles the prose pages and the workbench, honoring ADR-0071 (the App route is the viewport;
+   the instrument fills it; long content scrolls inside one container). */
+
+.prose {
+  max-width: var(--maxw, 76ch);
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+  line-height: 1.6;
+}
+.prose h1 {
+  font-size: 1.9rem;
+  margin: 0 0 12px;
+}
+.prose h2 {
+  margin-top: 32px;
+}
+.prose .lead {
+  font-size: 1.15rem;
+  opacity: 0.9;
+}
+.prose .muted {
+  opacity: 0.7;
+  font-size: 0.92rem;
+}
+.prose ul {
+  padding-left: 20px;
+}
+.prose li {
+  margin: 6px 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  font-size: 0.92rem;
+}
+.prose th,
+.prose td {
+  border-bottom: 1px solid var(--color-border, rgba(128, 128, 128, 0.25));
+  padding: 8px 10px;
+  text-align: left;
+}
+.prose th {
+  font-weight: 600;
+}
+.callout {
+  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.25));
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 24px 0;
+  background: var(--color-surface, rgba(128, 128, 128, 0.06));
+}
+
+/* ---- the workbench: the App route fills the viewport (ADR-0071) ---- */
+.wb {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  padding: 12px 16px;
+  gap: 12px;
+}
+.wb-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  min-width: 0;
+}
+.wb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  min-width: 0;
+}
+.wb-field select {
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
+  background: var(--color-bg, #fff);
+  color: var(--color-text, #111);
+  min-width: 240px;
+  max-width: 100%;
+}
+.wb-viewtabs {
+  display: flex;
+  gap: 4px;
+}
+.wb-viewtabs button {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text, #111);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.wb-viewtabs button.active {
+  background: var(--color-accent-soft, rgba(59, 130, 246, 0.15));
+  border-color: var(--color-accent, #3b82f6);
+}
+
+.wb-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+.wb-instrument {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+}
+.wb-readout {
+  overflow-y: auto;
+  font-size: 0.9rem;
+  min-width: 0;
+}
+.wb-readout h3 {
+  margin: 0 0 8px;
+}
+.wb-readout dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  margin: 0;
+}
+.wb-readout dt {
+  opacity: 0.7;
+}
+.wb-readout dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.wb-biaxial {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border, rgba(128, 128, 128, 0.25));
+}
+.wb-biaxial h4 {
+  margin: 0 0 6px;
+}
+.wb-context {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  font-size: 0.88rem;
+  border-top: 1px solid var(--color-border, rgba(128, 128, 128, 0.25));
+  padding-top: 12px;
+}
+.wb-context h4 {
+  margin: 0 0 6px;
+}
+.wb-context p {
+  margin: 0;
+  opacity: 0.85;
+}
+
+@media (max-width: 820px) {
+  .wb-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wb-context {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
