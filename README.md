@@ -20,6 +20,13 @@ The scientific engine is a separate, open-source (MIT) Python package,
 holds the domain layer: the curated material parameter database, the case matrix, the canonical bake,
 and the companion web app.
 
+## Manuscript
+
+The Cost of Reliability in Optimal Magnetization Switching: A Longitudinal-Field Front for Van der
+Waals Magnets. Preprint, 2026, CC-BY, Zenodo concept DOI
+[10.5281/zenodo.22736005](https://doi.org/10.5281/zenodo.22736005). Source under
+`manuscripts/reliability-realizability/`.
+
 ## Honesty
 
 - The switching cost is an integral in tesla-squared-seconds, not an energy. It becomes joules only
