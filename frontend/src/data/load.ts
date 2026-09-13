@@ -21,3 +21,9 @@ export async function loadCase(slug: string): Promise<CaseArtifact> {
   if (!response.ok) throw new Error(`${slug}.json ${response.status}`);
   return response.json();
 }
+
+export async function loadNovel(): Promise<import('./contract').NovelResults> {
+  const response = await fetch(bust(`${base}artifacts/novel.json`));
+  if (!response.ok) throw new Error(`novel.json ${response.status}`);
+  return response.json();
+}
