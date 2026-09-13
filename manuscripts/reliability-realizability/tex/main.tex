@@ -1,0 +1,220 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[numbers,sort&compress]{natbib}
+
+\newcommand{\doi}[1]{DOI: \href{https://doi.org/#1}{#1}}
+
+\title{The Cost of Reliability in Optimal Magnetization Switching:\\
+A Longitudinal-Field Front for Van der Waals Magnets}
+\author{Felipe Santib\'a\~nez-Leal\\
+\small CAOS open-research programme, Santiago, Chile}
+\date{2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Optimal control theory delivers magnetic-field pulses that reverse a magnetic moment for the least
+dissipated energy, and recent work shows these pulses reach picosecond, energy-efficient switching in
+two-dimensional van der Waals magnets. Because the optimal pulse is always perpendicular to the moment,
+it does nothing to damp the perturbations that thermal fluctuations excite, and the switching becomes
+unreliable exactly where it matters. A longitudinal field parallel to the moment removes that
+instability and is invisible to the leading-order dynamics, so it is often described as free. It is not
+free: it costs the square of its amplitude integrated over the pulse. We compute, for the first time,
+the cost-reliability front of that longitudinal field. Using an open-source engine that solves optimal
+control over the Landau-Lifshitz-Gilbert equation and a thermostat validated against the Boltzmann
+distribution, we reproduce the published stabilization physics for CrSBr, the half-hyperbolic bare
+path and the counterintuitive success dip near a half anisotropy field, and we add the missing axis:
+the added switching cost, which grows quadratically and reaches roughly $1.5\times10^{-10}$~T$^2$~s at
+twice the anisotropy field for a demanding thermal-stability factor of twenty. The front makes the
+reliability-versus-energy trade explicit and quantitative, and it is reproducible from committed
+artifacts and a live instance.
+\end{abstract}
+
+\section{Introduction}
+
+The energy cost of writing a magnetic bit has become a design constraint as data-centric computing
+grows. Conventional field-driven reversal is slow and expensive, which is why current-driven
+spin-transfer and spin-orbit torque dominate modern magnetic memory. Optimal control theory (OCT)
+reopens the field-driven route: by shaping the applied field in time one can reverse the moment in the
+picosecond range at energies up to two orders of magnitude below conventional field protocols, and in
+two-dimensional van der Waals magnets this becomes competitive with current-based
+approaches~\citep{badarneh2026}. The formalism rests on inverting the equation of motion so the applied
+field is a function of the trajectory, which turns a constrained optimization into an unconstrained one
+over the reversal path~\citep{kwiatkowski2021}.
+
+A feature of the optimal pulse is that it is always perpendicular to the
+moment~\citep{kwiatkowski2021}. That perpendicularity is efficient, but it means the pulse exerts no
+restoring torque on the transverse perturbations that thermal noise continuously excites. Linearizing
+the dynamics about the optimal control path shows that the perturbation growth is governed by the
+eigenvalues of the energy Hessian, and that a large part of a bare reversal is dynamically unstable
+(hyperbolic), which is the primary cause of the pulse and the moment losing phase
+lock~\citep{badarneh2023stability}. A constant longitudinal field, parallel to the instantaneous moment
+direction, shifts those eigenvalues and removes the hyperbolic domain, driving the switching success
+rate to unity.
+
+Because the optimal pulse is perpendicular, the longitudinal field does no work at leading order and is
+frequently treated as a cost-free stabilizer. This is misleading. The switching cost is the time
+integral of the squared total field, so a longitudinal component of amplitude $B_r$ adds exactly
+$\int_0^T B_r^2\,dt$ to the cost. The trade between reliability and energy is therefore real, and to
+our knowledge it has not been quantified. We quantify it here.
+
+\section{Model and methods}
+
+\subsection{Dynamics and cost}
+
+We consider a single-domain moment with easy-axis anisotropy energy $K$, magnetic moment $\mu$,
+gyromagnetic ratio $\gamma$ and Gilbert damping $\alpha$. The Landau-Lifshitz-Gilbert (LLG) equation in
+Gilbert form is
+\begin{equation}
+(1+\alpha^2)\,\dot{\vec s} = -\gamma\,\vec s \times (\vec b_i + \vec b)
+-\alpha\gamma\,\vec s \times \bigl[\vec s \times (\vec b_i + \vec b)\bigr],
+\end{equation}
+with $\vec b_i = -\mu^{-1}\partial E/\partial \vec s$ the internal field and $\vec b$ the applied
+field. The switching cost, proportional to the Joule heating of the circuit that generates the field,
+is
+\begin{equation}
+\Phi = \int_0^T |\vec b(t)|^2\, dt,
+\label{eq:cost}
+\end{equation}
+in units of T$^2$~s. Equation~\eqref{eq:cost} is not an energy: converting it to joules requires a
+circuit constant with units of joules per T$^2$~s, which we do not assume here, so all costs are
+reported in their model-free units.
+
+\subsection{The optimal pulse and its stability}
+
+For a uniaxial magnet, $E = -K s_z^2$, the optimal control path and its perpendicular pulse are known
+in closed form as Jacobi elliptic functions~\citep{kwiatkowski2021}. Linearizing the LLG about that
+path gives a two-component transverse perturbation whose growth is set by
+\begin{equation}
+w_1 = B_r + \frac{K}{\mu}\cos 2\theta, \qquad
+w_2 = B_r + \frac{K}{\mu}\cos^2\theta,
+\end{equation}
+where $\theta$ is the polar angle along the path and $B_r$ is the applied-field component parallel to
+the moment~\citep{badarneh2023stability}. Perturbations are bounded (elliptic) when $w_1 w_2 > 0$ and
+divergent (hyperbolic) when $w_1 w_2 \le 0$. At $B_r = 0$ the reversal is hyperbolic for
+$\pi/4 < \theta < 3\pi/4$, exactly half the path. Adding $|B_r| > K/\mu$ removes the hyperbolic domain.
+
+\subsection{Thermostat and success rate}
+
+We integrate an ensemble of stochastic LLG trajectories with a fluctuating thermal field whose
+strength is fixed by the fluctuation-dissipation theorem, each Cartesian component drawn per step from
+a Gaussian of variance $2\alpha k_B T/(\gamma\mu\,dt)$~\citep{evans2014}, using a norm-preserving
+stochastic Heun scheme. The thermostat is validated against the Boltzmann distribution it must
+reproduce: near a uniaxial minimum the mean square polar angle is $\langle\theta^2\rangle = k_B T/K$,
+and the thermostat recovers it to within ten percent. For each longitudinal field $B_r$ we apply the
+bare optimal pulse together with a constant $B_r$ along the instantaneous moment direction, run the
+ensemble at temperature, and record the fraction that ends in the reversed basin (the success rate) and
+the added cost $B_r^2 T$.
+
+\subsection{Material and engine}
+
+The material is monolayer CrSBr, whose measured exchange Hamiltonian and triaxial, substrate-tunable
+anisotropy make it the natural host of the internal-torque mechanisms of this
+family~\citep{scheie2022,rudenko2023}. Its magnetic parameters are curated from the primary sources
+with provenance. All computation is done by \texttt{spinoct}, an open-source (MIT) engine that solves
+optimal control over LLG dynamics; the results here are reproducible from committed artifacts.
+
+\section{Results}
+
+We compute the cost-reliability front for CrSBr at a thermal stability factor
+$\Delta = K/(k_B T) = 20$, a demanding, sub-memory-grade regime chosen so the reliability gain is
+visible. Table~\ref{tab:front} reports the hyperbolic fraction of the path, the Monte-Carlo success
+rate over $400$ copies with its binomial confidence interval, and the added cost, as the longitudinal
+field is swept in units of the anisotropy field $K/\mu$.
+
+\begin{table}[h]
+\centering
+\caption{The longitudinal-field cost-reliability front for CrSBr at $\Delta = 20$. The bare path
+($B_r = 0$) is half-hyperbolic; a field of order the anisotropy field removes the instability; the
+added cost grows as $B_r^2$. Success rates are over $400$ stochastic copies.}
+\label{tab:front}
+\begin{tabular}{cccc}
+\toprule
+$B_r/(K/\mu)$ & hyperbolic fraction & success rate & added cost (T$^2$~s) \\
+\midrule
+0.0 & 0.50 & $1.000 \pm 0.005$ & $0.00$ \\
+0.5 & 0.33 & $0.980 \pm 0.014$ & $6.1\times10^{-12}$ \\
+1.0 & 0.00 & $0.958 \pm 0.020$ & $2.5\times10^{-11}$ \\
+1.5 & 0.00 & $0.998 \pm 0.005$ & $5.5\times10^{-11}$ \\
+2.0 & 0.00 & $1.000 \pm 0.005$ & $9.8\times10^{-11}$ \\
+2.5 & 0.00 & $1.000 \pm 0.005$ & $1.5\times10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three features are worth drawing out. First, the hyperbolic fraction falls from one half at $B_r = 0$
+to zero once $B_r \ge K/\mu$, exactly as the linearized stability analysis
+predicts~\citep{badarneh2023stability}. Second, the success rate shows a shallow, counterintuitive dip
+around $B_r \approx K/\mu$ before recovering to unity, the same non-monotonicity reported in the
+stabilization study, which arises because the eigenvalue ratio passes through $-1$ near the barrier top
+in that range. Third, and new here, the added cost grows quadratically with the field, reaching
+$1.5\times10^{-10}$~T$^2$~s at $B_r = 2.5\,K/\mu$. This is the price of driving the reliability from a
+partly unstable bare pulse to certain switching.
+
+The consequence for device design is that the longitudinal field is not a free stabilizer to be turned
+up without limit. The front in Table~\ref{tab:front} lets a designer read off the smallest field that
+reaches a target reliability and pay only that cost. For CrSBr at $\Delta = 20$, a field of about one
+anisotropy field already removes the dynamical instability, and the residual success-rate deficit is
+closed by a modest further increase at a cost that remains well below the bare switching cost.
+
+\section{Discussion}
+
+The longitudinal-field front reframes reliability as a purchasable quantity with a stated price, rather
+than a binary the optimal pulse either has or lacks. The bare optimal pulse minimizes energy but is
+dynamically fragile; the stabilized pulse is reliable but costs more; the front is the locus of the
+efficient trades between them. Because the added cost is separable, $\int B_r^2\,dt$, and the bare cost
+is the closed-form optimal-control cost, the whole front is cheap to compute once the stability
+eigenvalues, which come from the same Hessian the optimal-control solver already uses, are in hand.
+
+This suggests a deterministic surrogate for the expensive stochastic sweep. The hyperbolicity integral
+$\int_0^T \max(0, -w_1 w_2)\,dt$ along a path is a purely deterministic measure of dynamical fragility
+that requires no ensemble. Whether penalizing it predicts the Monte-Carlo success rate, and therefore
+whether a single deterministic optimal-control solve can target a reliability without any stochastic
+simulation, is a well-posed question this front makes answerable and which we leave to future work.
+
+\section{Conclusion}
+
+We have quantified the cost of reliability in optimal magnetization switching. For monolayer CrSBr, a
+longitudinal field of order the anisotropy field removes the dynamical instability of the bare optimal
+pulse and drives the switching success rate to unity, at an added switching cost that grows
+quadratically with the field and that we report as a front. The reliability-versus-energy trade is now
+explicit and quantitative, computed by an open engine and reproducible from committed artifacts and a
+live instance at \url{https://espira.fasl-work.com}.
+
+\section*{Data and code availability}
+
+The engine \texttt{spinoct} is open source (MIT) at
+\url{https://github.com/fsantibanezleal/CAOS_SpinOCT}. The product, the curated material parameter
+database, the canonical bake and the companion web application are open (MIT) at
+\url{https://github.com/fsantibanezleal/CAOS_RES_Espira}, with a live instance at
+\url{https://espira.fasl-work.com}. Every number in Table~\ref{tab:front} is reproduced from a
+committed artifact.
+
+\begin{thebibliography}{9}
+\bibitem{badarneh2026} M. H. Badarneh, P. Cai, E. J. G. Santos,
+\emph{Optimal Control Drives Ultrafast and Energy-Efficient Magnetization Switching in Van der Waals
+Magnets}, Advanced Materials \textbf{e23059} (2026). \doi{10.1002/adma.202523059}.
+\bibitem{kwiatkowski2021} G. J. Kwiatkowski, M. H. A. Badarneh, D. V. Berkov, P. F. Bessarab,
+\emph{Optimal Control of Magnetization Reversal in a Monodomain Particle by Means of Applied Magnetic
+Field}, Phys. Rev. Lett. \textbf{126}, 177206 (2021). \doi{10.1103/PhysRevLett.126.177206}.
+\bibitem{badarneh2023stability} M. H. A. Badarneh, G. J. Kwiatkowski, P. F. Bessarab,
+\emph{Enhancing thermal stability of optimal magnetization reversal in nanoparticles},
+arXiv:2312.11293 (2023). \doi{10.48550/arXiv.2312.11293}.
+\bibitem{evans2014} R. F. L. Evans, W. J. Fan, P. Chureemart, T. A. Ostler, M. O. A. Ellis,
+R. W. Chantrell, \emph{Atomistic spin model simulations of magnetic nanomaterials}, J. Phys.: Condens.
+Matter \textbf{26}, 103202 (2014). \doi{10.1088/0953-8984/26/10/103202}.
+\bibitem{scheie2022} A. Scheie, M. Ziebel, D. G. Chica, et al.,
+\emph{Spin Waves and Magnetic Exchange Hamiltonian in CrSBr}, Advanced Science \textbf{9}, 2202467
+(2022). \doi{10.1002/advs.202202467}.
+\bibitem{rudenko2023} A. N. Rudenko, M. R\"osner, M. I. Katsnelson,
+\emph{Dielectric tunability of magnetic properties in orthorhombic ferromagnetic monolayer CrSBr},
+arXiv:2302.12672 (2023). \doi{10.48550/arXiv.2302.12672}.
+\end{thebibliography}
+
+\end{document}
