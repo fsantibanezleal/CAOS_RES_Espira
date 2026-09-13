@@ -101,3 +101,34 @@ export interface ArtifactIndex {
   cases: IndexEntry[];
   categories: Record<string, string[]>;
 }
+
+export interface ReliabilityPoint {
+  br_over_anisotropy: number;
+  added_cost: number;
+  success_rate: number;
+  confidence95: number;
+  hyperbolic_fraction: number;
+}
+
+export interface LatticeRow {
+  n_sites: number;
+  uniform_cost: number;
+  domain_wall_cost: number;
+  ratio: number;
+  cheaper_mode: string;
+}
+
+export interface NovelResults {
+  schema_version: string;
+  reliability_front: {
+    material: string;
+    thermal_stability_factor: number;
+    points: ReliabilityPoint[];
+  };
+  lattice_crossover: {
+    material: string;
+    exchange_over_anisotropy: number;
+    rows: LatticeRow[];
+  };
+  notes: { reliability: string; lattice: string };
+}

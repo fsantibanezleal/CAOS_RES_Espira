@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "reliability_front": {
+    "material": "CrSBr",
+    "thermal_stability_factor": 20.0,
+    "points": [
+      {
+        "br_over_anisotropy": 0.0,
+        "added_cost": 0.0,
+        "success_rate": 1.0,
+        "confidence95": 0.0049,
+        "hyperbolic_fraction": 0.49916805324459235
+      },
+      {
+        "br_over_anisotropy": 0.5,
+        "added_cost": 6.131943038111423e-12,
+        "success_rate": 0.98,
+        "confidence95": 0.013720000000000005,
+        "hyperbolic_fraction": 0.33444259567387685
+      },
+      {
+        "br_over_anisotropy": 1.0,
+        "added_cost": 2.4527772152445692e-11,
+        "success_rate": 0.9575,
+        "confidence95": 0.019769238098621803,
+        "hyperbolic_fraction": 0.0016638935108153079
+      },
+      {
+        "br_over_anisotropy": 1.5,
+        "added_cost": 5.518748734300281e-11,
+        "success_rate": 0.9975,
+        "confidence95": 0.0049,
+        "hyperbolic_fraction": 0.0
+      },
+      {
+        "br_over_anisotropy": 2.0,
+        "added_cost": 9.811108860978277e-11,
+        "success_rate": 1.0,
+        "confidence95": 0.0049,
+        "hyperbolic_fraction": 0.0
+      },
+      {
+        "br_over_anisotropy": 2.5,
+        "added_cost": 1.5329857595278555e-10,
+        "success_rate": 1.0,
+        "confidence95": 0.0049,
+        "hyperbolic_fraction": 0.0
+      }
+    ]
+  },
+  "lattice_crossover": {
+    "material": "CrSBr",
+    "exchange_over_anisotropy": 0.5,
+    "rows": [
+      {
+        "n_sites": 2,
+        "uniform_cost": 1.9369895491861694e-11,
+        "domain_wall_cost": 2.667419587892189e-10,
+        "ratio": 13.770954980179999,
+        "cheaper_mode": "uniform"
+      },
+      {
+        "n_sites": 4,
+        "uniform_cost": 3.873979098372338e-11,
+        "domain_wall_cost": 3.6341772549437677e-10,
+        "ratio": 9.380993450560114,
+        "cheaper_mode": "uniform"
+      },
+      {
+        "n_sites": 8,
+        "uniform_cost": 7.747958196744678e-11,
+        "domain_wall_cost": 5.884071062644962e-10,
+        "ratio": 7.59435055433981,
+        "cheaper_mode": "uniform"
+      },
+      {
+        "n_sites": 16,
+        "uniform_cost": 1.5495916393489355e-10,
+        "domain_wall_cost": 1.307551355261404e-09,
+        "ratio": 8.438038268009594,
+        "cheaper_mode": "uniform"
+      },
+      {
+        "n_sites": 32,
+        "uniform_cost": 3.099183278697871e-10,
+        "domain_wall_cost": 3.887400545494103e-09,
+        "ratio": 12.543306400153924,
+        "cheaper_mode": "uniform"
+      },
+      {
+        "n_sites": 64,
+        "uniform_cost": 6.198366557395742e-10,
+        "domain_wall_cost": 1.3645320765728374e-08,
+        "ratio": 22.014381755862928,
+        "cheaper_mode": "uniform"
+      }
+    ]
+  },
+  "notes": {
+    "reliability": "The longitudinal-field cost-reliability front (R12): a field parallel to the moment is invisible to the optimal pulse dynamics but removes the thermal instability, driving the switching success rate up, at a cost that grows as the square of the field. The dip near B_r = 0.5 K/mu is the published counterintuitive feature; the added cost is a number the source paper does not report.",
+    "lattice": "Beyond the macrospin (Gap 1): for the switching-cost metric, uniform rotation is cheaper than a domain-wall sweep across every chain length tested, because the wall forces fast local flips and pays exchange. Domain walls dominate real switching for thermal-barrier reasons, not field-cost reasons. A full free lattice optimal control path is the next step."
+  }
+}
