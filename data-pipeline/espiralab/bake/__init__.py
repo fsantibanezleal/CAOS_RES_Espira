@@ -183,7 +183,10 @@ def bake_case(case: Case) -> dict:
             "includes_biaxial": case.includes_biaxial,
         },
         "material": material.describe(),
+        "switching_times_tau0": list(case.switching_times_tau0),
         "cost_curve": _cost_curve(case.material, case.switching_times_tau0),
+        # One pulse and trajectory per switching-time variant, so the variant bar drives the instrument.
+        "pulses": [_reference_pulse(case.material, t_tau0) for t_tau0 in case.switching_times_tau0],
         "reference_pulse": _reference_pulse(case.material, reference_t),
         "static_baseline": _static_baseline(case.material, case.switching_times_tau0[-1]),
     }

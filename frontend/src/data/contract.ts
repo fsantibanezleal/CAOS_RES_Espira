@@ -79,7 +79,9 @@ export interface CaseArtifact {
   schema_version: string;
   case: CaseInfo;
   material: MaterialInfo;
+  switching_times_tau0: number[];
   cost_curve: CostRow[];
+  pulses: ReferencePulse[];
   reference_pulse: ReferencePulse;
   static_baseline: StaticBaseline;
   biaxial_reduction?: BiaxialReduction;
