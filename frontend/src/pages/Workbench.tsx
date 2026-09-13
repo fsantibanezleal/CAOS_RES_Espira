@@ -1,8 +1,10 @@
-// The App: a real workbench. A material/case selector drives every panel. The instrument (the sphere
-// trajectory, the cost curve, the pulse) fills the surface; the readouts report real baked numbers.
+// The App: a real workbench (ADR-0016 / ADR-0071). The shell CaseSelector picks the material; a
+// switching-time variant bar picks the regime; SubTabs give Trajectory / Cost / Pulse / Context. Every
+// panel reacts to both selectors, and the instrument fills the surface. No recompute: it reads the
+// committed artifact.
 
-import { useEffect, useState } from 'react';
-import { useShellLang } from '@fasl-work/caos-app-shell';
+import { useEffect, useMemo, useState } from 'react';
+import { useShellLang, CaseSelector, SubTabs, type CaseDef } from '@fasl-work/caos-app-shell';
 import type { ArtifactIndex, CaseArtifact } from '../data/contract';
 import { loadCase, loadIndex } from '../data/load';
 import { CostChart } from '../viz/CostChart';
@@ -12,15 +14,13 @@ import { useTheme } from '../theme';
 
 const T = {
   en: {
-    material: 'Material / case',
-    view: 'View',
+    variant: 'Switching time',
     trajectory: 'Trajectory',
     cost: 'Cost curve',
     pulse: 'Pulse',
     context: 'Context',
     reason: 'Why this case',
     expectation: 'Expected behaviour',
-    props: 'Parameters',
     easyAxis: 'Easy axis',
     damping: 'Gilbert damping',
     curie: 'Ordering temperature',
@@ -28,25 +28,26 @@ const T = {
     anis: 'Anisotropy K',
     hard: 'Hard-axis ratio',
     floor: 'Universal floor',
-    reduction: 'Static-field reduction factor',
+    reduction: 'Static-field reduction',
     biaxial: 'Biaxial hard-axis result',
-    biaxialText:
-      'The numerical optimal control path on the biaxial system, which has no closed form. A value below one relative to the free-macrospin cost means the material internal torque pays for part of the reversal.',
-    overFree: 'biaxial cost / free-macrospin cost',
+    overFree: 'biaxial / free-macrospin',
     reductionVsUni: 'reduction vs uniaxial',
     converged: 'converged',
+    atThisVariant: 'At this switching time',
+    optCost: 'Optimal cost',
+    peakField: 'Peak field',
+    meanField: 'Mean field',
+    overFloor: 'cost / floor',
     loading: 'Loading baked artifact...',
   },
   es: {
-    material: 'Material / caso',
-    view: 'Vista',
+    variant: 'Tiempo de conmutacion',
     trajectory: 'Trayectoria',
     cost: 'Curva de costo',
     pulse: 'Pulso',
     context: 'Contexto',
     reason: 'Por que este caso',
     expectation: 'Comportamiento esperado',
-    props: 'Parametros',
     easyAxis: 'Eje facil',
     damping: 'Amortiguamiento de Gilbert',
     curie: 'Temperatura de orden',
@@ -54,19 +55,22 @@ const T = {
     anis: 'Anisotropia K',
     hard: 'Razon de eje duro',
     floor: 'Piso universal',
-    reduction: 'Factor de reduccion frente al campo estatico',
+    reduction: 'Reduccion frente al campo estatico',
     biaxial: 'Resultado biaxial de eje duro',
-    biaxialText:
-      'La trayectoria optima numerica en el sistema biaxial, que no tiene forma cerrada. Un valor por debajo de uno frente al costo de macrospin libre significa que el torque interno del material paga parte de la reversion.',
-    overFree: 'costo biaxial / costo macrospin libre',
-    reductionVsUni: 'reduccion frente a uniaxial',
+    overFree: 'biaxial / macrospin libre',
+    reductionVsUni: 'reduccion vs uniaxial',
     converged: 'convergido',
+    atThisVariant: 'A este tiempo de conmutacion',
+    optCost: 'Costo optimo',
+    peakField: 'Campo pico',
+    meanField: 'Campo medio',
+    overFloor: 'costo / piso',
     loading: 'Cargando artefacto...',
   },
 };
 
-function sci(x: number, digits = 2): string {
-  return x.toExponential(digits);
+function sci(x: number, d = 2): string {
+  return x.toExponential(d);
 }
 
 export function Workbench(): React.JSX.Element {
@@ -74,9 +78,9 @@ export function Workbench(): React.JSX.Element {
   const t = T[lang];
   const { theme } = useTheme();
   const [index, setIndex] = useState<ArtifactIndex | null>(null);
-  const [slug, setSlug] = useState<string>('');
+  const [slug, setSlug] = useState('');
   const [artifact, setArtifact] = useState<CaseArtifact | null>(null);
-  const [view, setView] = useState<'trajectory' | 'cost' | 'pulse'>('trajectory');
+  const [variant, setVariant] = useState(0);
 
   useEffect(() => {
     loadIndex().then((ix) => {
@@ -86,61 +90,116 @@ export function Workbench(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (slug) loadCase(slug).then(setArtifact);
+    if (slug)
+      loadCase(slug).then((a) => {
+        setArtifact(a);
+        setVariant(Math.floor(a.switching_times_tau0.length / 2));
+      });
   }, [slug]);
+
+  const cases: CaseDef[] = useMemo(() => {
+    if (!index) return [];
+    return index.cases.map((c) => ({
+      id: c.slug,
+      name: c.material_name,
+      category: c.category,
+      kind: c.category === 'negative-control' ? 'synthetic' : 'real',
+      anchor: c.includes_biaxial ? 'biaxial hard-axis case' : undefined,
+    }));
+  }, [index]);
 
   if (!index || !artifact) return <p style={{ padding: 24 }}>{t.loading}</p>;
 
   const m = artifact.material;
   const sb = artifact.static_baseline;
   const bx = artifact.biaxial_reduction;
+  const pulse = artifact.pulses[variant] ?? artifact.reference_pulse;
+  const costRow = artifact.cost_curve[variant] ?? artifact.cost_curve[0];
 
   return (
     <div className="wb">
-      <div className="wb-controls">
-        <label className="wb-field">
-          <span>{t.material}</span>
-          <select value={slug} onChange={(e) => setSlug(e.target.value)}>
-            {Object.entries(index.categories).map(([cat, slugs]) => (
-              <optgroup key={cat} label={cat}>
-                {slugs.map((s) => {
-                  const entry = index.cases.find((c) => c.slug === s)!;
-                  return (
-                    <option key={s} value={s}>
-                      {entry.title}
-                    </option>
-                  );
-                })}
-              </optgroup>
-            ))}
-          </select>
-        </label>
-        <div className="wb-viewtabs" role="tablist" aria-label={t.view}>
-          {(['trajectory', 'cost', 'pulse'] as const).map((v) => (
+      <div className="wb-top">
+        <CaseSelector cases={cases} selectedId={slug} onSelect={setSlug} lang={lang} />
+        <div className="wb-variants" role="tablist" aria-label={t.variant}>
+          <span className="wb-variants-label">{t.variant}</span>
+          {artifact.switching_times_tau0.map((tt, i) => (
             <button
-              key={v}
+              key={tt}
               role="tab"
-              aria-selected={view === v}
-              className={view === v ? 'active' : ''}
-              onClick={() => setView(v)}
+              aria-selected={variant === i}
+              className={variant === i ? 'chip active' : 'chip'}
+              onClick={() => setVariant(i)}
             >
-              {t[v]}
+              {tt} tau0
             </button>
           ))}
         </div>
       </div>
 
       <div className="wb-stage">
-        <div className="wb-instrument">
-          {view === 'trajectory' && (
-            <SphereTrajectory pulse={artifact.reference_pulse} theme={theme} />
-          )}
-          {view === 'cost' && <CostChart rows={artifact.cost_curve} theme={theme} />}
-          {view === 'pulse' && <PulseChart pulse={artifact.reference_pulse} theme={theme} />}
+        <div className="wb-main">
+          <SubTabs
+            ariaLabel="workbench views"
+            initial="trajectory"
+            tabs={[
+              {
+                id: 'trajectory',
+                label: t.trajectory,
+                content: (
+                  <div className="wb-instrument">
+                    <SphereTrajectory pulse={pulse} theme={theme} />
+                  </div>
+                ),
+              },
+              {
+                id: 'cost',
+                label: t.cost,
+                content: (
+                  <div className="wb-instrument">
+                    <CostChart rows={artifact.cost_curve} theme={theme} />
+                  </div>
+                ),
+              },
+              {
+                id: 'pulse',
+                label: t.pulse,
+                content: (
+                  <div className="wb-instrument">
+                    <PulseChart pulse={pulse} theme={theme} />
+                  </div>
+                ),
+              },
+              {
+                id: 'context',
+                label: t.context,
+                content: (
+                  <div className="wb-ctx-panel">
+                    <h4>{t.reason}</h4>
+                    <p>{artifact.case.reason}</p>
+                    <h4>{t.expectation}</h4>
+                    <p>{artifact.case.expectation}</p>
+                    <h4>{m.name}</h4>
+                    <p>{m.notes}</p>
+                  </div>
+                ),
+              },
+            ]}
+          />
         </div>
 
         <aside className="wb-readout">
           <h3>{m.name}</h3>
+          <div className="wb-variant-readout">
+            <strong>{t.atThisVariant}</strong> ({artifact.switching_times_tau0[variant]} tau0)
+            <dl>
+              <dt>{t.optCost}</dt>
+              <dd>{sci(costRow.cost)} T^2 s</dd>
+              <dt>{t.overFloor}</dt>
+              <dd>{costRow.cost_over_floor?.toFixed(2)}</dd>
+              <dt>{t.meanField}</dt>
+              <dd>{(costRow.mean_amplitude * 1e3).toFixed(2)} mT</dd>
+            </dl>
+          </div>
           <dl>
             <dt>{t.easyAxis}</dt>
             <dd>{m.easy_axis}</dd>
@@ -157,42 +216,25 @@ export function Workbench(): React.JSX.Element {
             <dt>{t.curie}</dt>
             <dd>{m.curie_kelvin} K</dd>
             <dt>{t.floor}</dt>
-            <dd>{sci(artifact.cost_curve[0].cost_floor)} T^2 s</dd>
+            <dd>{sci(costRow.cost_floor)} T^2 s</dd>
             <dt>{t.reduction}</dt>
             <dd>{sb.reduction_factor ? `${sb.reduction_factor.toFixed(0)}x` : 'n/a'}</dd>
           </dl>
-
           {bx && (
             <div className="wb-biaxial">
               <h4>{t.biaxial}</h4>
-              <p className="muted">{t.biaxialText}</p>
               <dl>
                 <dt>{t.overFree}</dt>
                 <dd>{bx.biaxial_over_free.toFixed(3)}</dd>
                 <dt>{t.reductionVsUni}</dt>
                 <dd>{bx.reduction_vs_uniaxial?.toFixed(3)}</dd>
                 <dt>{t.converged}</dt>
-                <dd>{bx.converged ? 'yes' : 'no (iteration cap)'}</dd>
+                <dd>{bx.converged ? 'yes' : 'no (cap)'}</dd>
               </dl>
             </div>
           )}
         </aside>
       </div>
-
-      <section className="wb-context">
-        <div>
-          <h4>{t.reason}</h4>
-          <p>{artifact.case.reason}</p>
-        </div>
-        <div>
-          <h4>{t.expectation}</h4>
-          <p>{artifact.case.expectation}</p>
-        </div>
-        <div>
-          <h4>{t.context}</h4>
-          <p>{m.notes}</p>
-        </div>
-      </section>
     </div>
   );
 }

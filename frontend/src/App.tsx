@@ -3,6 +3,7 @@
 import { Routes, Route, NavLink } from 'react-router';
 import { AppShell, CitationsProvider, type ShellConfig } from '@fasl-work/caos-app-shell';
 import { CITATIONS } from './content/citations';
+import { ARCHITECTURE } from './content/architecture';
 import { APP_VERSION } from './version';
 import { Introduction } from './pages/Introduction';
 import { Theory } from './pages/Theory';
@@ -25,6 +26,7 @@ const config: ShellConfig = {
     github: 'https://github.com/fsantibanezleal/CAOS_RES_Espira',
   },
   version: APP_VERSION,
+  architecture: ARCHITECTURE,
   fixedRoutes: ['/app'],
   footer: {
     provenance: {
