@@ -6,8 +6,6 @@ Experiments page reads. Everything is driven by the spinoct engine; the web only
 
 from __future__ import annotations
 
-import numpy as np
-
 from spinoct.dynamics import MacrospinSystem
 from spinoct.lattice import SpinChain, compare_reversal_modes
 from spinoct.thermal import br_cost_reliability_front

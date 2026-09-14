@@ -1,2 +1,4 @@
-# CORE / LIVE lane, minimal, Pyodide-safe. Pinned to the verified install (Python 3.12, 2026-06-20).
+# RUNTIME lane. Espira ships a static site that replays committed JSON, so nothing Python runs at request
+# time; the artifact checker (scripts/check_artifacts.py) is stdlib only. numpy stays pinned for local
+# inspection of the artifacts. Pinned to the verified install (Python 3.12).
 numpy==2.4.6
