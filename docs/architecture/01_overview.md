@@ -1,28 +1,55 @@
 # Architecture, overview
 
-This product is an instance of the **CAOS product-repo archetype** ([ADR-0057]): offline-pipeline-heavy,
-backend-optional, deploying as a static deterministic-replay viewer. The base is **frozen** (instantiated, never
-re-litigated); per-product rework lives only in the **core**, models/algorithms, visualization, content.
+## Two repositories
 
-## The lanes (and what runs where)
-| Lane | Where | Deps | Notes |
-|---|---|---|---|
-| **Offline (precompute)** | `data-pipeline/` (`pipeline`), `.venv-pipeline` | `data-pipeline/requirements.txt` (SOTA engines) | bakes the committed artifacts |
-| **Live (client-side)** | `frontend/src/pyodide` + `pipeline/live.py` | Pyodide-safe wheels (`requirements.txt`) | optional small recompute in the browser; may be a reduced model |
-| **Replay** | `frontend/` | n/a | always present; the fallback (ADR-0054) |
-| **API (backend)** | `app/` (FastAPI) | `requirements-api.txt` | DORMANT; activate only on an ADR-0002 trigger |
+| Repository | Role | Distribution |
+|---|---|---|
+| [CAOS_SpinOCT](https://github.com/fsantibanezleal/CAOS_SpinOCT) | The engine `spinoct`: units contract, Landau-Lifshitz-Gilbert dynamics, analytic optimal control (uniaxial, spin-orbit torque), the image-based numerical optimal control path, baselines, GRAPE and CRAB, the discrete adjoint, the stochastic thermostat and reliability front, the field-plus-current hybrid, the Pareto front, the amortized policy, the spin chain with its free optimal control path and minimum energy path | PyPI `spinoct`, MIT |
+| CAOS_RES_Espira (this repository) | The product: the material parameter database, the case registry, the bakes that drive the engine, the committed artifacts, the web app, the manuscripts | GitHub Pages at https://espira.fasl-work.com, MIT |
 
-A measured **[gate](03_the-gate.md)** decides live vs replay per case.
+The split follows the rule that a product declares no package of its own: anything reusable lives in
+the engine, which the product pins (`data-pipeline/requirements.txt`).
 
-## The flow
-`data/raw` → **[CONTRACT 1](08_data-contracts.md)** (`io/contract.py`) → staged pipeline
-(preprocess → feature_extraction → train → infer → evaluate → export) → **[CONTRACT 2](08_data-contracts.md)**
-(`core/manifest.py`, compact artifact) → `data/derived/` (committed) → `frontend/` replays it.
+## Lanes
 
-## Frozen base vs rework
-- **Frozen:** the folder layout, the two contracts, the staged pipeline names, the gate, the manifest/trace,
-  the two-venv split, the cases-by-category mechanism, CI guards. Any area may be **dormant** (with a README).
-- **Rework (the only per-product surface):** the engine in `model/` + the stage bodies (the science), the
-  `frontend/` visualizations, and the cases + content + calibration.
+| Lane | Where | State |
+|---|---|---|
+| Offline bake | `data-pipeline/` in `.venv-pipeline` | Active. Canonical truth |
+| Replay | `frontend/` reading `data/artifacts/` | Active. Every page |
+| Live (in-browser recompute) | none | Not implemented. The analytic uniaxial pulse is cheap enough to run in TypeScript; that needs a parity fixture against the engine (backlog BL-008) |
+| API | `app/` | Dormant ([../../app/README.md](../../app/README.md)) |
 
-[ADR-0057]: ../../../conventions/architecture/0-archetype/ADR-0057-product-repo-archetype.md
+## Data flow
+
+```
+published parameters (DOI per value)
+        |  espiralab/materials   (curated in code today; Contract 1 module planned)
+        v
+case registry (category, reason, expectation, six switching-time variants)
+        |  espiralab/bake        drives spinoct
+        v
+data/artifacts/*.json   committed; checked by scripts/check_artifacts.py and the tests
+        |  frontend/copy-data.mjs at build time
+        v
+the web app (six pages) replays them; the manuscripts' tables are generated from them
+```
+
+Three bakes produce the artifacts:
+
+1. **Per-case** (`run.py`): for each material and each switching time, the analytic optimal pulse and
+   trajectory, its cost against the free-macrospin cost and the universal floor with the damping band, a
+   static-field baseline, and for CrSBr the numerical optimum with the hard axis.
+2. **Novel results** (`run.py`): the longitudinal-field cost-reliability front (manuscript M1) and the
+   two-mode lattice comparison.
+3. **Free chain crossover map** (`run_lattice_ocp.py`): 61 chains solved over every site's trajectory from
+   three starts, with the minimum-energy-path floor (manuscript M2 version 2). Parallel over cases and
+   checkpointed, because it takes hours.
+
+## What is not yet on the staged base
+
+ADR-0057 and ADR-0069 require the named stages `ingest -> preprocess -> dataset -> features -> train ->
+infer -> evaluate -> export -> validate`, a Contract 1 ingestion module, per-case manifests with hashes and
+a measured lane gate, a model registry, and the method x case x variant completeness manifest. The bakes
+above implement the science without that structure, and the case registry holds 6 of the 26 cases of the
+validated plan. The rebuild order is recorded in the programme plan (units U2 to U7); this page is updated
+as each unit lands.
