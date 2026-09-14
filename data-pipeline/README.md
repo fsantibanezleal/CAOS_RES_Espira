@@ -1,16 +1,36 @@
-# data-pipeline/, the offline engine (`pipeline`)
+# data-pipeline/, the offline bake (`espiralab`)
 
-Rename `pipeline` → `pipeline` per product. The **single source of physics/algorithm truth**; `frontend/` and
-`app/` consume it, never re-implement it. Its own venv: **`.venv-pipeline`** (heavy SOTA engines, local-only).
+The single source of Espira's results. The physics and the solvers live in the separate engine package
+[`spinoct`](https://github.com/fsantibanezleal/CAOS_SpinOCT) (PyPI `spinoct`, pinned in
+`requirements.txt`); `espiralab` holds the product's domain layer and drives the engine. `frontend/`
+consumes its artifacts and never recomputes them.
 
-## Layout (the package lives directly under `data-pipeline/`)
-- `pipeline/pipeline.py`, orchestrator + CLI (`python data-pipeline/run.py [all|<case>] [--seed N]`)
-- `pipeline/registry.py`, cases grouped by CATEGORY · `pipeline/live.py`, Pyodide live entrypoint
-- `pipeline/io/`, `contract.py` (**CONTRACT 1**) · `formats.py` (standard readers/writers) · `schema.py` (types)
-- `pipeline/core/`, `rng.py` (seeded determinism) · `trace.py` · `manifest.py` (**CONTRACT 2**) · `gate.py`
-- `pipeline/model/`, the shared pure-Python core (Pyodide-safe); EXAMPLE = SIR
-- `pipeline/stages/`, `preprocess → feature_extraction → train → infer → evaluate → export`
-- `pipeline/cases/`, documented cases
+## Layout today
 
-Setup + run: `scripts/setup.{sh,ps1}` then `scripts/precompute.{sh,ps1}`. See
-[../docs/architecture/05_precompute-pipeline.md](../docs/architecture/05_precompute-pipeline.md).
+| Module | What |
+|---|---|
+| `espiralab/materials/` | The material parameter database: six van der Waals magnets, each value with a DOI, an uncertainty and a convention |
+| `espiralab/cases/` | The case registry: each case has a category, a reason, an expectation, and a switching-time variant sweep of six values |
+| `espiralab/bake/__init__.py` | The per-case bake: analytic optimal pulse and cost curve, the universal floor with its damping band, the free-macrospin reference, a static baseline, and for CrSBr the numerical biaxial optimum |
+| `espiralab/bake/novel.py` | The reliability front (R12) and the two-mode lattice comparison |
+| `espiralab/bake/lattice_ocp.py` | The free chain optimal control crossover map: 61 chains, three starts each, the minimum-energy-path floor; parallel and checkpointed |
+| `run.py` | Bake the cases and `novel.json` |
+| `run_lattice_ocp.py` | Bake (or resume) the crossover map |
+
+## Moving onto the staged base
+
+ADR-0057 and ADR-0069 require the named stages `ingest -> preprocess -> dataset -> features -> train ->
+infer -> evaluate -> export -> validate`, the two data contracts, a measured lane gate, manifests with
+completeness counts, and the 26-case registry of the validated plan. The current modules implement the
+science but not that structure. The rebuild order (units U2 to U4) is recorded in the CAOS programme plan;
+until it lands, this README describes the code as it is.
+
+## Run
+
+```bash
+./scripts/setup.sh                 # or scripts/setup.ps1
+./scripts/precompute.sh            # python data-pipeline/run.py data/artifacts
+python data-pipeline/run_lattice_ocp.py data/artifacts 28   # hours; set ESPIRA_CHECKPOINT_DIR first
+```
+
+Tests never write `data/artifacts/`; the smoke test bakes into a temporary directory.

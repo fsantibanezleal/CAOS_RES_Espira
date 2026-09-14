@@ -21,7 +21,6 @@ import json
 from pathlib import Path
 
 import numpy as np
-
 from spinoct.analytic import (
     UniaxialOptimalControl,
     cost_free_macrospin,

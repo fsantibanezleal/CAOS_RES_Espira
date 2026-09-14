@@ -1,20 +1,29 @@
-# Docs, the product wiki
+# Espira wiki
 
-SimLab-style navigable wiki (ADR-0056), authored **as the product is built**, not at the end. The pipeline +
-its validation + these docs are the primary product; the web app is a projection of a validated subset.
+Espira computes the least-cost magnetic-field pulses that reverse the magnetization of van der Waals
+magnets, extends that optimal control past the single-moment (macrospin) limit, and publishes every
+result from committed artifacts. This wiki explains how the repository works; the physics of every
+method is documented with its equations and sources in the engine's theory pages
+(https://github.com/fsantibanezleal/CAOS_SpinOCT/tree/main/docs/theory).
 
 ## Map
-- **[architecture/](architecture/)**, how the repo works: the frozen base, the two data contracts, determinism +
-  trace, the live/precompute gate, the staged pipeline, model evaluation, deploy.
-- **[frameworks/](frameworks/)**, one card per research-chosen engine/library (what/why · install · usage ·
-  applying). The deep research, made binding (each is pinned in a `requirements-*.txt`).
-- **[guides/](guides/)**, runnable how-tos: **instantiate the template**, run the precompute pipeline,
-  **bring your own data**, the GPU lane, run the API.
-- **[cases/](cases/)**, the CATEGORY taxonomy + the coverage matrix + one page per documented case.
 
-## Honesty + data policy
-- Numbers come from the calibrated engine / committed artifacts, never from a claim. The EXAMPLE engine (SIR) is
-  synthetic and clearly labelled; a real product states sources, licenses and what is real vs synthetic.
-- Public derived artifacts are committed (`data/derived/`); raw/private sources stay out of git (`data/raw/`,
-  vault) per ADR-0055. The two data contracts ([architecture/08_data-contracts.md](architecture/08_data-contracts.md))
-  govern raw→pipeline and pipeline→web.
+| Section | What it covers |
+|---|---|
+| [architecture/01_overview.md](architecture/01_overview.md) | The two repositories, the lanes, the data flow from parameters to the web, and what is not yet on the staged base |
+| [architecture/07_deploy.md](architecture/07_deploy.md) | How the static site is built and published, and how a release is verified |
+| [frameworks/spinoct/](frameworks/spinoct/README.md) | The engine: what it implements, how it is pinned, a runnable example |
+| [guides/01_run-the-bake.md](guides/01_run-the-bake.md) | Set up, bake, check, and serve locally |
+| [cases/](cases/README.md) | The case taxonomy, the coverage matrix against the validated 26-case plan, and each baked case |
+
+## Honesty and data policy
+
+- There is no public experimental dataset of shaped-pulse switching in these materials. The real data
+  is the set of spin-Hamiltonian parameters, each transcribed with a DOI, an uncertainty and a
+  convention ([../data/README.md](../data/README.md)).
+- The switching cost is an integral of the squared applied field, in tesla-squared-seconds. It is not an
+  energy and is never presented as joules without an explicit circuit model.
+- Every number in the web app and the manuscripts is read from `data/artifacts/`, produced by the offline
+  bake. Tests never write that directory.
+- Where a result is a bound rather than an optimum (the free chain costs are upper bounds on the true
+  optimum; the barrier floor is a lower bound), the text says so.
