@@ -27,9 +27,11 @@ Waals Magnets. Preprint, 2026, CC-BY, Zenodo concept DOI
 [10.5281/zenodo.22736005](https://doi.org/10.5281/zenodo.22736005). Source under
 `manuscripts/reliability-realizability/`.
 
-2. Uniform Rotation is the Field-Cost Optimum over a Domain-Wall Sweep: A First Step Beyond the
-Macrospin in Optimal Magnetization Switching. Preprint, 2026, CC-BY, Zenodo concept DOI
-[10.5281/zenodo.22736065](https://doi.org/10.5281/zenodo.22736065). Source under
+2. Domain Walls Become the Optimal Reversal of a Spin Chain: Free Optimal Control Beyond the Macrospin
+and an Energy-Barrier Floor on the Switching Cost. Preprint, 2026, CC-BY, version 2 (corrects version
+1, whose two-mode comparison concluded that uniform rotation is always optimal), version DOI
+[10.5281/zenodo.22749089](https://doi.org/10.5281/zenodo.22749089), concept DOI
+[10.5281/zenodo.22736065](https://doi.org/10.5281/zenodo.22736065). Source and the table generator under
 `manuscripts/beyond-macrospin/`.
 
 ## Honesty
