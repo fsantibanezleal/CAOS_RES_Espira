@@ -132,3 +132,37 @@ export interface NovelResults {
   };
   notes: { reliability: string; lattice: string };
 }
+
+// ---- the free chain optimal control crossover map (data/artifacts/lattice_ocp.json) ----
+
+export interface LatticeStart {
+  ratio: number;
+  nonuniformity: number;
+  converged: boolean;
+  iterations: number;
+}
+
+export interface LatticeOCPCase {
+  key: string;
+  exchange_over_k: number;
+  alpha: number;
+  switching_tau0: number;
+  n_sites: number;
+  n_images: number;
+  uniform_bound_t2s: number;
+  barrier_over_nk: number;
+  floor_ratio: number;
+  best_start: 'uniform' | 'wall' | 'mep';
+  best_ratio: number;
+  best_nonuniformity: number;
+  saving: number;
+  starts: Record<'uniform' | 'wall' | 'mep', LatticeStart>;
+  sz_map: { times_over_t: number[]; sz: number[][] };
+}
+
+export interface LatticeOCPArtifact {
+  schema: string;
+  description: string;
+  reference: { mu_bohr: number; anisotropy_mev: number };
+  cases: LatticeOCPCase[];
+}

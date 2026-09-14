@@ -31,7 +31,7 @@ export function CostChart({ rows, theme }: Props): React.JSX.Element {
     const bandLow = rows.map((r) => r.cost_low_damping);
     const bandHigh = rows.map((r) => r.cost_high_damping);
 
-    const stroke = cssVar('--color-text', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
+    const stroke = cssVar('--color-fg', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
     const grid = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
     const accent = cssVar('--color-accent', '#3b82f6');
 

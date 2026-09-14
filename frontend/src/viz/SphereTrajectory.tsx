@@ -40,7 +40,7 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
     const cy = size / 2;
     const radius = size * 0.42;
 
-    const text = cssVar('--color-text', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
+    const text = cssVar('--color-fg', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
     const accent = cssVar('--color-accent', '#3b82f6');
     const faint = theme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
 

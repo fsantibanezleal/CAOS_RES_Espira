@@ -14,3 +14,5 @@ frontend/public/
 *.npz
 *.pt
 .env
+# bake checkpoints (temporary; point ESPIRA_CHECKPOINT_DIR at E:)
+/data/.checkpoints/

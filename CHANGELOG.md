@@ -4,6 +4,19 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.02.000] - 2026-09-14
+
+### Added
+- The free chain optimal control crossover map (`data-pipeline/run_lattice_ocp.py`, artifact
+  `data/artifacts/lattice_ocp.json`): 61 chains (J/K = 10; alpha 0.5 over T = 10 to 160 tau0 and N = 4
+  to 32; alpha 0.1 over T = 20 to 300 tau0 and N = 8 to 24), each solved over every site's trajectory
+  from three starts with spinoct 0.10.0, with the minimum-energy-path floor. 28 cases reverse more
+  cheaply through a domain wall than by uniform rotation, up to a 51 percent saving (N = 24,
+  T = 160 tau0, alpha = 0.5). Parallel and checkpointed.
+- Experiments, "Free chain optimal control" tab: damping, time and length selectors with a readout,
+  an interactive uPlot crossover chart with the floor, a hover-readout s_z(t, site) reversal map, and the
+  full case table. The two-mode tab is marked superseded.
+
 ## [0.01.000] - 2026-09-13
 
 ### Added

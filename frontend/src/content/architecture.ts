@@ -8,7 +8,7 @@ const S = 'stroke="currentColor" fill="none" stroke-width="1.6"';
 const BOX = 'rx="8" stroke="currentColor" fill="none" stroke-width="1.4"';
 
 const problemSvg = `
-<svg viewBox="0 0 640 300" role="img" style="width:100%;height:auto;color:var(--color-text)">
+<svg viewBox="0 0 640 300" role="img" style="width:100%;height:auto;color:var(--color-fg)">
   <circle cx="180" cy="150" r="110" ${S} opacity="0.5"/>
   <ellipse cx="180" cy="150" rx="110" ry="34" ${S} opacity="0.3"/>
   <circle cx="180" cy="45" r="4" fill="currentColor"/>
@@ -30,7 +30,7 @@ const problemSvg = `
 </svg>`;
 
 const engineSvg = `
-<svg viewBox="0 0 660 250" role="img" style="width:100%;height:auto;color:var(--color-text)">
+<svg viewBox="0 0 660 250" role="img" style="width:100%;height:auto;color:var(--color-fg)">
   <rect x="10" y="95" width="120" height="60" ${BOX}/>
   <text x="70" y="120" text-anchor="middle" class="l-en" font-size="12" fill="currentColor">Material DB</text>
   <text x="70" y="120" text-anchor="middle" class="l-es" font-size="12" fill="currentColor">Base materiales</text>
@@ -55,7 +55,7 @@ const engineSvg = `
 </svg>`;
 
 const honestySvg = `
-<svg viewBox="0 0 640 240" role="img" style="width:100%;height:auto;color:var(--color-text)">
+<svg viewBox="0 0 640 240" role="img" style="width:100%;height:auto;color:var(--color-fg)">
   <rect x="20" y="40" width="280" height="160" ${BOX}/>
   <text x="160" y="66" text-anchor="middle" font-size="14" fill="var(--color-accent,#3b82f6)">Phi  (T^2 s)</text>
   <text x="160" y="92" text-anchor="middle" class="l-en" font-size="12" fill="currentColor">what the engine computes:</text>
