@@ -1,10 +1,7 @@
-# Repo-local tool configuration ONLY. A product declares NO package of its own.
-# See conventions/no-internal-packages.md: if a package is required it is a SEPARATE REPO with a
-# valid PyPI project, published, and consumed as a dependency (milldem, minehaulsim, oreblocks).
-# data-pipeline/ is scripts, invoked by path: python data-pipeline/run.py
-# Product-repo template, the offline engine package (ADR-0057). Rename `pipeline` -> `pipeline` per product.
-# The EXAMPLE engine is numpy-only on purpose (an instantly-installable, no-hang reference); a real product pins
-# its research-chosen SOTA engines in data-pipeline/requirements.txt and documents them in docs/frameworks/.
+# Repo-local tool configuration only. The product declares no package of its own
+# (conventions/no-internal-packages.md): the engine is the separate PyPI package `spinoct`, and
+# data-pipeline/ is scripts invoked by path (python data-pipeline/run.py).
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
@@ -14,5 +11,8 @@ line-length = 110
 target-version = "py311"
 
 [tool.ruff.lint]
-# S/I/R are the standard SIR compartment names; single-letter here is intentional domain notation, not ambiguous.
-ignore = ["E741"]
+# Explicit, so the pinned ruff in requirements-dev.txt and any local ruff check the same rules.
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["espiralab"]

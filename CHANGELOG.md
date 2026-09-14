@@ -4,6 +4,24 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.02.002] - 2026-09-14
+
+### Changed
+- The repository no longer carries the product template outside the web app and the bakes: the SIR
+  tests, the SIR data contract and example, the template blueprint, the VPS scaffolds and the template
+  wiki pages are gone. `app/` is the dormant FastAPI lane of the frozen base with an Espira README.
+- The wiki describes the real system: architecture overview and deploy, the spinoct framework page with a
+  runnable example, the bake guide, and the case coverage matrix against the validated 26-case plan with
+  per-case pages generated from the registry.
+- CI runs ruff, the tests, and the artifact checker, in addition to the guards and the frontend build.
+  Before this release the ci workflow had failed on every push since 0.01.000.
+
+### Added
+- Tests: material traceability and physical ranges, the registry, artifact invariants with corrupted-copy
+  checks proving the checker fails, artifacts current with the database, manuscript facts recomputed from
+  the shipped map, a sandboxed bake smoke against the committed artifact, generated docs current, relative
+  links, and version consistency. The FePS3 case is a strict expected failure until it has six variants.
+
 ## [0.02.001] - 2026-09-14
 
 ### Fixed
