@@ -1,0 +1,9 @@
+{
+  "n_cases": 61,
+  "n_saving": 28,
+  "best_key": "jk10_a0.5_t160_n24",
+  "best_saving_percent": 50.9,
+  "best_ratio": 0.4908,
+  "best_floor": 0.3242,
+  "min_ratio_over_floor": 1.0178
+}

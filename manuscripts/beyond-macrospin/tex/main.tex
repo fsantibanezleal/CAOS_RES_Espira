@@ -7,149 +7,198 @@
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 \newcommand{\doi}[1]{DOI: \href{https://doi.org/#1}{#1}}
 
-\title{Uniform Rotation is the Field-Cost Optimum over a Domain-Wall Sweep:\\
-A First Step Beyond the Macrospin in Optimal Magnetization Switching}
+\title{Domain Walls Become the Optimal Reversal of a Spin Chain:\\
+Free Optimal Control Beyond the Macrospin and an Energy-Barrier Floor on the Switching Cost}
 \author{Felipe Santib\'a\~nez-Leal\\
 \small CAOS open-research programme, Santiago, Chile}
-\date{2026}
+\date{2026, version 2}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Optimal control of magnetization switching has been solved at the macrospin level, where the magnetic
-element is treated as a single rotating moment. The authors of the method state, in print, that this
-approximation breaks down with size and that the reversal may instead proceed by nonuniform rotation,
-domain-wall nucleation and propagation, or spin waves, and that it remains open under what conditions
-these become optimal in terms of energy efficiency. We take a first step past the macrospin. For a
-ferromagnetic spin chain with nearest-neighbour exchange, we compute the switching cost of two
-reversal modes, a uniform rotation in which every site follows the macrospin optimal control path
-together, and a domain-wall sweep in which a reversed domain nucleates at one end and its wall
-propagates to the other. The lattice engine reproduces the analytic macrospin cost in the one-site
-limit. We find that for the switching-cost metric, the Joule heating of the source, uniform rotation
-is cheaper than the domain-wall sweep across every chain length from two to sixty-four sites and every
-exchange strength tested, because the wall forces fast local flips and bends the bonds across itself
-while uniform rotation moves every site slowly and never pays exchange. This is worth stating plainly
-because it is the opposite of a common intuition: domain-wall motion dominates real, thermally-driven
-switching, but that is a thermal-barrier advantage, not a field-cost advantage. All results are
-reproducible from committed artifacts and a live instance.
+Optimal control of magnetization switching has been solved almost entirely for a single rotating
+moment, and its authors state in print that it remains open under what conditions nonuniform
+mechanisms such as domain-wall nucleation and propagation become optimal in terms of energy
+efficiency. We answer this for a ferromagnetic spin chain with nearest-neighbour exchange by minimizing
+the switching cost over the trajectory of every site, with no assumed reversal mode. Two results
+follow. First, a lower bound: inverting the equation of motion and applying the arithmetic-geometric
+mean inequality gives $\Phi \ge 4\alpha\,\Delta E/(\gamma\mu)$ for every pulse at every switching time,
+with $\Delta E$ the minimum-energy-path barrier; it equals the known infinite-time optimum for a single
+uniaxial moment. Second, above a crossover length and at long switching time the free optimum is a
+domain wall entering at an open end, strictly cheaper than uniform rotation. Over 61 chains ($J/K=10$,
+$N$ from 4 to 32, two damping values) 28 reverse more cheaply through a wall, by up to 51 percent, and
+every cost lies above its barrier floor. The saving at fixed switching time is not monotone in
+length: a longer wall needs more time to cross. One case was verified by grid refinement, local
+consistency, and open-loop forward dynamics. This version corrects version 1, whose comparison of two
+fixed modes concluded that uniform rotation is always the field-cost optimum.
 \end{abstract}
+
+\section*{Correction to version 1}
+
+Version 1 compared a uniform rotation with a constant-speed domain wall at a short switching time and
+concluded that uniform rotation is the field-cost optimum, adding that walls lower the energy barrier
+but not the field cost. Both statements are withdrawn. The comparison was correct for the two modes and
+the short time it tested, but the constant-speed wall is not the optimal wall, and the free search
+reported here finds wall-mediated reversals cheaper than uniform rotation at long switching times. The
+barrier floor of Section~\ref{sec:floor} shows that the energy barrier and the field cost are linked,
+not opposed.
 
 \section{Introduction}
 
-Optimal control theory computes the applied-field pulse that reverses a magnetic moment for the least
-dissipated energy~\citep{kwiatkowski2021}, and applied to two-dimensional van der Waals magnets it
-reaches picosecond, energy-efficient switching~\citep{badarneh2026}. The formalism has been developed
-almost entirely at the macrospin level, a single moment on the unit sphere. Its own authors note the
-limitation explicitly: ``A macrospin approximation is used in the present study, but this is expected
-to break down with increasing system size. Even if the initial and the final states are collinear, the
-transition between them may involve nonuniform rotation of magnetization such as nucleation and
-propagation of domain walls or excitation of spin waves. It remains to be seen under what conditions
-these and possibly other, yet unknown switching mechanisms become optimal in terms of energy
-efficiency''~\citep{badarneh2023}.
+Optimal control theory computes the applied-field pulse that reverses a magnetic moment at the least
+cost~\citep{kwiatkowski2021}, and applied to two-dimensional van der Waals magnets it reaches
+picosecond, energy-efficient switching~\citep{badarneh2026}. The formalism has been developed almost
+entirely for a single moment on the unit sphere. Its authors note the limitation: ``A macrospin
+approximation is used in the present study, but this is expected to break down with increasing system
+size. Even if the initial and the final states are collinear, the transition between them may involve
+nonuniform rotation of magnetization such as nucleation and propagation of domain walls or excitation
+of spin waves. It remains to be seen under what conditions these and possibly other, yet unknown
+switching mechanisms become optimal in terms of energy efficiency''~\citep{badarneh2023}. The only step
+past the macrospin we know of is a one-dimensional study that found a standing spin wave in the optimal
+reversal above a critical length~\citep{badarneh2020}.
 
-The only step past the macrospin taken anywhere is a single one-dimensional study, which found that
-above a critical length a standing spin wave appears in the optimal reversal~\citep{badarneh2020}. Here
-we compare, for a spin chain with exchange, the two reversal modes that matter most for a device, a
-uniform rotation and a domain-wall sweep, on the switching-cost metric, and we identify which is
-cheaper and why.
+We minimize the switching cost of a spin chain over all trajectories, derive a barrier floor under the
+cost, and map where the optimum stops being uniform.
 
-\section{Model}
+\section{Model and cost}
 
-A chain of $N$ unit moments has energy
+A chain of $N$ unit moments $\vec s_i$, each of moment $\mu$, has energy
 \begin{equation}
-E = -K \sum_i s_{i,z}^2 \;-\; J \sum_{\langle ij\rangle} \vec s_i \cdot \vec s_j,
+E = -K \sum_i s_{i,z}^2 \;-\; J \sum_{\langle ij\rangle} \vec s_i \cdot \vec s_j ,
 \end{equation}
-with $K$ the easy-axis anisotropy per site and $J$ the nearest-neighbour exchange (positive is
-ferromagnetic), open boundaries. The internal field at a site adds an exchange term
-$(J/\mu)(\vec s_{i-1} + \vec s_{i+1})$ to the single-site anisotropy field. In the one-site,
-no-exchange limit the chain is a macrospin, and our lattice cost reproduces the closed-form macrospin
-cost to within $2\times10^{-3}$, which is the validation gate for the method.
-
-The switching cost of any chain trajectory is computed as everywhere in this framework: the equation of
-motion is inverted at every site to give the applied field that site needs, with the chain internal
-field (including exchange) subtracted, and the summed squared field is integrated over time,
+with easy-axis anisotropy $K$ per site, ferromagnetic exchange $J$, and open ends. The internal field
+at a site is $\vec b^{\,\mathrm{int}}_i = -\mu^{-1}\partial E/\partial \vec s_i$. Given any trajectory,
+the Landau-Lifshitz-Gilbert equation is inverted at every site for the applied field that site needs,
 \begin{equation}
-\Phi = \int_0^T \sum_i |\vec b_i(t)|^2 \, dt,
+\vec b_i = \frac{\alpha}{\gamma}\dot{\vec s}_i + \frac{1}{\gamma}\,\vec s_i\times\dot{\vec s}_i
+- \vec b^{\,\mathrm{int}}_{i,\perp},
+\label{eq:inverse}
 \end{equation}
-in units of T$^2$~s. This is not an energy; converting to joules requires a circuit model, which we do
-not assume.
+and the switching cost is $\Phi = \int_0^T \sum_i |\vec b_i|^2\,dt$, in T$^2$~s. It is not an energy;
+converting it to joules needs a circuit model, which we do not assume. Times are in units of
+$\tau_0 = \mu/(2\gamma K)$.
 
-\subsection{Two reversal modes}
+\section{A barrier floor under the switching cost}
+\label{sec:floor}
 
-In the \emph{uniform rotation}, every site follows the same macrospin optimal control path together.
-Neighbouring spins stay parallel throughout, so exchange is never paid, and the cost scales linearly in
-$N$. In the \emph{domain-wall sweep}, a reversed domain nucleates at one end and a wall of finite width
-propagates to the other, so at any instant the chain is part up, part down. Spins across the wall are
-not parallel, so exchange is paid, and the wall must cross the chain in the switching time, which forces
-the sites it passes to flip quickly.
+Write $P_i = -\mu\,\vec b^{\,\mathrm{int}}_i\cdot\dot{\vec s}_i$ for the power the internal field
+absorbs at site $i$, so that $\sum_i P_i = dE/dt$. Dotting Eq.~\eqref{eq:inverse} with
+$\dot{\vec s}_i$, and using $\dot{\vec s}_i \perp \vec s_i$, gives
+\begin{equation}
+\mu\,\vec b_i\cdot\dot{\vec s}_i = P_i + \mu\frac{\alpha}{\gamma}|\dot{\vec s}_i|^2 .
+\end{equation}
+Only the component of $\vec b_i$ along $\dot{\vec s}_i$ enters, so $|\vec b_i|^2 \ge (\vec b_i\cdot
+\dot{\vec s}_i/|\dot{\vec s}_i|)^2$. Where $P_i>0$, the arithmetic-geometric mean inequality applied to
+the two terms gives $|\vec b_i|^2 \ge 4\alpha P_i/(\gamma\mu)$, and trivially $|\vec b_i|^2 \ge 0$
+elsewhere. Summing over sites, $\sum_i |\vec b_i|^2 \ge (4\alpha/\gamma\mu)\max(dE/dt,0)$, and
+integrating, the cost is at least $4\alpha/(\gamma\mu)$ times the total energy climbed. Every path from
+all up to all down passes through a configuration at least as high as the saddle of the minimum energy
+path, so it climbs at least that barrier $\Delta E$, and
+\begin{equation}
+\Phi \;\ge\; \frac{4\alpha}{\gamma\mu}\,\Delta E
+\label{eq:floor}
+\end{equation}
+for every pulse and every switching time. For one uniaxial moment $\Delta E = K$ and the bound equals
+the infinite-time optimum $\Phi_\infty = 4\alpha K/(\gamma\mu)$ of Ref.~\citep{kwiatkowski2021}, so it is
+tight there. Equality needs the field parallel to the velocity and the precession supplied by the
+internal field; uniform rotation meets both at long times, and whether a wall can is not guaranteed.
+
+We compute $\Delta E$ with the climbing-image string method~\citep{e2007} in the geodesic form used for
+magnetic systems~\citep{bessarab2015}. For $J/K = 10$ short chains reverse coherently
+($\Delta E = NK$); above about eight sites a wall entering at an open end has the lower barrier, which
+saturates at $8.867\,K$ against the continuum wall energy $2\sqrt{2JK} = 8.944\,K$. The last row of
+Table~\ref{tab:alpha05} gives $\Delta E/(NK)$.
+
+\section{Free optimal control of the chain}
+
+The image-based direct minimization of Ref.~\citep{badarneh2023} is generalized to $N$ coupled sites:
+the trajectory is $Q+2$ time slices of $N$ unit vectors with clamped ends, the midpoint rule gives
+position and velocity on every interval and site, and Eq.~\eqref{eq:inverse} with the chain internal
+field gives the cost. The exact central-difference gradient is obtained in 36 cost evaluations
+independent of $Q$ and $N$ by graph coloring: an image touches two intervals in time and three sites in
+space, so images two apart in time and three apart in space are perturbed together. The cost is
+minimized by L-BFGS on normalized vectors from three starts, the single-site optimum on every site with a
+small perturbation, a tanh wall on the optimum's azimuth, and the minimum energy path traversed on the
+optimum's schedule. Uniform rotation is feasible and never pays exchange, so the uniform cost on the
+same grid is an exact upper bound on the optimum, and every cost we report is the cost of an explicit
+feasible trajectory: an upper bound on the true optimum even where the optimizer stopped early.
+
+\input{tables/alpha05.tex}
+\input{tables/alpha01.tex}
 
 \section{Results}
 
-Table~\ref{tab:lattice} reports the two costs for a CrSBr chain at exchange $J/K = 0.5$ and switching
-time $T = 10\,\tau_0$, as the chain grows from two to sixty-four sites.
+Tables~\ref{tab:alpha05} and~\ref{tab:alpha01} give the cheapest trajectory found relative to uniform
+rotation. Three regimes appear.
 
-\begin{table}[h]
-\centering
-\caption{Switching cost of the uniform rotation and the domain-wall sweep for a CrSBr chain,
-$J/K = 0.5$, $T = 10\,\tau_0$. Uniform rotation is cheaper at every length; its cost scales linearly in
-$N$ while the wall cost scales faster.}
-\label{tab:lattice}
-\begin{tabular}{cccc}
-\toprule
-$N$ sites & uniform cost (T$^2$~s) & wall cost (T$^2$~s) & ratio wall/uniform \\
-\midrule
-2  & $1.9\times10^{-11}$ & $2.7\times10^{-10}$ & 13.8 \\
-4  & $3.9\times10^{-11}$ & $3.6\times10^{-10}$ & 9.4 \\
-8  & $7.8\times10^{-11}$ & $5.9\times10^{-10}$ & 7.6 \\
-16 & $1.6\times10^{-10}$ & $1.3\times10^{-9}$  & 8.4 \\
-32 & $3.1\times10^{-10}$ & $3.9\times10^{-9}$  & 12.5 \\
-64 & $6.2\times10^{-10}$ & $1.4\times10^{-8}$  & 22.0 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\emph{Short chains.} For $N \le 6$ at $J/K = 10$ the barrier is $NK$ and uniform rotation is optimal at
+every switching time: walls cannot lower the barrier, and no start finds a cheaper trajectory.
 
-Uniform rotation is cheaper at every chain length, by a factor between eight and twenty-two. Its cost
-doubles as the chain doubles, the linear scaling expected when exchange is never paid. The domain-wall
-cost grows faster than linearly, because the wall must sweep a longer chain in the same time and
-therefore forces faster local flips, whose field cost grows with their speed. We repeated the
-comparison across exchange strengths from $J/K = 0.2$ to $10$ and found uniform rotation cheaper
-throughout.
+\emph{Short switching times.} At $T \le 20\,\tau_0$ uniform rotation is optimal at every length even
+where the floor leaves large room. The wall has no time to cross the chain: its propagation cost grows
+with its speed.
 
-\section{Discussion}
+\emph{Long chains at long times.} Above the barrier crossover and at long switching times the optimum is
+nonuniform and strictly cheaper. At $\alpha = 0.5$ the saving reaches 51 percent ($N=24$,
+$T=160\,\tau_0$), against a floor of 0.324 of the uniform cost. At $\alpha = 0.1$ the regime starts
+later, near $150\,\tau_0$, because the uniform optimum approaches its own infinite-time floor on a time
+scale that grows as the damping falls; at $300\,\tau_0$ a sixteen-site chain saves 29 percent.
 
-This result is the opposite of a common intuition, and the resolution is instructive. Domain-wall
-motion dominates real magnetic switching, and much device engineering is aimed at nucleating and moving
-walls at low current. But that dominance is a \emph{thermal-barrier} advantage: a wall lowers the
-energy barrier for reversal, so it is easier to trigger by thermal activation or a small current. The
-switching cost minimized by optimal control is a different quantity, the Joule heating of the driving
-circuit, and for that quantity the cheap thing to do is to move every moment slowly and uniformly,
-never bending a bond. The two metrics reward opposite mechanisms.
+At fixed switching time the saving is not monotone in length. At $\alpha = 0.5$, $T = 40\,\tau_0$ it is
+largest at $N = 16$ and shrinks for longer chains, and the optimal length moves up as $T$ grows. A
+longer chain has a lower barrier per site but a longer distance for the wall to cross in the same time.
+Over all 61 chains every cost lies above its floor, the closest at 1.018 times it.
 
-The comparison here is between two specific ans\"atze, a uniform rotation and a constant-speed
-domain wall, not a free search over all chain trajectories. A full lattice optimal control path, the
-image-based direct-minimization method generalized to the chain with a per-site field, could in
-principle find a cheaper nonuniform mode, for instance one that lets the wall slow down where it can.
-That free lattice solve is the natural next step. What the present comparison establishes is the
-validation limit, the macrospin reproduction, and a clear, quantitative answer for the two modes that
-matter most to a device: for the field-cost metric, uniform rotation wins.
+\section{Verification of a sub-uniform trajectory}
 
-\section{Conclusion}
+Because the result reverses a published conclusion, one case ($N=16$, $J/K=10$, $\alpha=0.1$,
+$T=150\,\tau_0$) was checked three independent ways before being accepted. Its entry in
+Table~\ref{tab:alpha01} (0.934) comes from the bake's automatically chosen grid and fixed iteration
+budget; longer solves on finer grids lower it, which is why the values below differ. The
+minimum-energy-path start on a 300-slice grid gave 0.892 of the uniform cost.
+\emph{Grid refinement:} interpolated to 600 slices and re-optimized, the ratio fell to 0.838 against the
+600-slice uniform cost; a discretization artifact would have shrunk.
+\emph{Local consistency:} integrating every interval from its left image under its own midpoint field
+with a fine Runge-Kutta step and comparing with its right image gives errors of the same order for the
+wall trajectory (maximum $4.1\times10^{-3}$, mean $7.1\times10^{-4}$) as for the uniform optimum
+(maximum $2.0\times10^{-3}$, mean $6.5\times10^{-4}$) on the same grid.
+\emph{Open-loop dynamics:} applying the recovered per-site fields of the 600-slice trajectory to the
+chain equation of motion from the all-up state reverses every site (final $s_z = -1.000$ on all
+sixteen) and tracks the optimized trajectory to within 0.106. A second, independent start, the tanh
+wall alone, also lands below uniform rotation for this chain.
 
-We have taken a first step past the macrospin in optimal magnetization switching, comparing the
-switching cost of a uniform rotation and a domain-wall sweep for a ferromagnetic spin chain. Uniform
-rotation is the field-cost optimum across every chain length and exchange strength tested. The
-domain-wall mode that dominates real thermally-driven switching is more expensive in field cost, a
-distinction between the thermal-barrier and the Joule-heating metrics that this comparison makes
-concrete. Results are reproducible from committed artifacts and a live instance at
-\url{https://espira.fasl-work.com}.
+Three numerical traps were found on the way and are guarded in the code: the geodesic angle between
+nearly coincident images must be computed as $2\arctan(|\vec r-\vec l|/|\vec r+\vec l|)$ rather than
+$\arccos(\vec l\cdot\vec r)$, whose rounding error made the finite-difference gradient noise; the
+optimizer's relative stopping test must not be scaled by an expensive seed's own cost; and a wall seed
+must not compress the precession into each site's flip window, which creates near-antipodal jumps where
+the midpoint rule is singular.
+
+\section{Discussion and limits}
+
+The floor explains why the answer depends on length: the cost of any reversal is at least proportional
+to the barrier it must climb, and a wall entering at an open end climbs a barrier that stops growing
+with length while uniform rotation climbs $NK$. Whether a pulse can approach the floor is a question
+of time, because the wall must also be moved across the chain. The optimal reversal is therefore
+uniform for short chains or short times and wall-mediated for long chains at long times, with an
+optimal length that grows with the switching time.
+
+The trajectories reported are the cheapest found, not certified global optima; most nonuniform solves
+stopped before their convergence criterion, so the true savings are at least those quoted. The study is
+one-dimensional, with nearest-neighbour exchange, a uniaxial anisotropy, and open ends; the floor holds
+in any dimension, but the crossover map is specific to this model. The dimensionless map depends only on
+$J/K$, $\alpha$, $T/\tau_0$ and $N$; material parameters enter through $\tau_0$ and the cost scale.
 
 \section*{Data and code availability}
 
-The engine \texttt{spinoct} is open source (MIT) at
-\url{https://github.com/fsantibanezleal/CAOS_SpinOCT}; the product, the bake and the web application at
-\url{https://github.com/fsantibanezleal/CAOS_RES_Espira}. Every number in Table~\ref{tab:lattice} is
-reproduced from a committed artifact.
+The engine \texttt{spinoct} 0.10.0 (MIT, \url{https://pypi.org/project/spinoct/},
+\url{https://github.com/fsantibanezleal/CAOS_SpinOCT}) provides the chain solver, the minimum energy path,
+and the floor. The crossover bake, the committed artifact \texttt{data/artifacts/lattice\_ocp.json}, the
+table generator, and the web application are at
+\url{https://github.com/fsantibanezleal/CAOS_RES_Espira}; the live instance is at
+\url{https://espira.fasl-work.com}. Every number in Tables~\ref{tab:alpha05} and~\ref{tab:alpha01} is
+generated from the committed artifact.
 
 \begin{thebibliography}{9}
 \bibitem{kwiatkowski2021} G. J. Kwiatkowski, M. H. A. Badarneh, D. V. Berkov, P. F. Bessarab,
@@ -164,6 +213,13 @@ dynamics}, Phys. Rev. B \textbf{107}, 214448 (2023). \doi{10.1103/PhysRevB.107.2
 \bibitem{badarneh2020} M. H. A. Badarneh, G. J. Kwiatkowski, P. F. Bessarab,
 \emph{Mechanisms of energy-efficient magnetization switching in a bistable nanowire}, Nanosystems:
 Physics, Chemistry, Mathematics \textbf{11}, 294 (2020). \doi{10.17586/2220-8054-2020-11-3-294-300}.
+\bibitem{e2007} W. E, W. Ren, E. Vanden-Eijnden,
+\emph{Simplified and improved string method for computing the minimum energy paths in barrier-crossing
+events}, J. Chem. Phys. \textbf{126}, 164103 (2007). \doi{10.1063/1.2720838}.
+\bibitem{bessarab2015} P. F. Bessarab, V. M. Uzdin, H. J\'onsson,
+\emph{Method for finding mechanism and activation energy of magnetic transitions, applied to skyrmion
+and antivortex annihilation}, Comput. Phys. Commun. \textbf{196}, 335 (2015).
+\doi{10.1016/j.cpc.2015.07.001}.
 \end{thebibliography}
 
 \end{document}
