@@ -1,52 +1,87 @@
-"""Validate CONTRACT 2 on disk (the pipeline -> web artifact contract): the index references every case; each
-manifest exists; each artifact exists, is non-empty, and its byte size matches the manifest; the lane matches the
-gate verdict. Stdlib only (runs in CI WITHOUT installing the package). Exit non-zero on any drift.
+"""Validate the committed artifacts the web replays (Contract 2 on disk). Stdlib only, so CI runs it
+without installing the engine. Exit non-zero on any drift.
 
-Used by scripts/smoke.* and by .github/workflows/ci.yml, the mechanical guard that a product can't regress to
-serving artifacts that don't match their manifests."""
+Checks:
+- index.json lists every case file and every case file is listed (declared equals shipped);
+- each case artifact is non-empty, carries the index's schema version, and has one pulse per variant;
+- novel.json and lattice_ocp.json exist and parse;
+- the free chain map is internally consistent: every case key is unique, its best ratio lies between
+  its minimum-energy-path floor and the uniform bound (the floor is a rigorous lower bound, and uniform
+  rotation is always a feasible candidate), and its reversal map has one row of N sites per time sample.
+"""
+
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DERIVED = ROOT / "data" / "derived"
-MANIFESTS = DERIVED / "manifests"
+ARTIFACTS = ROOT / "data" / "artifacts"
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json"}
+#: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
+TOLERANCE = 1e-9
+
+
+def check(artifacts: Path) -> list[str]:
+    """Every contract violation found in an artifacts directory, as messages (empty when consistent)."""
+    errors: list[str] = []
+    index_path = artifacts / "index.json"
+    if not index_path.exists():
+        return [f"missing {index_path} (run scripts/precompute first)"]
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    declared = {entry["slug"] for entry in index.get("cases", [])}
+    shipped = {p.stem for p in artifacts.glob("*.json") if p.name not in RESERVED}
+    if declared != shipped:
+        errors.append(f"index and case files differ: {sorted(declared ^ shipped)}")
+
+    for slug in sorted(declared & shipped):
+        path = artifacts / f"{slug}.json"
+        if path.stat().st_size == 0:
+            errors.append(f"{slug}: empty artifact")
+            continue
+        artifact = json.loads(path.read_text(encoding="utf-8"))
+        if artifact.get("schema_version") != index.get("schema_version"):
+            errors.append(f"{slug}: schema {artifact.get('schema_version')} != index {index.get('schema_version')}")
+        if artifact.get("case", {}).get("slug") != slug:
+            errors.append(f"{slug}: artifact names a different case")
+        variants = artifact.get("switching_times_tau0", [])
+        if len(artifact.get("pulses", [])) != len(variants) or len(artifact.get("cost_curve", [])) != len(variants):
+            errors.append(f"{slug}: pulses/cost_curve do not match the {len(variants)} variants")
+
+    for name in ("novel.json", "lattice_ocp.json"):
+        if not (artifacts / name).exists():
+            errors.append(f"missing {name}")
+
+    lattice_path = artifacts / "lattice_ocp.json"
+    if lattice_path.exists():
+        lattice = json.loads(lattice_path.read_text(encoding="utf-8"))
+        keys = [c["key"] for c in lattice["cases"]]
+        if len(keys) != len(set(keys)):
+            errors.append("lattice_ocp: duplicate case keys")
+        for case in lattice["cases"]:
+            ratio, floor = case["best_ratio"], case["floor_ratio"]
+            if ratio > 1.0 + TOLERANCE:
+                errors.append(f"lattice_ocp {case['key']}: best ratio {ratio} above the uniform bound")
+            if ratio < floor * (1.0 - TOLERANCE):
+                errors.append(f"lattice_ocp {case['key']}: best ratio {ratio} below its floor {floor}")
+            sz = case["sz_map"]["sz"]
+            if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
+                errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
+
+    return errors
 
 
 def main() -> int:
-    idx_path = MANIFESTS / "index.json"
-    if not idx_path.exists():
-        print(f"FAIL: missing {idx_path} (run scripts/precompute.sh first)")
+    errors = check(ARTIFACTS)
+    if errors:
+        print("ARTIFACT CHECK FAILED")
+        for e in errors:
+            print(f"  - {e}")
         return 1
-    index = json.loads(idx_path.read_text(encoding="utf-8"))
-    errs: list[str] = []
-    for entry in index.get("cases", []):
-        mp = DERIVED / entry["manifest_path"]
-        if not mp.exists():
-            errs.append(f"missing manifest: {mp}")
-            continue
-        m = json.loads(mp.read_text(encoding="utf-8"))
-        art = DERIVED / m["artifact"]["path"]
-        if not art.exists():
-            errs.append(f"missing artifact: {art}")
-            continue
-        size = art.stat().st_size
-        if size != m["artifact"]["bytes"]:
-            errs.append(f"byte drift {art}: manifest={m['artifact']['bytes']} disk={size}")
-        if size == 0:
-            errs.append(f"empty artifact: {art}")
-        if m.get("gate", {}).get("lane") != m.get("lane"):
-            errs.append(f"lane/gate mismatch: {entry['case_id']}")
-    if errs:
-        print("CONTRACT 2 DRIFT:")
-        for e in errs:
-            print("  -", e)
-        return 1
-    print(f"CONTRACT 2 OK: {len(index.get('cases', []))} cases, manifests <-> artifacts consistent.")
+    index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json consistent")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

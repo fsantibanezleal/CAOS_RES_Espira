@@ -1,4 +1,4 @@
-# Optional GPU accelerator lane. This file is intentionally dependency-free in
-# the template. An instantiated product pins the verified CUDA/ROCm packages and
-# records the driver/runtime matrix in docs/guides/03_gpu-lane.md.
+# GPU lane: DORMANT. The bake runs on CPU today (numpy solvers, parallel over cases). A batched GPU image
+# solver (torch) is planned for the full case matrix (programme backlog BL-009); when it lands, its pinned
+# CUDA packages and driver matrix go here.
 -r requirements-precompute.txt
