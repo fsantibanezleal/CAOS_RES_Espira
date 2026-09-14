@@ -1,10 +1,164 @@
-// Experiments: cross-case evidence plus the novel-agenda results (the reliability front R12 and the
-// beyond-macrospin lattice study, Gap 1). All read from committed artifacts.
+// Experiments: cross-case evidence plus the novel-agenda results (the reliability front R12, the free
+// chain optimal control crossover and the earlier two-mode lattice comparison, Gap 1). All read from
+// committed artifacts.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useShellLang, Tabs, Cite } from '@fasl-work/caos-app-shell';
-import type { ArtifactIndex, CaseArtifact, NovelResults } from '../data/contract';
-import { loadCase, loadIndex, loadNovel } from '../data/load';
+import type { ArtifactIndex, CaseArtifact, LatticeOCPArtifact, NovelResults } from '../data/contract';
+import { loadCase, loadIndex, loadLatticeOCP, loadNovel } from '../data/load';
+import { useTheme } from '../theme';
+import { CrossoverChart } from '../viz/CrossoverChart';
+import { ChainMap } from '../viz/ChainMap';
+
+function Chips<T extends number>({
+  label,
+  values,
+  active,
+  onPick,
+  format,
+}: {
+  label: string;
+  values: T[];
+  active: T;
+  onPick: (v: T) => void;
+  format: (v: T) => string;
+}) {
+  return (
+    <div className="wb-variants" role="group" aria-label={label}>
+      <span className="wb-variants-label">{label}</span>
+      {values.map((v) => (
+        <button
+          key={v}
+          type="button"
+          className={`chip${v === active ? ' active' : ''}`}
+          aria-pressed={v === active}
+          onClick={() => onPick(v)}
+        >
+          {format(v)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const START_NAMES: Record<string, { en: string; es: string }> = {
+  uniform: { en: 'uniform rotation', es: 'rotacion uniforme' },
+  wall: { en: 'tanh wall', es: 'pared tanh' },
+  mep: { en: 'minimum energy path', es: 'camino de minima energia' },
+};
+
+function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
+  const { theme } = useTheme();
+  const alphas = useMemo(() => [...new Set(data.cases.map((c) => c.alpha))].sort((a, b) => b - a), [data]);
+  const [alpha, setAlpha] = useState(alphas[0]);
+  const scoped = useMemo(() => data.cases.filter((c) => c.alpha === alpha), [data, alpha]);
+  const times = useMemo(() => [...new Set(scoped.map((c) => c.switching_tau0))].sort((a, b) => a - b), [scoped]);
+  const sizes = useMemo(() => [...new Set(scoped.map((c) => c.n_sites))].sort((a, b) => a - b), [scoped]);
+  const [time, setTime] = useState(times[times.length - 1]);
+  const [size, setSize] = useState(16);
+  const t = times.includes(time) ? time : times[times.length - 1];
+  const n = sizes.includes(size) ? size : sizes[Math.floor(sizes.length / 2)];
+  const item = scoped.find((c) => c.switching_tau0 === t && c.n_sites === n) ?? scoped[0];
+  const exchange = data.cases[0]?.exchange_over_k;
+  const startName = (s: string) => (START_NAMES[s] ? START_NAMES[s][es ? 'es' : 'en'] : s);
+
+  return (
+    <div className="prose">
+      <p>
+        {es
+          ? 'La trayectoria de control optimo libre de una cadena de espines: el costo de conmutacion se minimiza sobre la trayectoria de cada sitio, sin suponer un modo. Resultado nuevo: sobre una longitud de cruce y a tiempos de conmutacion largos, la inversion optima es una pared de dominio, estrictamente mas barata que la rotacion uniforme. Esto reemplaza la conclusion de la comparacion de dos modos.'
+          : "The free optimal control path of a spin chain: the switching cost is minimized over every site's trajectory, with no assumed mode. Novel result: above a crossover length and at long switching time, the optimal reversal is a domain wall, strictly cheaper than uniform rotation. This supersedes the conclusion of the two-mode comparison."}{' '}
+        <Cite id="badarneh2023" /> <Cite id="kwiatkowski2021" />
+      </p>
+      <p>
+        {es
+          ? 'Cada razon es el costo de una trayectoria factible explicita dividido por el costo uniforme en la misma malla, por lo que es una cota superior del optimo verdadero. El piso es 4 alpha dE / (gamma mu), con dE la barrera del camino de minima energia: una cota inferior rigurosa a todo tiempo de conmutacion.'
+          : 'Each ratio is the cost of an explicit feasible trajectory over the uniform cost on the same grid, so it is an upper bound on the true optimum. The floor is 4 alpha dE / (gamma mu), with dE the minimum energy path barrier: a rigorous lower bound at every switching time.'}{' '}
+        <Cite id="e2007string" /> <Cite id="bessarab2015" />
+      </p>
+      <Chips label={es ? 'Amortiguamiento' : 'Damping'} values={alphas} active={alpha} onPick={setAlpha} format={(v) => `alpha = ${v}`} />
+      <Chips label={es ? 'Tiempo' : 'Time'} values={times} active={t} onPick={setTime} format={(v) => `T = ${v} tau0`} />
+      <Chips label={es ? 'Sitios' : 'Sites'} values={sizes} active={n} onPick={setSize} format={(v) => `N = ${v}`} />
+      <div className="wb-variant-readout" data-testid="chain-readout" data-key={item.key}>
+        <dl className="readout-grid">
+          <div>
+            <dt>{es ? 'Costo / uniforme' : 'Cost / uniform'}</dt>
+            <dd>{item.best_ratio.toFixed(4)}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Ahorro minimo' : 'Saving (at least)'}</dt>
+            <dd>{(100 * Math.max(0, item.saving)).toFixed(1)} %</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Piso MEP / uniforme' : 'MEP floor / uniform'}</dt>
+            <dd>{item.floor_ratio.toFixed(4)}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Barrera / (N K)' : 'Barrier / (N K)'}</dt>
+            <dd>{item.barrier_over_nk.toFixed(4)}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Mejor inicio' : 'Best start'}</dt>
+            <dd>{startName(item.best_start)}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'No uniformidad (rad)' : 'Nonuniformity (rad)'}</dt>
+            <dd>{item.best_nonuniformity.toFixed(3)}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Imagenes en el tiempo' : 'Time images'}</dt>
+            <dd>{item.n_images}</dd>
+          </div>
+        </dl>
+      </div>
+      <h3>{es ? 'Cruce: costo contra longitud' : 'Crossover: cost against length'}</h3>
+      <p className="muted">
+        {es ? 'Cadena con J/K' : 'Chain with J/K'} = {exchange}, alpha = {alpha}.{' '}
+        {es ? 'Bajo la linea uniforme, la pared gana.' : 'Below the uniform line, the wall wins.'}
+      </p>
+      <CrossoverChart cases={scoped} selectedT={t} theme={theme} es={es} />
+      <h3>{es ? 'La inversion, sitio por sitio' : 'The reversal, site by site'}</h3>
+      <p className="muted">
+        {es
+          ? 'Una rotacion uniforme es un bloque de filas iguales; una pared de dominio es un frente diagonal que entra por un extremo.'
+          : 'A uniform rotation is a block of identical rows; a domain wall is a diagonal front entering at one end.'}
+      </p>
+      <ChainMap item={item} theme={theme} es={es} />
+      <h3>{es ? 'Todos los casos' : 'All cases'}</h3>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>alpha</th>
+              <th>T / tau0</th>
+              <th>N</th>
+              <th>{es ? 'Costo / uniforme' : 'Cost / uniform'}</th>
+              <th>{es ? 'Piso' : 'Floor'}</th>
+              <th>{es ? 'Uniforme + ruido' : 'Uniform + noise'}</th>
+              <th>{es ? 'Pared' : 'Wall'}</th>
+              <th>MEP</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.cases.map((c) => (
+              <tr key={c.key} className={c.key === item.key ? 'active' : undefined}>
+                <td>{c.alpha}</td>
+                <td>{c.switching_tau0}</td>
+                <td>{c.n_sites}</td>
+                <td>{c.best_ratio.toFixed(4)}</td>
+                <td>{c.floor_ratio.toFixed(3)}</td>
+                <td>{c.starts.uniform.ratio.toFixed(4)}</td>
+                <td>{c.starts.wall.ratio.toFixed(4)}</td>
+                <td>{c.starts.mep.ratio.toFixed(4)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="muted">{data.description}</p>
+    </div>
+  );
+}
 
 function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boolean }) {
   return (
@@ -88,8 +242,8 @@ function Lattice({ novel, es }: { novel: NovelResults; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'Mas alla del macrospin (Gap 1), el problema que los autores del metodo declaran como trabajo futuro. Para una cadena de espines con intercambio, el costo de conmutacion de una rotacion uniforme frente a un barrido de pared de dominio.'
-          : 'Beyond the macrospin (Gap 1), the problem the method authors state as future work. For a spin chain with exchange, the switching cost of a uniform rotation versus a domain-wall sweep.'}{' '}
+          ? 'Mas alla del macrospin (Gap 1), el problema que los autores del metodo declaran como trabajo futuro. Para una cadena de espines con intercambio, el costo de conmutacion de una rotacion uniforme frente a un barrido de pared de dominio a velocidad constante. Reemplazado: esta comparacion fija solo dos modos; la busqueda libre (pestana anterior) encuentra paredes optimas mas baratas que la rotacion uniforme a tiempos largos.'
+          : 'Beyond the macrospin (Gap 1), the problem the method authors state as future work. For a spin chain with exchange, the switching cost of a uniform rotation versus a constant-speed domain-wall sweep. Superseded: this comparison fixes two modes; the free search (previous tab) finds optimal walls cheaper than uniform rotation at long switching times.'}{' '}
         <Cite id="badarneh2023" />
       </p>
       <p className="muted">
@@ -129,15 +283,17 @@ export function Experiments(): React.JSX.Element {
   const es = lang === 'es';
   const [artifacts, setArtifacts] = useState<CaseArtifact[]>([]);
   const [novel, setNovel] = useState<NovelResults | null>(null);
+  const [chain, setChain] = useState<LatticeOCPArtifact | null>(null);
 
   useEffect(() => {
     loadIndex().then(async (ix: ArtifactIndex) => {
       setArtifacts(await Promise.all(ix.cases.map((c) => loadCase(c.slug))));
     });
     loadNovel().then(setNovel);
+    loadLatticeOCP().then(setChain);
   }, []);
 
-  if (!artifacts.length || !novel) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
+  if (!artifacts.length || !novel || !chain) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
   return (
     <article className="prose">
@@ -165,8 +321,13 @@ export function Experiments(): React.JSX.Element {
             content: <Reliability novel={novel} es={es} />,
           },
           {
+            id: 'free-chain',
+            label: es ? 'Control optimo de cadena libre' : 'Free chain optimal control',
+            content: <FreeChain data={chain} es={es} />,
+          },
+          {
             id: 'lattice',
-            label: es ? 'Mas alla del macrospin' : 'Beyond the macrospin',
+            label: es ? 'Comparacion de dos modos' : 'Two-mode comparison',
             content: <Lattice novel={novel} es={es} />,
           },
         ]}

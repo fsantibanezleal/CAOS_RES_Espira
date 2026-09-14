@@ -27,3 +27,9 @@ export async function loadNovel(): Promise<import('./contract').NovelResults> {
   if (!response.ok) throw new Error(`novel.json ${response.status}`);
   return response.json();
 }
+
+export async function loadLatticeOCP(): Promise<import('./contract').LatticeOCPArtifact> {
+  const response = await fetch(bust(`${base}artifacts/lattice_ocp.json`));
+  if (!response.ok) throw new Error(`lattice_ocp.json ${response.status}`);
+  return response.json();
+}

@@ -26,6 +26,20 @@ export const CITATIONS: Citation[] = [
     doi: '10.1103/PhysRevB.107.214448',
   },
   {
+    id: 'e2007string',
+    label: 'E 2007',
+    citation:
+      'W. E, W. Ren, E. Vanden-Eijnden, Simplified and improved string method for computing the minimum energy paths in barrier-crossing events, J. Chem. Phys. 126, 164103 (2007).',
+    doi: '10.1063/1.2720838',
+  },
+  {
+    id: 'bessarab2015',
+    label: 'Bessarab 2015',
+    citation:
+      'P. F. Bessarab, V. M. Uzdin, H. Jonsson, Method for finding mechanism and activation energy of magnetic transitions, applied to skyrmion and antivortex annihilation, Comput. Phys. Commun. 196, 335 (2015).',
+    doi: '10.1016/j.cpc.2015.07.001',
+  },
+  {
     id: 'vlasov2022',
     label: 'Vlasov 2022',
     citation:

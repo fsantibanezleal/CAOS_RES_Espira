@@ -84,7 +84,7 @@
   border-radius: 8px;
   border: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
   background: var(--color-bg, #fff);
-  color: var(--color-text, #111);
+  color: var(--color-fg, #111);
   min-width: 240px;
   max-width: 100%;
 }
@@ -97,7 +97,7 @@
   border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
-  color: var(--color-text, #111);
+  color: var(--color-fg, #111);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -199,7 +199,7 @@
   border-radius: 999px;
   border: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
   background: transparent;
-  color: var(--color-text, #111);
+  color: var(--color-fg, #111);
   cursor: pointer;
   font-size: 0.82rem;
   font-variant-numeric: tabular-nums;
@@ -240,4 +240,31 @@
 .wb-ctx-panel p {
   margin: 0;
   opacity: 0.88;
+}
+
+/* free chain case table: the selected case */
+.table-wrap tr.active td {
+  background: var(--color-accent-soft, rgba(59, 130, 246, 0.15));
+}
+
+/* compact label/value readout grid (the free chain readout) */
+.readout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px 18px;
+  margin: 0;
+}
+.readout-grid > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.readout-grid dt {
+  font-size: 0.76rem;
+  color: var(--color-fg-subtle, rgba(128, 128, 128, 0.9));
+}
+.readout-grid dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
