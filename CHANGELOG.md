@@ -4,6 +4,13 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.02.001] - 2026-09-14
+
+### Fixed
+- Deep links answered HTTP 404: GitHub Pages served every route except the landing page through
+  404.html, so the app mounted but the document status was 404. A postbuild step now writes one HTML
+  entry per route in App.tsx (experiments.html and siblings), which Pages serves with 200.
+
 ## [0.02.000] - 2026-09-14
 
 ### Added

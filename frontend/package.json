@@ -1,13 +1,14 @@
 {
   "name": "espira-frontend",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "scripts": {
     "predev": "node copy-data.mjs",
     "dev": "vite",
     "prebuild": "node copy-data.mjs",
     "build": "tsc --noEmit && vite build",
+    "postbuild": "node write-routes.mjs",
     "preview": "vite preview",
     "test": "vitest run"
   },
