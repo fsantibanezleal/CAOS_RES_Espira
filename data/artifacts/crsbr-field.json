@@ -22,11 +22,112 @@
     "damping_high": 0.02,
     "curie_kelvin": 146.0,
     "easy_axis": "in-plane b axis (triaxial: b easy, z hard)",
-    "notes": "Monolayer, A-type antiferromagnetic stacking, ferromagnetic within a layer. The exchange Hamiltonian is measured by inelastic neutron scattering (Scheie 2022, eighth-neighbour set, convention +sum J S.S, S=3/2). Anisotropy is below the neutron resolution and is triaxial and dielectric-tunable (Rudenko 2023): the substrate is a knob on the hard-axis ratio. The macrospin anisotropy here is an effective easy-axis scale, not a micromagnetic constant.",
+    "notes": "Monolayer, ferromagnetic within a layer, antiferromagnetically stacked in bulk. The exchange Hamiltonian is measured by inelastic neutron scattering (Scheie 2022, S = 3/2), but the anisotropy is below the neutron resolution; the easy-axis scale and the hard-axis ratio used here are assumed and flagged. Triaxiality and its dielectric tunability are computed (Rudenko 2023): the substrate is a knob on the hard axis.",
     "sources": [
       "10.1002/advs.202202467",
-      "10.48550/arXiv.2302.12672",
-      "10.1002/adma.202523059"
+      "10.1021/acs.nanolett.1c00219",
+      "10.1021/acs.nanolett.2c02863",
+      "10.1038/s41524-023-01050-3"
+    ],
+    "provenance": {
+      "moment": {
+        "value": 3.0,
+        "low": null,
+        "high": null,
+        "provenance": "derived",
+        "method": "spin length and g = 2",
+        "sources": [
+          "10.1002/advs.202202467"
+        ],
+        "note": "S = 3/2 Cr(III) from the neutron Hamiltonian, g = 2.",
+        "input": {
+          "value": 3.0,
+          "unit": "mu_B",
+          "basis": "per-ion"
+        },
+        "flags": []
+      },
+      "anisotropy": {
+        "value": 0.15,
+        "low": null,
+        "high": null,
+        "provenance": "assumed",
+        "method": "",
+        "sources": [
+          "10.1002/advs.202202467"
+        ],
+        "note": "Below neutron resolution. Chosen at the scale of the quoted zone-centre magnon gaps (0.102 and 0.141 meV); a ferromagnetic gap-to-K relation does not hold for the antiferromagnetically stacked bulk. Kept because manuscript M1 uses it.",
+        "input": {
+          "value": 0.15,
+          "unit": "meV",
+          "basis": "unit-vector"
+        },
+        "flags": [
+          "assumed"
+        ]
+      },
+      "hard_axis_ratio": {
+        "value": 3.0,
+        "low": null,
+        "high": null,
+        "provenance": "assumed",
+        "method": "",
+        "sources": [
+          "10.1038/s41524-023-01050-3"
+        ],
+        "note": "Triaxiality (b easy, z hard) is computed; the ratio of the hard to the easy scale is an assumption.",
+        "input": {
+          "value": 3.0,
+          "unit": "ratio",
+          "basis": "none"
+        },
+        "flags": [
+          "assumed"
+        ]
+      },
+      "damping": {
+        "value": 0.01,
+        "low": 0.004,
+        "high": 0.02,
+        "provenance": "assumed",
+        "method": "",
+        "sources": [
+          "10.1021/acs.nanolett.2c02863"
+        ],
+        "note": "The typical value set in first-principles spin dynamics of CrSBr; no measurement found.",
+        "input": {
+          "value": 0.01,
+          "unit": "dimensionless",
+          "basis": "none"
+        },
+        "flags": [
+          "assumed",
+          "wide damping band"
+        ]
+      },
+      "ordering_temperature": {
+        "value": 146.0,
+        "low": null,
+        "high": null,
+        "provenance": "measured",
+        "method": "second-harmonic generation (monolayer)",
+        "sources": [
+          "10.1021/acs.nanolett.1c00219"
+        ],
+        "note": "Monolayer ferromagnetic order.",
+        "input": {
+          "value": 146.0,
+          "unit": "K",
+          "basis": "none"
+        },
+        "flags": []
+      }
+    },
+    "flags": [
+      "anisotropy: assumed",
+      "hard_axis_ratio: assumed",
+      "damping: assumed",
+      "damping: wide damping band"
     ]
   },
   "switching_times_tau0": [
@@ -9224,10 +9325,10 @@
     "switching_time_tau0": 20.0,
     "hard_axis_ratio": 3.0,
     "uniaxial_cost": 4.844524695194577e-12,
-    "biaxial_cost": 4.133993920294512e-12,
+    "biaxial_cost": 4.133038113212952e-12,
     "cost_free": 4.8420723185098685e-12,
-    "biaxial_over_free": 0.8537654228111021,
-    "reduction_vs_uniaxial": 1.1718751378447714,
+    "biaxial_over_free": 0.8535680265273032,
+    "reduction_vs_uniaxial": 1.1721461458840814,
     "converged": false
   }
 }

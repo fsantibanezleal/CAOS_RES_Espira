@@ -12,22 +12,21 @@ Large anisotropy: a fast, high-amplitude optimal pulse; the analytic solution is
 
 ## Material: CrI3
 
-| Parameter | Value |
-|---|---|
-| Family | semiconductor |
-| Spin | 1.5 |
-| Moment per site | 3 Bohr magnetons |
-| Anisotropy per site | 0.7 meV |
-| Hard-axis ratio | 0 |
-| Gilbert damping | 0.01 (range 0.005 to 0.02) |
-| Ordering temperature | 45 K |
-| Easy axis | out-of-plane (strong uniaxial, Ising-like) |
+| Parameter | Value | Provenance | Source |
+|---|---|---|---|
+| Family | semiconductor | | |
+| Spin | 1.5 | | |
+| Easy axis | out-of-plane (Ising-like) | | |
+| Moment per site | 3 Bohr magnetons | derived | [10.1103/PhysRevX.8.041028](https://doi.org/10.1103/PhysRevX.8.041028) |
+| Anisotropy per site (unit-vector convention) | 0.495 meV | measured | [10.1103/PhysRevX.8.041028](https://doi.org/10.1103/PhysRevX.8.041028) |
+| Hard-axis ratio | 0 | assumed | none |
+| Gilbert damping | 0.01 (range 0.005 to 0.02) | assumed | none |
+| Ordering temperature | 45 K | measured | [10.1038/nature22391](https://doi.org/10.1038/nature22391) |
 
-The archetypal two-dimensional magnet. Large uniaxial (Ising-like) anisotropy, the clean uniaxial extreme of the family, where the analytic optimal control path applies directly. Monolayer Tc about 45 K.
+The archetypal two-dimensional magnet. Easy-axis single-ion anisotropy from inelastic neutron scattering (Chen 2018, D_z on spin operators, converted to the per-site unit-vector form); monolayer ordering temperature from Huang 2017. Damping assumed and flagged.
 
-Sources:
-
-- https://doi.org/10.1038/nature22391
+Every value enters through Contract 1 (`data/materials/parameters.csv`); the conversion from the published
+unit and each value's note are in that table. Assumed values are not measurements.
 
 ## Variants
 
