@@ -12,10 +12,14 @@ global Python is touched.
 ## 2. Bake the cases
 
 ```bash
-./scripts/precompute.sh     # writes data/artifacts/index.json, <case>.json, novel.json
+./scripts/precompute.sh     # python data-pipeline/run.py all data/artifacts manifests
 ```
 
-The per-case bake is deterministic. CrSBr includes the numerical biaxial solve and is the slowest case.
+This is the whole release sequence: the parameters through Contract 1, the split, the learned policy
+trained on the training materials, every declared method over every variant, the scores, the artifacts
+and their manifests, and the validation gate. It takes a few minutes, most of it the numerical solves.
+Single stages run alone for inspection: `python data-pipeline/run.py ingest`, `dataset`, `train`,
+`validate`. The cross-case novel results have their own entry point: `python data-pipeline/run_novel.py`.
 
 ## 3. Bake the free chain crossover map (hours)
 

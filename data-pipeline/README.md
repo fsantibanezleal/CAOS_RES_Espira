@@ -16,16 +16,18 @@ consumes its artifacts and never recomputes them.
 | `espiralab/bake/__init__.py` | The per-case bake: analytic optimal pulse and cost curve, the universal floor with its damping band, the free-macrospin reference, a static baseline, and for CrSBr the numerical biaxial optimum |
 | `espiralab/bake/novel.py` | The reliability front (R12) and the two-mode lattice comparison |
 | `espiralab/bake/lattice_ocp.py` | The free chain optimal control crossover map: 61 chains, three starts each, the minimum-energy-path floor; parallel and checkpointed |
-| `run.py` | Bake the cases and `novel.json` |
+| `espiralab/core/` | The seeded generator, the Contract 2 manifest, and the measured live-versus-precompute gate |
+| `espiralab/stages/` | The nine named stages, from `ingest` to `validate` |
+| `espiralab/pipeline.py` | The orchestrator and its command line |
+| `run.py` | Run the release sequence, or a single stage |
+| `run_novel.py` | Bake the cross-case novel results |
 | `run_lattice_ocp.py` | Bake (or resume) the crossover map |
 
-## Moving onto the staged base
+## The release sequence
 
-ADR-0057 and ADR-0069 require the named stages `ingest -> preprocess -> dataset -> features -> train ->
-infer -> evaluate -> export -> validate`, the two data contracts, a measured lane gate, manifests with
-completeness counts, and the 26-case registry of the validated plan. The current modules implement the
-science; `ingest` and `preprocess` exist, the remaining stages do not. The rebuild order (units U3 to U4) is recorded in the CAOS programme plan;
-until it lands, this README describes the code as it is.
+`python data-pipeline/run.py all` runs ingest, preprocess, dataset, features, train, infer, evaluate,
+export and validate, and refuses to call a release canonical when validate finds a problem. See
+[../docs/architecture/03_staged-pipeline.md](../docs/architecture/03_staged-pipeline.md).
 
 ## Run
 
