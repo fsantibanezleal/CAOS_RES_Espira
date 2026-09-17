@@ -93,3 +93,21 @@ def test_switching_time_accessor_refuses_another_axis() -> None:
     assert get_case("crsbr-field").switching_times_tau0 == (2.0, 5.0, 10.0, 20.0, 50.0, 100.0)
     with pytest.raises(AttributeError, match="sweeps"):
         _ = get_case("biaxial-hard-axis").switching_times_tau0
+
+
+def test_a_learned_case_reports_where_its_method_fails() -> None:
+    """C26 sweeps past the policy's training range on purpose: the artifact must show the failures."""
+    import json
+    from pathlib import Path
+
+    artifact = json.loads(
+        (Path(__file__).resolve().parents[1] / "data" / "artifacts" / "amortized-policy.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    rows = artifact["cost_curve"]
+    assert any(row["switched"] for row in rows), "the policy must work somewhere"
+    assert any(not row["switched"] for row in rows), "the sweep must reach the limit of amortization"
+    for row in rows:
+        assert (row["cost"] is None) == (not row["switched"]), "a failed cell carries no cost"
+        assert row["cost_over_analytic"] > 0

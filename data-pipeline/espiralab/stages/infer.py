@@ -12,6 +12,13 @@ Methods implemented here:
 | R05 | the closed-form uniaxial optimal control path |
 | R06 | the closed-form spin-orbit-torque optimal protocol |
 | R07 | the numerical image-based optimal control path (the only one that sees a hard axis) |
+| R08 | GRAPE under an amplitude cap, the constraint a driver actually has |
+| R09 | CRAB, band-limited to a few harmonics, the pulse an antenna can emit |
+| R13 | the joint field-plus-current optimum under a two-term cost |
+| R15 | the amortized policy, emitting a pulse with no optimization at inference |
+
+Where a case sweeps a control parameter (harmonics, an amplitude cap, the price of current, the damping),
+the variant sets that parameter and the switching time is held at the case's fixed time.
 
 A method a case declares but this stage does not implement raises rather than silently skipping: a
 missing cell must be a failure, not an absence.
@@ -22,9 +29,13 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 
+from spinoct.amortized import evaluate_policy
 from spinoct.analytic import UniaxialOptimalControl, cost_free_macrospin, cost_infinite_time
 from spinoct.analytic.sot import SOTOptimalControl, ideal_sot_ratio_beta
 from spinoct.control import ConstantFieldProtocol, static_switching_field
+from spinoct.control.constrained import CRABSolver, GRAPESolver
+from spinoct.control.hybrid import HybridSolver
+from spinoct.dynamics import MacrospinSystem
 from spinoct.numeric import ImageOCPSolver
 
 from ..cases import Case
@@ -32,7 +43,7 @@ from ..core.manifest import MethodResult
 
 __all__ = ["IMPLEMENTED_METHODS", "InferenceRun", "infer_case"]
 
-IMPLEMENTED_METHODS = ("R00", "R05", "R06", "R07")
+IMPLEMENTED_METHODS = ("R00", "R05", "R06", "R07", "R08", "R09", "R13", "R15")
 
 #: Seeds and iteration cap for the numerical solver in the release bake. The image count comes from the
 #: engine's resolution rule, which scales with the switching time.
@@ -42,6 +53,11 @@ _MAX_ITERATIONS = 2500
 _SOT_COUPLING = 1.0
 #: Integration steps for the static-field baseline.
 _BASELINE_STEPS = 4001
+#: Budgets for the constrained and hybrid solvers, and the CRAB bandwidth when a case does not sweep it.
+_GRAPE_SLICES = 24
+_CRAB_HARMONICS = 6
+_CONSTRAINED_ITERATIONS = 400
+_HYBRID_ITERATIONS = 200
 
 
 @dataclass(frozen=True)
@@ -140,6 +156,90 @@ def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> Metho
                 "converged": float(result.converged),
                 "images": float(images),
                 "solve_ms": (time.perf_counter() - started) * 1e3,
+            },
+        )
+
+
+    if method == "R08":
+        # The amplitude cap is the case's variant, in units of the anisotropy field.
+        cap = variant * system.anisotropy_field if case.axis.name == "amplitude_cap" else None
+        result = GRAPESolver(
+            system, switching_time, n_slices=_GRAPE_SLICES, amplitude_cap=cap
+        ).solve(max_iterations=_CONSTRAINED_ITERATIONS)
+        optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=result.cost if result.switched else None,
+            switched=bool(result.switched),
+            reason="" if result.switched else "no reversal under this amplitude cap",
+            metrics={
+                "over_analytic": result.cost / optimal.cost() if result.switched else float("inf"),
+                "peak_amplitude_t": result.peak_amplitude,
+                "infidelity": result.infidelity,
+                "cap_over_anisotropy_field": variant if cap is not None else float("nan"),
+            },
+        )
+
+    if method == "R09":
+        harmonics = int(variant) if case.axis.name == "harmonics" else _CRAB_HARMONICS
+        result = CRABSolver(system, switching_time, n_harmonics=harmonics).solve(
+            max_iterations=_CONSTRAINED_ITERATIONS
+        )
+        optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=result.cost if result.switched else None,
+            switched=bool(result.switched),
+            reason="" if result.switched else "no reversal at this bandwidth",
+            metrics={
+                "over_analytic": result.cost / optimal.cost() if result.switched else float("inf"),
+                "harmonics": float(harmonics),
+                "peak_amplitude_t": result.peak_amplitude,
+                "infidelity": result.infidelity,
+            },
+        )
+
+    if method == "R13":
+        price = variant if case.axis.name == "current_price" else 1.0
+        result = HybridSolver(
+            system, switching_time, circuit_field=1.0, circuit_current=price
+        ).solve(max_iterations=_HYBRID_ITERATIONS)
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=result.field_cost if result.switched else None,
+            switched=bool(result.switched),
+            reason="" if result.switched else "the co-optimization did not reverse the moment",
+            metrics={
+                "weighted_cost": result.weighted_cost,
+                "current_cost_reduced": result.current_cost,
+                "field_fraction": result.field_fraction,
+                "current_price": price,
+            },
+        )
+
+    if method == "R15":
+        from ..stages.train import load_or_train_policy
+
+        policy = load_or_train_policy()
+        alpha = variant if case.axis.name == "damping" else system.alpha
+        scored = MacrospinSystem(
+            mu=system.mu, anisotropy_j=system.anisotropy_j, alpha=alpha, gamma=system.gamma
+        )
+        evaluation = evaluate_policy(policy, scored, scored.switching_time_from_tau0(t_tau0))
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=evaluation.cost if evaluation.switched else None,
+            switched=bool(evaluation.switched),
+            reason="" if evaluation.switched else "the emitted pulse did not reverse the moment",
+            metrics={
+                "cost_ratio_to_analytic": evaluation.cost_ratio,
+                "predicted_p": evaluation.predicted_p,
+                "true_p": evaluation.true_p,
+                "damping": alpha,
             },
         )
 

@@ -1,6 +1,8 @@
 # Amplitude and slew-rate limited control
 
-Case `grape-amplitude-slew` (C24), category E. Constrained and hybrid control. Planned: declared and runnable, not yet computed.
+Case `grape-amplitude-slew` (C24), category E. Constrained and hybrid control. Blocked: something outside this repository is missing.
+
+**What is missing.** Same engine defect as the band-limited case: the constrained solver optimizes with Nelder-Mead and does not converge at this parameter count, so the reported cost under a cap would be an optimizer artifact rather than the price of the constraint (programme backlog BL-036).
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 

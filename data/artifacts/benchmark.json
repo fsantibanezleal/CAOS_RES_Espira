@@ -212,6 +212,32 @@
         }
       ],
       "complete": true
+    },
+    {
+      "case": "amortized-policy",
+      "methods": [
+        {
+          "method": "R15",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 4,
+          "best_cost": 9.544360367286965e-12,
+          "worst_ratio_to_oracle": 1.8623029865332787,
+          "notes": ""
+        },
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 9.901244253712093e-12,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        }
+      ],
+      "complete": true
     }
   ],
   "manifests": [
@@ -311,6 +337,19 @@
       "code": "C18",
       "manifest": "feps3-negative-control.json",
       "sha256": "2146f125c990ced35cc80ef30c030986e4c87d562d388159ecfbeb62508ecc07",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "amortized-policy",
+      "code": "C26",
+      "manifest": "amortized-policy.json",
+      "sha256": "8abe6f439778b655aaadf51a4eedf8fb0190f798cba0c9c2dd7e6457540c9ff9",
       "lane": "precompute",
       "completeness": {
         "expected": 12,

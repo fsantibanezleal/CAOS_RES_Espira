@@ -45,9 +45,11 @@ export interface VariantAxis {
 export interface CostRow {
   /** The value of the case's variant family at this row (a switching time, a hard-axis ratio, ...). */
   variant: number;
+  /** Null when the method did not reverse the moment at this variant. */
+  switched?: boolean;
   switching_time_tau0: number;
   switching_time_s: number;
-  cost: number;
+  cost: number | null;
   cost_low_damping: number;
   cost_high_damping: number;
   cost_free: number;
