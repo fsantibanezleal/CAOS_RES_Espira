@@ -4,6 +4,38 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.06.000] - 2026-09-17
+
+### Added
+- C26, the amortized policy, is baked as a real case (`amortized-policy`): the learned policy emits a
+  pulse with no optimization at inference, and the sweep runs over a damping range deliberately wider
+  than the range it trained on, so the limit of amortization is measured rather than implied. Inside the
+  training range the pulse reverses the moment at 0.99 to 1.11 times the analytic optimum; at a damping
+  of 0.1 it costs 1.86 times the optimum; at 0.2 and 0.5 it does not reverse the moment at all, and the
+  artifact says so.
+- The result schema now carries a cost of `null` with a reason, in the Python contract and in the
+  TypeScript mirror, so a method that ran and did not switch is a recorded outcome rather than a missing
+  cell. The workbench marks those points "no reversal" instead of dropping them from the curve.
+- Rungs R08 (GRAPE under an amplitude cap), R09 (CRAB, band-limited), R13 (the joint field-plus-current
+  optimum) and R15 (the amortized policy) run in stage `infer`.
+
+### Changed
+- C23 (band-limited bandwidth) and C24 (amplitude cap) move from planned to blocked, with the
+  measurement that blocks them: the engine's constrained solvers optimize with Nelder-Mead, which does
+  not converge at this parameter count. Measured 2026-09-17, 90 to 230 seconds per solve and a cost 2.2
+  times the analytic optimum at two harmonics rising to 14 times at six, where more harmonics should
+  cost less. Baking them would publish optimizer artifacts as the price of a physical constraint. They
+  wait on the engine moving those solvers to a gradient method.
+- C25 (field plus current) stays planned and now records what a first solve measured: the moment
+  reverses and 95 per cent of the weighted cost sits on the field at equal prices, at five minutes per
+  solve.
+
+### Fixed
+- The sphere trajectory sized itself from the panel width alone, so at 1360x900 it grew past the stage
+  and its scrubber and caption overflowed onto the footer. The sphere is now a square inscribed in the
+  measured drawing box, and the ADR-0071 layout gate is green on every sub-tab at both viewports in both
+  themes.
+
 ## [0.05.001] - 2026-09-17
 
 ### Fixed

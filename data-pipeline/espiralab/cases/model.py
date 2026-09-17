@@ -73,6 +73,7 @@ class Case:
     split: str
     seed: int = 0
     surface: str = "workbench"
+    primary_method: str = "R05"
     material: str | None = None
     synthetic: SyntheticSystem | None = None
     includes_biaxial: bool = False
