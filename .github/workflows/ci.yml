@@ -69,6 +69,7 @@ jobs:
           node e2e/workbench-provenance.mjs http://localhost:4173 e2e-shots
           node e2e/free-chain.mjs http://localhost:4173 e2e-shots
           node e2e/coverage.mjs http://localhost:4173 e2e-shots
+          node e2e/benchmark.mjs http://localhost:4173 e2e-shots
       - uses: actions/upload-artifact@v4
         if: always()
         with:

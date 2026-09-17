@@ -1,0 +1,208 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "cr2ge2te6-floor",
+  "code": "C15",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.12.000",
+  "seed": 0,
+  "split": "test",
+  "ground_truth": "provisional",
+  "methods": [
+    "R00",
+    "R05"
+  ],
+  "variants": [
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    50.0,
+    100.0
+  ],
+  "artifact": {
+    "path": "cr2ge2te6-floor.json",
+    "bytes": 273649,
+    "sha256": "5483c3127cf0886ef152057b1efd5a4a9b7049eb7e5aece691dd46944f3be093"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 6852.782,
+    "artifact_bytes": 273649,
+    "methods": [
+      "R00",
+      "R05"
+    ],
+    "reasons": [
+      "runtime 6853 ms over the 250 ms budget"
+    ]
+  },
+  "completeness": {
+    "expected": 12,
+    "produced": 12,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R00",
+      "variant": 2.0,
+      "cost": 1.721029920317265e-12,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 0.1459024293309411,
+        "amplitude_t": 0.2525410087492803
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 5.0,
+      "cost": 4.3025748007931635e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 0.9118900644770045,
+        "amplitude_t": 0.2525410087492803
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 10.0,
+      "cost": 8.605149601586327e-12,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 3.6475585601751797,
+        "amplitude_t": 0.2525410087492803
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 20.0,
+      "cost": 1.7210299203172654e-11,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 14.590207077046424,
+        "amplitude_t": 0.2525410087492803
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 50.0,
+      "cost": 4.3025748007931635e-11,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 91.18760584157751,
+        "amplitude_t": 0.2525410087492803
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 100.0,
+      "cost": 8.605149601586327e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 364.73344750463036,
+        "amplitude_t": 0.2525410087492803
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 2.0,
+      "cost": 1.1795759181045324e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000000248236662,
+        "cost_over_floor": 3524.8605293554992,
+        "mean_amplitude_t": 0.661150976829342,
+        "peak_amplitude_t": 0.6611509686232468
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 5.0,
+      "cost": 4.718304287327459e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000001551479072,
+        "cost_over_floor": 1409.9443954921044,
+        "mean_amplitude_t": 0.26446039073173677,
+        "peak_amplitude_t": 0.2644603702164987
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 10.0,
+      "cost": 2.3591532417160293e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000006205915934,
+        "cost_over_floor": 704.9725258708596,
+        "mean_amplitude_t": 0.13223019536586839,
+        "peak_amplitude_t": 0.1322301543353946
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 20.0,
+      "cost": 1.1795788169619748e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000024823657963,
+        "cost_over_floor": 352.4869191848538,
+        "mean_amplitude_t": 0.06611509768293419,
+        "peak_amplitude_t": 0.06611501562200565
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 50.0,
+      "cost": 4.718376758644298e-13,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000155147609522,
+        "cost_over_floor": 140.99660516890745,
+        "mean_amplitude_t": 0.026446039073173676,
+        "peak_amplitude_t": 0.026445833921186507
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 100.0,
+      "cost": 2.3592981834979865e-13,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000620586827456,
+        "cost_over_floor": 70.50158380102849,
+        "mean_amplitude_t": 0.013223019536586838,
+        "peak_amplitude_t": 0.013222609234999762
+      }
+    }
+  ],
+  "parameter_flags": [
+    "anisotropy: converted from erg/cm3 (volume)",
+    "hard_axis_ratio: assumed"
+  ]
+}

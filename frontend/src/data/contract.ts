@@ -219,3 +219,39 @@ export interface LatticeOCPArtifact {
   reference: { mu_bohr: number; anisotropy_mev: number };
   cases: LatticeOCPCase[];
 }
+
+// ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
+
+export interface MethodScore {
+  method: string;
+  cells: number;
+  produced: number;
+  not_applicable: number;
+  switched: number;
+  best_cost: number | null;
+  worst_ratio_to_oracle: number | null;
+  notes: string;
+}
+
+export interface CaseScore {
+  case: string;
+  methods: MethodScore[];
+  complete: boolean;
+}
+
+export interface ManifestSummary {
+  case: string;
+  code: string;
+  manifest: string;
+  sha256: string;
+  lane: string;
+  completeness: { expected: number; produced: number; not_applicable: number; missing: number };
+}
+
+export interface Benchmark {
+  schema: string;
+  engine: { name: string; version: string };
+  cases: CaseScore[];
+  manifests: ManifestSummary[];
+  complete: boolean;
+}

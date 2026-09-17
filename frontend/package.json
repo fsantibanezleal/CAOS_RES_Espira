@@ -1,7 +1,7 @@
 {
   "name": "espira-frontend",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "scripts": {
     "predev": "node copy-data.mjs",
@@ -11,7 +11,7 @@
     "postbuild": "node write-routes.mjs",
     "preview": "vite preview",
     "test": "vitest run",
-    "gate": "node e2e/workbench-provenance.mjs $npm_config_url && node e2e/free-chain.mjs $npm_config_url && node e2e/coverage.mjs $npm_config_url"
+    "gate": "node e2e/workbench-provenance.mjs $npm_config_url && node e2e/free-chain.mjs $npm_config_url && node e2e/coverage.mjs $npm_config_url && node e2e/benchmark.mjs $npm_config_url"
   },
   "dependencies": {
     "@fasl-work/caos-app-shell": "^0.6.8",

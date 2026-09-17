@@ -33,3 +33,9 @@ export async function loadLatticeOCP(): Promise<import('./contract').LatticeOCPA
   if (!response.ok) throw new Error(`lattice_ocp.json ${response.status}`);
   return response.json();
 }
+
+export async function loadBenchmark(): Promise<import('./contract').Benchmark> {
+  const response = await fetch(bust(`${base}artifacts/benchmark.json`));
+  if (!response.ok) throw new Error(`benchmark.json ${response.status}`);
+  return response.json();
+}
