@@ -43,8 +43,7 @@ ARTIFACT_SCHEMA_VERSION = "2.0.0"
 _TRAJECTORY_SAMPLES = 160
 #: The switching time, in tau0, at which a case that sweeps something other than time is computed.
 _FIXED_TIME_TAU0 = 10.0
-#: Image count and seeds for the numerical biaxial solves.
-_IMAGES = 60
+#: Seeds and iteration cap for the numerical biaxial solves. The image count comes from the engine rule.
 _SEEDS = 4
 _MAX_ITERATIONS = 2500
 
@@ -221,7 +220,8 @@ def _biaxial(case: Case, ratio: float, t_tau0: float) -> dict:
     biaxial_system = _system(case, ratio, uniaxial=False)
     switching_time = uniaxial_system.switching_time_from_tau0(t_tau0)
     free = cost_free_macrospin(switching_time, uniaxial_system.alpha, uniaxial_system.gamma)
-    result = ImageOCPSolver(biaxial_system, n_images=_IMAGES, switching_time=switching_time).solve_best(
+    images = ImageOCPSolver.recommended_images(biaxial_system, switching_time)
+    result = ImageOCPSolver(biaxial_system, n_images=images, switching_time=switching_time).solve_best(
         n_seeds=_SEEDS, max_iterations=_MAX_ITERATIONS
     )
     uniaxial = UniaxialOptimalControl.for_switching_time(uniaxial_system, switching_time)
@@ -234,6 +234,7 @@ def _biaxial(case: Case, ratio: float, t_tau0: float) -> dict:
         "biaxial_over_free": result.cost / free,
         "reduction_vs_uniaxial": uniaxial.cost() / result.cost if result.cost > 0 else None,
         "converged": bool(result.converged),
+        "images": images,
     }
 
 

@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -68,9 +68,21 @@ def check(artifacts: Path) -> list[str]:
         if row["variants"] < 6:
             errors.append(f"registry {row['slug']}: {row['variants']} variants, fewer than six")
 
-    for name in ("novel.json", "lattice_ocp.json"):
+    for name in ("novel.json", "lattice_ocp.json", "benchmark.json"):
         if not (artifacts / name).exists():
             errors.append(f"missing {name}")
+
+    benchmark_path = artifacts / "benchmark.json"
+    if benchmark_path.exists():
+        benchmark = json.loads(benchmark_path.read_text(encoding="utf-8"))
+        if sorted(c["case"] for c in benchmark["cases"]) != sorted(declared):
+            errors.append("benchmark cases differ from the index cases")
+        if not benchmark["complete"]:
+            errors.append("the benchmark reports an incomplete method x variant matrix")
+        for case in benchmark["cases"]:
+            for method in case["methods"]:
+                if method["produced"] + method["not_applicable"] != method["cells"]:
+                    errors.append(f"benchmark {case['case']}/{method['method']}: incomplete cells")
 
     lattice_path = artifacts / "lattice_ocp.json"
     if lattice_path.exists():

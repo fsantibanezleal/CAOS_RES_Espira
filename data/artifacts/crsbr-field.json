@@ -9355,10 +9355,11 @@
     "switching_time_tau0": 20.0,
     "hard_axis_ratio": 3.0,
     "uniaxial_cost": 4.844524695194577e-12,
-    "biaxial_cost": 4.133038113212952e-12,
+    "biaxial_cost": 3.690970025998171e-12,
     "cost_free": 4.8420723185098685e-12,
-    "biaxial_over_free": 0.8535680265273032,
-    "reduction_vs_uniaxial": 1.1721461458840814,
-    "converged": false
+    "biaxial_over_free": 0.7622707351744087,
+    "reduction_vs_uniaxial": 1.3125342826062218,
+    "converged": true,
+    "images": 74
   }
 }

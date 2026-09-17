@@ -1,0 +1,324 @@
+{
+  "schema": "espira.benchmark/1",
+  "engine": {
+    "name": "spinoct",
+    "version": "0.12.000"
+  },
+  "cases": [
+    {
+      "case": "uniaxial-analytic",
+      "methods": [
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 2.015331696821165e-12,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        },
+        {
+          "method": "R07",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 2.0345915245285492e-12,
+          "worst_ratio_to_oracle": 1.0095566539928704,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "biaxial-hard-axis",
+      "methods": [
+        {
+          "method": "R07",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 5.809670033059821e-12,
+          "worst_ratio_to_oracle": null,
+          "notes": "scored against the uniaxial optimum of the same system"
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "crsbr-field",
+      "methods": [
+        {
+          "method": "R00",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 3,
+          "best_cost": 7.063998379904358e-12,
+          "worst_ratio_to_oracle": 360.1663597363756,
+          "notes": ""
+        },
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 9.806577139901217e-13,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        },
+        {
+          "method": "R07",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 1.3293060465578004e-12,
+          "worst_ratio_to_oracle": 1.3555249987776985,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "fe3gete2-field",
+      "methods": [
+        {
+          "method": "R00",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 3,
+          "best_cost": 3.175431631970039e-11,
+          "worst_ratio_to_oracle": 360.1663597363756,
+          "notes": ""
+        },
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 4.408284597004425e-12,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "fe3gate2-field",
+      "methods": [
+        {
+          "method": "R00",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 3,
+          "best_cost": 2.40641703051687e-11,
+          "worst_ratio_to_oracle": 360.1663597363757,
+          "notes": ""
+        },
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 3.3407021026037114e-12,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "cri3-field",
+      "methods": [
+        {
+          "method": "R00",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 3,
+          "best_cost": 2.331119465368439e-11,
+          "worst_ratio_to_oracle": 360.16635973637574,
+          "notes": ""
+        },
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 3.236170456167401e-12,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "cr2ge2te6-floor",
+      "methods": [
+        {
+          "method": "R00",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 2,
+          "best_cost": 1.721029920317265e-12,
+          "worst_ratio_to_oracle": 364.73344750463036,
+          "notes": ""
+        },
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 2.3592981834979865e-13,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "feps3-negative-control",
+      "methods": [
+        {
+          "method": "R00",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 3,
+          "best_cost": 3.7580471381091194e-10,
+          "worst_ratio_to_oracle": 360.1663597363758,
+          "notes": ""
+        },
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 5.2170990384274465e-11,
+          "worst_ratio_to_oracle": 1.0,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    }
+  ],
+  "manifests": [
+    {
+      "case": "uniaxial-analytic",
+      "code": "C02",
+      "manifest": "uniaxial-analytic.json",
+      "sha256": "c82d6d86a5a9847d03fb1c72e30c75847aef607a38ecfa2114345885350f2f5c",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "biaxial-hard-axis",
+      "code": "C04",
+      "manifest": "biaxial-hard-axis.json",
+      "sha256": "788b302e05f9483f36d2bcd3f07faa9a16c568ccd4128014beadd7bfdb968158",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "crsbr-field",
+      "code": "C11",
+      "manifest": "crsbr-field.json",
+      "sha256": "a502455ce11b678d2b928b4529405f46f7d57a20d16a90ede6aa429a1d9faa63",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 18,
+        "produced": 18,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "fe3gete2-field",
+      "code": "C12",
+      "manifest": "fe3gete2-field.json",
+      "sha256": "2a37e24ccf9a7ea2321e8985b3841a6ecd46f3a3ebd609c48e44748b60a51652",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "fe3gate2-field",
+      "code": "C13",
+      "manifest": "fe3gate2-field.json",
+      "sha256": "069ee71e267b50cc9c77b69fe5810141b1230453a1eb4d29561756d58cc408d6",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "cri3-field",
+      "code": "C14",
+      "manifest": "cri3-field.json",
+      "sha256": "584b914f332959a76590eadaa7d2f7ed854b12b25ca9832677ac275813a07dd4",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "cr2ge2te6-floor",
+      "code": "C15",
+      "manifest": "cr2ge2te6-floor.json",
+      "sha256": "5483c3127cf0886ef152057b1efd5a4a9b7049eb7e5aece691dd46944f3be093",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "feps3-negative-control",
+      "code": "C18",
+      "manifest": "feps3-negative-control.json",
+      "sha256": "2146f125c990ced35cc80ef30c030986e4c87d562d388159ecfbeb62508ecc07",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    }
+  ],
+  "complete": true
+}
