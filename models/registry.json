@@ -1,0 +1,77 @@
+{
+  "schema": "espira.model-registry/1",
+  "models": [
+    {
+      "name": "amortized-shape-policy",
+      "method": "R15",
+      "version": "1",
+      "engine": "spinoct.amortized",
+      "license": "MIT",
+      "lane": "precompute",
+      "checkpoint": "amortized_policy.json",
+      "train_materials": [
+        "crsbr",
+        "fe3gate2",
+        "fe3gete2"
+      ],
+      "held_out_materials": [
+        "cr2ge2te6",
+        "cri3"
+      ],
+      "training_dampings": [
+        0.0003,
+        0.00043709725652255245,
+        0.0009278798260445945,
+        0.0013519124211557178,
+        0.0019697240344864184,
+        0.002869869905268492,
+        0.004181374207231649,
+        0.00609222398158372,
+        0.008876314628237146,
+        0.012932709240111518,
+        0.0188428390941887,
+        0.027453844243885913,
+        0.04
+      ],
+      "acceptance": {
+        "rule": "every held-out case reverses and costs at most 1.1 times the analytic optimum",
+        "passed": true,
+        "scores": [
+          {
+            "material": "cr2ge2te6",
+            "switching_time_tau0": 5.0,
+            "cost_ratio": 0.9994242231577328,
+            "switched": true,
+            "predicted_p": 0.7960035806934758,
+            "true_p": 0.7957743872614227
+          },
+          {
+            "material": "cr2ge2te6",
+            "switching_time_tau0": 20.0,
+            "cost_ratio": 1.0157937775842996,
+            "switched": true,
+            "predicted_p": 3.158259706312659,
+            "true_p": 3.183101252931067
+          },
+          {
+            "material": "cri3",
+            "switching_time_tau0": 5.0,
+            "cost_ratio": 1.0004699328786866,
+            "switched": true,
+            "predicted_p": 0.7955208251836684,
+            "true_p": 0.7957077405713118
+          },
+          {
+            "material": "cri3",
+            "switching_time_tau0": 20.0,
+            "cost_ratio": 0.9945043543978151,
+            "switched": true,
+            "predicted_p": 3.1923868034889047,
+            "true_p": 3.1835867834149982
+          }
+        ]
+      },
+      "status": "trained"
+    }
+  ]
+}

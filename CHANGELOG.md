@@ -4,6 +4,36 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.05.000] - 2026-09-17
+
+### Added
+- The nine named stages of ADR-0057 and ADR-0069, with one orchestrator and a command line
+  (`python data-pipeline/run.py all|<stage>`): ingest, preprocess, dataset, features, train, infer,
+  evaluate, export, validate. Every method a case declares now runs over every variant into one result
+  schema, or says why it cannot; a method the pipeline cannot run raises rather than leaving a gap.
+- Contract 2: per-case manifests in `manifests/` binding each artifact to the engine version, the seed,
+  the split, every result row, the artifact's size and sha256, the measured lane verdict and the
+  completeness counts, plus the Contract 1 flags of the parameters it used. `validate` recomputes the
+  hash and refuses a release that does not match, which a test proves on a mutated copy.
+- A measured live-versus-precompute gate (`espiralab/core/gate.py`): closed form, runtime under 250 ms
+  and artifact under 512 kB, or the case is precompute with the failing reasons recorded. Every baked
+  case is precompute today, and the manifests say why in measured terms.
+- A model registry (`models/registry.json`) for the amortized policy: version, engine, license, lane,
+  checkpoint, training materials, held-out materials, and the acceptance rule with the scores.
+- The Benchmark page shows the real method x case x variant matrix and the release evidence (lane,
+  completeness, artifact hash), with a fourth browser gate checking both against the artifact.
+
+### Changed
+- The learned policy trains over a damping RANGE with the held-out materials' dampings excluded, instead
+  of the training materials' damping values alone. Four of six materials carry the same assumed damping
+  of 0.01, so the old split trained at a single point and the policy could not reach the one material
+  with a measured damping of 7e-4: it emitted pulses that did not switch. It now passes its gate, every
+  held-out case reversing within 1.6 per cent of the analytic optimum.
+- The bake and the pipeline take the image count from `spinoct.ImageOCPSolver.recommended_images` rather
+  than a fixed 60, and the engine (0.12.000) minimizes with L-BFGS. The numerical optimum was 20 per cent
+  above the closed form at the longest switching time; it is now within 1 per cent at every baked
+  variant.
+
 ## [0.04.000] - 2026-09-17
 
 ### Added

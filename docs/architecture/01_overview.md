@@ -47,10 +47,11 @@ Three bakes produce the artifacts:
 
 ## What is not yet on the staged base
 
-ADR-0057 and ADR-0069 require the named stages `ingest -> preprocess -> dataset -> features -> train ->
-infer -> evaluate -> export -> validate`. `ingest` and `preprocess` with Contract 1 are implemented
-([02_data-contracts.md](02_data-contracts.md)); still missing are per-case manifests with hashes and
-a measured lane gate, a model registry, and the method x case x variant completeness manifest. The bakes
-above implement the science without that structure, and the case registry holds 6 of the 26 cases of the
-validated plan. The rebuild order is recorded in the programme plan (units U2 to U7); this page is updated
-as each unit lands.
+All nine named stages of ADR-0057 and ADR-0069 are implemented
+([03_staged-pipeline.md](03_staged-pipeline.md)), with Contract 1 on the way in
+([02_data-contracts.md](02_data-contracts.md)), Contract 2 manifests with hashes and a measured lane
+verdict on the way out, a model registry for the one learned method, and a completeness count that
+refuses a release with a missing cell. The registry declares all 26 cases of the validated plan; 10 are
+baked, 14 are planned and 2 are blocked, and the coverage matrix in the app and the wiki shows all of
+them. What remains is baking the planned cases, the parameters for two more materials, and the
+two-dimensional lattice; the programme plan tracks them.
