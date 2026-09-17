@@ -1,67 +1,538 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "cases": [
     {
+      "slug": "uniaxial-analytic",
+      "code": "C02",
+      "title": "Uniaxial macrospin, the analytic optimum",
+      "category": "A. Exact oracles",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Switching time"
+    },
+    {
+      "slug": "biaxial-hard-axis",
+      "code": "C04",
+      "title": "Biaxial anisotropy, the hard-axis cost reduction",
+      "category": "A. Exact oracles",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": true,
+      "axis": "Hard-axis ratio"
+    },
+    {
       "slug": "crsbr-field",
+      "code": "C11",
       "title": "CrSBr, field-driven reversal",
-      "category": "real-material-field",
+      "category": "C. Real materials",
       "material": "crsbr",
       "material_name": "CrSBr",
-      "includes_biaxial": true
+      "includes_biaxial": true,
+      "axis": "Switching time"
     },
     {
       "slug": "fe3gete2-field",
+      "code": "C12",
       "title": "Fe3GeTe2, field-driven reversal",
-      "category": "real-material-field",
+      "category": "C. Real materials",
       "material": "fe3gete2",
       "material_name": "Fe3GeTe2",
-      "includes_biaxial": false
+      "includes_biaxial": false,
+      "axis": "Switching time"
     },
     {
       "slug": "fe3gate2-field",
+      "code": "C13",
       "title": "Fe3GaTe2, field-driven reversal",
-      "category": "real-material-field",
+      "category": "C. Real materials",
       "material": "fe3gate2",
       "material_name": "Fe3GaTe2",
-      "includes_biaxial": false
+      "includes_biaxial": false,
+      "axis": "Switching time"
     },
     {
       "slug": "cri3-field",
+      "code": "C14",
       "title": "CrI3, field-driven reversal",
-      "category": "real-material-field",
+      "category": "C. Real materials",
       "material": "cri3",
       "material_name": "CrI3",
-      "includes_biaxial": false
+      "includes_biaxial": false,
+      "axis": "Switching time"
     },
     {
       "slug": "cr2ge2te6-floor",
+      "code": "C15",
       "title": "Cr2Ge2Te6, the low-damping floor",
-      "category": "damping-extreme",
+      "category": "C. Real materials",
       "material": "cr2ge2te6",
       "material_name": "Cr2Ge2Te6",
-      "includes_biaxial": false
+      "includes_biaxial": false,
+      "axis": "Switching time"
     },
     {
       "slug": "feps3-negative-control",
+      "code": "C18",
       "title": "FePS3, negative control",
-      "category": "negative-control",
+      "category": "C. Real materials",
       "material": "feps3",
       "material_name": "FePS3",
-      "includes_biaxial": false
+      "includes_biaxial": false,
+      "axis": "Switching time"
     }
   ],
   "categories": {
-    "real-material-field": [
+    "A. Exact oracles": [
+      "uniaxial-analytic",
+      "biaxial-hard-axis"
+    ],
+    "C. Real materials": [
       "crsbr-field",
       "fe3gete2-field",
       "fe3gate2-field",
-      "cri3-field"
-    ],
-    "damping-extreme": [
-      "cr2ge2te6-floor"
-    ],
-    "negative-control": [
+      "cri3-field",
+      "cr2ge2te6-floor",
       "feps3-negative-control"
     ]
-  }
+  },
+  "coverage": {
+    "baked": 10,
+    "planned": 14,
+    "blocked": 2
+  },
+  "registry": [
+    {
+      "slug": "free-macrospin",
+      "code": "C01",
+      "title": "Free macrospin, no anisotropy",
+      "category": "A. Exact oracles",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "analytic",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R05"
+      ]
+    },
+    {
+      "slug": "uniaxial-analytic",
+      "code": "C02",
+      "title": "Uniaxial macrospin, the analytic optimum",
+      "category": "A. Exact oracles",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "analytic",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R05",
+        "R07"
+      ]
+    },
+    {
+      "slug": "sot-analytic",
+      "code": "C03",
+      "title": "Spin-orbit torque, the analytic optimum",
+      "category": "A. Exact oracles",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "analytic",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R06"
+      ]
+    },
+    {
+      "slug": "biaxial-hard-axis",
+      "code": "C04",
+      "title": "Biaxial anisotropy, the hard-axis cost reduction",
+      "category": "A. Exact oracles",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Hard-axis ratio",
+      "methods": [
+        "R07"
+      ]
+    },
+    {
+      "slug": "prb107-biaxial-figures",
+      "code": "C05",
+      "title": "Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)",
+      "category": "B. Published replication",
+      "status": "blocked",
+      "surface": "workbench",
+      "blocked_reason": "The published figure values have not been digitized from the paper; without them there is nothing to compare against, and inventing reference points would be fabrication.",
+      "split": "control",
+      "ground_truth": "published",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R07"
+      ]
+    },
+    {
+      "slug": "ocp-family",
+      "code": "C06",
+      "title": "The optimal control path family (several coexisting optima)",
+      "category": "B. Published replication",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "published",
+      "variants": 6,
+      "axis": "Search seed",
+      "methods": [
+        "R07"
+      ]
+    },
+    {
+      "slug": "thermal-success-rate",
+      "code": "C07",
+      "title": "Thermal success rate against switching time",
+      "category": "B. Published replication",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "published",
+      "variants": 6,
+      "axis": "Thermal stability factor",
+      "methods": [
+        "R11"
+      ]
+    },
+    {
+      "slug": "sot-down-chirp",
+      "code": "C08",
+      "title": "Spin-orbit torque, the simplified down-chirp protocol",
+      "category": "B. Published replication",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "published",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R06",
+        "R04"
+      ]
+    },
+    {
+      "slug": "longitudinal-stabilization",
+      "code": "C09",
+      "title": "Longitudinal stabilization, the cost of reliability",
+      "category": "B. Published replication",
+      "status": "baked",
+      "surface": "experiments",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "published",
+      "variants": 6,
+      "axis": "Longitudinal field",
+      "methods": [
+        "R11",
+        "R12"
+      ]
+    },
+    {
+      "slug": "kickoff-replication",
+      "code": "C10",
+      "title": "The kickoff paper's own switching energies",
+      "category": "B. Published replication",
+      "status": "blocked",
+      "surface": "workbench",
+      "blocked_reason": "The full text is behind a Cloudflare challenge and has not been read. The abstract's 1 to 10 ps rotation window and the press summaries' 126 to 140 ps switching times are in tension, and no number may be quoted until the paper itself is read (programme backlog BL-002).",
+      "split": "control",
+      "ground_truth": "published",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R05",
+        "R07"
+      ]
+    },
+    {
+      "slug": "crsbr-field",
+      "code": "C11",
+      "title": "CrSBr, field-driven reversal",
+      "category": "C. Real materials",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "train",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05",
+        "R07"
+      ]
+    },
+    {
+      "slug": "fe3gete2-field",
+      "code": "C12",
+      "title": "Fe3GeTe2, field-driven reversal",
+      "category": "C. Real materials",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "train",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05"
+      ]
+    },
+    {
+      "slug": "fe3gate2-field",
+      "code": "C13",
+      "title": "Fe3GaTe2, field-driven reversal",
+      "category": "C. Real materials",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "train",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05"
+      ]
+    },
+    {
+      "slug": "cri3-field",
+      "code": "C14",
+      "title": "CrI3, field-driven reversal",
+      "category": "C. Real materials",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "test",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05"
+      ]
+    },
+    {
+      "slug": "cr2ge2te6-floor",
+      "code": "C15",
+      "title": "Cr2Ge2Te6, the low-damping floor",
+      "category": "C. Real materials",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "test",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05"
+      ]
+    },
+    {
+      "slug": "fe5gete2-field",
+      "code": "C16",
+      "title": "Fe5GeTe2, the near-room-temperature metal",
+      "category": "C. Real materials",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "test",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05"
+      ]
+    },
+    {
+      "slug": "crcl3-crbr3-contrast",
+      "code": "C17",
+      "title": "CrCl3 against CrBr3, the anisotropy-sign contrast",
+      "category": "C. Real materials",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "test",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05"
+      ]
+    },
+    {
+      "slug": "feps3-negative-control",
+      "code": "C18",
+      "title": "FePS3, negative control",
+      "category": "C. Real materials",
+      "status": "baked",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Switching time",
+      "methods": [
+        "R00",
+        "R05"
+      ]
+    },
+    {
+      "slug": "chain-crossover",
+      "code": "C19",
+      "title": "The spin chain, where uniform rotation stops being optimal",
+      "category": "D. Beyond the macrospin",
+      "status": "baked",
+      "surface": "experiments",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "provisional",
+      "variants": 9,
+      "axis": "Chain length",
+      "methods": [
+        "R07",
+        "R16"
+      ]
+    },
+    {
+      "slug": "patch-2d-crsbr",
+      "code": "C20",
+      "title": "A two-dimensional CrSBr patch, size sweep",
+      "category": "D. Beyond the macrospin",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Patch width",
+      "methods": [
+        "R16"
+      ]
+    },
+    {
+      "slug": "patch-2d-fe3gate2",
+      "code": "C21",
+      "title": "A two-dimensional Fe3GaTe2 patch, perpendicular anisotropy",
+      "category": "D. Beyond the macrospin",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Patch width",
+      "methods": [
+        "R16"
+      ]
+    },
+    {
+      "slug": "continuum-cross-check",
+      "code": "C22",
+      "title": "Continuum cross-check against a micromagnetic solver",
+      "category": "D. Beyond the macrospin",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Sites per wall width",
+      "methods": [
+        "R16"
+      ]
+    },
+    {
+      "slug": "crab-bandwidth",
+      "code": "C23",
+      "title": "Band-limited control, the price of realizability",
+      "category": "E. Constrained and hybrid control",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "analytic",
+      "variants": 6,
+      "axis": "Harmonics",
+      "methods": [
+        "R09",
+        "R05"
+      ]
+    },
+    {
+      "slug": "grape-amplitude-slew",
+      "code": "C24",
+      "title": "Amplitude and slew-rate limited control",
+      "category": "E. Constrained and hybrid control",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "analytic",
+      "variants": 6,
+      "axis": "Amplitude cap",
+      "methods": [
+        "R08",
+        "R05"
+      ]
+    },
+    {
+      "slug": "field-plus-current",
+      "code": "C25",
+      "title": "Field together with current, the hybrid cost",
+      "category": "E. Constrained and hybrid control",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "control",
+      "ground_truth": "provisional",
+      "variants": 6,
+      "axis": "Current price",
+      "methods": [
+        "R13"
+      ]
+    },
+    {
+      "slug": "amortized-policy",
+      "code": "C26",
+      "title": "The amortized policy on held-out materials",
+      "category": "F. Screening and learned",
+      "status": "planned",
+      "surface": "workbench",
+      "blocked_reason": "",
+      "split": "test",
+      "ground_truth": "analytic",
+      "variants": 6,
+      "axis": "Damping",
+      "methods": [
+        "R15"
+      ]
+    }
+  ]
 }

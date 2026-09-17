@@ -1,12 +1,23 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "case": {
     "slug": "fe3gate2-field",
+    "code": "C13",
     "title": "Fe3GaTe2, field-driven reversal",
-    "category": "real-material-field",
+    "category": "C. Real materials",
     "material": "fe3gate2",
-    "reason": "The only above-room-temperature member of the family.",
+    "reason": "The only above-room-temperature member of the family, so the only one whose numbers matter for a device that runs on a desk.",
     "expectation": "Uniaxial, room-temperature-relevant; the cost curve mirrors Fe3GeTe2 scaled by its anisotropy and moment.",
+    "kill_criterion": "A cost curve that does not scale with the anisotropy and moment as the analytic solution predicts would mean the parameter canonicalization is wrong.",
+    "ground_truth": "provisional",
+    "split": "train",
+    "status": "baked",
+    "surface": "workbench",
+    "methods": [
+      "R00",
+      "R05"
+    ],
+    "sources": [],
     "includes_biaxial": false
   },
   "material": {
@@ -121,16 +132,22 @@
       "hard_axis_ratio: assumed"
     ]
   },
-  "switching_times_tau0": [
-    2.0,
-    5.0,
-    10.0,
-    20.0,
-    50.0,
-    100.0
-  ],
+  "axis": {
+    "name": "switching_time",
+    "label": "Switching time",
+    "unit": "tau0",
+    "values": [
+      2.0,
+      5.0,
+      10.0,
+      20.0,
+      50.0,
+      100.0
+    ]
+  },
   "cost_curve": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 1.9299325328250748e-12,
       "cost": 1.6495055182223394e-10,
@@ -143,6 +160,7 @@
       "mean_amplitude": 9.244953327342396
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 4.824831332062687e-12,
       "cost": 6.598197522447444e-11,
@@ -155,6 +173,7 @@
       "mean_amplitude": 3.6979813309369582
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 9.649662664125373e-12,
       "cost": 3.299412059245318e-11,
@@ -167,6 +186,7 @@
       "mean_amplitude": 1.8489906654684791
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 1.9299325328250747e-11,
       "cost": 1.6503325884728777e-11,
@@ -179,6 +199,7 @@
       "mean_amplitude": 0.9244953327342396
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 4.824831332062687e-11,
       "cost": 6.6188673367201195e-12,
@@ -191,6 +212,7 @@
       "mean_amplitude": 0.36979813309369586
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 9.649662664125373e-11,
       "cost": 3.3407021026037114e-12,
@@ -205,6 +227,7 @@
   ],
   "pulses": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 1.9299325328250748e-12,
       "time_s": [
@@ -1505,6 +1528,7 @@
       ]
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 4.824831332062687e-12,
       "time_s": [
@@ -2805,6 +2829,7 @@
       ]
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 9.649662664125373e-12,
       "time_s": [
@@ -4105,6 +4130,7 @@
       ]
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 1.9299325328250747e-11,
       "time_s": [
@@ -5405,6 +5431,7 @@
       ]
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 4.824831332062687e-11,
       "time_s": [
@@ -6705,6 +6732,7 @@
       ]
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 9.649662664125373e-11,
       "time_s": [
@@ -8006,6 +8034,7 @@
     }
   ],
   "reference_pulse": {
+    "variant": 20.0,
     "switching_time_tau0": 20.0,
     "switching_time_s": 1.9299325328250747e-11,
     "time_s": [
