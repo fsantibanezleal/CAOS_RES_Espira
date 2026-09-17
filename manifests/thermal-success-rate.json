@@ -1,0 +1,259 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "thermal-success-rate",
+  "code": "C07",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.12.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "published",
+  "methods": [
+    "R11",
+    "R12"
+  ],
+  "variants": [
+    1.0,
+    2.0,
+    3.0,
+    5.0,
+    10.0,
+    20.0
+  ],
+  "artifact": {
+    "path": "thermal-success-rate.json",
+    "bytes": 277032,
+    "sha256": "958033bb2c28d7b9b805df2b01e30914f2f288214842eeca80335a72b7b61f7d"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 12620.388,
+    "artifact_bytes": 277032,
+    "methods": [
+      "R11",
+      "R12"
+    ],
+    "reasons": [
+      "methods ['R11', 'R12'] have no closed form for the browser",
+      "runtime 12620 ms over the 250 ms budget"
+    ]
+  },
+  "completeness": {
+    "expected": 12,
+    "produced": 12,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R11",
+      "variant": 1.0,
+      "cost": 9.6853708835911e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.735,
+        "confidence95": 0.035314011383585406,
+        "final_sz_mean": -0.5665442731474503,
+        "temperature_k": 1.7406777182325122,
+        "stability_factor": 1.0,
+        "n_copies": 600.0
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 2.0,
+      "cost": 9.6853708835911e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.81,
+        "confidence95": 0.03139061006097205,
+        "final_sz_mean": -0.7060302682736732,
+        "temperature_k": 0.8703388591162561,
+        "stability_factor": 2.0,
+        "n_copies": 600.0
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 3.0,
+      "cost": 9.6853708835911e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.87,
+        "confidence95": 0.026909879226782122,
+        "final_sz_mean": -0.7809492619539855,
+        "temperature_k": 0.580225906077504,
+        "stability_factor": 3.0,
+        "n_copies": 600.0
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 5.0,
+      "cost": 9.6853708835911e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.9316666666666666,
+        "confidence95": 0.020189568080057074,
+        "final_sz_mean": -0.8593890311085363,
+        "temperature_k": 0.3481355436465024,
+        "stability_factor": 5.0,
+        "n_copies": 600.0
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 10.0,
+      "cost": 9.6853708835911e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.9833333333333333,
+        "confidence95": 0.010243661093212373,
+        "final_sz_mean": -0.9297846082290822,
+        "temperature_k": 0.1740677718232512,
+        "stability_factor": 10.0,
+        "n_copies": 600.0
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 20.0,
+      "cost": 9.6853708835911e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.9983333333333333,
+        "confidence95": 0.003266666666666667,
+        "final_sz_mean": -0.9662814062750348,
+        "temperature_k": 0.0870338859116256,
+        "stability_factor": 20.0,
+        "n_copies": 600.0
+      }
+    },
+    {
+      "method": "R12",
+      "variant": 1.0,
+      "cost": 1.0779645949337386e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.86,
+        "confidence95": 0.027764745031544347,
+        "added_cost": 9.811108860978277e-11,
+        "added_cost_over_optimal": 10.1298225735477,
+        "longitudinal_field_over_anisotropy": 2.0,
+        "hyperbolic_fraction": 0.0,
+        "temperature_k": 1.7406777182325122,
+        "stability_factor": 1.0
+      }
+    },
+    {
+      "method": "R12",
+      "variant": 2.0,
+      "cost": 1.0779645949337386e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.9633333333333334,
+        "confidence95": 0.015038497757915003,
+        "added_cost": 9.811108860978277e-11,
+        "added_cost_over_optimal": 10.1298225735477,
+        "longitudinal_field_over_anisotropy": 2.0,
+        "hyperbolic_fraction": 0.0,
+        "temperature_k": 0.8703388591162561,
+        "stability_factor": 2.0
+      }
+    },
+    {
+      "method": "R12",
+      "variant": 3.0,
+      "cost": 1.0779645949337386e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.9833333333333333,
+        "confidence95": 0.010243661093212373,
+        "added_cost": 9.811108860978277e-11,
+        "added_cost_over_optimal": 10.1298225735477,
+        "longitudinal_field_over_anisotropy": 2.0,
+        "hyperbolic_fraction": 0.0,
+        "temperature_k": 0.580225906077504,
+        "stability_factor": 3.0
+      }
+    },
+    {
+      "method": "R12",
+      "variant": 5.0,
+      "cost": 1.0779645949337386e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 0.995,
+        "confidence95": 0.005643869830769195,
+        "added_cost": 9.811108860978277e-11,
+        "added_cost_over_optimal": 10.1298225735477,
+        "longitudinal_field_over_anisotropy": 2.0,
+        "hyperbolic_fraction": 0.0,
+        "temperature_k": 0.3481355436465024,
+        "stability_factor": 5.0
+      }
+    },
+    {
+      "method": "R12",
+      "variant": 10.0,
+      "cost": 1.0779645949337386e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 1.0,
+        "confidence95": 0.003266666666666667,
+        "added_cost": 9.811108860978277e-11,
+        "added_cost_over_optimal": 10.1298225735477,
+        "longitudinal_field_over_anisotropy": 2.0,
+        "hyperbolic_fraction": 0.0,
+        "temperature_k": 0.1740677718232512,
+        "stability_factor": 10.0
+      }
+    },
+    {
+      "method": "R12",
+      "variant": 20.0,
+      "cost": 1.0779645949337386e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "success_rate": 1.0,
+        "confidence95": 0.003266666666666667,
+        "added_cost": 9.811108860978277e-11,
+        "added_cost_over_optimal": 10.1298225735477,
+        "longitudinal_field_over_anisotropy": 2.0,
+        "hyperbolic_fraction": 0.0,
+        "temperature_k": 0.0870338859116256,
+        "stability_factor": 20.0
+      }
+    }
+  ],
+  "parameter_flags": [
+    "anisotropy: assumed",
+    "hard_axis_ratio: assumed",
+    "damping: assumed",
+    "damping: wide damping band"
+  ]
+}

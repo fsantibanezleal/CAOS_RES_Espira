@@ -1,0 +1,164 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "ocp-family",
+  "code": "C06",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.12.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "published",
+  "methods": [
+    "R07"
+  ],
+  "variants": [
+    0.0,
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0
+  ],
+  "artifact": {
+    "path": "ocp-family.json",
+    "bytes": 112186,
+    "sha256": "6d0b83a84eeada63f999c1401bae8c8fc737904ab3788305762f618eace478d2"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 6024.807,
+    "artifact_bytes": 112186,
+    "methods": [
+      "R07"
+    ],
+    "reasons": [
+      "methods ['R07'] have no closed form for the browser",
+      "runtime 6025 ms over the 250 ms budget"
+    ]
+  },
+  "completeness": {
+    "expected": 6,
+    "produced": 6,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R07",
+      "variant": 0.0,
+      "cost": 1.5206492707519304e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.4428192798747166,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 904.2810999962967,
+        "mid_azimuth_deg": 62.385583466895085,
+        "max_abs_sx": 0.58743382218775,
+        "max_abs_sy": 0.9812105862874281,
+        "winding_turns": 0.0,
+        "iterations": 1213.0
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 1.0,
+      "cost": 1.5206492422384576e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.4428192528206225,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 1382.3935999826062,
+        "mid_azimuth_deg": 62.39207639592312,
+        "max_abs_sx": 0.5873718635865053,
+        "max_abs_sy": 0.9812065241160804,
+        "winding_turns": 0.0,
+        "iterations": 1907.0
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 2.0,
+      "cost": 1.5206892133184687e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.442857178097665,
+        "converged": 0.0,
+        "images": 60.0,
+        "solve_ms": 1870.796999981394,
+        "mid_azimuth_deg": 62.634364969183345,
+        "max_abs_sx": 0.5894499808821968,
+        "max_abs_sy": 0.9812143796793729,
+        "winding_turns": 0.0,
+        "iterations": 2500.0
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 3.0,
+      "cost": 2.0250368492329283e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.9213912535434723,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 759.0449999843258,
+        "mid_azimuth_deg": -20.72000606944021,
+        "max_abs_sx": 0.9371856339330727,
+        "max_abs_sy": 0.9071014541144508,
+        "winding_turns": 0.0,
+        "iterations": 1015.0
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 4.0,
+      "cost": 2.0250368421029077e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.921391246778381,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 495.2151000034064,
+        "mid_azimuth_deg": -20.72332640600105,
+        "max_abs_sx": 0.9372119390524426,
+        "max_abs_sy": 0.907093583454645,
+        "winding_turns": 0.0,
+        "iterations": 684.0
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 5.0,
+      "cost": 2.025036839989525e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.9213912447731654,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 612.7283999812789,
+        "mid_azimuth_deg": -20.718669301751873,
+        "max_abs_sx": 0.9372138794224806,
+        "max_abs_sy": 0.9070889448996048,
+        "winding_turns": 0.0,
+        "iterations": 832.0
+      }
+    }
+  ],
+  "parameter_flags": [
+    "synthetic system"
+  ]
+}
