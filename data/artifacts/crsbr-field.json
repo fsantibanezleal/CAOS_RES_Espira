@@ -1,12 +1,24 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "case": {
     "slug": "crsbr-field",
+    "code": "C11",
     "title": "CrSBr, field-driven reversal",
-    "category": "real-material-field",
+    "category": "C. Real materials",
     "material": "crsbr",
     "reason": "The kickoff material and, because of its triaxial anisotropy, the natural host of the biaxial cost-reduction mechanism.",
     "expectation": "The optimal pulse cost falls with switching time toward the universal floor; the hard axis pushes the numerical cost below the free-macrospin floor.",
+    "kill_criterion": "A biaxial cost above the free-macrospin cost would mean the hard axis is not being exploited, and the material's headline advantage does not exist.",
+    "ground_truth": "provisional",
+    "split": "train",
+    "status": "baked",
+    "surface": "workbench",
+    "methods": [
+      "R00",
+      "R05",
+      "R07"
+    ],
+    "sources": [],
     "includes_biaxial": true
   },
   "material": {
@@ -130,16 +142,22 @@
       "damping: wide damping band"
     ]
   },
-  "switching_times_tau0": [
-    2.0,
-    5.0,
-    10.0,
-    20.0,
-    50.0,
-    100.0
-  ],
+  "axis": {
+    "name": "switching_time",
+    "label": "Switching time",
+    "unit": "tau0",
+    "values": [
+      2.0,
+      5.0,
+      10.0,
+      20.0,
+      50.0,
+      100.0
+    ]
+  },
   "cost_curve": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 6.574495441492013e-12,
       "cost": 4.842096843813964e-11,
@@ -152,6 +170,7 @@
       "mean_amplitude": 2.713841138026316
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 1.6436238603730032e-11,
       "cost": 1.9368902404603787e-11,
@@ -164,6 +183,7 @@
       "mean_amplitude": 1.0855364552105264
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 3.2872477207460065e-11,
       "cost": 9.6853708835911e-12,
@@ -176,6 +196,7 @@
       "mean_amplitude": 0.5427682276052632
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 6.574495441492013e-11,
       "cost": 4.844524695194577e-12,
@@ -188,6 +209,7 @@
       "mean_amplitude": 0.2713841138026316
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 1.6436238603730032e-10,
       "cost": 1.942957831101712e-12,
@@ -200,6 +222,7 @@
       "mean_amplitude": 0.10855364552105265
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 3.2872477207460065e-10,
       "cost": 9.806577139901217e-13,
@@ -214,6 +237,7 @@
   ],
   "pulses": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 6.574495441492013e-12,
       "time_s": [
@@ -1514,6 +1538,7 @@
       ]
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 1.6436238603730032e-11,
       "time_s": [
@@ -2814,6 +2839,7 @@
       ]
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 3.2872477207460065e-11,
       "time_s": [
@@ -4114,6 +4140,7 @@
       ]
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 6.574495441492013e-11,
       "time_s": [
@@ -5414,6 +5441,7 @@
       ]
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 1.6436238603730032e-10,
       "time_s": [
@@ -6714,6 +6742,7 @@
       ]
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 3.2872477207460065e-10,
       "time_s": [
@@ -8015,6 +8044,7 @@
     }
   ],
   "reference_pulse": {
+    "variant": 20.0,
     "switching_time_tau0": 20.0,
     "switching_time_s": 6.574495441492013e-11,
     "time_s": [

@@ -1,6 +1,8 @@
 # CrSBr, field-driven reversal
 
-Case `crsbr-field`, category `real-material-field`. Generated from the registry by `scripts/gen_case_docs.py`.
+Case `crsbr-field` (C11), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+
+Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
@@ -9,6 +11,10 @@ The kickoff material and, because of its triaxial anisotropy, the natural host o
 ## What a domain expert should see
 
 The optimal pulse cost falls with switching time toward the universal floor; the hard axis pushes the numerical cost below the free-macrospin floor.
+
+## Kill criterion
+
+A biaxial cost above the free-macrospin cost would mean the hard axis is not being exploited, and the material's headline advantage does not exist.
 
 ## Material: CrSBr
 
@@ -30,12 +36,18 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Switching times, in units of the Larmor timescale tau0: 2, 5, 10, 20, 50, 100.
+Switching time (tau0): 2, 5, 10, 20, 50, 100.
 
-## What the bake computes
+## Design
 
-For every variant: the analytic optimal pulse, its trajectory on the sphere, and its cost against the
-free-macrospin cost and the universal floor (with the band from the damping range). A static-field
-baseline at the longest switching time. Numerical biaxial solve: Yes: the numerical image-based optimal control path with the hard axis, which has no closed form.
+| Field | Value |
+|---|---|
+| Methods | R00, R05, R07 |
+| Ground truth | provisional |
+| Split | train |
+| Seed | 0 |
+| Surface | workbench |
 
-Artifact: `data/artifacts/crsbr-field.json`.
+## Sources
+
+No external reference: the case is checked against the engine's own oracles.

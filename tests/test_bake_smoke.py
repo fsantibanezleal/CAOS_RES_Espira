@@ -32,7 +32,7 @@ def test_regenerated_case_matches_the_committed_artifact(tmp_path: Path) -> None
     (tmp_path / f"{slug}.json").write_text(json.dumps(regenerated), encoding="utf-8")
 
     committed = json.loads((ARTIFACTS / f"{slug}.json").read_text(encoding="utf-8"))
-    assert regenerated["switching_times_tau0"] == committed["switching_times_tau0"]
+    assert regenerated["axis"] == committed["axis"]
     for key in ("cost", "cost_free", "cost_floor", "cost_over_floor"):
         np.testing.assert_allclose(
             _numbers(regenerated["cost_curve"], key),

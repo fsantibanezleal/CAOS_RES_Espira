@@ -4,6 +4,36 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.04.000] - 2026-09-17
+
+### Added
+- The full 26-case registry of the validated plan, in six categories, with a model that makes the case
+  contract explicit (ADR-0069 section 4): a variant family of at least six values with its own label and
+  unit, a seed, a split, a ground-truth class, the surface it is shown on, what a domain expert should
+  see, and the kill criterion that would make it a failure. Every case carries an honest status: `baked`
+  (committed artifacts), `planned` (declared and runnable, not computed), or `blocked` (naming what is
+  missing, as for the Cloudflare-blocked kickoff paper and the undigitized published figures).
+- Two exact oracles are now baked cases of the product rather than engine tests: C02, the analytic
+  uniaxial optimum, and C04, the hard-axis sweep. Both run on a declared synthetic reference macrospin
+  whose values are definitional and marked as such.
+- Cases may sweep something other than time. C04 sweeps the hard-axis ratio at fixed switching time; the
+  artifact, the variant bar, the cost chart and the docs all read the declared axis.
+- Experiments gains a Coverage tab: all 26 declared cases with status, variants, methods and ground
+  truth, and the blocked reasons in full. A third browser gate checks it against the committed index.
+- The wiki's case section is generated from the registry: a page per case (status, kill criterion,
+  system, variants, design, sources) plus the coverage matrix, and a test fails when they drift.
+
+### Changed
+- **C04's declared expectation was refuted by its own measurement and corrected.** The hard-axis benefit
+  is not monotone: at the reference damping and switching time the cost falls to a minimum near a
+  hard-axis ratio of one (1.81 times cheaper than the uniaxial optimum) and rises again beyond it, and at
+  long switching time the hard axis is purely harmful. Verified stable across solver budgets. Cases now
+  report the reduction against the uniaxial optimum, which is the measure the mechanism is about.
+- The FePS3 negative control has the six variants the case contract requires, not three.
+- The artifact schema is 2.0.0: a declared `axis` block replaces the implicit switching-time list, the
+  case block carries its code, kill criterion, ground truth, split, status and methods, and the index
+  carries the whole registry with coverage counts.
+
 ## [0.03.000] - 2026-09-17
 
 ### Added

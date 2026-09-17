@@ -1,14 +1,20 @@
 # Fe3GeTe2, field-driven reversal
 
-Case `fe3gete2-field`, category `real-material-field`. Generated from the registry by `scripts/gen_case_docs.py`.
+Case `fe3gete2-field` (C12), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+
+Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-An itinerant metal with strong perpendicular anisotropy, cleanly uniaxial.
+An itinerant metal with strong perpendicular anisotropy, cleanly uniaxial, and a spin-orbit-torque-compatible conductor.
 
 ## What a domain expert should see
 
 Uniaxial: the analytic optimal control path applies and the cost cannot beat the free-macrospin floor.
+
+## Kill criterion
+
+A cost below the free-macrospin floor for a uniaxial material would mean the analytic solution is being applied outside its validity.
 
 ## Material: Fe3GeTe2
 
@@ -30,12 +36,18 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Switching times, in units of the Larmor timescale tau0: 2, 5, 10, 20, 50, 100.
+Switching time (tau0): 2, 5, 10, 20, 50, 100.
 
-## What the bake computes
+## Design
 
-For every variant: the analytic optimal pulse, its trajectory on the sphere, and its cost against the
-free-macrospin cost and the universal floor (with the band from the damping range). A static-field
-baseline at the longest switching time. Numerical biaxial solve: No: the material is treated as uniaxial, where the analytic optimum is exact.
+| Field | Value |
+|---|---|
+| Methods | R00, R05 |
+| Ground truth | provisional |
+| Split | train |
+| Seed | 0 |
+| Surface | workbench |
 
-Artifact: `data/artifacts/fe3gete2-field.json`.
+## Sources
+
+No external reference: the case is checked against the engine's own oracles.

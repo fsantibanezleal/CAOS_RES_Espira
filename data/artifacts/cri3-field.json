@@ -1,12 +1,23 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "case": {
     "slug": "cri3-field",
+    "code": "C14",
     "title": "CrI3, field-driven reversal",
-    "category": "real-material-field",
+    "category": "C. Real materials",
     "material": "cri3",
-    "reason": "The archetypal two-dimensional magnet and the clean strong-uniaxial extreme.",
+    "reason": "The archetypal two-dimensional magnet and the clean strong-uniaxial extreme of the family.",
     "expectation": "Large anisotropy: a fast, high-amplitude optimal pulse; the analytic solution is exact.",
+    "kill_criterion": "A peak field far outside what a laboratory coil or an antenna can produce, without the product saying so, would make the result a number rather than a result.",
+    "ground_truth": "provisional",
+    "split": "test",
+    "status": "baked",
+    "surface": "workbench",
+    "methods": [
+      "R00",
+      "R05"
+    ],
+    "sources": [],
     "includes_biaxial": false
   },
   "material": {
@@ -122,16 +133,22 @@
       "hard_axis_ratio: assumed"
     ]
   },
-  "switching_times_tau0": [
-    2.0,
-    5.0,
-    10.0,
-    20.0,
-    50.0,
-    100.0
-  ],
+  "axis": {
+    "name": "switching_time",
+    "label": "Switching time",
+    "unit": "tau0",
+    "values": [
+      2.0,
+      5.0,
+      10.0,
+      20.0,
+      50.0,
+      100.0
+    ]
+  },
   "cost_curve": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 1.992271345906671e-12,
       "cost": 1.5978919584586076e-10,
@@ -144,6 +161,7 @@
       "mean_amplitude": 8.955675755486842
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 4.980678364766677e-12,
       "cost": 6.391737793519248e-11,
@@ -156,6 +174,7 @@
       "mean_amplitude": 3.5822703021947366
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 9.961356729533354e-12,
       "cost": 3.1961723915850605e-11,
@@ -168,6 +187,7 @@
       "mean_amplitude": 1.7911351510973683
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 1.992271345906671e-11,
       "cost": 1.5986931494142104e-11,
@@ -180,6 +200,7 @@
       "mean_amplitude": 0.8955675755486842
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 4.980678364766677e-11,
       "cost": 6.411760842635652e-12,
@@ -192,6 +213,7 @@
       "mean_amplitude": 0.35822703021947366
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 9.961356729533354e-11,
       "cost": 3.236170456167401e-12,
@@ -206,6 +228,7 @@
   ],
   "pulses": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 1.992271345906671e-12,
       "time_s": [
@@ -1506,6 +1529,7 @@
       ]
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 4.980678364766677e-12,
       "time_s": [
@@ -2806,6 +2830,7 @@
       ]
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 9.961356729533354e-12,
       "time_s": [
@@ -4106,6 +4131,7 @@
       ]
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 1.992271345906671e-11,
       "time_s": [
@@ -5406,6 +5432,7 @@
       ]
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 4.980678364766677e-11,
       "time_s": [
@@ -6706,6 +6733,7 @@
       ]
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 9.961356729533354e-11,
       "time_s": [
@@ -8007,6 +8035,7 @@
     }
   ],
   "reference_pulse": {
+    "variant": 20.0,
     "switching_time_tau0": 20.0,
     "switching_time_s": 1.992271345906671e-11,
     "time_s": [
