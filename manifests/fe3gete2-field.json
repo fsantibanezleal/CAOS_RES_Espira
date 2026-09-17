@@ -1,0 +1,210 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "fe3gete2-field",
+  "code": "C12",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.12.000",
+  "seed": 0,
+  "split": "train",
+  "ground_truth": "provisional",
+  "methods": [
+    "R00",
+    "R05"
+  ],
+  "variants": [
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    50.0,
+    100.0
+  ],
+  "artifact": {
+    "path": "fe3gete2-field.json",
+    "bytes": 268056,
+    "sha256": "2a37e24ccf9a7ea2321e8985b3841a6ecd46f3a3ebd609c48e44748b60a51652"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 6872.961,
+    "artifact_bytes": 268056,
+    "methods": [
+      "R00",
+      "R05"
+    ],
+    "reasons": [
+      "runtime 6873 ms over the 250 ms budget"
+    ]
+  },
+  "completeness": {
+    "expected": 12,
+    "produced": 12,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R00",
+      "variant": 2.0,
+      "cost": 3.175431631970039e-11,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 0.14588717672859008,
+        "amplitude_t": 4.659574468085107
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 5.0,
+      "cost": 7.938579079925097e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 0.9117706094467847,
+        "amplitude_t": 4.659574468085107
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 10.0,
+      "cost": 1.5877158159850194e-10,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 3.64673612647717,
+        "amplitude_t": 4.659574468085107
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 20.0,
+      "cost": 3.175431631970039e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 14.581406483305452,
+        "amplitude_t": 4.659574468085107
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 50.0,
+      "cost": 7.938579079925098e-10,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 90.89232749712933,
+        "amplitude_t": 4.659574468085107
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 100.0,
+      "cost": 1.5877158159850195e-09,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 360.1663597363756,
+        "amplitude_t": 4.659574468085107
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 2.0,
+      "cost": 2.1766351938372508e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000050650429155,
+        "cost_over_floor": 246.76603391245786,
+        "mean_amplitude_t": 12.199347353116199,
+        "peak_amplitude_t": 12.19931645800726
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 5.0,
+      "cost": 8.706772293024248e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000316564129974,
+        "cost_over_floor": 98.70903829046136,
+        "mean_amplitude_t": 4.8797389412464796,
+        "peak_amplitude_t": 4.879661703730865
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 10.0,
+      "cost": 4.3537995646501275e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.000126624148784,
+        "cost_over_floor": 49.35920608379308,
+        "mean_amplitude_t": 2.4398694706232398,
+        "peak_amplitude_t": 2.4397149974259666
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 20.0,
+      "cost": 2.177726569522395e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0005064725438595,
+        "cost_over_floor": 24.688976362614348,
+        "mean_amplitude_t": 1.2199347353116199,
+        "peak_amplitude_t": 1.2196258035922058
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 50.0,
+      "cost": 8.734047524721846e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0031644011564715,
+        "cost_over_floor": 9.90182587224895,
+        "mean_amplitude_t": 0.4879738941246479,
+        "peak_amplitude_t": 0.4872018220307756
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 100.0,
+      "cost": 4.408284597004425e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0126425727279467,
+        "cost_over_floor": 4.997690515342723,
+        "mean_amplitude_t": 0.24398694706232396,
+        "peak_amplitude_t": 0.2424446511565094
+      }
+    }
+  ],
+  "parameter_flags": [
+    "anisotropy: converted from erg/cm3 (volume)",
+    "damping: assumed",
+    "damping: wide damping band",
+    "hard_axis_ratio: assumed"
+  ]
+}

@@ -3,23 +3,25 @@
 
 import { useEffect, useState } from 'react';
 import { useShellLang } from '@fasl-work/caos-app-shell';
-import type { ArtifactIndex, CaseArtifact } from '../data/contract';
-import { loadCase, loadIndex } from '../data/load';
+import type { ArtifactIndex, Benchmark as BenchmarkArtifact, CaseArtifact } from '../data/contract';
+import { loadBenchmark, loadCase, loadIndex } from '../data/load';
 
 export function Benchmark(): React.JSX.Element {
   const lang = useShellLang();
   const es = lang === 'es';
   const [index, setIndex] = useState<ArtifactIndex | null>(null);
   const [artifacts, setArtifacts] = useState<CaseArtifact[]>([]);
+  const [benchmark, setBenchmark] = useState<BenchmarkArtifact | null>(null);
 
   useEffect(() => {
     loadIndex().then(async (ix) => {
       setIndex(ix);
       setArtifacts(await Promise.all(ix.cases.map((c) => loadCase(c.slug))));
     });
+    loadBenchmark().then(setBenchmark);
   }, []);
 
-  if (!index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
+  if (!index || !benchmark) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
   return (
     <article className="prose">
@@ -33,7 +35,8 @@ export function Benchmark(): React.JSX.Element {
         <table>
           <thead>
             <tr>
-              <th>{es ? 'Material' : 'Material'}</th>
+              <th>{es ? 'Caso' : 'Case'}</th>
+              <th>{es ? 'Sistema' : 'System'}</th>
               <th>{es ? 'Costo optimo' : 'Optimal cost'}</th>
               <th>{es ? 'Costo estatico' : 'Static cost'}</th>
               <th>{es ? 'Factor de reduccion' : 'Reduction factor'}</th>
@@ -44,6 +47,9 @@ export function Benchmark(): React.JSX.Element {
               const sb = a.static_baseline;
               return (
                 <tr key={a.case.slug}>
+                  <td>
+                    <code>{a.case.code}</code> {a.case.title}
+                  </td>
                   <td>{a.material.name}</td>
                   <td>{sb.optimal_cost.toExponential(2)}</td>
                   <td>{sb.static_switched ? sb.static_cost.toExponential(2) : 'no switch'}</td>
@@ -54,6 +60,93 @@ export function Benchmark(): React.JSX.Element {
           </tbody>
         </table>
       </div>
+      <h2>{es ? 'Matriz de metodos' : 'The method matrix'}</h2>
+      <p>
+        {es
+          ? 'Cada metodo que un caso declara corre sobre cada variante, o dice por que no puede. Una celda que falta es un fallo del release, no un promedio mas corto. La razon frente al oraculo es el costo numerico dividido por la solucion analitica: uno cuando coincide.'
+          : 'Every method a case declares runs over every variant, or says why it cannot. A missing cell fails the release rather than shortening an average. The ratio to the oracle is the numerical cost over the closed form: one when they agree.'}
+      </p>
+      <p className="muted" data-testid="benchmark-summary">
+        {es ? 'Motor' : 'Engine'} {benchmark.engine.name} {benchmark.engine.version} &middot;{' '}
+        {benchmark.cases.length} {es ? 'casos' : 'cases'} &middot;{' '}
+        {benchmark.complete
+          ? es
+            ? 'matriz completa'
+            : 'matrix complete'
+          : es
+            ? 'matriz INCOMPLETA'
+            : 'matrix INCOMPLETE'}
+      </p>
+      <div className="table-wrap">
+        <table data-testid="method-matrix">
+          <thead>
+            <tr>
+              <th>{es ? 'Caso' : 'Case'}</th>
+              <th>{es ? 'Metodo' : 'Method'}</th>
+              <th>{es ? 'Celdas' : 'Cells'}</th>
+              <th>{es ? 'Mejor costo' : 'Best cost'}</th>
+              <th>{es ? 'Peor razon al oraculo' : 'Worst ratio to oracle'}</th>
+              <th>{es ? 'Nota' : 'Note'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {benchmark.cases.flatMap((c) =>
+              c.methods.map((m) => (
+                <tr key={`${c.case}-${m.method}`} data-case={c.case} data-method={m.method}>
+                  <td>{c.case}</td>
+                  <td>
+                    <code>{m.method}</code>
+                  </td>
+                  <td>
+                    {m.produced}/{m.cells}
+                    {m.not_applicable > 0 && ` (${m.not_applicable} n/a)`}
+                  </td>
+                  <td>{m.best_cost === null ? '-' : m.best_cost.toExponential(2)}</td>
+                  <td>{m.worst_ratio_to_oracle === null ? '-' : m.worst_ratio_to_oracle.toFixed(3)}</td>
+                  <td className="muted">{m.notes}</td>
+                </tr>
+              )),
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>{es ? 'Evidencia del release' : 'Release evidence'}</h2>
+      <p>
+        {es
+          ? 'Cada artefacto esta ligado por hash a un manifiesto que registra el motor, la semilla, los metodos, el veredicto de carril medido y la completitud. La etapa de validacion rechaza un release cuyo artefacto no coincide con su manifiesto.'
+          : 'Every artifact is bound by hash to a manifest recording the engine, the seed, the methods, the measured lane verdict and the completeness. The validate stage refuses a release whose artifact does not match its manifest.'}
+      </p>
+      <div className="table-wrap">
+        <table data-testid="release-evidence">
+          <thead>
+            <tr>
+              <th>{es ? 'Caso' : 'Case'}</th>
+              <th>{es ? 'Carril' : 'Lane'}</th>
+              <th>{es ? 'Completitud' : 'Completeness'}</th>
+              <th>sha256</th>
+            </tr>
+          </thead>
+          <tbody>
+            {benchmark.manifests.map((m) => (
+              <tr key={m.case} data-manifest={m.case}>
+                <td>
+                  <code>{m.code}</code> {m.case}
+                </td>
+                <td>{m.lane}</td>
+                <td>
+                  {m.completeness.produced + m.completeness.not_applicable}/{m.completeness.expected}
+                  {m.completeness.missing > 0 && ` (${m.completeness.missing} missing)`}
+                </td>
+                <td>
+                  <code>{m.sha256.slice(0, 12)}</code>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="callout">
         <h3>{es ? 'Que es y que no es este numero' : 'What this number is and is not'}</h3>
         <ul>
