@@ -80,6 +80,16 @@
       "material_name": "FePS3",
       "includes_biaxial": false,
       "axis": "Switching time"
+    },
+    {
+      "slug": "amortized-policy",
+      "code": "C26",
+      "title": "The amortized policy on held-out materials",
+      "category": "F. Screening and learned",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Damping"
     }
   ],
   "categories": {
@@ -94,12 +104,15 @@
       "cri3-field",
       "cr2ge2te6-floor",
       "feps3-negative-control"
+    ],
+    "F. Screening and learned": [
+      "amortized-policy"
     ]
   },
   "coverage": {
-    "baked": 10,
-    "planned": 14,
-    "blocked": 2
+    "baked": 11,
+    "planned": 11,
+    "blocked": 4
   },
   "registry": [
     {
@@ -473,9 +486,9 @@
       "code": "C23",
       "title": "Band-limited control, the price of realizability",
       "category": "E. Constrained and hybrid control",
-      "status": "planned",
+      "status": "blocked",
       "surface": "workbench",
-      "blocked_reason": "",
+      "blocked_reason": "The engine's band-limited solver optimizes with Nelder-Mead, which does not converge at this parameter count: measured 2026-09-17, 90 to 230 seconds per solve and a cost 2.2 times the analytic optimum at two harmonics rising to 14 times at six, where more harmonics should cost less. Baking it would ship optimizer artifacts as a price of realizability. Needs the engine's constrained solvers on a gradient method (programme backlog BL-036).",
       "split": "control",
       "ground_truth": "analytic",
       "variants": 6,
@@ -490,9 +503,9 @@
       "code": "C24",
       "title": "Amplitude and slew-rate limited control",
       "category": "E. Constrained and hybrid control",
-      "status": "planned",
+      "status": "blocked",
       "surface": "workbench",
-      "blocked_reason": "",
+      "blocked_reason": "Same engine defect as the band-limited case: the constrained solver optimizes with Nelder-Mead and does not converge at this parameter count, so the reported cost under a cap would be an optimizer artifact rather than the price of the constraint (programme backlog BL-036).",
       "split": "control",
       "ground_truth": "analytic",
       "variants": 6,
@@ -523,7 +536,7 @@
       "code": "C26",
       "title": "The amortized policy on held-out materials",
       "category": "F. Screening and learned",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "test",
@@ -531,7 +544,8 @@
       "variants": 6,
       "axis": "Damping",
       "methods": [
-        "R15"
+        "R15",
+        "R05"
       ]
     }
   ]

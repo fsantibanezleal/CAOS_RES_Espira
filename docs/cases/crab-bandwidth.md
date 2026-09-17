@@ -1,6 +1,8 @@
 # Band-limited control, the price of realizability
 
-Case `crab-bandwidth` (C23), category E. Constrained and hybrid control. Planned: declared and runnable, not yet computed.
+Case `crab-bandwidth` (C23), category E. Constrained and hybrid control. Blocked: something outside this repository is missing.
+
+**What is missing.** The engine's band-limited solver optimizes with Nelder-Mead, which does not converge at this parameter count: measured 2026-09-17, 90 to 230 seconds per solve and a cost 2.2 times the analytic optimum at two harmonics rising to 14 times at six, where more harmonics should cost less. Baking it would ship optimizer artifacts as a price of realizability. Needs the engine's constrained solvers on a gradient method (programme backlog BL-036).
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
