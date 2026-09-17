@@ -181,7 +181,12 @@ function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boole
               <tr key={a.case.slug}>
                 <td>{a.material.name}</td>
                 <td>{a.material.family}</td>
-                <td>{a.material.damping}</td>
+                <td>
+                  {a.material.damping}{' '}
+                  {a.material.provenance.damping?.provenance === 'assumed' && (
+                    <span className="prov-badge prov-assumed">{es ? 'supuesto' : 'assumed'}</span>
+                  )}
+                </td>
                 <td>{mid.cost_over_free.toFixed(3)}</td>
                 <td>{mid.cost_over_floor?.toFixed(2)}</td>
                 <td>{a.biaxial_reduction ? a.biaxial_reduction.biaxial_over_free.toFixed(3) : '-'}</td>

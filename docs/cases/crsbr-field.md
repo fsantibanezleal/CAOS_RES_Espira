@@ -12,24 +12,21 @@ The optimal pulse cost falls with switching time toward the universal floor; the
 
 ## Material: CrSBr
 
-| Parameter | Value |
-|---|---|
-| Family | semiconductor |
-| Spin | 1.5 |
-| Moment per site | 3 Bohr magnetons |
-| Anisotropy per site | 0.15 meV |
-| Hard-axis ratio | 3 |
-| Gilbert damping | 0.01 (range 0.004 to 0.02) |
-| Ordering temperature | 146 K |
-| Easy axis | in-plane b axis (triaxial: b easy, z hard) |
+| Parameter | Value | Provenance | Source |
+|---|---|---|---|
+| Family | semiconductor | | |
+| Spin | 1.5 | | |
+| Easy axis | in-plane b axis (triaxial: b easy, z hard) | | |
+| Moment per site | 3 Bohr magnetons | derived | [10.1002/advs.202202467](https://doi.org/10.1002/advs.202202467) |
+| Anisotropy per site (unit-vector convention) | 0.15 meV | assumed | [10.1002/advs.202202467](https://doi.org/10.1002/advs.202202467) |
+| Hard-axis ratio | 3 | assumed | [10.1038/s41524-023-01050-3](https://doi.org/10.1038/s41524-023-01050-3) |
+| Gilbert damping | 0.01 (range 0.004 to 0.02) | assumed | [10.1021/acs.nanolett.2c02863](https://doi.org/10.1021/acs.nanolett.2c02863) |
+| Ordering temperature | 146 K | measured | [10.1021/acs.nanolett.1c00219](https://doi.org/10.1021/acs.nanolett.1c00219) |
 
-Monolayer, A-type antiferromagnetic stacking, ferromagnetic within a layer. The exchange Hamiltonian is measured by inelastic neutron scattering (Scheie 2022, eighth-neighbour set, convention +sum J S.S, S=3/2). Anisotropy is below the neutron resolution and is triaxial and dielectric-tunable (Rudenko 2023): the substrate is a knob on the hard-axis ratio. The macrospin anisotropy here is an effective easy-axis scale, not a micromagnetic constant.
+Monolayer, ferromagnetic within a layer, antiferromagnetically stacked in bulk. The exchange Hamiltonian is measured by inelastic neutron scattering (Scheie 2022, S = 3/2), but the anisotropy is below the neutron resolution; the easy-axis scale and the hard-axis ratio used here are assumed and flagged. Triaxiality and its dielectric tunability are computed (Rudenko 2023): the substrate is a knob on the hard axis.
 
-Sources:
-
-- https://doi.org/10.1002/advs.202202467
-- https://doi.org/10.48550/arXiv.2302.12672
-- https://doi.org/10.1002/adma.202523059
+Every value enters through Contract 1 (`data/materials/parameters.csv`); the conversion from the published
+unit and each value's note are in that table. Assumed values are not measurements.
 
 ## Variants
 

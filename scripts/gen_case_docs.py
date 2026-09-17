@@ -1,7 +1,7 @@
-"""Generate docs/cases/<case>.md from the case registry and the material database.
+"""Generate docs/cases/<case>.md from the case registry and the Contract 1 material records.
 
 The per-case pages restate registry and parameter values; hand-copying them drifts. Run this after any
-registry or material change; tests/test_docs.py fails when the committed pages differ from a fresh
+registry or parameter change; tests/test_docs.py fails when the committed pages differ from a fresh
 generation.
 
 Usage: python scripts/gen_case_docs.py [--check]
@@ -20,11 +20,31 @@ from espiralab.materials import get_material  # noqa: E402
 
 OUT = ROOT / "docs" / "cases"
 
+LABELS = {
+    "moment": ("Moment per site", lambda m: f"{m.moment_bohr:.3g} Bohr magnetons"),
+    "anisotropy": ("Anisotropy per site (unit-vector convention)", lambda m: f"{m.anisotropy_mev:.4g} meV"),
+    "hard_axis_ratio": ("Hard-axis ratio", lambda m: f"{m.hard_axis_ratio:g}"),
+    "damping": ("Gilbert damping", lambda m: f"{m.damping:g} (range {m.damping_low:g} to {m.damping_high:g})"),
+    "ordering_temperature": ("Ordering temperature", lambda m: f"{m.curie_kelvin:g} K"),
+}
+
+
+def parameter_rows(m) -> str:
+    rows = [
+        f"| Family | {m.family} | | |",
+        f"| Spin | {m.spin:g} | | |",
+        f"| Easy axis | {m.easy_axis} | | |",
+    ]
+    for name, (label, fmt) in LABELS.items():
+        record = m.provenance[name]
+        sources = ", ".join(f"[{doi}](https://doi.org/{doi})" for doi in record["sources"]) or "none"
+        rows.append(f"| {label} | {fmt(m)} | {record['provenance']} | {sources} |")
+    return "\n".join(rows)
+
 
 def page(slug: str) -> str:
     case = CASES[slug]
     m = get_material(case.material)
-    sources = "\n".join(f"- https://doi.org/{doi}" for doi in m.sources)
     variants = ", ".join(f"{t:g}" for t in case.switching_times_tau0)
     biaxial = (
         "Yes: the numerical image-based optimal control path with the hard axis, which has no closed form."
@@ -45,22 +65,14 @@ Case `{slug}`, category `{case.category}`. Generated from the registry by `scrip
 
 ## Material: {m.name}
 
-| Parameter | Value |
-|---|---|
-| Family | {m.family} |
-| Spin | {m.spin:g} |
-| Moment per site | {m.moment_bohr:g} Bohr magnetons |
-| Anisotropy per site | {m.anisotropy_mev:g} meV |
-| Hard-axis ratio | {m.hard_axis_ratio:g} |
-| Gilbert damping | {m.damping:g} (range {m.damping_low:g} to {m.damping_high:g}) |
-| Ordering temperature | {m.curie_kelvin:g} K |
-| Easy axis | {m.easy_axis} |
+| Parameter | Value | Provenance | Source |
+|---|---|---|---|
+{parameter_rows(m)}
 
 {m.notes}
 
-Sources:
-
-{sources}
+Every value enters through Contract 1 (`data/materials/parameters.csv`); the conversion from the published
+unit and each value's note are in that table. Assumed values are not measurements.
 
 ## Variants
 
