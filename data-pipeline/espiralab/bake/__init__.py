@@ -214,7 +214,7 @@ def bake_all(output_dir: Path) -> dict:
     for slug, case in CASES.items():
         artifact = bake_case(case)
         path = output_dir / f"{slug}.json"
-        path.write_text(json.dumps(artifact, indent=2), encoding="utf-8")
+        path.write_text(json.dumps(artifact, indent=2), encoding="utf-8", newline="\n")
         index["cases"].append(
             {
                 "slug": slug,
@@ -227,5 +227,5 @@ def bake_all(output_dir: Path) -> dict:
         )
         index["categories"].setdefault(case.category, []).append(slug)
 
-    (output_dir / "index.json").write_text(json.dumps(index, indent=2), encoding="utf-8")
+    (output_dir / "index.json").write_text(json.dumps(index, indent=2), encoding="utf-8", newline="\n")
     return index

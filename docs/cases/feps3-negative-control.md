@@ -12,22 +12,21 @@ The macrospin optimal-control numbers are computed but flagged as not physically
 
 ## Material: FePS3
 
-| Parameter | Value |
-|---|---|
-| Family | Ising antiferromagnet |
-| Spin | 2 |
-| Moment per site | 4 Bohr magnetons |
-| Anisotropy per site | 2 meV |
-| Hard-axis ratio | 0 |
-| Gilbert damping | 0.01 (range 0.005 to 0.02) |
-| Ordering temperature | 118 K |
-| Easy axis | out-of-plane (very strong Ising) |
+| Parameter | Value | Provenance | Source |
+|---|---|---|---|
+| Family | Ising antiferromagnet | | |
+| Spin | 2 | | |
+| Easy axis | out-of-plane (strong Ising) | | |
+| Moment per site | 4 Bohr magnetons | derived | [10.1103/PhysRevB.94.214407](https://doi.org/10.1103/PhysRevB.94.214407) |
+| Anisotropy per site (unit-vector convention) | 10.64 meV | derived | [10.1103/PhysRevB.94.214407](https://doi.org/10.1103/PhysRevB.94.214407) |
+| Hard-axis ratio | 0 | assumed | none |
+| Gilbert damping | 0.01 (range 0.005 to 0.02) | assumed | none |
+| Ordering temperature | 118 K | measured | [10.1002/aelm.202100408](https://doi.org/10.1002/aelm.202100408) |
 
-The negative control. An Ising antiferromagnet (Neel temperature 118 K), where uniform field-driven reversal of a single sublattice is not the relevant switching mode. Included so the product can show what the optimal-control machinery says when its own assumptions (a single ferromagnetic macrospin) do not hold, rather than silently producing a number.
+The negative control: an Ising antiferromagnet (Neel temperature 118 K) where uniform field-driven reversal of a single ferromagnetic macrospin is not the physical switching mode. The large single-ion anisotropy comes from inelastic neutron scattering (Lancon 2016) and is converted assuming the term -Delta (S^z)^2. Included so the product shows what the machinery says when its own assumptions fail.
 
-Sources:
-
-- https://doi.org/10.1103/PhysRevB.94.214407
+Every value enters through Contract 1 (`data/materials/parameters.csv`); the conversion from the published
+unit and each value's note are in that table. Assumed values are not measurements.
 
 ## Variants
 

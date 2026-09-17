@@ -10,6 +10,7 @@ import { loadCase, loadIndex } from '../data/load';
 import { CostChart } from '../viz/CostChart';
 import { PulseChart } from '../viz/PulseChart';
 import { SphereTrajectory } from '../viz/SphereTrajectory';
+import { ParameterPanel } from '../viz/ParameterPanel';
 import { useTheme } from '../theme';
 
 const T = {
@@ -22,11 +23,6 @@ const T = {
     reason: 'Why this case',
     expectation: 'Expected behaviour',
     easyAxis: 'Easy axis',
-    damping: 'Gilbert damping',
-    curie: 'Ordering temperature',
-    moment: 'Moment',
-    anis: 'Anisotropy K',
-    hard: 'Hard-axis ratio',
     floor: 'Universal floor',
     reduction: 'Static-field reduction',
     biaxial: 'Biaxial hard-axis result',
@@ -39,6 +35,9 @@ const T = {
     meanField: 'Mean field',
     overFloor: 'cost / floor',
     loading: 'Loading baked artifact...',
+    negativeTitle: 'Negative control',
+    negativeBody:
+      'The macrospin model assumes a single ferromagnetic moment. This material is an antiferromagnet, so these numbers show what the machinery returns when its own assumptions fail. They are not predictions of how it switches.',
   },
   es: {
     variant: 'Tiempo de conmutacion',
@@ -49,11 +48,6 @@ const T = {
     reason: 'Por que este caso',
     expectation: 'Comportamiento esperado',
     easyAxis: 'Eje facil',
-    damping: 'Amortiguamiento de Gilbert',
-    curie: 'Temperatura de orden',
-    moment: 'Momento',
-    anis: 'Anisotropia K',
-    hard: 'Razon de eje duro',
     floor: 'Piso universal',
     reduction: 'Reduccion frente al campo estatico',
     biaxial: 'Resultado biaxial de eje duro',
@@ -66,6 +60,9 @@ const T = {
     meanField: 'Campo medio',
     overFloor: 'costo / piso',
     loading: 'Cargando artefacto...',
+    negativeTitle: 'Control negativo',
+    negativeBody:
+      'El modelo de macrospin supone un unico momento ferromagnetico. Este material es un antiferromagneto, por lo que estos numeros muestran lo que entrega la maquinaria cuando sus propios supuestos fallan. No son predicciones de como conmuta.',
   },
 };
 
@@ -103,7 +100,8 @@ export function Workbench(): React.JSX.Element {
       id: c.slug,
       name: c.material_name,
       category: c.category,
-      kind: c.category === 'negative-control' ? 'synthetic' : 'real',
+      // Every case, the negative control included, runs on published parameters.
+      kind: 'real',
       anchor: c.includes_biaxial ? 'biaxial hard-axis case' : undefined,
     }));
   }, [index]);
@@ -189,6 +187,11 @@ export function Workbench(): React.JSX.Element {
 
         <aside className="wb-readout">
           <h3>{m.name}</h3>
+          {artifact.case.category === 'negative-control' && (
+            <div className="negative-control" role="note" data-testid="negative-control">
+              <strong>{t.negativeTitle}.</strong> {t.negativeBody}
+            </div>
+          )}
           <div className="wb-variant-readout">
             <strong>{t.atThisVariant}</strong> ({artifact.switching_times_tau0[variant]} tau0)
             <dl>
@@ -200,21 +203,10 @@ export function Workbench(): React.JSX.Element {
               <dd>{(costRow.mean_amplitude * 1e3).toFixed(2)} mT</dd>
             </dl>
           </div>
+          <ParameterPanel material={m} lang={lang} />
           <dl>
             <dt>{t.easyAxis}</dt>
             <dd>{m.easy_axis}</dd>
-            <dt>{t.moment}</dt>
-            <dd>{m.moment_bohr} muB</dd>
-            <dt>{t.anis}</dt>
-            <dd>{m.anisotropy_mev} meV</dd>
-            <dt>{t.hard}</dt>
-            <dd>{m.hard_axis_ratio}</dd>
-            <dt>{t.damping}</dt>
-            <dd>
-              {m.damping} ({m.damping_low}-{m.damping_high})
-            </dd>
-            <dt>{t.curie}</dt>
-            <dd>{m.curie_kelvin} K</dd>
             <dt>{t.floor}</dt>
             <dd>{sci(costRow.cost_floor)} T^2 s</dd>
             <dt>{t.reduction}</dt>

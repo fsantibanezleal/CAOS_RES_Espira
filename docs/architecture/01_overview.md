@@ -22,8 +22,8 @@ the engine, which the product pins (`data-pipeline/requirements.txt`).
 ## Data flow
 
 ```
-published parameters (DOI per value)
-        |  espiralab/materials   (curated in code today; Contract 1 module planned)
+published parameters (data/materials/*.csv, one row per value with unit, provenance, DOI)
+        |  Contract 1: stages ingest (validate, reject with a reason, flag) and preprocess (canonical units)
         v
 case registry (category, reason, expectation, six switching-time variants)
         |  espiralab/bake        drives spinoct
@@ -48,7 +48,8 @@ Three bakes produce the artifacts:
 ## What is not yet on the staged base
 
 ADR-0057 and ADR-0069 require the named stages `ingest -> preprocess -> dataset -> features -> train ->
-infer -> evaluate -> export -> validate`, a Contract 1 ingestion module, per-case manifests with hashes and
+infer -> evaluate -> export -> validate`. `ingest` and `preprocess` with Contract 1 are implemented
+([02_data-contracts.md](02_data-contracts.md)); still missing are per-case manifests with hashes and
 a measured lane gate, a model registry, and the method x case x variant completeness manifest. The bakes
 above implement the science without that structure, and the case registry holds 6 of the 26 cases of the
 validated plan. The rebuild order is recorded in the programme plan (units U2 to U7); this page is updated

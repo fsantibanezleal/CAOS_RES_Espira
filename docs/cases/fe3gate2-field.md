@@ -12,22 +12,21 @@ Uniaxial, room-temperature-relevant; the cost curve mirrors Fe3GeTe2 scaled by i
 
 ## Material: Fe3GaTe2
 
-| Parameter | Value |
-|---|---|
-| Family | itinerant metal |
-| Spin | 1 |
-| Moment per site | 1.82 Bohr magnetons |
-| Anisotropy per site | 0.31 meV |
-| Hard-axis ratio | 0 |
-| Gilbert damping | 0.01 (range 0.003 to 0.03) |
-| Ordering temperature | 380 K |
-| Easy axis | out-of-plane c axis (strong perpendicular anisotropy) |
+| Parameter | Value | Provenance | Source |
+|---|---|---|---|
+| Family | itinerant metal | | |
+| Spin | 1 | | |
+| Easy axis | out-of-plane c axis | | |
+| Moment per site | 1.82 Bohr magnetons | computed | [10.1021/acs.nanolett.4c01019](https://doi.org/10.1021/acs.nanolett.4c01019) |
+| Anisotropy per site (unit-vector convention) | 0.31 meV | computed | [10.1021/acs.nanolett.4c01019](https://doi.org/10.1021/acs.nanolett.4c01019) |
+| Hard-axis ratio | 0 | assumed | none |
+| Gilbert damping | 0.01 (range 0.003 to 0.03) | assumed | none |
+| Ordering temperature | 380 K | measured | [10.1038/s41467-022-32605-5](https://doi.org/10.1038/s41467-022-32605-5) |
 
-The only above-room-temperature member (bulk Tc about 380 K). Strong perpendicular anisotropy, MAE 0.31 meV/Fe (Ruiz 2024, DFT plus Wannier plus TB2J, cross-checked with SIESTA). Metallic, so spin-orbit-torque compatible.
+The above-room-temperature member (350 to 380 K, Zhang 2022). Moment and anisotropy are first-principles values (Ruiz 2024); the measured room-temperature anisotropy is lower. Damping assumed and flagged.
 
-Sources:
-
-- https://doi.org/10.1021/acs.nanolett.4c01019
+Every value enters through Contract 1 (`data/materials/parameters.csv`); the conversion from the published
+unit and each value's note are in that table. Assumed values are not measurements.
 
 ## Variants
 

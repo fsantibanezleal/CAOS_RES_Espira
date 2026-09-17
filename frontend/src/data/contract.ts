@@ -18,6 +18,21 @@ export interface MaterialInfo {
   easy_axis: string;
   notes: string;
   sources: string[];
+  /** Contract 1 record per parameter (moment, anisotropy, hard_axis_ratio, damping, ordering_temperature). */
+  provenance: Record<string, ParameterProvenance>;
+  flags: string[];
+}
+
+export interface ParameterProvenance {
+  value: number;
+  low: number | null;
+  high: number | null;
+  provenance: 'measured' | 'computed' | 'derived' | 'assumed';
+  method: string;
+  sources: string[];
+  note: string;
+  input: { value: number; unit: string; basis: string };
+  flags: string[];
 }
 
 export interface CostRow {

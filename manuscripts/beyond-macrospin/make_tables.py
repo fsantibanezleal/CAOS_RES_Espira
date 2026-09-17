@@ -45,7 +45,7 @@ def ratio_table(cases: list[dict], alpha: float, label: str, caption: str) -> st
     floor = " & ".join(f"{lookup[(t_long, n)]['floor_ratio']:.3f}" for n in sizes)
     lines.append(f"floor at {t_long:g} & {floor} {BS}{BS}")
     barrier = " & ".join(f"{lookup[(t_long, n)]['barrier_over_nk']:.3f}" for n in sizes)
-    lines.append(f"$" + BS + "Delta E/(NK)$ & " + barrier + f" {BS}{BS}")
+    lines.append("$" + BS + "Delta E/(NK)$ & " + barrier + f" {BS}{BS}")
     lines += [f"{BS}bottomrule", f"{BS}end{{tabular}}", f"{BS}end{{table}}", ""]
     return "\n".join(lines)
 
@@ -65,6 +65,7 @@ def main() -> int:
             "path barrier relative to $NK$.",
         ),
         encoding="utf-8",
+        newline="\n",
     )
     (OUT / "alpha01.tex").write_text(
         ratio_table(
@@ -74,6 +75,7 @@ def main() -> int:
             "As Table~" + BS + "ref{tab:alpha05} at $" + BS + "alpha = 0.1$.",
         ),
         encoding="utf-8",
+        newline="\n",
     )
     saving = [c for c in cases if c["saving"] > 0.01]
     best = max(cases, key=lambda c: c["saving"])
@@ -86,7 +88,7 @@ def main() -> int:
         "best_floor": round(best["floor_ratio"], 4),
         "min_ratio_over_floor": round(min(c["best_ratio"] / c["floor_ratio"] for c in cases), 4),
     }
-    (OUT / "facts.json").write_text(json.dumps(facts, indent=2), encoding="utf-8")
+    (OUT / "facts.json").write_text(json.dumps(facts, indent=2), encoding="utf-8", newline="\n")
     print(json.dumps(facts, indent=2))
     return 0
 
