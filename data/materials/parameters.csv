@@ -1,0 +1,31 @@
+material,parameter,value,unit,basis,spin_length,ions_per_cell,cell_volume_nm3,ms_emu_per_cm3,moment_for_density_bohr,low,high,provenance,method,source_doi,note
+crsbr,moment,3.0,mu_B,per-ion,,,,,,,,derived,spin length and g = 2,10.1002/advs.202202467,"S = 3/2 Cr(III) from the neutron Hamiltonian, g = 2."
+crsbr,anisotropy,0.15,meV,unit-vector,,,,,,,,assumed,,10.1002/advs.202202467,"Below neutron resolution. Chosen at the scale of the quoted zone-centre magnon gaps (0.102 and 0.141 meV); a ferromagnetic gap-to-K relation does not hold for the antiferromagnetically stacked bulk. Kept because manuscript M1 uses it."
+crsbr,hard_axis_ratio,3.0,ratio,none,,,,,,,,assumed,,10.1038/s41524-023-01050-3,"Triaxiality (b easy, z hard) is computed; the ratio of the hard to the easy scale is an assumption."
+crsbr,damping,0.01,dimensionless,none,,,,,,0.004,0.02,assumed,,10.1021/acs.nanolett.2c02863,"The typical value set in first-principles spin dynamics of CrSBr; no measurement found."
+crsbr,ordering_temperature,146,K,none,,,,,,,,measured,second-harmonic generation (monolayer),10.1021/acs.nanolett.1c00219,Monolayer ferromagnetic order.
+fe3gete2,moment,1.58,mu_B,per-ion,,,,,,,,measured,SQUID magnetometry at 5 K,10.1063/1.4961592,"Saturated moment per Fe of an Fe2.87GeTe2 crystal; published values span 1.2 to 1.8."
+fe3gete2,anisotropy,1.46e7,erg/cm3,volume,,,,376,1.58,,,derived,SQUID magnetometry at 5 K (K_1 with demagnetizing correction),10.1063/1.4961592,"K_u per Fe through the ion density implied by M_s = 376 emu/cm3 and 1.58 mu_B/Fe from the same measurement."
+fe3gete2,damping,0.01,dimensionless,none,,,,,,0.003,0.03,assumed,,,"No measured Gilbert damping found; a wide band on purpose."
+fe3gete2,ordering_temperature,130,K,none,,,,,,,,measured,anomalous Hall effect (monolayer),10.1038/s41563-018-0149-7,Monolayer; 207 K in thick flakes in the same work.
+fe3gate2,moment,1.82,mu_B,per-ion,,,,,,,,computed,DFT (LDA) average over Fe sites,10.1021/acs.nanolett.4c01019,2.05 mu_B on Fe1 and Fe2 and 1.35 mu_B on Fe3.
+fe3gate2,anisotropy,0.31,meV,unit-vector,,,,,,,,computed,DFT magnetic anisotropy energy per Fe,10.1021/acs.nanolett.4c01019,"Low-temperature first-principles value; the measured room-temperature anisotropy (4.79e5 J/m3, Zhang 2022) is lower."
+fe3gate2,damping,0.01,dimensionless,none,,,,,,0.003,0.03,assumed,,,No measured Gilbert damping found.
+fe3gate2,ordering_temperature,380,K,none,,,,,,,,measured,magnetometry (bulk crystal),10.1038/s41467-022-32605-5,Reported as 350 to 380 K.
+cri3,moment,3.0,mu_B,per-ion,,,,,,,,derived,spin length and g = 2,10.1103/PhysRevX.8.041028,S = 3/2 Cr(III) from the neutron Hamiltonian.
+cri3,anisotropy,0.22,meV,spin-operator,1.5,,,,,,,measured,inelastic neutron scattering fit,10.1103/PhysRevX.8.041028,"D_z in H = -sum[J S.S + A.(S x S)] - sum D_z (S^z)^2, with J1 = 2.01 meV."
+cri3,damping,0.01,dimensionless,none,,,,,,0.005,0.02,assumed,,,No measured Gilbert damping found.
+cri3,ordering_temperature,45,K,none,,,,,,,,measured,magneto-optical Kerr effect (monolayer),10.1038/nature22391,Monolayer.
+cr2ge2te6,moment,2.80,mu_B,per-ion,,,,,,,,measured,neutron powder diffraction at 5 K,10.1088/0953-8984/7/1/008,Ordered Cr moment along c.
+cr2ge2te6,anisotropy,3.95e5,erg/cm3,volume,,6,0.8301,,,,,derived,broadband ferromagnetic resonance at 2 K,10.1103/PhysRevB.100.134437;10.1088/0953-8984/7/1/008,"K_u per Cr through the hexagonal cell (Z = 3, six Cr in 0.8301 nm3, Carteaux 1995). K_u falls to 0.77e5 erg/cm3 at 60 K."
+cr2ge2te6,damping,0.0007,dimensionless,none,,,,,,0.0004,0.001,measured,spin pumping and ferromagnetic resonance (thick flakes),10.1038/s41467-023-39529-8,The nominal value is the middle of the measured range.
+cr2ge2te6,ordering_temperature,61,K,none,,,,,,,,measured,magnetometry and neutron diffraction (bulk),10.1088/0953-8984/7/1/008,Bulk.
+feps3,moment,4.0,mu_B,per-ion,,,,,,,,derived,spin length and g = 2,10.1103/PhysRevB.94.214407,S = 2 Fe(II).
+feps3,anisotropy,2.66,meV,spin-operator,2.0,,,,,,,derived,inelastic neutron scattering fit,10.1103/PhysRevB.94.214407,"Single-ion Delta with J1 = 1.46, J2 = -0.04, J3 = -0.96 meV. The conversion assumes the term -Delta (S^z)^2; the operator form was not read in the full text."
+feps3,damping,0.01,dimensionless,none,,,,,,0.005,0.02,assumed,,,No measured Gilbert damping found.
+feps3,ordering_temperature,118,K,none,,,,,,,,measured,low-frequency electronic noise and magnetometry,10.1002/aelm.202100408,Neel temperature.
+fe3gete2,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
+fe3gate2,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
+cri3,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
+cr2ge2te6,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
+feps3,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
