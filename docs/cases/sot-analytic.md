@@ -1,6 +1,6 @@
 # Spin-orbit torque, the analytic optimum
 
-Case `sot-analytic` (C03), category A. Exact oracles. Planned: declared and runnable, not yet computed.
+Case `sot-analytic` (C03), category A. Exact oracles. Baked: committed artifacts, replayed by the web app.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
@@ -10,11 +10,11 @@ The current-driven counterpart: the closed-form optimal spin-orbit-torque protoc
 
 ## What a domain expert should see
 
-The optimal ratio xi_D = -alpha xi_F reproduces the published protocol; the cost falls with switching time like the field case.
+At the ideal ratio xi_D = -alpha xi_F the current torque points entirely along the switching direction, the average current follows Eq. 8 exactly, and the fast-switching cost asymptote falls as 1/T like the field case. At the forbidden ratio xi_F = alpha xi_D the protocol is reported as forbidden rather than returning a finite cost. The reported quantity is a current integral in the reference reduced units, NOT a field cost in T^2 s, and the case declares that so it is never mixed into a field-cost comparison.
 
 ## Kill criterion
 
-A reversal at the forbidden ratio xi_F = alpha xi_D, where the torque cannot drive the moment over the barrier, would mean the spin-orbit torque enters with the wrong sign.
+A reversal at the forbidden ratio xi_F = alpha xi_D, where the torque cannot drive the moment over the barrier, would mean the spin-orbit torque enters with the wrong sign. A mean current that disagrees with the closed form of Eq. 8, or a reduced-unit cost quoted in T^2 s, is equally a failure.
 
 ## System: a synthetic reference macrospin
 

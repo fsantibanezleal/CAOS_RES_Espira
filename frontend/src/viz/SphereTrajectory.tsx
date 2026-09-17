@@ -11,8 +11,10 @@ interface Props {
   theme: 'light' | 'dark';
 }
 
-/** Below this the poles and their labels collide; above it the projection gains nothing. */
-const MIN_SPHERE_PX = 200;
+/** Below this the poles and their labels collide; above it the projection gains nothing. The floor
+ * is deliberately small: the sphere must fit the box it was given rather than push past it, and the
+ * bounded case list keeps the box comfortably above this in practice. */
+const MIN_SPHERE_PX = 140;
 const MAX_SPHERE_PX = 460;
 
 function cssVar(name: string, fallback: string): string {

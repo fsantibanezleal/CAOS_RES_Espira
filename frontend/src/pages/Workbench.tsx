@@ -5,12 +5,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useShellLang, CaseSelector, SubTabs, type CaseDef } from '@fasl-work/caos-app-shell';
-import type { ArtifactIndex, Benchmark, CaseArtifact } from '../data/contract';
+import type { ArtifactIndex, Benchmark, CaseArtifact, CostRow } from '../data/contract';
 import { loadBenchmark, loadCase, loadIndex } from '../data/load';
 import { CostChart } from '../viz/CostChart';
 import { PulseChart } from '../viz/PulseChart';
 import { SphereTrajectory } from '../viz/SphereTrajectory';
 import { ParameterPanel } from '../viz/ParameterPanel';
+import { sotOptimalProtocol } from '../engine/sotAnalytic';
 import { useTheme } from '../theme';
 
 const T = {
@@ -46,6 +47,14 @@ const T = {
     overFloor: 'cost / floor',
     loading: 'Loading baked artifact...',
     noSwitch: 'no reversal',
+    observed: 'Measured here',
+    notAFieldCost: 'This case does not report a field cost',
+    fieldReference: 'Field cost of the same reversal (scale only)',
+    liveTitle: 'Recomputed in your browser',
+    liveAgreement: 'agreement with the baked artifact',
+    liveNote:
+      'This case is in the live lane: the closed form runs on the client and is checked against the committed artifact.',
+    drawnPath: 'About the drawn path',
     negativeTitle: 'Negative control',
     negativeBody:
       'The macrospin model assumes a single ferromagnetic moment. This material is an antiferromagnet, so these numbers show what the machinery returns when its own assumptions fail. They are not predictions of how it switches.',
@@ -82,6 +91,14 @@ const T = {
     overFloor: 'costo / piso',
     loading: 'Cargando artefacto...',
     noSwitch: 'sin inversion',
+    observed: 'Medido aqui',
+    notAFieldCost: 'Este caso no reporta un costo de campo',
+    fieldReference: 'Costo de campo de la misma reversion (solo escala)',
+    liveTitle: 'Recalculado en tu navegador',
+    liveAgreement: 'acuerdo con el artefacto precomputado',
+    liveNote:
+      'Este caso corre en el carril vivo: la forma cerrada se evalua en el cliente y se compara con el artefacto comprometido.',
+    drawnPath: 'Sobre la trayectoria dibujada',
     negativeTitle: 'Control negativo',
     negativeBody:
       'El modelo de macrospin supone un unico momento ferromagnetico. Este material es un antiferromagneto, por lo que estos numeros muestran lo que entrega la maquinaria cuando sus propios supuestos fallan. No son predicciones de como conmuta.',
@@ -91,6 +108,41 @@ const T = {
 function sci(x: number, d = 2): string {
   return x.toExponential(d);
 }
+
+/** A readable value for a quantity that may be a cost of 1e-11 or a success rate of 0.932. */
+function quantity(x: number): string {
+  return Math.abs(x) >= 0.01 && Math.abs(x) < 1000 ? Number(x.toPrecision(3)).toString() : sci(x);
+}
+
+
+/** What the browser itself computed for a live-lane case, and how far it is from the baked value.
+ *
+ * The lane gate decides live against precompute by measurement. A verdict of "live" that nothing could
+ * actually evaluate on the client would be a label, so the one case that passes the gate is recomputed
+ * here from its own inputs and the agreement is shown. A disagreement is a defect in one of the two
+ * implementations, and the browser gate fails the build on it.
+ */
+function liveRecompute(
+  artifact: CaseArtifact,
+  row: CostRow,
+): { value: number; baked: number; relativeError: number } | null {
+  const inputs = artifact.live_inputs;
+  if (!inputs || inputs.method !== 'R06') return null;
+  const baked = row[artifact.observable.key];
+  if (typeof baked !== 'number' || !Number.isFinite(baked)) return null;
+  const result = sotOptimalProtocol({
+    alpha: inputs.alpha,
+    gamma: inputs.gamma,
+    anisotropyJ: inputs.anisotropy_j,
+    mu: inputs.mu,
+    xi: inputs.xi,
+    beta: inputs.beta,
+    switchingTime: row.switching_time_s,
+  });
+  const value = result.meanCurrentReduced;
+  return { value, baked, relativeError: Math.abs(value - baked) / Math.abs(baked) };
+}
+
 
 export function Workbench(): React.JSX.Element {
   const lang = useShellLang();
@@ -138,6 +190,11 @@ export function Workbench(): React.JSX.Element {
   const pulse = artifact.pulses[variant] ?? artifact.reference_pulse;
   const evidence = benchmark?.manifests.find((entry) => entry.case === artifact.case.slug) ?? null;
   const costRow = artifact.cost_curve[variant] ?? artifact.cost_curve[0];
+  const observable = artifact.observable;
+  const observed = observable.is_field_cost
+    ? (costRow.cost ?? null)
+    : ((costRow[observable.key] as number | null | undefined) ?? null);
+  const live = liveRecompute(artifact, costRow);
 
   return (
     <div className="wb">
@@ -170,7 +227,14 @@ export function Workbench(): React.JSX.Element {
                 label: t.trajectory,
                 content: (
                   <div className="wb-instrument">
-                    <SphereTrajectory pulse={pulse} theme={theme} />
+                    <div className="wb-instrument-stack">
+                      <SphereTrajectory pulse={pulse} theme={theme} />
+                      {artifact.pulse_note && (
+                        <p className="wb-pulse-note" data-testid="pulse-note">
+                          <strong>{t.drawnPath}.</strong> {artifact.pulse_note}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 ),
               },
@@ -179,7 +243,13 @@ export function Workbench(): React.JSX.Element {
                 label: t.cost,
                 content: (
                   <div className="wb-instrument">
-                    <CostChart rows={artifact.cost_curve} axis={artifact.axis} theme={theme} />
+                    <CostChart
+                      rows={artifact.cost_curve}
+                      axis={artifact.axis}
+                      observable={observable}
+                      methods={artifact.case.methods}
+                      theme={theme}
+                    />
                   </div>
                 ),
               },
@@ -188,7 +258,14 @@ export function Workbench(): React.JSX.Element {
                 label: t.pulse,
                 content: (
                   <div className="wb-instrument">
-                    <PulseChart pulse={pulse} theme={theme} />
+                    <div className="wb-instrument-stack">
+                      <PulseChart pulse={pulse} theme={theme} />
+                      {artifact.pulse_note && (
+                        <p className="wb-pulse-note">
+                          <strong>{t.drawnPath}.</strong> {artifact.pulse_note}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 ),
               },
@@ -285,22 +362,50 @@ export function Workbench(): React.JSX.Element {
           <div className="wb-variant-readout">
             <strong>{artifact.axis.label}</strong> ({artifact.axis.values[variant]} {artifact.axis.unit})
             <dl>
-              <dt>{t.optCost}</dt>
-              <dd>
-                {costRow.cost === null ? (
+              <dt>{observable.is_field_cost ? t.optCost : observable.label}</dt>
+              <dd data-testid="observable-value">
+                {observed === null ? (
                   <span className="prov-badge prov-assumed" data-testid="no-switch">
                     {t.noSwitch}
                   </span>
                 ) : (
-                  `${sci(costRow.cost)} T^2 s`
+                  `${quantity(observed)} ${observable.unit}`
                 )}
               </dd>
-              <dt>{t.overFloor}</dt>
-              <dd>{costRow.cost_over_floor?.toFixed(2) ?? '-'}</dd>
-              <dt>{t.meanField}</dt>
-              <dd>{(costRow.mean_amplitude * 1e3).toFixed(2)} mT</dd>
+              {observable.is_field_cost ? (
+                <>
+                  <dt>{t.overFloor}</dt>
+                  <dd>{costRow.cost_over_floor?.toFixed(2) ?? '-'}</dd>
+                  <dt>{t.meanField}</dt>
+                  <dd>{((costRow.mean_amplitude ?? 0) * 1e3).toFixed(2)} mT</dd>
+                </>
+              ) : (
+                <>
+                  <dt>{t.fieldReference}</dt>
+                  <dd>{costRow.field_cost_reference ? `${sci(costRow.field_cost_reference)} T^2 s` : '-'}</dd>
+                </>
+              )}
             </dl>
+            {!observable.is_field_cost && (
+              <p className="wb-observable-note" data-testid="observable-note">
+                <strong>{t.notAFieldCost}.</strong> {observable.note}
+              </p>
+            )}
           </div>
+          {live && (
+            <div className="wb-live" data-testid="live-recompute">
+              <h4>{t.liveTitle}</h4>
+              <dl>
+                <dt>{observable.label}</dt>
+                <dd data-testid="live-value">
+                  {quantity(live.value)} {observable.unit}
+                </dd>
+                <dt>{t.liveAgreement}</dt>
+                <dd data-testid="live-agreement">{live.relativeError.toExponential(1)}</dd>
+              </dl>
+              <p>{t.liveNote}</p>
+            </div>
+          )}
           <ParameterPanel material={m} lang={lang} />
           <dl>
             <dt>{t.easyAxis}</dt>

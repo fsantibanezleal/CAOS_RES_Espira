@@ -4,7 +4,7 @@ A case is a scientific question the product answers: a system, a variant family,
 pre-declared expectation with the kill criterion that would make it a failure. The 26 cases of the
 validated plan are all declared here, so a missing one cannot hide behind the ones that are baked.
 
-**11 baked, 11 planned, 4 blocked.** Baked cases
+**15 baked, 7 planned, 4 blocked.** Baked cases
 have committed artifacts; planned cases are declared and runnable but not yet computed; blocked
 cases name what is missing. This page and the per-case pages are generated from the registry
 (`python scripts/gen_case_docs.py`).
@@ -15,9 +15,9 @@ Closed-form or exactly-known answers every numerical method must reproduce.
 
 | Case | Status | Variants | Methods | Ground truth |
 |---|---|---|---|---|
-| C01 [Free macrospin, no anisotropy](free-macrospin.md) | planned | 6 x switching time | R05 | analytic |
+| C01 [Free macrospin, no anisotropy](free-macrospin.md) | baked | 6 x switching time | R05, R07 | analytic |
 | C02 [Uniaxial macrospin, the analytic optimum](uniaxial-analytic.md) | baked | 6 x switching time | R05, R07 | analytic |
-| C03 [Spin-orbit torque, the analytic optimum](sot-analytic.md) | planned | 6 x switching time | R06 | analytic |
+| C03 [Spin-orbit torque, the analytic optimum](sot-analytic.md) | baked | 6 x switching time | R06 | analytic |
 | C04 [Biaxial anisotropy, the hard-axis cost reduction](biaxial-hard-axis.md) | baked | 6 x hard-axis ratio | R07 | provisional |
 
 ## B. Published replication
@@ -27,8 +27,8 @@ Figures and tables of the lineage papers, reproduced or refuted.
 | Case | Status | Variants | Methods | Ground truth |
 |---|---|---|---|---|
 | C05 [Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)](prb107-biaxial-figures.md) | blocked (The published figure values have not been digitized from the...) | 6 x switching time | R07 | published |
-| C06 [The optimal control path family (several coexisting optima)](ocp-family.md) | planned | 6 x search seed | R07 | published |
-| C07 [Thermal success rate against switching time](thermal-success-rate.md) | planned | 6 x thermal stability factor | R11 | published |
+| C06 [The optimal control path family (several coexisting optima)](ocp-family.md) | baked | 6 x search seed | R07 | published |
+| C07 [Thermal success rate against the stability factor](thermal-success-rate.md) | baked | 6 x thermal stability factor | R11, R12 | published |
 | C08 [Spin-orbit torque, the simplified down-chirp protocol](sot-down-chirp.md) | planned | 6 x switching time | R06, R04 | published |
 | C09 [Longitudinal stabilization, the cost of reliability](longitudinal-stabilization.md) | baked | 6 x longitudinal field | R11, R12 | published |
 | C10 [The kickoff paper's own switching energies](kickoff-replication.md) | blocked (The full text is behind a Cloudflare challenge and has not b...) | 6 x switching time | R05, R07 | published |

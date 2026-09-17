@@ -94,9 +94,9 @@ export const ARCHITECTURE: ArchitectureConfig = {
       en: 'The engine and lanes',
       es: 'El motor y las lineas',
       body_en:
-        'The computation is done by spinoct, an open-source Python package that solves optimal control over Landau-Lifshitz-Gilbert dynamics. A curated material database (each value with a DOI) feeds the engine; the canonical bake runs it offline and commits checksummed JSON artifacts. This web page replays those artifacts and never recomputes.',
+        'The computation is done by spinoct, an open-source Python package that solves optimal control over Landau-Lifshitz-Gilbert dynamics. A curated material database (each value with a DOI) feeds the engine; the canonical bake runs it offline and commits checksummed JSON artifacts. This web page replays those artifacts, except the one case the lane gate measured as cheap enough for the browser, which it recomputes on the client and checks against its artifact.',
       body_es:
-        'El calculo lo hace spinoct, un paquete de Python de codigo abierto que resuelve el control optimo sobre la dinamica de Landau-Lifshitz-Gilbert. Una base de materiales curada (cada valor con un DOI) alimenta el motor; el horneado canonico lo ejecuta sin conexion y compromete artefactos JSON. Esta pagina reproduce esos artefactos y nunca recalcula.',
+        'El calculo lo hace spinoct, un paquete de Python de codigo abierto que resuelve el control optimo sobre la dinamica de Landau-Lifshitz-Gilbert. Una base de materiales curada (cada valor con un DOI) alimenta el motor; el horneado canonico lo ejecuta sin conexion y compromete artefactos JSON. Esta pagina reproduce esos artefactos, salvo el unico caso que el gate de carril midio como suficientemente barato para el navegador, que recalcula en el cliente y compara con su artefacto.',
       svg: engineSvg,
     },
     {

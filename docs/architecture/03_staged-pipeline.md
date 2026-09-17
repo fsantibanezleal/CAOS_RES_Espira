@@ -35,14 +35,49 @@ reports a current integral in reduced units, which is not a field cost in T^2 s,
 and its metrics carry the current. R06 is not applicable at all on a material with no measured
 spin-orbit couplings, which is recorded as the reason.
 
+## The declared observable: a case reports the quantity it was asked about
+
+Most cases report the field switching cost in T^2 s, and the free-macrospin cost and the universal floor
+are meaningful references for it. Two cases report something else, and quoting either in T^2 s would be
+a units failure rather than a rounding one:
+
+| Case | Observable | Unit |
+|---|---|---|
+| C03, the spin-orbit-torque oracle | the average optimal current | reduced units `j0` |
+| C07, the thermal case | the switching success rate | fraction of an ensemble of 600 copies |
+
+So a case declares an `observable` (its key in the cost-curve row, its label, its unit, and whether it
+is a field cost), the artifact carries the declaration, and the app plots and reads what the case
+declared instead of assuming every number is a cost. On such a case the field-derived ratios are not
+carried at all: the closed-form field cost of the same reversal stays in the row under
+`field_cost_reference` with a note saying it is there for scale only. A browser gate
+(`e2e/observable.mjs`) fails the build if a non-cost observable is ever shown in T^2 s.
+
+The same rule applies to the drawn trajectory. Three cases draw a path that is not literally the object
+they measure (the spin-orbit-torque case maps onto the field problem at the ideal ratio, the thermal case
+draws the zero-temperature path behind a stochastic ensemble, the learned case draws the emitted pulse),
+and each carries a `pulse_note` saying so, which the same gate checks is displayed. The two cases whose
+answer IS a numerical path, the hard-axis sweep and the search family, draw the solver's own path on its
+own image grid rather than the closed-form one, because there the shape of the path is the result.
+
 ## The lane gate
 
 `espiralab/core/gate.py` decides live against precompute by measurement, never by hand: a case may run
 live in the browser only if every method it runs has a closed form cheap enough for the browser, its
 measured runtime is under 250 ms, and its artifact is under 512 kB. The verdict, the measured runtime,
-the artifact size and the failing reasons go into the manifest. Today every baked case is `precompute`,
-and the manifests say why (the numerical solver has no browser closed form, and the runtimes are tens of
-seconds). Nothing in the product is labelled live without those numbers.
+the artifact size and the failing reasons go into the manifest. Nothing in the product is labelled live
+without those numbers.
+
+One case passes: C03, the spin-orbit-torque oracle, whose methods are closed forms. A verdict of `live`
+would be a label rather than a fact if nothing on the client could evaluate it, so the web carries its
+own implementation of that closed form (`frontend/src/engine/sotAnalytic.ts`, the complete elliptic
+integral by the arithmetic-geometric mean, written independently of the engine's path through SciPy).
+The case ships the constants it needs in `live_inputs`, the workbench recomputes it in the browser and
+shows the agreement with the committed artifact, and two gates hold the two sides together: a Python test
+refuses a manifest that puts a case in the live lane without a browser implementation of its methods, and
+the browser gate fails the build if the two implementations disagree by more than a part in a million.
+They currently agree exactly. Every other baked case is `precompute` and its manifest says why (the
+numerical solver has no browser closed form, and the runtimes are seconds to minutes).
 
 ## Contract 2: the manifest
 

@@ -22,19 +22,19 @@
   ],
   "artifact": {
     "path": "fe3gate2-field.json",
-    "bytes": 268322,
-    "sha256": "069ee71e267b50cc9c77b69fe5810141b1230453a1eb4d29561756d58cc408d6"
+    "bytes": 268590,
+    "sha256": "70cb9761be42124a5095eaa50e33e7ec6d3efcf51c3b3745402e6e4d88a313ed"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 8180.68,
-    "artifact_bytes": 268322,
+    "runtime_ms": 2745.663,
+    "artifact_bytes": 268590,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 8181 ms over the 250 ms budget"
+      "runtime 2746 ms over the 250 ms budget"
     ]
   },
   "completeness": {

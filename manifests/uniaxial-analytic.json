@@ -22,20 +22,20 @@
   ],
   "artifact": {
     "path": "uniaxial-analytic.json",
-    "bytes": 270419,
-    "sha256": "c82d6d86a5a9847d03fb1c72e30c75847aef607a38ecfa2114345885350f2f5c"
+    "bytes": 270687,
+    "sha256": "479520c4dc69ed4f71e89276bf91117eb504c5d4a4a5c7b1cbac0dcff15d0d78"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 43059.732,
-    "artifact_bytes": 270419,
+    "runtime_ms": 15650.45,
+    "artifact_bytes": 270687,
     "methods": [
       "R05",
       "R07"
     ],
     "reasons": [
       "methods ['R07'] have no closed form for the browser",
-      "runtime 43060 ms over the 250 ms budget"
+      "runtime 15650 ms over the 250 ms budget"
     ]
   },
   "completeness": {
@@ -140,7 +140,7 @@
         "over_analytic": 1.0001097223696922,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 1063.8430999824777
+        "solve_ms": 343.810599995777
       }
     },
     {
@@ -154,7 +154,7 @@
         "over_analytic": 1.0006834665790152,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 1103.256100002909
+        "solve_ms": 345.877699990524
       }
     },
     {
@@ -168,7 +168,7 @@
         "over_analytic": 1.0027015076965036,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 1321.9769999850541
+        "solve_ms": 459.48910000151955
       }
     },
     {
@@ -182,7 +182,7 @@
         "over_analytic": 1.0070030927315803,
         "converged": 1.0,
         "images": 73.0,
-        "solve_ms": 2294.372000003932
+        "solve_ms": 792.5579000147991
       }
     },
     {
@@ -196,7 +196,7 @@
         "over_analytic": 1.0073406166843575,
         "converged": 0.0,
         "images": 155.0,
-        "solve_ms": 16515.8858000068
+        "solve_ms": 5988.0406000011135
       }
     },
     {
@@ -210,7 +210,7 @@
         "over_analytic": 1.0095566539928704,
         "converged": 0.0,
         "images": 255.0,
-        "solve_ms": 20759.578599972883
+        "solve_ms": 7720.340999978362
       }
     }
   ],

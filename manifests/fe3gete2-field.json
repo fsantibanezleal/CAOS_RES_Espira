@@ -22,19 +22,19 @@
   ],
   "artifact": {
     "path": "fe3gete2-field.json",
-    "bytes": 268056,
-    "sha256": "2a37e24ccf9a7ea2321e8985b3841a6ecd46f3a3ebd609c48e44748b60a51652"
+    "bytes": 268324,
+    "sha256": "f3ca0827339ada0548e36f7810c4f68c9bcf95bea945d6eb8e97a9578a644da1"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 6662.233,
-    "artifact_bytes": 268056,
+    "runtime_ms": 2731.905,
+    "artifact_bytes": 268324,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 6662 ms over the 250 ms budget"
+      "runtime 2732 ms over the 250 ms budget"
     ]
   },
   "completeness": {
