@@ -12,22 +12,21 @@ Uniaxial: the analytic optimal control path applies and the cost cannot beat the
 
 ## Material: Fe3GeTe2
 
-| Parameter | Value |
-|---|---|
-| Family | itinerant metal |
-| Spin | 1 |
-| Moment per site | 1.82 Bohr magnetons |
-| Anisotropy per site | 0.3 meV |
-| Hard-axis ratio | 0 |
-| Gilbert damping | 0.01 (range 0.003 to 0.03) |
-| Ordering temperature | 130 K |
-| Easy axis | out-of-plane c axis (strong perpendicular anisotropy) |
+| Parameter | Value | Provenance | Source |
+|---|---|---|---|
+| Family | itinerant metal | | |
+| Spin | 1 | | |
+| Easy axis | out-of-plane c axis | | |
+| Moment per site | 1.58 Bohr magnetons | measured | [10.1063/1.4961592](https://doi.org/10.1063/1.4961592) |
+| Anisotropy per site (unit-vector convention) | 0.3551 meV | derived | [10.1063/1.4961592](https://doi.org/10.1063/1.4961592) |
+| Hard-axis ratio | 0 | assumed | none |
+| Gilbert damping | 0.01 (range 0.003 to 0.03) | assumed | none |
+| Ordering temperature | 130 K | measured | [10.1038/s41563-018-0149-7](https://doi.org/10.1038/s41563-018-0149-7) |
 
-Itinerant ferromagnet with strong perpendicular magnetic anisotropy. Moments and exchange from DFT plus Wannier plus TB2J (Ruiz 2024); the ordered moment is disputed between sources (1.82 average vs 2.64/1.47 per inequivalent Fe site), and that disagreement is propagated rather than hidden. Monolayer Tc falls to about 130 K. Damping is not firmly pinned in the literature reviewed; the band is wide on purpose.
+Itinerant ferromagnet with strong perpendicular anisotropy. Moment and anisotropy measured on bulk Fe2.87GeTe2 crystals at 5 K (Leon-Brito 2016); ordering temperature of the monolayer (Fei 2018). No measured damping was found; it is assumed and flagged.
 
-Sources:
-
-- https://doi.org/10.1021/acs.nanolett.4c01019
+Every value enters through Contract 1 (`data/materials/parameters.csv`); the conversion from the published
+unit and each value's note are in that table. Assumed values are not measurements.
 
 ## Variants
 

@@ -17,7 +17,7 @@ def main() -> int:
     print(f"baked {len(index['cases'])} cases into {output}")
     import json as _json
     novel = bake_novel_results()
-    (output / "novel.json").write_text(_json.dumps(novel, indent=2), encoding="utf-8")
+    (output / "novel.json").write_text(_json.dumps(novel, indent=2), encoding="utf-8", newline="\n")
     print("baked novel results (reliability front + lattice crossover)")
     for row in index["cases"]:
         print(f"  {row['slug']:28s} {row['material_name']}")

@@ -21,10 +21,104 @@
     "damping_low": 0.003,
     "damping_high": 0.03,
     "curie_kelvin": 380.0,
-    "easy_axis": "out-of-plane c axis (strong perpendicular anisotropy)",
-    "notes": "The only above-room-temperature member (bulk Tc about 380 K). Strong perpendicular anisotropy, MAE 0.31 meV/Fe (Ruiz 2024, DFT plus Wannier plus TB2J, cross-checked with SIESTA). Metallic, so spin-orbit-torque compatible.",
+    "easy_axis": "out-of-plane c axis",
+    "notes": "The above-room-temperature member (350 to 380 K, Zhang 2022). Moment and anisotropy are first-principles values (Ruiz 2024); the measured room-temperature anisotropy is lower. Damping assumed and flagged.",
     "sources": [
-      "10.1021/acs.nanolett.4c01019"
+      "10.1021/acs.nanolett.4c01019",
+      "10.1038/s41467-022-32605-5"
+    ],
+    "provenance": {
+      "moment": {
+        "value": 1.82,
+        "low": null,
+        "high": null,
+        "provenance": "computed",
+        "method": "DFT (LDA) average over Fe sites",
+        "sources": [
+          "10.1021/acs.nanolett.4c01019"
+        ],
+        "note": "2.05 mu_B on Fe1 and Fe2 and 1.35 mu_B on Fe3.",
+        "input": {
+          "value": 1.82,
+          "unit": "mu_B",
+          "basis": "per-ion"
+        },
+        "flags": []
+      },
+      "anisotropy": {
+        "value": 0.31,
+        "low": null,
+        "high": null,
+        "provenance": "computed",
+        "method": "DFT magnetic anisotropy energy per Fe",
+        "sources": [
+          "10.1021/acs.nanolett.4c01019"
+        ],
+        "note": "Low-temperature first-principles value; the measured room-temperature anisotropy (4.79e5 J/m3, Zhang 2022) is lower.",
+        "input": {
+          "value": 0.31,
+          "unit": "meV",
+          "basis": "unit-vector"
+        },
+        "flags": []
+      },
+      "damping": {
+        "value": 0.01,
+        "low": 0.003,
+        "high": 0.03,
+        "provenance": "assumed",
+        "method": "",
+        "sources": [],
+        "note": "No measured Gilbert damping found.",
+        "input": {
+          "value": 0.01,
+          "unit": "dimensionless",
+          "basis": "none"
+        },
+        "flags": [
+          "assumed",
+          "wide damping band"
+        ]
+      },
+      "ordering_temperature": {
+        "value": 380.0,
+        "low": null,
+        "high": null,
+        "provenance": "measured",
+        "method": "magnetometry (bulk crystal)",
+        "sources": [
+          "10.1038/s41467-022-32605-5"
+        ],
+        "note": "Reported as 350 to 380 K.",
+        "input": {
+          "value": 380.0,
+          "unit": "K",
+          "basis": "none"
+        },
+        "flags": []
+      },
+      "hard_axis_ratio": {
+        "value": 0.0,
+        "low": null,
+        "high": null,
+        "provenance": "assumed",
+        "method": "",
+        "sources": [],
+        "note": "Modelled as uniaxial: no distinct hard axis enters the macrospin.",
+        "input": {
+          "value": 0.0,
+          "unit": "ratio",
+          "basis": "none"
+        },
+        "flags": [
+          "assumed"
+        ]
+      }
+    },
+    "flags": [
+      "damping: assumed",
+      "damping: wide damping band",
+      "hard_axis_ratio: assumed"
     ]
   },
   "switching_times_tau0": [

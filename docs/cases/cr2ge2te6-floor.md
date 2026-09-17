@@ -12,22 +12,21 @@ The lowest universal floor of the family; a wide uncertainty band because the fl
 
 ## Material: Cr2Ge2Te6
 
-| Parameter | Value |
-|---|---|
-| Family | semiconductor |
-| Spin | 1.5 |
-| Moment per site | 3 Bohr magnetons |
-| Anisotropy per site | 0.05 meV |
-| Hard-axis ratio | 0 |
-| Gilbert damping | 0.0007 (range 0.0004 to 0.001) |
-| Ordering temperature | 40 K |
-| Easy axis | out-of-plane (weak, near-Heisenberg) |
+| Parameter | Value | Provenance | Source |
+|---|---|---|---|
+| Family | semiconductor | | |
+| Spin | 1.5 | | |
+| Easy axis | out-of-plane c axis (weak) | | |
+| Moment per site | 2.8 Bohr magnetons | measured | [10.1088/0953-8984/7/1/008](https://doi.org/10.1088/0953-8984/7/1/008) |
+| Anisotropy per site (unit-vector convention) | 0.03411 meV | derived | [10.1103/PhysRevB.100.134437](https://doi.org/10.1103/PhysRevB.100.134437), [10.1088/0953-8984/7/1/008](https://doi.org/10.1088/0953-8984/7/1/008) |
+| Hard-axis ratio | 0 | assumed | none |
+| Gilbert damping | 0.0007 (range 0.0004 to 0.001) | measured | [10.1038/s41467-023-39529-8](https://doi.org/10.1038/s41467-023-39529-8) |
+| Ordering temperature | 61 K | measured | [10.1088/0953-8984/7/1/008](https://doi.org/10.1088/0953-8984/7/1/008) |
 
-The low-damping extreme: a record-low Gilbert damping of 4 to 10 x 10^-4 measured by spin pumping (Nat. Commun. 2023). Because the universal energy floor is linear in the damping, this material sets the best-case reachable floor of the whole family. Weak, near-Heisenberg anisotropy.
+The low-damping extreme: Gilbert damping 4 to 10 x 10^-4 measured by spin pumping (2023), which sets the lowest universal floor of the family. Anisotropy from ferromagnetic resonance at 2 K (Khan 2019) per Cr through the unit cell of Carteaux 1995, which also gives the neutron moment and the bulk Curie temperature.
 
-Sources:
-
-- https://doi.org/10.1038/s41467-023-39529-8
+Every value enters through Contract 1 (`data/materials/parameters.csv`); the conversion from the published
+unit and each value's note are in that table. Assumed values are not measurements.
 
 ## Variants
 
