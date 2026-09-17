@@ -1,0 +1,131 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "sot-analytic",
+  "code": "C03",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.12.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "analytic",
+  "methods": [
+    "R06"
+  ],
+  "variants": [
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    50.0,
+    100.0
+  ],
+  "artifact": {
+    "path": "sot-analytic.json",
+    "bytes": 274087,
+    "sha256": "ff26b6bca28491f5bc074e71fc54e03ff7f0c86a5848555a273c44029eb6ecc1"
+  },
+  "lane": {
+    "lane": "live",
+    "runtime_ms": 0.074,
+    "artifact_bytes": 274087,
+    "methods": [
+      "R06"
+    ],
+    "reasons": []
+  },
+  "completeness": {
+    "expected": 6,
+    "produced": 6,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R06",
+      "variant": 2.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+      "metrics": {
+        "cost_fast_reduced": 4.8900040412908384e-11,
+        "mean_current_reduced": 829642443266.4883,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      }
+    },
+    {
+      "method": "R06",
+      "variant": 5.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+      "metrics": {
+        "cost_fast_reduced": 1.9560016165163354e-11,
+        "mean_current_reduced": 331856977306.5953,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      }
+    },
+    {
+      "method": "R06",
+      "variant": 10.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+      "metrics": {
+        "cost_fast_reduced": 9.780008082581677e-12,
+        "mean_current_reduced": 165928488653.29764,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      }
+    },
+    {
+      "method": "R06",
+      "variant": 20.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+      "metrics": {
+        "cost_fast_reduced": 4.8900040412908386e-12,
+        "mean_current_reduced": 82964244326.64882,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      }
+    },
+    {
+      "method": "R06",
+      "variant": 50.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+      "metrics": {
+        "cost_fast_reduced": 1.9560016165163353e-12,
+        "mean_current_reduced": 33185697730.65953,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      }
+    },
+    {
+      "method": "R06",
+      "variant": 100.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+      "metrics": {
+        "cost_fast_reduced": 9.780008082581677e-13,
+        "mean_current_reduced": 16592848865.329765,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      }
+    }
+  ],
+  "parameter_flags": [
+    "synthetic system"
+  ]
+}

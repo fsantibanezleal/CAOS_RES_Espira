@@ -16,6 +16,8 @@ const VIEWPORTS = [
   { width: 1600, height: 1000 },
 ];
 const INSTRUMENT_FLOOR = 0.5;
+//: And it must fill the box across, not only down.
+const WIDTH_FLOOR = 0.8;
 const READOUT_MIN_WIDTH = 280;
 
 const failures = [];
@@ -33,6 +35,9 @@ for (const viewport of VIEWPORTS) {
       localStorage.setItem('caos.lang', 'en');
     }, theme);
     const page = await ctx.newPage();
+    const pageErrors = [];
+    page.on('pageerror', (e) => pageErrors.push(e.message));
+    page.on('console', (m) => m.type() === 'error' && pageErrors.push(m.text()));
     await page.goto(`${base}/app`, { waitUntil: 'networkidle' });
     const tag = `${viewport.width}x${viewport.height}-${theme}`;
     await page.waitForSelector('.wb-stage');
@@ -56,11 +61,36 @@ for (const viewport of VIEWPORTS) {
           .filter((r) => r.height > 0 && r.width > 0);
         const contentTop = Math.min(...painted.map((r) => r.top));
         const contentBottom = Math.max(...painted.map((r) => r.bottom));
+        const contentWidth = Math.max(...painted.map((r) => r.width));
         const readout = rect('.wb-readout');
+        // What is VISIBLY over the footer, not what a layout box would reach if nothing clipped it.
+        // Content inside a scroll region is clipped by that region, so its box may extend past the
+        // viewport while nothing is drawn there; counting that as an overlap would push the page into
+        // avoiding scroll regions altogether, which is not what the floor asks for.
+        const visibleRect = (el) => {
+          let rect = el.getBoundingClientRect();
+          for (let node = el.parentElement; node; node = node.parentElement) {
+            const style = getComputedStyle(node);
+            const clips = ['hidden', 'auto', 'scroll', 'clip'].some(
+              (v) => style.overflowY === v || style.overflowX === v,
+            );
+            if (!clips) continue;
+            const box = node.getBoundingClientRect();
+            rect = {
+              top: Math.max(rect.top, box.top),
+              bottom: Math.min(rect.bottom, box.bottom),
+              left: Math.max(rect.left, box.left),
+              right: Math.min(rect.right, box.right),
+            };
+            if (rect.bottom <= rect.top || rect.right <= rect.left) return null;
+          }
+          return rect;
+        };
         const overlapping = [...document.querySelectorAll('.wb *')]
           .filter((el) => {
-            const r = el.getBoundingClientRect();
-            return footer && r.height > 0 && r.top < footer.bottom && r.bottom > footer.top + 1;
+            if (!footer) return false;
+            const r = visibleRect(el);
+            return r !== null && r.bottom - r.top > 0 && r.top < footer.bottom && r.bottom > footer.top + 1;
           })
           .map((el) => el.className)
           .slice(0, 3);
@@ -68,7 +98,7 @@ for (const viewport of VIEWPORTS) {
           footerTop: footer?.top ?? null,
           stage: stage && { top: stage.top, height: stage.height, width: stage.width },
           instrument: instrument && { height: instrument.height, width: instrument.width },
-          content: { top: contentTop, bottom: contentBottom, height: contentBottom - contentTop },
+          content: { top: contentTop, bottom: contentBottom, height: contentBottom - contentTop, width: contentWidth },
           readout: readout && { width: readout.width },
           overlapping,
           horizontalScroll: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
@@ -82,10 +112,19 @@ for (const viewport of VIEWPORTS) {
         share >= INSTRUMENT_FLOOR,
         `${tag} ${tab}: painted content fills ${(share * 100).toFixed(0)}% of the surface`,
       );
+      // Height alone is not enough: a chart built while its sub-tab panel was hidden came up 90 px wide
+      // in a 1000 px stage and still filled the height, so the surface share passed while the
+      // instrument was a sliver.
+      const widthShare = m.content.width / m.instrument.width;
+      check(
+        widthShare >= WIDTH_FLOOR,
+        `${tag} ${tab}: painted content fills ${(widthShare * 100).toFixed(0)}% of the instrument width`,
+      );
       check(m.overlapping.length === 0, `${tag} ${tab}: nothing overlaps the footer ${JSON.stringify(m.overlapping)}`);
       check(!m.horizontalScroll, `${tag} ${tab}: no horizontal scroll`);
       check(m.readout.width >= READOUT_MIN_WIDTH, `${tag} ${tab}: readout ${Math.round(m.readout.width)}px wide`);
     }
+    check(pageErrors.length === 0, `${tag}: no page errors ${JSON.stringify(pageErrors.slice(0, 3))}`);
     await page.screenshot({ path: `${out}/app-layout-${tag}.png` });
     await ctx.close();
   }

@@ -22,19 +22,19 @@
   ],
   "artifact": {
     "path": "cr2ge2te6-floor.json",
-    "bytes": 273649,
-    "sha256": "5483c3127cf0886ef152057b1efd5a4a9b7049eb7e5aece691dd46944f3be093"
+    "bytes": 273917,
+    "sha256": "06ae3523bb7e2e64582c119bb76342e4ab01b245b1a7e22c2ee1eec4dbc83250"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 7848.876,
-    "artifact_bytes": 273649,
+    "runtime_ms": 2723.721,
+    "artifact_bytes": 273917,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 7849 ms over the 250 ms budget"
+      "runtime 2724 ms over the 250 ms budget"
     ]
   },
   "completeness": {

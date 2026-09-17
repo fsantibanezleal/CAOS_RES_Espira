@@ -1,20 +1,20 @@
-# Thermal success rate against switching time
+# Thermal success rate against the stability factor
 
-Case `thermal-success-rate` (C07), category B. Published replication. Planned: declared and runnable, not yet computed.
+Case `thermal-success-rate` (C07), category B. Published replication. Baked: committed artifacts, replayed by the web app.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-An optimal pulse is derived at zero temperature; at finite temperature it sometimes fails. The success rate against the thermal stability factor is the honest reliability statement.
+An optimal pulse is derived at zero temperature; at finite temperature it sometimes fails. The success rate against the thermal stability factor is the honest reliability statement. The factor is per site: a single CrSBr site carries an anisotropy of 1.7 K in temperature units, so the window where the pulse starts to fail is sub-Kelvin. Device-grade retention comes from the exchange-coupled volume, not from one site, and this case measures the single site.
 
 ## What a domain expert should see
 
-The success rate falls as the thermal stability factor falls, and the pulse that is optimal at zero temperature is not the most reliable one.
+The success rate falls as the thermal stability factor falls, and the pulse that is optimal at zero temperature is NOT the most reliable one: the same pulse with a longitudinal field at twice the anisotropy field succeeds more often, at an added cost the case reports. Measured 2026-09-17 with 600 copies per point: 0.810 against 0.952 at a stability factor of two, and 0.983 against 1.000 at ten. The declared window (10 to 80) was corrected to (1 to 20) from measurement, because above ten the zero-temperature pulse already succeeds essentially always and the case would have shown a flat line.
 
 ## Kill criterion
 
-A success rate that does not depend on temperature would mean the thermostat is not actually perturbing the trajectory.
+A success rate that does not depend on temperature would mean the thermostat is not actually perturbing the trajectory. A longitudinal field that buys reliability at NO added cost would mean the added cost is not being charged.
 
 ## Material: CrSBr
 
@@ -36,13 +36,13 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Thermal stability factor (K/kT): 10, 20, 30, 40, 60, 80.
+Thermal stability factor (K/kT): 1, 2, 3, 5, 10, 20.
 
 ## Design
 
 | Field | Value |
 |---|---|
-| Methods | R11 |
+| Methods | R11, R12 |
 | Ground truth | published |
 | Split | control |
 | Seed | 0 |

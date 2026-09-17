@@ -37,7 +37,7 @@ from ..materials import get_material
 __all__ = ["ARTIFACT_SCHEMA_VERSION", "bake_all", "bake_case"]
 
 #: The artifact schema version. Bump when the JSON shape changes; the web contract mirrors it.
-ARTIFACT_SCHEMA_VERSION = "2.0.0"
+ARTIFACT_SCHEMA_VERSION = "2.1.0"
 
 #: Samples along the trajectory and pulse the workbench draws.
 _TRAJECTORY_SAMPLES = 160
@@ -177,6 +177,24 @@ def _cost_row(case: Case, variant: float) -> dict:
         row["true_shape_parameter"] = emitted.metrics["true_p"]
         return row
 
+    if not case.observable.is_field_cost:
+        # The case measures something that is not a field cost (a current in reduced units, a success
+        # rate). Its own methods produce the row, and the analytic field cost stays in the row under an
+        # unambiguous name so the two are never read as the same quantity.
+        return _observable_row(case, variant, t_tau0, row)
+
+    if case.axis.name == "seed":
+        # The case whose subject is the search: one seed per variant, reported alone.
+        from ..stages.infer import _run_method
+
+        solved = _run_method(case, "R07", variant, t_tau0)
+        row["cost"] = solved.cost
+        row["uniaxial_cost"] = cost
+        row["cost_over_free"] = solved.cost / free
+        row["cost_over_floor"] = solved.cost / floor if floor > 0 else None
+        row.update({k: v for k, v in solved.metrics.items() if k != "solve_ms"})
+        return row
+
     if case.axis.name == "hard_axis_ratio":
         # The hard axis has no closed form: the reported cost is the numerical optimum.
         biaxial = _biaxial(case, variant, t_tau0)
@@ -191,6 +209,76 @@ def _cost_row(case: Case, variant: float) -> dict:
     return row
 
 
+def _observable_row(case: Case, variant: float, t_tau0: float, row: dict) -> dict:
+    """The cost-curve row of a case whose observable is not a field cost.
+
+    Every method the case declares contributes its metrics under its own rung name, and the declared
+    observable key carries the primary method's value, so the app plots what the case measured without
+    knowing which method produced it.
+    """
+    from ..stages.infer import _run_method
+
+    row["field_cost_reference"] = row.pop("cost")
+    row["field_cost_note"] = (
+        "The closed-form field cost of the same reversal, for scale only. This case does not report a "
+        "field cost."
+    )
+    # The ratios derived from the field cost describe the field problem, not this case, so they are not
+    # carried: a number in the row must belong to the question the case asked.
+    for derived in ("cost_over_floor", "cost_over_free", "cost_low_damping", "cost_high_damping", "mean_amplitude"):
+        row.pop(derived, None)
+    for method in case.methods:
+        result = _run_method(case, method, variant, t_tau0)
+        row[f"{method.lower()}"] = {
+            "cost": result.cost,
+            "switched": result.switched,
+            "reason": result.reason,
+            **result.metrics,
+        }
+    primary = row[case.primary_method.lower()]
+    row[case.observable.key] = primary.get(case.observable.key)
+    return row
+
+
+def _numeric_pulse(case: Case, variant: float, t_tau0: float, seed: int | None = None) -> dict:
+    """The pulse of a case whose answer is the NUMERICAL path, drawn on the solver's own grid.
+
+    Two cases would otherwise draw the closed-form uniaxial path while reporting a numerical biaxial
+    cost: the hard-axis sweep, whose whole subject is the path the hard axis produces, and the search
+    family, whose subject is that different seeds find different paths. Drawing the analytic path there
+    would show the same picture for two different answers.
+
+    The control is defined at the midpoints of the image chain, so the moment is taken at the midpoints
+    too (the normalized average of the neighbouring images) and every array shares one time base.
+    """
+    system = _system(case, variant, uniaxial=False)
+    switching_time = system.switching_time_from_tau0(t_tau0)
+    images = ImageOCPSolver.recommended_images(system, switching_time)
+    solver = ImageOCPSolver(system, n_images=images, switching_time=switching_time)
+    result = (
+        solver.solve(seed=seed, max_iterations=_MAX_ITERATIONS)
+        if seed is not None
+        else solver.solve_best(n_seeds=_SEEDS, max_iterations=_MAX_ITERATIONS)
+    )
+    moment = 0.5 * (result.images[:-1] + result.images[1:])
+    moment = moment / np.linalg.norm(moment, axis=1, keepdims=True)
+    times = 0.5 * (result.times[:-1] + result.times[1:])
+    field = result.field_midpoints
+    return {
+        "variant": variant,
+        "switching_time_tau0": t_tau0,
+        "switching_time_s": switching_time,
+        "time_s": times.tolist(),
+        "sx": moment[:, 0].tolist(),
+        "sy": moment[:, 1].tolist(),
+        "sz": moment[:, 2].tolist(),
+        "field_amplitude_t": np.linalg.norm(field, axis=1).tolist(),
+        "field_x_t": field[:, 0].tolist(),
+        "field_y_t": field[:, 1].tolist(),
+        "field_z_t": field[:, 2].tolist(),
+    }
+
+
 def _pulse(case: Case, variant: float) -> dict:
     """The trajectory on the sphere and the pulse waveform at one variant.
 
@@ -198,6 +286,10 @@ def _pulse(case: Case, variant: float) -> dict:
     case is about: the workbench must show what the method produced.
     """
     t_tau0 = _time_for(case, variant)
+    if case.axis.name == "seed":
+        return _numeric_pulse(case, variant, t_tau0, seed=int(variant))
+    if case.axis.name == "hard_axis_ratio":
+        return _numeric_pulse(case, variant, t_tau0)
     system = _system(case, variant, uniaxial=True)
     if case.axis.name == "damping":
         system = MacrospinSystem(
@@ -226,6 +318,72 @@ def _pulse(case: Case, variant: float) -> dict:
         "field_y_t": field[:, 1].tolist(),
         "field_z_t": field[:, 2].tolist(),
     }
+
+
+def _live_inputs(case: Case) -> dict | None:
+    """The system constants a live case needs to recompute itself in the browser.
+
+    A lane verdict of `live` is a claim until something in the browser can evaluate the case. The web
+    carries its own implementation of the closed form, and this block gives it the same inputs the
+    engine used, in SI, so the two can be compared rather than assumed equal.
+    """
+    if case.primary_method != "R06":
+        return None
+    from spinoct.analytic.sot import ideal_sot_ratio_beta
+
+    from ..stages.infer import _SOT_COUPLING
+
+    system = _system(case, uniaxial=True)
+    return {
+        "method": "R06",
+        "alpha": system.alpha,
+        "gamma": system.gamma,
+        "anisotropy_j": system.anisotropy_j,
+        "mu": system.mu,
+        "tau0_s": system.tau0,
+        "xi": _SOT_COUPLING,
+        "beta": ideal_sot_ratio_beta(system.alpha),
+        "note": (
+            "The browser evaluates the closed form of Phys. Rev. B 105, 134404 from these constants and "
+            "compares its answer with the committed artifact; the workbench shows the agreement."
+        ),
+    }
+
+
+def _pulse_note(case: Case) -> str:
+    """What the drawn trajectory is, when it is not the case's own control.
+
+    Three cases draw a path that is not literally the object they measure, and saying so is the
+    difference between context and a false claim.
+    """
+    if case.primary_method == "R06":
+        return (
+            "The drawn path is the field-driven optimum. At the ideal spin-orbit-torque ratio "
+            "xi_D = -alpha xi_F the current torque points entirely along the switching direction and the "
+            "problem collapses onto the field-driven one (Phys. Rev. B 105, 134404, Eq. 11), so the "
+            "trajectory is the same and only the control differs. The current itself is reported as a "
+            "number, not a waveform: the closed form gives its average and its cost, not its shape."
+        )
+    if case.axis.name == "seed":
+        return (
+            "The drawn path is the one THIS seed converged to, on the solver's own image grid, which is "
+            "the point of the case: the seeds do not all find the same path."
+        )
+    if case.axis.name == "hard_axis_ratio":
+        return (
+            "The drawn path is the numerical biaxial optimum on the solver's own image grid, not the "
+            "closed-form uniaxial path: with a hard axis there is no closed form, and the shape of the "
+            "path is what the hard axis changes."
+        )
+    if case.primary_method == "R11":
+        return (
+            "The drawn path is the zero-temperature optimal trajectory, which is the pulse under test. "
+            "The success rate comes from a stochastic ensemble of 600 copies at each point, whose "
+            "individual trajectories are not drawn."
+        )
+    if case.primary_method == "R15":
+        return "The drawn path is the one the learned policy emitted, not the closed-form optimum."
+    return ""
 
 
 def _static_baseline(case: Case, t_tau0: float) -> dict:
@@ -298,6 +456,15 @@ def bake_case(case: Case) -> dict:
             "unit": case.axis.unit,
             "values": list(variants),
         },
+        "observable": {
+            "key": case.observable.key,
+            "label": case.observable.label,
+            "unit": case.observable.unit,
+            "is_field_cost": case.observable.is_field_cost,
+            "note": case.observable.note,
+        },
+        "pulse_note": _pulse_note(case),
+        "live_inputs": _live_inputs(case),
         "cost_curve": [_cost_row(case, v) for v in variants],
         "pulses": [_pulse(case, v) for v in variants],
         "reference_pulse": _pulse(case, reference),

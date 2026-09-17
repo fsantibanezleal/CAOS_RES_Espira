@@ -30,8 +30,8 @@ export function Implementation(): React.JSX.Element {
       <h2>{es ? 'Las lineas de ejecucion' : 'The lanes'}</h2>
       <p>
         {es
-          ? 'La verdad canonica se hornea sin conexion con spinoct y se compromete como artefactos JSON con suma de verificacion. Esta pagina web reproduce esos artefactos; nunca recalcula. El motor de atomistica pesado (VAMPIRE) se llama como proceso separado para verificacion, nunca enlazado, manteniendo spinoct bajo licencia MIT.'
-          : 'The canonical truth is baked offline with spinoct and committed as checksummed JSON artifacts. This web page replays those artifacts; it never recomputes. The heavy atomistic engine (VAMPIRE) is called as a separate process for verification, never linked, keeping spinoct MIT-licensed.'}{' '}
+          ? 'La verdad canonica se hornea sin conexion con spinoct y se compromete como artefactos JSON con suma de verificacion. Esta pagina web reproduce esos artefactos, salvo un caso: el gate de carril mide tiempo de ejecucion y tamano, y el oraculo de torque de espin-orbita (C03) pasa, asi que el navegador evalua su forma cerrada y muestra el acuerdo con el artefacto. El motor de atomistica pesado (VAMPIRE) se llama como proceso separado para verificacion, nunca enlazado, manteniendo spinoct bajo licencia MIT.'
+          : 'The canonical truth is baked offline with spinoct and committed as checksummed JSON artifacts. This web page replays those artifacts, with one exception: the lane gate measures runtime and artifact size, and the spin-orbit-torque oracle (C03) passes it, so the browser evaluates that closed form itself and shows the agreement with the committed artifact. The heavy atomistic engine (VAMPIRE) is called as a separate process for verification, never linked, keeping spinoct MIT-licensed.'}{' '}
         <Cite id="evans2014" />
       </p>
       <Refs ids={['kwiatkowski2021', 'vlasov2022', 'badarneh2023', 'scheie2022', 'ruiz2024', 'evans2014']} label="Refs" />

@@ -34,8 +34,8 @@ const config: ShellConfig = {
       es: 'Motor: spinoct (MIT). Metodo: Kwiatkowski 2021, Badarneh 2023.',
     },
     disclaimer: {
-      en: 'The web replays offline-baked artifacts; it never recomputes. The switching cost is in T^2 s, not joules.',
-      es: 'La web reproduce artefactos horneados sin conexion; nunca recalcula. El costo esta en T^2 s, no en julios.',
+      en: 'The web replays offline-baked artifacts, except one case the lane gate measured as cheap enough to recompute in the browser. The switching cost is in T^2 s, not joules.',
+      es: 'La web reproduce artefactos horneados sin conexion, salvo un caso que el gate de carril midio como suficientemente barato para recalcular en el navegador. El costo esta en T^2 s, no en julios.',
     },
     license: { en: 'MIT', es: 'MIT' },
   },
