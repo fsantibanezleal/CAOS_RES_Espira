@@ -50,3 +50,26 @@ jobs:
         run: |
           npm ci --legacy-peer-deps
           npm run build
+      - name: Install the browser for the gates
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - name: Browser gates (both themes, both languages, against the built site)
+        working-directory: frontend
+        run: |
+          set -euo pipefail
+          npx vite preview --port 4173 --strictPort &
+          server=$!
+          trap 'kill $server' EXIT
+          ready=0
+          for _ in $(seq 1 60); do
+            if curl -sf http://localhost:4173 > /dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          [ "$ready" = 1 ] || { echo "the preview server did not answer on :4173"; exit 1; }
+          node e2e/workbench-provenance.mjs http://localhost:4173 e2e-shots
+          node e2e/free-chain.mjs http://localhost:4173 e2e-shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-shots
+          path: frontend/e2e-shots
