@@ -13,11 +13,21 @@ hide.
 
 from __future__ import annotations
 
-from .model import GROUND_TRUTH, SPLITS, STATUSES, SURFACES, Case, SyntheticSystem, VariantAxis
+from .model import (
+    GROUND_TRUTH,
+    SPLITS,
+    STATUSES,
+    SURFACES,
+    Case,
+    Observable,
+    SyntheticSystem,
+    VariantAxis,
+)
 
 __all__ = [
     "CASES",
     "Case",
+    "Observable",
     "SyntheticSystem",
     "VariantAxis",
     "baked_cases",
@@ -52,17 +62,24 @@ CASES: dict[str, Case] = {
         code="C01",
         title="Free macrospin, no anisotropy",
         category="A. Exact oracles",
-        reason="With no anisotropy the optimal cost has the closed form pi^2 (1 + alpha^2) / (gamma^2 T), "
-        "the fastest possible reversal of a free moment. It is the simplest oracle in the ladder.",
-        expectation="The numerical cost matches the closed form at every switching time, and falls as 1/T.",
+        reason="A moment with no magnetic potential costs pi^2 (1 + alpha^2) / (gamma^2 T) to reverse, "
+        "the fastest possible reversal and the reference every material is scored against. The free limit "
+        "is reached by making the switching time short compared with the Larmor time tau0 rather than by "
+        "setting the anisotropy to zero, which the engine refuses because tau0 would be undefined: below "
+        "tau0 the anisotropy has no time to act, and both solvers must return the free cost.",
+        expectation="Both the closed-form uniaxial optimum and the numerical image-based solver return the "
+        "free-moment cost, and it falls as 1/T. Measured 2026-09-17: the deviation from the closed form is "
+        "below one part in a million up to 0.2 tau0 and is 1.5e-4 at one tau0, where the anisotropy starts "
+        "to be felt, so the approach to the free limit is visible along the sweep rather than assumed.",
         kill_criterion="A numerical cost that differs from the closed form by more than a per cent at any "
-        "switching time means the cost functional or the integrator is wrong.",
-        axis=_time_axis(),
-        status="planned",
+        "switching time means the cost functional or the integrator is wrong. A cost BELOW the free value "
+        "would be worse: no uniaxial magnet can beat it.",
+        axis=_time_axis((0.02, 0.05, 0.1, 0.2, 0.5, 1.0)),
+        status="baked",
         ground_truth="analytic",
         split="control",
         synthetic=SyntheticSystem(anisotropy_mev=0.15, damping=0.1),
-        methods=("R05",),
+        methods=("R05", "R07"),
         sources=("10.1103/PhysRevLett.126.177206",),
     ),
     "uniaxial-analytic": Case(
@@ -91,15 +108,30 @@ CASES: dict[str, Case] = {
         category="A. Exact oracles",
         reason="The current-driven counterpart: the closed-form optimal spin-orbit-torque protocol, with "
         "its ideal field-like to damping-like ratio.",
-        expectation="The optimal ratio xi_D = -alpha xi_F reproduces the published protocol; the cost "
-        "falls with switching time like the field case.",
+        expectation="At the ideal ratio xi_D = -alpha xi_F the current torque points entirely along the "
+        "switching direction, the average current follows Eq. 8 exactly, and the fast-switching cost "
+        "asymptote falls as 1/T like the field case. At the forbidden ratio xi_F = alpha xi_D the protocol "
+        "is reported as forbidden rather than returning a finite cost. The reported quantity is a current "
+        "integral in the reference reduced units, NOT a field cost in T^2 s, and the case declares that so "
+        "it is never mixed into a field-cost comparison.",
         kill_criterion="A reversal at the forbidden ratio xi_F = alpha xi_D, where the torque cannot "
-        "drive the moment over the barrier, would mean the spin-orbit torque enters with the wrong sign.",
+        "drive the moment over the barrier, would mean the spin-orbit torque enters with the wrong sign. "
+        "A mean current that disagrees with the closed form of Eq. 8, or a reduced-unit cost quoted in "
+        "T^2 s, is equally a failure.",
         axis=_time_axis(),
-        status="planned",
+        status="baked",
         ground_truth="analytic",
         split="control",
         synthetic=SyntheticSystem(),
+        primary_method="R06",
+        observable=Observable(
+            key="mean_current_reduced",
+            label="Mean optimal current",
+            unit="reduced units j0",
+            is_field_cost=False,
+            note="The spin-orbit-torque control is a current, and its cost is Joule heating in the "
+            "reference reduced units. It is not a field cost in T^2 s and the two are never compared.",
+        ),
         methods=("R06",),
         sources=("10.1103/PhysRevB.105.134404",),
     ),
@@ -158,36 +190,62 @@ CASES: dict[str, Case] = {
         reason="At a biaxial ratio of four and moderate damping, several distinct optimal control paths "
         "coexist at the same switching time. A single-seed solver reports one of them and calls it the "
         "optimum, which is the failure this case exists to expose.",
-        expectation="A multi-seed search finds more than one distinct path, with costs close together, "
-        "and the cheapest is reported.",
+        expectation="A multi-seed search finds more than one distinct converged path, and they are NOT "
+        "close together. Measured 2026-09-17 at a hard-axis ratio of four, a damping of 0.2 and ten tau0: "
+        "two families, one passing near the easy plane at 1.5206e-11 T^2 s and one climbing over the hard "
+        "axis at 2.0250e-11, a spread of 33 per cent. Three of the six seeds land on the expensive family, "
+        "so a single-seed solver has an even chance of reporting a cost a third too high and calling it "
+        "the optimum. The cheapest is what the product reports everywhere else, which is why every "
+        "biaxial bake in this repository runs a multi-seed search.",
         kill_criterion="If every seed converges to the same path, either the search is not exploring or "
-        "the family does not exist at these parameters; both change what the product may claim.",
+        "the family does not exist at these parameters; both change what the product may claim. A seed "
+        "that converges BELOW the cheapest family would mean the converged flag is not trustworthy.",
         axis=VariantAxis("seed", "Search seed", "index", (0.0, 1.0, 2.0, 3.0, 4.0, 5.0)),
-        status="planned",
+        status="baked",
         ground_truth="published",
         split="control",
         synthetic=SyntheticSystem(damping=0.2, hard_axis_ratio=4.0),
         includes_biaxial=True,
+        primary_method="R07",
         methods=("R07",),
         sources=("10.1103/PhysRevB.107.214448",),
     ),
     "thermal-success-rate": Case(
         slug="thermal-success-rate",
         code="C07",
-        title="Thermal success rate against switching time",
+        title="Thermal success rate against the stability factor",
         category="B. Published replication",
         reason="An optimal pulse is derived at zero temperature; at finite temperature it sometimes fails. "
-        "The success rate against the thermal stability factor is the honest reliability statement.",
+        "The success rate against the thermal stability factor is the honest reliability statement. The "
+        "factor is per site: a single CrSBr site carries an anisotropy of 1.7 K in temperature units, so "
+        "the window where the pulse starts to fail is sub-Kelvin. Device-grade retention comes from the "
+        "exchange-coupled volume, not from one site, and this case measures the single site.",
         expectation="The success rate falls as the thermal stability factor falls, and the pulse that is "
-        "optimal at zero temperature is not the most reliable one.",
+        "optimal at zero temperature is NOT the most reliable one: the same pulse with a longitudinal "
+        "field at twice the anisotropy field succeeds more often, at an added cost the case reports. "
+        "Measured 2026-09-17 with 600 copies per point: 0.810 against 0.952 at a stability factor of two, "
+        "and 0.983 against 1.000 at ten. The declared window (10 to 80) was corrected to (1 to 20) from "
+        "measurement, because above ten the zero-temperature pulse already succeeds essentially always "
+        "and the case would have shown a flat line.",
         kill_criterion="A success rate that does not depend on temperature would mean the thermostat is "
-        "not actually perturbing the trajectory.",
-        axis=VariantAxis("stability_factor", "Thermal stability factor", "K/kT", (10.0, 20.0, 30.0, 40.0, 60.0, 80.0)),
-        status="planned",
+        "not actually perturbing the trajectory. A longitudinal field that buys reliability at NO added "
+        "cost would mean the added cost is not being charged.",
+        axis=VariantAxis("stability_factor", "Thermal stability factor", "K/kT", (1.0, 2.0, 3.0, 5.0, 10.0, 20.0)),
+        status="baked",
         ground_truth="published",
         split="control",
         material="crsbr",
-        methods=("R11",),
+        primary_method="R11",
+        observable=Observable(
+            key="success_rate",
+            label="Switching success rate",
+            unit="fraction of copies",
+            is_field_cost=False,
+            note="A reliability case reports how often the pulse reversed the moment out of the ensemble, "
+            "with its 95 per cent interval. The field cost of the pulse is the same at every point of the "
+            "sweep, so plotting it would say nothing.",
+        ),
+        methods=("R11", "R12"),
         sources=("10.1103/PhysRevB.107.214448",),
     ),
     "sot-down-chirp": Case(

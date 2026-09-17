@@ -1,5 +1,5 @@
 {
-  "schema_version": "2.0.0",
+  "schema_version": "2.1.0",
   "case": {
     "slug": "amortized-policy",
     "code": "C26",
@@ -143,6 +143,15 @@
       0.5
     ]
   },
+  "observable": {
+    "key": "cost",
+    "label": "Switching cost",
+    "unit": "T^2 s",
+    "is_field_cost": true,
+    "note": "The field cost integral, comparable with the universal floor and the free-macrospin cost."
+  },
+  "pulse_note": "The drawn path is the one the learned policy emitted, not the closed-form optimum.",
+  "live_inputs": null,
   "cost_curve": [
     {
       "variant": 0.005,

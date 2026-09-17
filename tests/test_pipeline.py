@@ -7,6 +7,7 @@ a sandbox; the canonical `data/artifacts` and `manifests` are never written by a
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -47,12 +48,44 @@ def test_each_gate_reason_forces_precompute(methods, runtime, size, reason) -> N
 
 
 def test_the_shipped_cases_declare_their_measured_lane() -> None:
-    """Every baked case is precompute, and its manifest says why in measured terms."""
+    """Every baked case declares a measured lane, and a precompute verdict says why.
+
+    A `live` verdict is only allowed when the web can actually evaluate the case, which the next test
+    enforces against the browser implementation; a `precompute` verdict must carry its reasons.
+    """
     for slug in baked_cases("workbench"):
         manifest = json.loads((MANIFESTS / f"{slug}.json").read_text(encoding="utf-8"))
-        assert manifest["lane"]["lane"] == "precompute"
-        assert manifest["lane"]["reasons"], slug
+        assert manifest["lane"]["lane"] in ("live", "precompute")
         assert manifest["lane"]["runtime_ms"] > 0
+        if manifest["lane"]["lane"] == "precompute":
+            assert manifest["lane"]["reasons"], slug
+        else:
+            assert not manifest["lane"]["reasons"], slug
+
+
+def test_a_live_lane_case_can_actually_be_computed_in_the_browser() -> None:
+    """A `live` verdict is a claim about the web app, so the web app must be able to honour it.
+
+    The lane gate measures the engine. If it puts a case in the live lane and nothing on the client can
+    evaluate it, the manifest says something the product does not do. The frontend carries its own
+    implementation of the closed forms it can run, and the case must ship the inputs it needs.
+    """
+    implemented = (ROOT / "frontend" / "src" / "engine").glob("*.ts")
+    browser_methods = set()
+    for module in implemented:
+        text = module.read_text(encoding="utf-8")
+        browser_methods.update(re.findall(r"BROWSER_METHOD\s*=\s*'([^']+)'", text))
+    assert browser_methods, "the frontend declares no browser method implementation"
+
+    for slug in baked_cases("workbench"):
+        manifest = json.loads((MANIFESTS / f"{slug}.json").read_text(encoding="utf-8"))
+        if manifest["lane"]["lane"] != "live":
+            continue
+        artifact = json.loads((ARTIFACTS / f"{slug}.json").read_text(encoding="utf-8"))
+        assert artifact["live_inputs"], f"{slug} is live but ships no inputs for the browser"
+        assert set(manifest["methods"]) <= browser_methods, (
+            f"{slug} is live but the browser implements only {sorted(browser_methods)}"
+        )
 
 
 # ------------------------------------------------------------------ the manifest

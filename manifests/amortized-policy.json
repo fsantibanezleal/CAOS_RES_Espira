@@ -22,13 +22,13 @@
   ],
   "artifact": {
     "path": "amortized-policy.json",
-    "bytes": 270404,
-    "sha256": "8abe6f439778b655aaadf51a4eedf8fb0190f798cba0c9c2dd7e6457540c9ff9"
+    "bytes": 270754,
+    "sha256": "38524b29aba19b9212920ec5850eaa3d773d363b850ef8cc99c2a530c1a1d0d1"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 195.806,
-    "artifact_bytes": 270404,
+    "runtime_ms": 139.407,
+    "artifact_bytes": 270754,
     "methods": [
       "R15",
       "R05"

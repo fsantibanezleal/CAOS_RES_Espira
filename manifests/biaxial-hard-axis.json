@@ -21,19 +21,19 @@
   ],
   "artifact": {
     "path": "biaxial-hard-axis.json",
-    "bytes": 270413,
-    "sha256": "788b302e05f9483f36d2bcd3f07faa9a16c568ccd4128014beadd7bfdb968158"
+    "bytes": 110486,
+    "sha256": "494b3f6d2326549a2cd34b91bfd055ee6f3666b1e0b05819a37dcf7fbefbf0b6"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 19845.834,
-    "artifact_bytes": 270413,
+    "runtime_ms": 14564.151,
+    "artifact_bytes": 110486,
     "methods": [
       "R07"
     ],
     "reasons": [
       "methods ['R07'] have no closed form for the browser",
-      "runtime 19846 ms over the 250 ms budget"
+      "runtime 14564 ms over the 250 ms budget"
     ]
   },
   "completeness": {
@@ -54,7 +54,7 @@
         "over_analytic": 0.702223621283626,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 930.3132000204641
+        "solve_ms": 745.5435000010766
       }
     },
     {
@@ -68,7 +68,7 @@
         "over_analytic": 0.5512319043341408,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 899.1098999977112
+        "solve_ms": 777.1058999933302
       }
     },
     {
@@ -82,7 +82,7 @@
         "over_analytic": 0.9930219910252713,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 2217.550100001972
+        "solve_ms": 1876.0232999920845
       }
     },
     {
@@ -96,7 +96,7 @@
         "over_analytic": 1.4311978168781732,
         "converged": 0.0,
         "images": 60.0,
-        "solve_ms": 4690.146400011145
+        "solve_ms": 4052.167499990901
       }
     },
     {
@@ -110,7 +110,7 @@
         "over_analytic": 1.4428192754965046,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 5025.540400005411
+        "solve_ms": 4256.142800004454
       }
     },
     {
@@ -124,7 +124,7 @@
         "over_analytic": 2.1138215665140145,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 6083.0303999828175
+        "solve_ms": 2857.0475000014994
       }
     }
   ],

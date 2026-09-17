@@ -18,6 +18,15 @@ function cssVar(name: string, fallback: string): string {
   return value || fallback;
 }
 
+//: The chart never shrinks below this, and leaves this much room for the legend and axis labels.
+const _MIN_HEIGHT = 320;
+const _CHROME = 44;
+
+/** Fill the stage: a fixed chart height leaves the instrument under the measured ADR-0071 floor. */
+function chartHeight(element: HTMLElement): number {
+  return Math.max(_MIN_HEIGHT, (element.parentElement?.clientHeight ?? 0) - _CHROME);
+}
+
 export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot | null>(null);
@@ -35,8 +44,11 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
     const accent = cssVar('--color-accent', '#3b82f6');
 
     const opts: uPlot.Options = {
-      width: ref.current.clientWidth || 640,
-      height: 320,
+      width: ref.current.parentElement?.clientWidth || ref.current.clientWidth || 640,
+      height: chartHeight(ref.current),
+      // The x axis is an elapsed time in picoseconds, not a timestamp: uPlot's default time formatting
+      // would label a 33 ps pulse with dates in 1969.
+      scales: { x: { time: false } },
       axes: [
         { label: 'time  (ps)', stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
         { label: 'field  (mT)', stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
@@ -53,10 +65,21 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data, ref.current);
 
-    const onResize = () => plotRef.current?.setSize({ width: ref.current!.clientWidth, height: 320 });
-    window.addEventListener('resize', onResize);
+    // A hidden sub-tab panel has no width, so a chart built at mount would stay that size once the
+    // panel is shown. Observe the container rather than only the window.
+    const resize = () => {
+      // Measure the SIZED box, which is the flex parent; the chart's own div takes its width.
+      const width = ref.current?.parentElement?.clientWidth ?? ref.current?.clientWidth ?? 0;
+      if (width <= 0) return;
+      plotRef.current?.setSize({ width, height: chartHeight(ref.current!) });
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(ref.current);
+    if (ref.current.parentElement) observer.observe(ref.current.parentElement);
+    window.addEventListener('resize', resize);
     return () => {
-      window.removeEventListener('resize', onResize);
+      observer.disconnect();
+      window.removeEventListener('resize', resize);
       plotRef.current?.destroy();
       plotRef.current = null;
     };
