@@ -5,8 +5,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useShellLang, CaseSelector, SubTabs, type CaseDef } from '@fasl-work/caos-app-shell';
-import type { ArtifactIndex, CaseArtifact } from '../data/contract';
-import { loadCase, loadIndex } from '../data/load';
+import type { ArtifactIndex, Benchmark, CaseArtifact } from '../data/contract';
+import { loadBenchmark, loadCase, loadIndex } from '../data/load';
 import { CostChart } from '../viz/CostChart';
 import { PulseChart } from '../viz/PulseChart';
 import { SphereTrajectory } from '../viz/SphereTrajectory';
@@ -25,6 +25,11 @@ const T = {
     methods: 'Methods',
     groundTruth: 'Ground truth',
     split: 'Split',
+    code: 'Case code',
+    evidence: 'Release evidence',
+    lane: 'Lane',
+    completeness: 'Cells produced',
+    sources: 'Sources',
     reason: 'Why this case',
     expectation: 'Expected behaviour',
     easyAxis: 'Easy axis',
@@ -55,6 +60,11 @@ const T = {
     methods: 'Metodos',
     groundTruth: 'Verdad de referencia',
     split: 'Particion',
+    code: 'Codigo del caso',
+    evidence: 'Evidencia del release',
+    lane: 'Carril',
+    completeness: 'Celdas producidas',
+    sources: 'Fuentes',
     reason: 'Por que este caso',
     expectation: 'Comportamiento esperado',
     easyAxis: 'Eje facil',
@@ -88,8 +98,10 @@ export function Workbench(): React.JSX.Element {
   const [slug, setSlug] = useState('');
   const [artifact, setArtifact] = useState<CaseArtifact | null>(null);
   const [variant, setVariant] = useState(0);
+  const [benchmark, setBenchmark] = useState<Benchmark | null>(null);
 
   useEffect(() => {
+    loadBenchmark().then(setBenchmark);
     loadIndex().then((ix) => {
       setIndex(ix);
       setSlug(ix.cases[0].slug);
@@ -122,6 +134,7 @@ export function Workbench(): React.JSX.Element {
   const sb = artifact.static_baseline;
   const bx = artifact.biaxial_reduction;
   const pulse = artifact.pulses[variant] ?? artifact.reference_pulse;
+  const evidence = benchmark?.manifests.find((entry) => entry.case === artifact.case.slug) ?? null;
   const costRow = artifact.cost_curve[variant] ?? artifact.cost_curve[0];
 
   return (
@@ -182,19 +195,77 @@ export function Workbench(): React.JSX.Element {
                 label: t.context,
                 content: (
                   <div className="wb-ctx-panel">
-                    <h4>{t.reason}</h4>
-                    <p>{artifact.case.reason}</p>
-                    <h4>{t.expectation}</h4>
-                    <p>{artifact.case.expectation}</p>
-                    <h4>{t.killCriterion}</h4>
-                    <p>{artifact.case.kill_criterion}</p>
-                    <h4>{t.design}</h4>
-                    <p className="muted">
-                      {t.methods}: {artifact.case.methods.join(', ')} &middot; {t.groundTruth}:{' '}
-                      {artifact.case.ground_truth} &middot; {t.split}: {artifact.case.split}
-                    </p>
-                    <h4>{m.name}</h4>
-                    <p>{m.notes}</p>
+                    <div className="wb-ctx-grid">
+                      <div>
+                        <h4>{t.reason}</h4>
+                        <p>{artifact.case.reason}</p>
+                        <h4>{t.expectation}</h4>
+                        <p>{artifact.case.expectation}</p>
+                        <h4>{t.killCriterion}</h4>
+                        <p>{artifact.case.kill_criterion}</p>
+                        <h4>{m.name}</h4>
+                        <p>{m.notes}</p>
+                      </div>
+                      <div>
+                        <h4>{t.design}</h4>
+                        <dl className="wb-ctx-facts">
+                          <div>
+                            <dt>{t.methods}</dt>
+                            <dd>{artifact.case.methods.join(', ')}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.groundTruth}</dt>
+                            <dd>{artifact.case.ground_truth}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.split}</dt>
+                            <dd>{artifact.case.split}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.code}</dt>
+                            <dd>{artifact.case.code}</dd>
+                          </div>
+                        </dl>
+                        {evidence && (
+                          <>
+                            <h4>{t.evidence}</h4>
+                            <dl className="wb-ctx-facts" data-testid="case-evidence">
+                              <div>
+                                <dt>{t.lane}</dt>
+                                <dd>{evidence.lane}</dd>
+                              </div>
+                              <div>
+                                <dt>{t.completeness}</dt>
+                                <dd>
+                                  {evidence.completeness.produced + evidence.completeness.not_applicable}/
+                                  {evidence.completeness.expected}
+                                </dd>
+                              </div>
+                              <div>
+                                <dt>sha256</dt>
+                                <dd>
+                                  <code>{evidence.sha256.slice(0, 12)}</code>
+                                </dd>
+                              </div>
+                            </dl>
+                          </>
+                        )}
+                        {artifact.case.sources.length > 0 && (
+                          <>
+                            <h4>{t.sources}</h4>
+                            <ul className="wb-ctx-sources">
+                              {artifact.case.sources.map((doi) => (
+                                <li key={doi}>
+                                  <a href={`https://doi.org/${doi}`} target="_blank" rel="noreferrer">
+                                    {doi}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ),
               },
