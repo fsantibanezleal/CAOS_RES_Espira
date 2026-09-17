@@ -1,14 +1,20 @@
 # CrI3, field-driven reversal
 
-Case `cri3-field`, category `real-material-field`. Generated from the registry by `scripts/gen_case_docs.py`.
+Case `cri3-field` (C14), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+
+Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-The archetypal two-dimensional magnet and the clean strong-uniaxial extreme.
+The archetypal two-dimensional magnet and the clean strong-uniaxial extreme of the family.
 
 ## What a domain expert should see
 
 Large anisotropy: a fast, high-amplitude optimal pulse; the analytic solution is exact.
+
+## Kill criterion
+
+A peak field far outside what a laboratory coil or an antenna can produce, without the product saying so, would make the result a number rather than a result.
 
 ## Material: CrI3
 
@@ -30,12 +36,18 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Switching times, in units of the Larmor timescale tau0: 2, 5, 10, 20, 50, 100.
+Switching time (tau0): 2, 5, 10, 20, 50, 100.
 
-## What the bake computes
+## Design
 
-For every variant: the analytic optimal pulse, its trajectory on the sphere, and its cost against the
-free-macrospin cost and the universal floor (with the band from the damping range). A static-field
-baseline at the longest switching time. Numerical biaxial solve: No: the material is treated as uniaxial, where the analytic optimum is exact.
+| Field | Value |
+|---|---|
+| Methods | R00, R05 |
+| Ground truth | provisional |
+| Split | test |
+| Seed | 0 |
+| Surface | workbench |
 
-Artifact: `data/artifacts/cri3-field.json`.
+## Sources
+
+No external reference: the case is checked against the engine's own oracles.

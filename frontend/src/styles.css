@@ -356,3 +356,14 @@
   font-size: 0.85rem;
   line-height: 1.45;
 }
+
+/* coverage matrix status badges */
+.status-baked {
+  color: var(--color-good, #16a34a);
+}
+.status-planned {
+  color: var(--color-fg-subtle, rgba(128, 128, 128, 0.9));
+}
+.status-blocked {
+  color: var(--color-warn, #d97706);
+}

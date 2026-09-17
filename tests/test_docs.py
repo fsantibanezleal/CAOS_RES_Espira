@@ -25,9 +25,19 @@ def test_generated_case_pages_are_current() -> None:
 
 
 def test_every_case_is_in_the_coverage_matrix() -> None:
+    """All 26 declared cases appear with their status, so a planned or blocked one cannot hide."""
     matrix = (DOCS / "cases" / "README.md").read_text(encoding="utf-8")
-    for slug in CASES:
-        assert f"[{slug}]({slug}.md)" in matrix
+    for slug, case in CASES.items():
+        assert f"]({slug}.md)" in matrix, slug
+        assert case.code in matrix
+    assert (DOCS / "cases" / f"{slug}.md").exists()
+
+
+def test_a_blocked_case_states_what_is_missing_on_its_page() -> None:
+    for slug, case in CASES.items():
+        if case.status == "blocked":
+            page = (DOCS / "cases" / f"{slug}.md").read_text(encoding="utf-8")
+            assert "What is missing" in page and case.blocked_reason[:40] in page
 
 
 def test_relative_links_resolve() -> None:
