@@ -7,6 +7,10 @@ import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { CostRow } from '../data/contract';
 
+//: The chart never shrinks below this, and leaves this much room for the legend and axis labels.
+const _MIN_HEIGHT = 320;
+const _CHROME = 44;
+
 interface Props {
   rows: CostRow[];
   axis: { label: string; unit: string };
@@ -37,9 +41,11 @@ export function CostChart({ rows, axis, theme }: Props): React.JSX.Element {
     const accent = cssVar('--color-accent', '#3b82f6');
 
     const width = ref.current.clientWidth || 640;
+    // Fill the stage: a fixed chart height leaves the instrument under the measured ADR-0071 floor.
+    const height = Math.max(_MIN_HEIGHT, (ref.current.parentElement?.clientHeight ?? 0) - _CHROME);
     const opts: uPlot.Options = {
       width,
-      height: 360,
+      height,
       scales: { x: { distr: 3 }, y: { distr: 3 } },
       axes: [
         {
@@ -80,7 +86,10 @@ export function CostChart({ rows, axis, theme }: Props): React.JSX.Element {
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data, ref.current);
 
-    const onResize = () => plotRef.current?.setSize({ width: ref.current!.clientWidth, height: 360 });
+    const onResize = () => plotRef.current?.setSize({
+        width: ref.current!.clientWidth,
+        height: Math.max(_MIN_HEIGHT, (ref.current!.parentElement?.clientHeight ?? 0) - _CHROME),
+      });
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);

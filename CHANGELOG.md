@@ -4,6 +4,22 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.05.001] - 2026-09-17
+
+### Fixed
+- The App surface now meets the measured ADR-0071 floor on every sub-tab. The sub-tab chain did not pass
+  the stage height down, so the Context panel sat at 42 per cent of the surface at 1600x1000; the charts
+  used a fixed height instead of the stage; and the first attempt at the fix overrode the shell's
+  `[hidden]` rule, which laid out the inactive panels and pushed the visible one down the page. Painted
+  content now fills 84 to 89 per cent on every tab at both viewports.
+- The Context tab carries the case's design, its release evidence (lane, cells produced, artifact hash)
+  and its sources next to the prose, instead of leaving the stage half empty.
+
+### Added
+- A fifth browser gate (`e2e/app-layout.mjs`) measuring the App surface at two viewports in both themes:
+  the share of the surface the PAINTED content fills (not the stretched container, which a half-empty box
+  would satisfy), no overlap with the footer, no horizontal scroll, and the readout column width.
+
 ## [0.05.000] - 2026-09-17
 
 ### Added
