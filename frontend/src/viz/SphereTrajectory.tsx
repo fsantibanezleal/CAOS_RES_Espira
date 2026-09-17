@@ -11,6 +11,10 @@ interface Props {
   theme: 'light' | 'dark';
 }
 
+/** Below this the poles and their labels collide; above it the projection gains nothing. */
+const MIN_SPHERE_PX = 200;
+const MAX_SPHERE_PX = 460;
+
 function cssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -19,10 +23,32 @@ function cssVar(name: string, fallback: string): string {
 
 export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
   const ref = useRef<HTMLCanvasElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  // The drawing box is measured, not assumed: sizing the sphere from the width alone overflows the
+  // stage at a short viewport, and the overflow lands on the footer.
+  const [box, setBox] = useState({ width: 0, height: 0 });
   const [yaw, setYaw] = useState(0.6);
   const [pitch, setPitch] = useState(0.35);
   const [cursor, setCursor] = useState(Math.floor(pulse.time_s.length / 2));
   const dragging = useRef<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    const element = boxRef.current;
+    if (!element || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setBox((previous) =>
+        Math.abs(previous.width - width) < 1 && Math.abs(previous.height - height) < 1
+          ? previous
+          : { width, height },
+      );
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  // The sphere is a square inscribed in the measured box, so it never pushes the panel past the stage.
+  const size = Math.max(MIN_SPHERE_PX, Math.min(box.width || MIN_SPHERE_PX, box.height || MIN_SPHERE_PX, MAX_SPHERE_PX));
 
   useEffect(() => {
     const canvas = ref.current;
@@ -31,7 +57,8 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const size = Math.min(canvas.clientWidth, 420);
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
     canvas.width = size * dpr;
     canvas.height = size * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -114,7 +141,7 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
     ctx.beginPath();
     ctx.arc(mx, my, 5, 0, 2 * Math.PI);
     ctx.fill();
-  }, [pulse, theme, yaw, pitch, cursor]);
+  }, [pulse, theme, yaw, pitch, cursor, size]);
 
   const onDown = (e: React.PointerEvent) => {
     dragging.current = { x: e.clientX, y: e.clientY };
@@ -133,16 +160,18 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
   const tps = (pulse.time_s[i] * 1e12).toFixed(2);
 
   return (
-    <div>
-      <canvas
-        ref={ref}
-        style={{ width: '100%', maxWidth: 420, touchAction: 'none', cursor: 'grab' }}
-        onPointerDown={onDown}
-        onPointerMove={onMove}
-        onPointerUp={onUp}
-        onPointerLeave={onUp}
-      />
-      <div style={{ fontSize: 13, marginTop: 8 }}>
+    <div className="sphere-panel">
+      <div className="sphere-box" ref={boxRef}>
+        <canvas
+          ref={ref}
+          style={{ touchAction: 'none', cursor: 'grab' }}
+          onPointerDown={onDown}
+          onPointerMove={onMove}
+          onPointerUp={onUp}
+          onPointerLeave={onUp}
+        />
+      </div>
+      <div className="sphere-scrub">
         <label>
           t = {tps} ps, s = ({pulse.sx[i].toFixed(2)}, {pulse.sy[i].toFixed(2)},{' '}
           {pulse.sz[i].toFixed(2)})
@@ -157,7 +186,7 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
           aria-label="scrub along the trajectory"
         />
       </div>
-      <p style={{ fontSize: 12, opacity: 0.7, margin: '4px 0 0' }}>
+      <p className="sphere-note">
         Drag to rotate. The moment spirals from the north pole to the south pole, precessing as the
         internal torque assists the reversal.
       </p>
