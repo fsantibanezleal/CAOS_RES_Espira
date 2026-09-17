@@ -1,24 +1,23 @@
 {
   "schema_version": "2.1.0",
   "case": {
-    "slug": "uniaxial-analytic",
-    "code": "C02",
-    "title": "Uniaxial macrospin, the analytic optimum",
+    "slug": "sot-analytic",
+    "code": "C03",
+    "title": "Spin-orbit torque, the analytic optimum",
     "category": "A. Exact oracles",
     "material": null,
-    "reason": "The closed-form uniaxial optimal control path in Jacobi elliptic functions, the exact result the whole product is built on.",
-    "expectation": "The pulse reverses the moment exactly at T, its cost sits between the infinite-time floor and the free-macrospin cost, and the numerical solver converges onto it from above.",
-    "kill_criterion": "A cost below the universal floor 4 alpha K / (gamma mu), or a pulse that does not reverse the moment, falsifies the implementation.",
+    "reason": "The current-driven counterpart: the closed-form optimal spin-orbit-torque protocol, with its ideal field-like to damping-like ratio.",
+    "expectation": "At the ideal ratio xi_D = -alpha xi_F the current torque points entirely along the switching direction, the average current follows Eq. 8 exactly, and the fast-switching cost asymptote falls as 1/T like the field case. At the forbidden ratio xi_F = alpha xi_D the protocol is reported as forbidden rather than returning a finite cost. The reported quantity is a current integral in the reference reduced units, NOT a field cost in T^2 s, and the case declares that so it is never mixed into a field-cost comparison.",
+    "kill_criterion": "A reversal at the forbidden ratio xi_F = alpha xi_D, where the torque cannot drive the moment over the barrier, would mean the spin-orbit torque enters with the wrong sign. A mean current that disagrees with the closed form of Eq. 8, or a reduced-unit cost quoted in T^2 s, is equally a failure.",
     "ground_truth": "analytic",
     "split": "control",
     "status": "baked",
     "surface": "workbench",
     "methods": [
-      "R05",
-      "R07"
+      "R06"
     ],
     "sources": [
-      "10.1103/PhysRevLett.126.177206"
+      "10.1103/PhysRevB.105.134404"
     ],
     "includes_biaxial": false
   },
@@ -146,92 +145,138 @@
     ]
   },
   "observable": {
-    "key": "cost",
-    "label": "Switching cost",
-    "unit": "T^2 s",
-    "is_field_cost": true,
-    "note": "The field cost integral, comparable with the universal floor and the free-macrospin cost."
+    "key": "mean_current_reduced",
+    "label": "Mean optimal current",
+    "unit": "reduced units j0",
+    "is_field_cost": false,
+    "note": "The spin-orbit-torque control is a current, and its cost is Joule heating in the reference reduced units. It is not a field cost in T^2 s and the two are never compared."
   },
-  "pulse_note": "",
-  "live_inputs": null,
+  "pulse_note": "The drawn path is the field-driven optimum. At the ideal spin-orbit-torque ratio xi_D = -alpha xi_F the current torque points entirely along the switching direction and the problem collapses onto the field-driven one (Phys. Rev. B 105, 134404, Eq. 11), so the trajectory is the same and only the control differs. The current itself is reported as a number, not a waveform: the closed form gives its average and its cost, not its shape.",
+  "live_inputs": {
+    "method": "R06",
+    "alpha": 0.1,
+    "gamma": 176085962784.0,
+    "anisotropy_j": 2.4032649509999997e-23,
+    "mu": 2.78220301971e-23,
+    "tau0_s": 3.2872477207460065e-12,
+    "xi": 1.0,
+    "beta": -0.09966865249116204,
+    "note": "The browser evaluates the closed form of Phys. Rev. B 105, 134404 from these constants and compares its answer with the committed artifact; the workbench shows the agreement."
+  },
   "cost_curve": [
     {
       "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 6.574495441492013e-12,
-      "cost": 4.8924323828272845e-11,
-      "cost_low_damping": 4.8924323828272845e-11,
-      "cost_high_damping": 4.8924323828272845e-11,
       "cost_free": 4.8900040412908384e-11,
       "cost_floor": 1.9622217721956553e-12,
-      "cost_over_floor": 24.933126582082664,
-      "cost_over_free": 1.0004965929508323,
-      "mean_amplitude": 2.7272402306619115
+      "field_cost_reference": 4.8924323828272845e-11,
+      "field_cost_note": "The closed-form field cost of the same reversal, for scale only. This case does not report a field cost.",
+      "r06": {
+        "cost": null,
+        "switched": true,
+        "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+        "cost_fast_reduced": 4.8900040412908384e-11,
+        "mean_current_reduced": 829642443266.4883,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      },
+      "mean_current_reduced": 829642443266.4883
     },
     {
       "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 1.6436238603730032e-11,
-      "cost": 1.9620704916876115e-11,
-      "cost_low_damping": 1.9620704916876115e-11,
-      "cost_high_damping": 1.9620704916876115e-11,
       "cost_free": 1.9560016165163354e-11,
       "cost_floor": 1.9622217721956553e-12,
-      "cost_over_floor": 9.999229034606651,
-      "cost_over_free": 1.00310269435364,
-      "mean_amplitude": 1.0908960922647646
+      "field_cost_reference": 1.9620704916876115e-11,
+      "field_cost_note": "The closed-form field cost of the same reversal, for scale only. This case does not report a field cost.",
+      "r06": {
+        "cost": null,
+        "switched": true,
+        "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+        "cost_fast_reduced": 1.9560016165163354e-11,
+        "mean_current_reduced": 331856977306.5953,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      },
+      "mean_current_reduced": 331856977306.5953
     },
     {
       "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 3.2872477207460065e-11,
-      "cost": 9.901244253712093e-12,
-      "cost_low_damping": 9.901244253712093e-12,
-      "cost_high_damping": 9.901244253712093e-12,
       "cost_free": 9.780008082581677e-12,
       "cost_floor": 1.9622217721956553e-12,
-      "cost_over_floor": 5.045935374895447,
-      "cost_over_free": 1.0123963262715845,
-      "mean_amplitude": 0.5454480461323823
+      "field_cost_reference": 9.901244253712093e-12,
+      "field_cost_note": "The closed-form field cost of the same reversal, for scale only. This case does not report a field cost.",
+      "r06": {
+        "cost": null,
+        "switched": true,
+        "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+        "cost_fast_reduced": 9.780008082581677e-12,
+        "mean_current_reduced": 165928488653.29764,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      },
+      "mean_current_reduced": 165928488653.29764
     },
     {
       "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 6.574495441492013e-11,
-      "cost": 5.1313458859804114e-12,
-      "cost_low_damping": 5.1313458859804114e-12,
-      "cost_high_damping": 5.1313458859804114e-12,
       "cost_free": 4.8900040412908386e-12,
       "cost_floor": 1.9622217721956553e-12,
-      "cost_over_floor": 2.6150692845684924,
-      "cost_over_free": 1.0493541196800042,
-      "mean_amplitude": 0.27272402306619115
+      "field_cost_reference": 5.1313458859804114e-12,
+      "field_cost_note": "The closed-form field cost of the same reversal, for scale only. This case does not report a field cost.",
+      "r06": {
+        "cost": null,
+        "switched": true,
+        "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+        "cost_fast_reduced": 4.8900040412908386e-12,
+        "mean_current_reduced": 82964244326.64882,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      },
+      "mean_current_reduced": 82964244326.64882
     },
     {
       "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 1.6436238603730032e-10,
-      "cost": 2.539674201352681e-12,
-      "cost_low_damping": 2.539674201352681e-12,
-      "cost_high_damping": 2.539674201352681e-12,
       "cost_free": 1.9560016165163353e-12,
       "cost_floor": 1.9622217721956553e-12,
-      "cost_over_floor": 1.2942849974143733,
-      "cost_over_free": 1.2984008703816279,
-      "mean_amplitude": 0.10908960922647645
+      "field_cost_reference": 2.539674201352681e-12,
+      "field_cost_note": "The closed-form field cost of the same reversal, for scale only. This case does not report a field cost.",
+      "r06": {
+        "cost": null,
+        "switched": true,
+        "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+        "cost_fast_reduced": 1.9560016165163353e-12,
+        "mean_current_reduced": 33185697730.65953,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      },
+      "mean_current_reduced": 33185697730.65953
     },
     {
       "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 3.2872477207460065e-10,
-      "cost": 2.015331696821165e-12,
-      "cost_low_damping": 2.015331696821165e-12,
-      "cost_high_damping": 2.015331696821165e-12,
       "cost_free": 9.780008082581677e-13,
       "cost_floor": 1.9622217721956553e-12,
-      "cost_over_floor": 1.0270662192103197,
-      "cost_over_free": 2.0606646536524824,
-      "mean_amplitude": 0.054544804613238226
+      "field_cost_reference": 2.015331696821165e-12,
+      "field_cost_note": "The closed-form field cost of the same reversal, for scale only. This case does not report a field cost.",
+      "r06": {
+        "cost": null,
+        "switched": true,
+        "reason": "current cost in reduced units; not comparable with a field cost in T^2 s",
+        "cost_fast_reduced": 9.780008082581677e-13,
+        "mean_current_reduced": 16592848865.329765,
+        "characteristic_time_s": 1.6384136458933598e-10,
+        "forbidden_ratio": 0.0
+      },
+      "mean_current_reduced": 16592848865.329765
     }
   ],
   "pulses": [

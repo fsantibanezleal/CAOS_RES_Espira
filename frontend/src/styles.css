@@ -124,9 +124,13 @@
   min-height: 0;
 }
 .wb-instrument > * {
-  flex: 1 1 auto;
+  /* basis 0, not auto: with `auto` the item takes its CONTENT width, so a chart that came up narrow
+     (built while its sub-tab panel was hidden and had no width) pins its own container narrow and can
+     never recover. One case rendered 90 px wide inside a 1000 px stage that way. */
+  flex: 1 1 0;
   min-width: 0;
   min-height: 0;
+  width: 100%;
 }
 .wb-readout {
   overflow-y: auto;
@@ -462,4 +466,66 @@
   font-size: 0.75rem;
   opacity: 0.7;
   margin: 0;
+}
+
+/* ---- the declared observable, the drawn-path note and the live lane ---- */
+.wb-instrument-stack {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 8px;
+}
+.wb-instrument-stack > *:first-child {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.wb-pulse-note {
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+.wb-observable-note {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+.wb-live {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-accent, #3b82f6);
+  border-radius: 8px;
+  background: var(--color-accent-soft, rgba(59, 130, 246, 0.12));
+}
+.wb-live h4 {
+  margin: 0 0 6px;
+}
+.wb-live p {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+/* ---- the case list is bounded, so the stage does not shrink as cases are baked (ADR-0071) ----
+   The registry has 26 cases and 15 are baked. Chips in wrapping rows grew the selector to 39 per cent
+   of the App surface at 1360x900 and pushed the instrument onto the footer, which the layout gate
+   caught. The list scrolls inside a bounded box instead; the stage keeps its height whatever the
+   coverage becomes. */
+.wb-top > .cs,
+.wb-top > div:first-child {
+  max-height: 27vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.wb-top .cs-group {
+  break-inside: avoid;
+}
+
+/* The context prose is long by design (a case declares its reason, its expectation and its kill
+   criterion). It scrolls inside the stage instead of pushing the page past the footer. */
+.wb-ctx-panel {
+  overflow-y: auto;
+  min-height: 0;
 }

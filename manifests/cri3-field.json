@@ -22,19 +22,19 @@
   ],
   "artifact": {
     "path": "cri3-field.json",
-    "bytes": 268169,
-    "sha256": "584b914f332959a76590eadaa7d2f7ed854b12b25ca9832677ac275813a07dd4"
+    "bytes": 268437,
+    "sha256": "d7846b408d670d374296c5ae69bf0f416097d46aba178754b22c7a3fb1a01c39"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 8648.871,
-    "artifact_bytes": 268169,
+    "runtime_ms": 2707.0,
+    "artifact_bytes": 268437,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 8649 ms over the 250 ms budget"
+      "runtime 2707 ms over the 250 ms budget"
     ]
   },
   "completeness": {

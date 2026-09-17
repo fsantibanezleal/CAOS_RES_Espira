@@ -1,5 +1,5 @@
 {
-  "schema_version": "2.0.0",
+  "schema_version": "2.1.0",
   "case": {
     "slug": "feps3-negative-control",
     "code": "C18",
@@ -146,6 +146,15 @@
       100.0
     ]
   },
+  "observable": {
+    "key": "cost",
+    "label": "Switching cost",
+    "unit": "T^2 s",
+    "is_field_cost": true,
+    "note": "The field cost integral, comparable with the universal floor and the free-macrospin cost."
+  },
+  "pulse_note": "",
+  "live_inputs": null,
   "cost_curve": [
     {
       "variant": 2.0,

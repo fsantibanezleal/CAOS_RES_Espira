@@ -22,19 +22,19 @@
   ],
   "artifact": {
     "path": "feps3-negative-control.json",
-    "bytes": 265543,
-    "sha256": "2146f125c990ced35cc80ef30c030986e4c87d562d388159ecfbeb62508ecc07"
+    "bytes": 265811,
+    "sha256": "e464440aaded102efddd7f6a49443e57f956f701c5c7b70c7775cc71a8989a07"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 7373.53,
-    "artifact_bytes": 265543,
+    "runtime_ms": 2709.098,
+    "artifact_bytes": 265811,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 7374 ms over the 250 ms budget"
+      "runtime 2709 ms over the 250 ms budget"
     ]
   },
   "completeness": {

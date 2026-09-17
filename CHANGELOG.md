@@ -4,6 +4,66 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.07.000] - 2026-09-17
+
+### Added
+- Four more cases baked, taking the matrix to 15 of 26. **C01, the free-moment oracle**: the free limit
+  is reached by making the switching time short compared with the Larmor time rather than by setting the
+  anisotropy to zero, which the engine refuses; both the closed form and the numerical solver return the
+  free cost, within one part in a million up to 0.2 tau0. **C03, the spin-orbit-torque oracle**, which
+  reports a current, not a field cost. **C06, the search family**: the six seeds find two distinct
+  converged paths, 1.5206e-11 and 2.0250e-11 T^2 s, a spread of 33 per cent, and three of the six land on
+  the expensive one, which is exactly why every biaxial bake here runs a multi-seed search. **C07, the
+  single-site thermal success rate**, where the zero-temperature optimum is measurably not the most
+  reliable pulse.
+- A case now declares the **observable** it reports (its key, label, unit, and whether it is a field
+  cost), and the app plots and reads the declaration instead of assuming every number is a cost in
+  T^2 s. On a case that does not report a field cost the field-derived ratios are not carried at all; the
+  closed-form field cost stays under `field_cost_reference` with a note saying it is there for scale.
+- **The live lane is real.** C03 is the first case the lane gate puts in the live lane, and the web now
+  carries its own implementation of that closed form (the complete elliptic integral by the
+  arithmetic-geometric mean, and Eqs. 8, 9, 11 and 12 of Phys. Rev. B 105, 134404), written independently
+  of the engine's path through SciPy. The workbench recomputes the case in the browser and shows the
+  agreement with the committed artifact; the two agree exactly today.
+- Rungs R11 (the finite-temperature success rate over a stochastic ensemble) and R12 (the same pulse with
+  a longitudinal field, the reliability it buys and its added cost) run in stage `infer`.
+- A sixth browser gate (`e2e/observable.mjs`): a non-cost observable is never shown in T^2 s, a case says
+  so when it does not report a field cost, the page and the manifest agree about the lane, the live
+  recompute matches the artifact to better than a part in a million, and the drawn-path note appears
+  exactly where the artifact declares one.
+- A Python test refuses a manifest that puts a case in the live lane without a browser implementation of
+  its methods, so the gate's verdict and the app cannot drift apart.
+
+### Changed
+- C04 and C06 draw the solver's own path on its own image grid instead of the closed-form uniaxial path.
+  Both cases are ABOUT the numerical path, so drawing the analytic one showed the same picture for two
+  different answers.
+- C07's declared window moved from a stability factor of 10 to 80 down to 1 to 20, from measurement:
+  above ten the zero-temperature pulse already succeeds essentially always and the case would have been a
+  flat line. C01's sweep moved to 0.02 to 1 tau0 for the same reason, that being where the free limit is.
+- The artifact schema is 2.1.0, and the loader now refuses an artifact whose major version differs from
+  the one the app reads. The TypeScript mirror had been left at 1.0.0 while the Python side was at 2.0.0.
+- The case list is bounded and scrolls. With 15 cases baked it had grown to 39 per cent of the App
+  surface at 1360x900 and pushed the instrument onto the footer; the registry has 26 cases, so chips in
+  wrapping rows do not scale.
+
+### Fixed
+- **Both charts were formatting their x axis as dates.** uPlot treats x as a time axis by default, so a
+  switching time of 2 tau0 and a pulse time of 33 ps were labelled with times in 1969. Live on the site
+  until now.
+- **A chart built while its sub-tab panel was hidden stayed that size.** The cost curve rendered 90 px
+  wide inside a 1000 px stage, and the layout gate passed it because the sliver still filled the height.
+  Both charts now observe their container, the flex item takes a zero basis so a narrow chart cannot pin
+  its own container narrow, and the layout gate measures the painted WIDTH against the instrument too.
+- **An uncaught exception in a chart formatter was invisible to every gate.** uPlot passes null for a
+  tick it cannot place, the formatter threw, and the throw aborted the redraw that would have resized the
+  plot. It never reached `console.error`, so no gate saw it; all six gates now fail on an uncaught page
+  error as well.
+- The layout gate counted content clipped inside a scroll region as overlapping the footer. It now
+  intersects each element with its clipping ancestors and measures what is actually visible.
+- The footer, the architecture modal and the Implementation page said the web never recomputes. One case
+  now does, and all three say so.
+
 ## [0.06.000] - 2026-09-17
 
 ### Added
