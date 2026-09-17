@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 
 import numpy as np
@@ -22,7 +23,7 @@ from spinoct.dynamics import MacrospinSystem
 from ..materials import get_material
 from .dataset import splits
 
-__all__ = ["REGISTRY_PATH", "TrainedPolicy", "train_policy"]
+__all__ = ["REGISTRY_PATH", "TrainedPolicy", "load_or_train_policy", "train_policy"]
 
 ROOT = Path(__file__).resolve().parents[3]
 CHECKPOINT_PATH = ROOT / "models" / "amortized_policy.json"
@@ -167,3 +168,23 @@ def train_policy(write: bool = True) -> TrainedPolicy:
             newline="\n",
         )
     return TrainedPolicy(checkpoint, train_materials, test_materials, tuple(scores), passed)
+
+
+@cache
+def load_or_train_policy():
+    """The trained policy object, trained once per process.
+
+    `infer` needs the policy itself, not its checkpoint, and training it is a second of work; caching
+    keeps the release from retraining it for every variant while keeping the training set identical to
+    the one the registry records.
+    """
+    by_split = splits()
+    dampings = _training_dampings(by_split["train"], by_split["test"])
+    reference = get_material(by_split["train"][0])
+    return train_amortized_policy(
+        mu=reference.moment_j_per_t,
+        anisotropy_j=reference.anisotropy_j,
+        alphas=dampings,
+        switching_times_tau0=np.array(_TRAIN_TIMES),
+        seed=_SEED,
+    )

@@ -478,7 +478,12 @@ CASES: dict[str, Case] = {
         kill_criterion="A band-limited pulse cheaper than the unconstrained optimum would mean the "
         "unconstrained solver is stuck in a local minimum.",
         axis=VariantAxis("harmonics", "Harmonics", "count", (1.0, 2.0, 3.0, 4.0, 6.0, 8.0)),
-        status="planned",
+        status="blocked",
+        blocked_reason="The engine's band-limited solver optimizes with Nelder-Mead, which does not "
+        "converge at this parameter count: measured 2026-09-17, 90 to 230 seconds per solve and a cost "
+        "2.2 times the analytic optimum at two harmonics rising to 14 times at six, where more harmonics "
+        "should cost less. Baking it would ship optimizer artifacts as a price of realizability. Needs "
+        "the engine's constrained solvers on a gradient method (programme backlog BL-036).",
         ground_truth="analytic",
         split="control",
         synthetic=SyntheticSystem(),
@@ -496,7 +501,10 @@ CASES: dict[str, Case] = {
         kill_criterion="A reported reversal under a cap that cannot physically reverse the moment means "
         "the constraint is not being enforced.",
         axis=VariantAxis("amplitude_cap", "Amplitude cap", "K/mu", (0.5, 1.0, 1.5, 2.0, 3.0, 5.0)),
-        status="planned",
+        status="blocked",
+        blocked_reason="Same engine defect as the band-limited case: the constrained solver optimizes "
+        "with Nelder-Mead and does not converge at this parameter count, so the reported cost under a cap "
+        "would be an optimizer artifact rather than the price of the constraint (programme backlog BL-036).",
         ground_truth="analytic",
         split="control",
         synthetic=SyntheticSystem(),
@@ -510,7 +518,10 @@ CASES: dict[str, Case] = {
         reason="The kickoff paper names hybridization with current- and light-driven approaches as the "
         "open design space. The two-term cost prices the trade directly.",
         expectation="As the relative price of current falls, the optimum shifts from field-dominated to "
-        "current-dominated; whether the mixture ever beats both pure protocols is the open question.",
+        "current-dominated; whether the mixture ever beats both pure protocols is the open question. A "
+        "first solve at equal prices reverses the moment and puts 95 per cent of the weighted cost on the "
+        "field, which is the honest null prior. Measured 2026-09-17: five minutes per solve, so the sweep "
+        "waits for the engine's constrained solvers to move to a gradient method (programme backlog BL-036).",
         kill_criterion="A hybrid that beats both pure protocols at every price would be too good: it "
         "would mean the two cost terms are not being weighed consistently.",
         axis=VariantAxis("current_price", "Current price", "C_j / C_b", (0.1, 0.3, 1.0, 3.0, 10.0, 30.0)),
@@ -529,15 +540,23 @@ CASES: dict[str, Case] = {
         category="F. Screening and learned",
         reason="Every solver here re-optimizes from scratch. A policy that emits a near-optimal pulse "
         "instantly is the useful object, and the uniaxial optimum is known, so its claim is checkable.",
-        expectation="On materials it never trained on, the emitted pulse reverses the moment and costs "
-        "within ten per cent of the analytic optimum.",
-        kill_criterion="A policy that cannot reach the analytic optimum where the optimum is known has "
-        "no business being trusted anywhere else; that is the pre-declared acceptance gate.",
+        expectation="Inside the damping range it was trained over (the van der Waals family, 3e-4 to "
+        "4e-2), the emitted pulse reverses the moment and costs within about ten per cent of the analytic "
+        "optimum, including at the held-out materials' dampings. Outside that range it degrades and then "
+        "fails: measured 2026-09-17, 1.11 times the optimum at a damping of 0.05, 1.86 at 0.1, and no "
+        "reversal at all at 0.2 and above. The sweep is deliberately wider than the training range so the "
+        "limit of amortization is visible rather than implied.",
+        kill_criterion="A policy that cannot reach the analytic optimum INSIDE its training range, where "
+        "the optimum is known, has no business being trusted anywhere else; that is the pre-declared "
+        "acceptance gate, and it is what the model registry records. Failing outside the range is not a "
+        "kill, but presenting those numbers without saying the pulse did not switch would be.",
         axis=VariantAxis("damping", "Damping", "alpha", (0.005, 0.01, 0.05, 0.1, 0.2, 0.5)),
-        status="planned",
+        status="baked",
         ground_truth="analytic",
         split="test",
-        methods=("R15",),
+        synthetic=SyntheticSystem(),
+        primary_method="R15",
+        methods=("R15", "R05"),
     ),
 }
 

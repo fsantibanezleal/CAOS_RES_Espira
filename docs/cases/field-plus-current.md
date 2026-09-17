@@ -10,7 +10,7 @@ The kickoff paper names hybridization with current- and light-driven approaches 
 
 ## What a domain expert should see
 
-As the relative price of current falls, the optimum shifts from field-dominated to current-dominated; whether the mixture ever beats both pure protocols is the open question.
+As the relative price of current falls, the optimum shifts from field-dominated to current-dominated; whether the mixture ever beats both pure protocols is the open question. A first solve at equal prices reverses the moment and puts 95 per cent of the weighted cost on the field, which is the honest null prior. Measured 2026-09-17: five minutes per solve, so the sweep waits for the engine's constrained solvers to move to a gradient method (programme backlog BL-036).
 
 ## Kill criterion
 

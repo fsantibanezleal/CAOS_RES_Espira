@@ -134,6 +134,10 @@ def _cost_row(case: Case, variant: float) -> dict:
     """One row of the cost curve: the optimum at this variant against its references."""
     t_tau0 = _time_for(case, variant)
     system = _system(case, variant, uniaxial=True)
+    if case.axis.name == "damping":
+        system = MacrospinSystem(
+            mu=system.mu, anisotropy_j=system.anisotropy_j, alpha=variant, gamma=system.gamma
+        )
     switching_time = system.switching_time_from_tau0(t_tau0)
     optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
     free = cost_free_macrospin(switching_time, system.alpha, system.gamma)
@@ -160,6 +164,19 @@ def _cost_row(case: Case, variant: float) -> dict:
         "cost_over_free": cost / free,
         "mean_amplitude": optimal.mean_amplitude(),
     }
+    if case.primary_method == "R15":
+        # A learned case reports what the POLICY costs, against the closed form it never saw.
+        from ..stages.infer import _run_method
+
+        emitted = _run_method(case, "R15", variant, t_tau0)
+        row["cost"] = emitted.cost
+        row["switched"] = emitted.switched
+        row["cost_over_analytic"] = emitted.metrics["cost_ratio_to_analytic"]
+        row["analytic_cost"] = cost
+        row["predicted_shape_parameter"] = emitted.metrics["predicted_p"]
+        row["true_shape_parameter"] = emitted.metrics["true_p"]
+        return row
+
     if case.axis.name == "hard_axis_ratio":
         # The hard axis has no closed form: the reported cost is the numerical optimum.
         biaxial = _biaxial(case, variant, t_tau0)
@@ -175,11 +192,24 @@ def _cost_row(case: Case, variant: float) -> dict:
 
 
 def _pulse(case: Case, variant: float) -> dict:
-    """The trajectory on the sphere and the pulse waveform at one variant."""
+    """The trajectory on the sphere and the pulse waveform at one variant.
+
+    For a learned case this is the pulse the policy emits, not the closed form, because that is what the
+    case is about: the workbench must show what the method produced.
+    """
     t_tau0 = _time_for(case, variant)
     system = _system(case, variant, uniaxial=True)
+    if case.axis.name == "damping":
+        system = MacrospinSystem(
+            mu=system.mu, anisotropy_j=system.anisotropy_j, alpha=variant, gamma=system.gamma
+        )
     switching_time = system.switching_time_from_tau0(t_tau0)
-    optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
+    if case.primary_method == "R15":
+        from ..stages.train import load_or_train_policy
+
+        optimal = load_or_train_policy().pulse(system, switching_time)
+    else:
+        optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
     grid = np.linspace(0.0, switching_time, _TRAJECTORY_SAMPLES)
     moment = optimal.moment(grid)
     field = optimal.field_vector(grid)

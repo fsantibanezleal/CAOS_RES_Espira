@@ -104,6 +104,19 @@
         "not_applicable": 0,
         "missing": 0
       }
+    },
+    {
+      "case": "amortized-policy",
+      "code": "C26",
+      "manifest": "amortized-policy.json",
+      "sha256": "8abe6f439778b655aaadf51a4eedf8fb0190f798cba0c9c2dd7e6457540c9ff9",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
     }
   ]
 }

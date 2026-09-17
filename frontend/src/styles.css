@@ -126,6 +126,7 @@
 .wb-instrument > * {
   flex: 1 1 auto;
   min-width: 0;
+  min-height: 0;
 }
 .wb-readout {
   overflow-y: auto;
@@ -431,4 +432,34 @@
   .wb-ctx-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* ---- sphere trajectory: a square inscribed in the measured box (ADR-0071) ---- */
+.sphere-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  gap: 8px;
+}
+.sphere-box {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sphere-box canvas {
+  display: block;
+}
+.sphere-scrub {
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+}
+.sphere-note {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin: 0;
 }
