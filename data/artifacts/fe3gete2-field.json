@@ -1,12 +1,23 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "case": {
     "slug": "fe3gete2-field",
+    "code": "C12",
     "title": "Fe3GeTe2, field-driven reversal",
-    "category": "real-material-field",
+    "category": "C. Real materials",
     "material": "fe3gete2",
-    "reason": "An itinerant metal with strong perpendicular anisotropy, cleanly uniaxial.",
+    "reason": "An itinerant metal with strong perpendicular anisotropy, cleanly uniaxial, and a spin-orbit-torque-compatible conductor.",
     "expectation": "Uniaxial: the analytic optimal control path applies and the cost cannot beat the free-macrospin floor.",
+    "kill_criterion": "A cost below the free-macrospin floor for a uniaxial material would mean the analytic solution is being applied outside its validity.",
+    "ground_truth": "provisional",
+    "split": "train",
+    "status": "baked",
+    "surface": "workbench",
+    "methods": [
+      "R00",
+      "R05"
+    ],
+    "sources": [],
     "includes_biaxial": false
   },
   "material": {
@@ -124,16 +135,22 @@
       "hard_axis_ratio: assumed"
     ]
   },
-  "switching_times_tau0": [
-    2.0,
-    5.0,
-    10.0,
-    20.0,
-    50.0,
-    100.0
-  ],
+  "axis": {
+    "name": "switching_time",
+    "label": "Switching time",
+    "unit": "tau0",
+    "values": [
+      2.0,
+      5.0,
+      10.0,
+      20.0,
+      50.0,
+      100.0
+    ]
+  },
   "cost_curve": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 1.4625484195537659e-12,
       "cost": 2.1766351938372508e-10,
@@ -146,6 +163,7 @@
       "mean_amplitude": 12.199347353116199
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 3.656371048884414e-12,
       "cost": 8.706772293024248e-11,
@@ -158,6 +176,7 @@
       "mean_amplitude": 4.8797389412464796
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 7.312742097768829e-12,
       "cost": 4.3537995646501275e-11,
@@ -170,6 +189,7 @@
       "mean_amplitude": 2.4398694706232398
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 1.4625484195537657e-11,
       "cost": 2.177726569522395e-11,
@@ -182,6 +202,7 @@
       "mean_amplitude": 1.2199347353116199
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 3.6563710488844145e-11,
       "cost": 8.734047524721846e-12,
@@ -194,6 +215,7 @@
       "mean_amplitude": 0.4879738941246479
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 7.312742097768829e-11,
       "cost": 4.408284597004425e-12,
@@ -208,6 +230,7 @@
   ],
   "pulses": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 1.4625484195537659e-12,
       "time_s": [
@@ -1508,6 +1531,7 @@
       ]
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 3.656371048884414e-12,
       "time_s": [
@@ -2808,6 +2832,7 @@
       ]
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 7.312742097768829e-12,
       "time_s": [
@@ -4108,6 +4133,7 @@
       ]
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 1.4625484195537657e-11,
       "time_s": [
@@ -5408,6 +5434,7 @@
       ]
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 3.6563710488844145e-11,
       "time_s": [
@@ -6708,6 +6735,7 @@
       ]
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 7.312742097768829e-11,
       "time_s": [
@@ -8009,6 +8037,7 @@
     }
   ],
   "reference_pulse": {
+    "variant": 20.0,
     "switching_time_tau0": 20.0,
     "switching_time_s": 1.4625484195537657e-11,
     "time_s": [

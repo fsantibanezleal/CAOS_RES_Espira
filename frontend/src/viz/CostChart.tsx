@@ -9,6 +9,7 @@ import type { CostRow } from '../data/contract';
 
 interface Props {
   rows: CostRow[];
+  axis: { label: string; unit: string };
   theme: 'light' | 'dark';
 }
 
@@ -18,13 +19,13 @@ function cssVar(name: string, fallback: string): string {
   return value || fallback;
 }
 
-export function CostChart({ rows, theme }: Props): React.JSX.Element {
+export function CostChart({ rows, axis, theme }: Props): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot | null>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-    const t = rows.map((r) => r.switching_time_tau0);
+    const t = rows.map((r) => r.variant);
     const optimal = rows.map((r) => r.cost);
     const free = rows.map((r) => r.cost_free);
     const floor = rows.map((r) => r.cost_floor);
@@ -42,7 +43,7 @@ export function CostChart({ rows, theme }: Props): React.JSX.Element {
       scales: { x: { distr: 3 }, y: { distr: 3 } },
       axes: [
         {
-          label: 'switching time  T / tau0',
+          label: `${axis.label}  (${axis.unit})`,
           stroke,
           grid: { stroke: grid },
           ticks: { stroke: grid },
@@ -55,7 +56,7 @@ export function CostChart({ rows, theme }: Props): React.JSX.Element {
         },
       ],
       series: [
-        { label: 'T / tau0' },
+        { label: `${axis.label} (${axis.unit})` },
         {
           label: 'damping band high',
           stroke: 'transparent',
@@ -86,7 +87,7 @@ export function CostChart({ rows, theme }: Props): React.JSX.Element {
       plotRef.current?.destroy();
       plotRef.current = null;
     };
-  }, [rows, theme]);
+  }, [rows, axis, theme]);
 
   return <div ref={ref} style={{ width: '100%' }} />;
 }

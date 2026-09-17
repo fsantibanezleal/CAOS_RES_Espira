@@ -1,20 +1,22 @@
-# CrSBr, field-driven reversal
+# Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)
 
-Case `crsbr-field` (C11), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+Case `prb107-biaxial-figures` (C05), category B. Published replication. Blocked: something outside this repository is missing.
+
+**What is missing.** The published figure values have not been digitized from the paper; without them there is nothing to compare against, and inventing reference points would be fabrication.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-The kickoff material and, because of its triaxial anisotropy, the natural host of the biaxial cost-reduction mechanism.
+The lineage paper's own numerical optimal control paths for a biaxial particle; the closest published comparison for our image-based solver.
 
 ## What a domain expert should see
 
-The optimal pulse cost falls with switching time toward the universal floor; the hard axis pushes the numerical cost below the free-macrospin floor.
+Our solver reproduces the published cost against switching time within the digitizing uncertainty of the figures.
 
 ## Kill criterion
 
-A biaxial cost above the free-macrospin cost would mean the hard axis is not being exploited, and the material's headline advantage does not exist.
+A systematic offset larger than the digitizing uncertainty means our cost functional differs from theirs, most likely in the anisotropy convention.
 
 ## Material: CrSBr
 
@@ -42,12 +44,12 @@ Switching time (tau0): 2, 5, 10, 20, 50, 100.
 
 | Field | Value |
 |---|---|
-| Methods | R00, R05, R07 |
-| Ground truth | provisional |
-| Split | train |
+| Methods | R07 |
+| Ground truth | published |
+| Split | control |
 | Seed | 0 |
 | Surface | workbench |
 
 ## Sources
 
-No external reference: the case is checked against the engine's own oracles.
+- https://doi.org/10.1103/PhysRevB.107.214448

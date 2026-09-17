@@ -7,4 +7,4 @@ recomputes them.
 
 from __future__ import annotations
 
-__version__ = "0.03.000"
+__version__ = "0.04.000"

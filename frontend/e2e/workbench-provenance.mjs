@@ -70,15 +70,24 @@ for (const theme of ['light', 'dark']) {
         `${tag} ${entry.slug}: assumed count ${expectedAssumed}`,
       );
 
+      // A material case links the DOIs behind a sourced value; a synthetic reference system has none, and
+      // must instead declare every value assumed, so a reader cannot mistake a definition for a measurement.
       const sourced = ORDER.find((n) => prov[n].sources.length > 0);
-      const row = panel.locator(`.param-row[data-parameter="${sourced}"]`);
-      await row.locator('.param-head').click();
-      const links = await row.locator('.param-sources a').evaluateAll((as) => as.map((a) => a.href));
-      check(
-        JSON.stringify(links) === JSON.stringify(prov[sourced].sources.map((d) => `https://doi.org/${d}`)),
-        `${tag} ${entry.slug}: ${sourced} links its ${prov[sourced].sources.length} DOI(s)`,
-      );
-      await row.locator('.param-head').click();
+      if (sourced) {
+        const row = panel.locator(`.param-row[data-parameter="${sourced}"]`);
+        await row.locator('.param-head').click();
+        const links = await row.locator('.param-sources a').evaluateAll((as) => as.map((a) => a.href));
+        check(
+          JSON.stringify(links) === JSON.stringify(prov[sourced].sources.map((d) => `https://doi.org/${d}`)),
+          `${tag} ${entry.slug}: ${sourced} links its ${prov[sourced].sources.length} DOI(s)`,
+        );
+        await row.locator('.param-head').click();
+      } else {
+        check(
+          ORDER.every((n) => prov[n].provenance === 'assumed') && expectedAssumed === ORDER.length,
+          `${tag} ${entry.slug}: a synthetic system declares every value assumed`,
+        );
+      }
     }
 
     const contrast = await page.evaluate(() => {
