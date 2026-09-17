@@ -1,0 +1,160 @@
+"""The staged pipeline: the lane gate, the manifest, the split plan, the scores and the release gate.
+
+The heavy stages (infer over every method, the full release) are exercised on the smallest real case in
+a sandbox; the canonical `data/artifacts` and `manifests` are never written by a test.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from espiralab.cases import baked_cases, get_case
+from espiralab.core.gate import ARTIFACT_BUDGET_BYTES, RUNTIME_BUDGET_MS, classify_lane
+from espiralab.core.manifest import MethodResult, build_manifest, sha256_of
+from espiralab.stages.dataset import plan_matrix, splits
+from espiralab.stages.evaluate import evaluate_case
+from espiralab.stages.infer import infer_case
+from espiralab.stages.validate import validate_release
+
+ROOT = Path(__file__).resolve().parents[1]
+ARTIFACTS = ROOT / "data" / "artifacts"
+MANIFESTS = ROOT / "manifests"
+
+
+# ------------------------------------------------------------------ the lane gate
+
+
+def test_a_closed_form_case_inside_both_budgets_is_live() -> None:
+    verdict = classify_lane(("R05",), RUNTIME_BUDGET_MS / 2, ARTIFACT_BUDGET_BYTES // 2)
+    assert verdict.lane == "live" and verdict.reasons == ()
+
+
+@pytest.mark.parametrize(
+    ("methods", "runtime", "size", "reason"),
+    [
+        (("R05", "R07"), 1.0, 1000, "no closed form"),
+        (("R05",), RUNTIME_BUDGET_MS * 2, 1000, "over the"),
+        (("R05",), 1.0, ARTIFACT_BUDGET_BYTES * 2, "byte budget"),
+    ],
+)
+def test_each_gate_reason_forces_precompute(methods, runtime, size, reason) -> None:
+    verdict = classify_lane(methods, runtime, size)
+    assert verdict.lane == "precompute"
+    assert any(reason in r for r in verdict.reasons)
+
+
+def test_the_shipped_cases_declare_their_measured_lane() -> None:
+    """Every baked case is precompute, and its manifest says why in measured terms."""
+    for slug in baked_cases("workbench"):
+        manifest = json.loads((MANIFESTS / f"{slug}.json").read_text(encoding="utf-8"))
+        assert manifest["lane"]["lane"] == "precompute"
+        assert manifest["lane"]["reasons"], slug
+        assert manifest["lane"]["runtime_ms"] > 0
+
+
+# ------------------------------------------------------------------ the manifest
+
+
+def test_manifest_binds_the_artifact_by_hash(tmp_path: Path) -> None:
+    case = get_case("fe3gete2-field")
+    artifact = tmp_path / "artifact.json"
+    artifact.write_text('{"hello": 1}', encoding="utf-8")
+    results = [
+        MethodResult(method=m, variant=v, cost=1e-12, switched=True)
+        for m in case.methods
+        for v in case.axis.values
+    ]
+    manifest = build_manifest(case, artifact, results, {"lane": "precompute"}, "0.0.0", ["flag"])
+    assert manifest.artifact_sha256 == sha256_of(artifact)
+    assert manifest.completeness == {
+        "expected": len(case.methods) * len(case.axis.values),
+        "produced": len(results),
+        "not_applicable": 0,
+        "missing": 0,
+    }
+
+
+def test_manifest_counts_a_missing_cell(tmp_path: Path) -> None:
+    case = get_case("fe3gete2-field")
+    artifact = tmp_path / "artifact.json"
+    artifact.write_text("{}", encoding="utf-8")
+    results = [MethodResult(method=case.methods[0], variant=case.axis.values[0], cost=1e-12, switched=True)]
+    manifest = build_manifest(case, artifact, results, {}, "0.0.0", [])
+    assert manifest.completeness["missing"] == manifest.completeness["expected"] - 1
+
+
+# ------------------------------------------------------------------ dataset and evaluate
+
+
+def test_the_plan_counts_every_declared_cell() -> None:
+    plan = plan_matrix()
+    assert plan.expected == sum(len(c.methods) * len(c.axis.values) for c in baked_cases("workbench").values())
+    by_split = splits()
+    assert not set(by_split["train"]) & set(by_split["test"])
+
+
+def test_infer_and_evaluate_produce_a_complete_matrix_for_a_real_case() -> None:
+    """The cheapest real case, end to end: every declared cell is produced or explicitly not applicable."""
+    case = get_case("cr2ge2te6-floor")
+    run = infer_case(case)
+    score = evaluate_case(case, run.results)
+    assert score.complete
+    for method in score.methods:
+        assert method.produced + method.not_applicable == method.cells
+    analytic = next(m for m in score.methods if m.method == "R05")
+    assert analytic.worst_ratio_to_oracle == pytest.approx(1.0)
+
+
+def test_a_method_the_stage_cannot_run_is_an_error_not_a_silent_gap() -> None:
+    from espiralab.stages.infer import MethodNotImplemented, _run_method
+
+    case = get_case("cr2ge2te6-floor")
+    with pytest.raises(MethodNotImplemented, match="R99"):
+        _run_method(case, "R99", case.axis.values[0], 10.0)
+
+
+# ------------------------------------------------------------------ the release gate
+
+
+def test_the_committed_release_validates() -> None:
+    assert validate_release(ARTIFACTS, MANIFESTS) == []
+
+
+def test_validate_catches_a_tampered_artifact(tmp_path: Path) -> None:
+    import shutil
+
+    artifacts, manifests = tmp_path / "artifacts", tmp_path / "manifests"
+    shutil.copytree(ARTIFACTS, artifacts)
+    shutil.copytree(MANIFESTS, manifests)
+    target = artifacts / "cri3-field.json"
+    data = json.loads(target.read_text(encoding="utf-8"))
+    data["cost_curve"][0]["cost"] *= 1.5
+    target.write_text(json.dumps(data), encoding="utf-8")
+    problems = validate_release(artifacts, manifests)
+    assert any("does not match its manifest hash" in p for p in problems)
+
+
+def test_validate_catches_a_missing_manifest(tmp_path: Path) -> None:
+    import shutil
+
+    artifacts, manifests = tmp_path / "artifacts", tmp_path / "manifests"
+    shutil.copytree(ARTIFACTS, artifacts)
+    shutil.copytree(MANIFESTS, manifests)
+    (manifests / "cri3-field.json").unlink()
+    problems = validate_release(artifacts, manifests)
+    assert any("no manifest" in p for p in problems)
+
+
+def test_the_model_registry_records_the_policy_and_its_gate() -> None:
+    registry = json.loads((ROOT / "models" / "registry.json").read_text(encoding="utf-8"))
+    model = registry["models"][0]
+    assert model["method"] == "R15"
+    assert model["acceptance"]["passed"] is True
+    assert not set(model["train_materials"]) & set(model["held_out_materials"])
+    held_out = {s["material"] for s in model["acceptance"]["scores"]}
+    assert held_out == set(model["held_out_materials"])
+    for score in model["acceptance"]["scores"]:
+        assert score["switched"] and score["cost_ratio"] <= 1.10

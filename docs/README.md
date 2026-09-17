@@ -12,6 +12,7 @@ method is documented with its equations and sources in the engine's theory pages
 |---|---|
 | [architecture/01_overview.md](architecture/01_overview.md) | The two repositories, the lanes, the data flow from parameters to the web, and what is not yet on the staged base |
 | [architecture/02_data-contracts.md](architecture/02_data-contracts.md) | Contract 1 (published parameters into the engine, with provenance and conversions) and Contract 2 (the bake into the web) |
+| [architecture/03_staged-pipeline.md](architecture/03_staged-pipeline.md) | The named stages, the result schema, the measured lane gate, Contract 2 manifests and the model registry |
 | [architecture/07_deploy.md](architecture/07_deploy.md) | How the static site is built and published, and how a release is verified |
 | [frameworks/spinoct/](frameworks/spinoct/README.md) | The engine: what it implements, how it is pinned, a runnable example |
 | [guides/01_run-the-bake.md](guides/01_run-the-bake.md) | Set up, bake, check, and serve locally |

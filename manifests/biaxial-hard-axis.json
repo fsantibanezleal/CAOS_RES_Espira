@@ -1,0 +1,134 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "biaxial-hard-axis",
+  "code": "C04",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.12.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "provisional",
+  "methods": [
+    "R07"
+  ],
+  "variants": [
+    0.5,
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0
+  ],
+  "artifact": {
+    "path": "biaxial-hard-axis.json",
+    "bytes": 270413,
+    "sha256": "788b302e05f9483f36d2bcd3f07faa9a16c568ccd4128014beadd7bfdb968158"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 39547.615,
+    "artifact_bytes": 270413,
+    "methods": [
+      "R07"
+    ],
+    "reasons": [
+      "methods ['R07'] have no closed form for the browser",
+      "runtime 39548 ms over the 250 ms budget"
+    ]
+  },
+  "completeness": {
+    "expected": 6,
+    "produced": 6,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R07",
+      "variant": 0.5,
+      "cost": 7.401036654448147e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 0.702223621283626,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 2158.3973999950103
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 1.0,
+      "cost": 5.809670033059821e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 0.5512319043341408,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 2145.2664000098594
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 2.0,
+      "cost": 1.0465885697232498e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 0.9930219910252713,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 5149.447900010273
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 3.0,
+      "cost": 1.5084009112537827e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.4311978168781732,
+        "converged": 0.0,
+        "images": 60.0,
+        "solve_ms": 11291.012100002263
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 4.0,
+      "cost": 1.5206492661375447e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.4428192754965046,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 11200.817199976882
+      }
+    },
+    {
+      "method": "R07",
+      "variant": 5.0,
+      "cost": 2.227847429304072e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 2.1138215665140145,
+        "converged": 1.0,
+        "images": 60.0,
+        "solve_ms": 7602.44300001068
+      }
+    }
+  ],
+  "parameter_flags": [
+    "synthetic system"
+  ]
+}

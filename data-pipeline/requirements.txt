@@ -1,4 +1,4 @@
 # PRECOMPUTE lane: the engines the bake actually runs, pinned to the verified install.
 numpy==2.4.6
 scipy>=1.14
-spinoct==0.10.0
+spinoct==0.12.0

@@ -1,0 +1,173 @@
+"""Stage ``infer``: run every method a case declares, over every variant, into one result schema.
+
+A method that a case declares must produce a row for every variant, or say why it cannot. The rows share
+one shape (cost, whether the moment reversed, and the method's own metrics), so `evaluate` can compare
+methods without knowing which engine produced them.
+
+Methods implemented here:
+
+| Rung | What runs |
+|---|---|
+| R00 | the conventional static antiparallel field, the baseline the reduction factor is quoted against |
+| R05 | the closed-form uniaxial optimal control path |
+| R06 | the closed-form spin-orbit-torque optimal protocol |
+| R07 | the numerical image-based optimal control path (the only one that sees a hard axis) |
+
+A method a case declares but this stage does not implement raises rather than silently skipping: a
+missing cell must be a failure, not an absence.
+"""
+
+from __future__ import annotations
+
+import time
+from dataclasses import dataclass
+
+from spinoct.analytic import UniaxialOptimalControl, cost_free_macrospin, cost_infinite_time
+from spinoct.analytic.sot import SOTOptimalControl, ideal_sot_ratio_beta
+from spinoct.control import ConstantFieldProtocol, static_switching_field
+from spinoct.numeric import ImageOCPSolver
+
+from ..cases import Case
+from ..core.manifest import MethodResult
+
+__all__ = ["IMPLEMENTED_METHODS", "InferenceRun", "infer_case"]
+
+IMPLEMENTED_METHODS = ("R00", "R05", "R06", "R07")
+
+#: Seeds and iteration cap for the numerical solver in the release bake. The image count comes from the
+#: engine's resolution rule, which scales with the switching time.
+_SEEDS = 3
+_MAX_ITERATIONS = 2500
+#: The spin-orbit-torque coupling magnitude of the reference protocol, in the source's reduced units.
+_SOT_COUPLING = 1.0
+#: Integration steps for the static-field baseline.
+_BASELINE_STEPS = 4001
+
+
+@dataclass(frozen=True)
+class InferenceRun:
+    """Every result row of a case, with the wall time the whole case took."""
+
+    case: str
+    results: tuple[MethodResult, ...]
+    runtime_ms: float
+
+
+class MethodNotImplemented(RuntimeError):
+    """A case declares a method this stage cannot run; a missing cell is never silent."""
+
+
+def _system(case: Case, variant: float, uniaxial: bool = True):
+    from ..bake import _system as bake_system  # one definition of the case's system
+
+    return bake_system(case, variant, uniaxial=uniaxial)
+
+
+def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> MethodResult:
+    system = _system(case, variant, uniaxial=True)
+    switching_time = system.switching_time_from_tau0(t_tau0)
+
+    if method == "R05":
+        optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=optimal.cost(),
+            switched=True,
+            metrics={
+                "cost_over_free": optimal.cost() / cost_free_macrospin(switching_time, system.alpha, system.gamma),
+                "cost_over_floor": optimal.cost() / cost_infinite_time(system),
+                "mean_amplitude_t": optimal.mean_amplitude(),
+                "peak_amplitude_t": float(max(abs(optimal.field_amplitude(t)) for t in (0.0, switching_time / 2))),
+            },
+        )
+
+    if method == "R00":
+        protocol = ConstantFieldProtocol(system, amplitude=1.2 * static_switching_field(system))
+        result = protocol.run(switching_time, n_steps=_BASELINE_STEPS)
+        optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=result.cost,
+            switched=bool(result.switched),
+            metrics={
+                "over_optimal": result.cost / optimal.cost() if optimal.cost() > 0 else float("inf"),
+                "amplitude_t": 1.2 * static_switching_field(system),
+            },
+        )
+
+    if method == "R06":
+        # The closed-form spin-orbit-torque protocol, at the ideal field-like to damping-like balance.
+        # Its cost is a current integral in the reference's reduced units, not a field cost in T^2 s, so
+        # it is reported in its own units and never mixed into a field cost comparison.
+        protocol = SOTOptimalControl(
+            system=system,
+            switching_time=switching_time,
+            xi=_SOT_COUPLING,
+            beta=ideal_sot_ratio_beta(system.alpha),
+        )
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=None,
+            switched=not protocol.is_forbidden(),
+            applicable=True,
+            reason="current cost in reduced units; not comparable with a field cost in T^2 s",
+            metrics={
+                "cost_fast_reduced": protocol.cost_fast(),
+                "mean_current_reduced": protocol.mean_current(),
+                "characteristic_time_s": protocol.characteristic_time_ideal(),
+                "forbidden_ratio": float(protocol.is_forbidden()),
+            },
+        )
+
+    if method == "R07":
+        biaxial = _system(case, variant, uniaxial=False)
+        started = time.perf_counter()
+        images = ImageOCPSolver.recommended_images(biaxial, switching_time)
+        result = ImageOCPSolver(biaxial, n_images=images, switching_time=switching_time).solve_best(
+            n_seeds=_SEEDS, max_iterations=_MAX_ITERATIONS
+        )
+        uniaxial = UniaxialOptimalControl.for_switching_time(system, switching_time)
+        return MethodResult(
+            method=method,
+            variant=variant,
+            cost=result.cost,
+            switched=True,
+            metrics={
+                "over_analytic": result.cost / uniaxial.cost() if uniaxial.cost() > 0 else float("inf"),
+                "converged": float(result.converged),
+                "images": float(images),
+                "solve_ms": (time.perf_counter() - started) * 1e3,
+            },
+        )
+
+    raise MethodNotImplemented(
+        f"case {case.slug!r} declares method {method!r}, which stage infer does not implement"
+    )
+
+
+def infer_case(case: Case) -> InferenceRun:
+    """Run every declared method over every variant of one case."""
+    from ..bake import _time_for
+
+    started = time.perf_counter()
+    rows: list[MethodResult] = []
+    for method in case.methods:
+        for variant in case.axis.values:
+            t_tau0 = _time_for(case, variant)
+            if method == "R06" and case.material is not None:
+                rows.append(
+                    MethodResult(
+                        method=method,
+                        variant=variant,
+                        cost=None,
+                        switched=False,
+                        applicable=False,
+                        reason="no measured spin-orbit-torque couplings for this material",
+                    )
+                )
+                continue
+            rows.append(_run_method(case, method, variant, t_tau0))
+    return InferenceRun(case.slug, tuple(rows), (time.perf_counter() - started) * 1e3)
