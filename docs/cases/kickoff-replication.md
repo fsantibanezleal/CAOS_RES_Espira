@@ -1,20 +1,22 @@
-# CrSBr, field-driven reversal
+# The kickoff paper's own switching energies
 
-Case `crsbr-field` (C11), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+Case `kickoff-replication` (C10), category B. Published replication. Blocked: something outside this repository is missing.
+
+**What is missing.** The full text is behind a Cloudflare challenge and has not been read. The abstract's 1 to 10 ps rotation window and the press summaries' 126 to 140 ps switching times are in tension, and no number may be quoted until the paper itself is read (programme backlog BL-002).
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-The kickoff material and, because of its triaxial anisotropy, the natural host of the biaxial cost-reduction mechanism.
+The paper that started this product reports switching times and energies for three van der Waals magnets. Reproducing them is the most direct external check available.
 
 ## What a domain expert should see
 
-The optimal pulse cost falls with switching time toward the universal floor; the hard axis pushes the numerical cost below the free-macrospin floor.
+Our costs, converted through an explicit circuit model, land in the same range as the published energies for the same materials and switching times.
 
 ## Kill criterion
 
-A biaxial cost above the free-macrospin cost would mean the hard axis is not being exploited, and the material's headline advantage does not exist.
+A disagreement larger than the damping uncertainty band would mean either their circuit assumption or our parameter set differs, and the product must say which.
 
 ## Material: CrSBr
 
@@ -42,12 +44,12 @@ Switching time (tau0): 2, 5, 10, 20, 50, 100.
 
 | Field | Value |
 |---|---|
-| Methods | R00, R05, R07 |
-| Ground truth | provisional |
-| Split | train |
+| Methods | R05, R07 |
+| Ground truth | published |
+| Split | control |
 | Seed | 0 |
 | Surface | workbench |
 
 ## Sources
 
-No external reference: the case is checked against the engine's own oracles.
+- https://doi.org/10.1002/adma.202523059

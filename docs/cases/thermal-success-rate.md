@@ -1,20 +1,20 @@
-# CrSBr, field-driven reversal
+# Thermal success rate against switching time
 
-Case `crsbr-field` (C11), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+Case `thermal-success-rate` (C07), category B. Published replication. Planned: declared and runnable, not yet computed.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-The kickoff material and, because of its triaxial anisotropy, the natural host of the biaxial cost-reduction mechanism.
+An optimal pulse is derived at zero temperature; at finite temperature it sometimes fails. The success rate against the thermal stability factor is the honest reliability statement.
 
 ## What a domain expert should see
 
-The optimal pulse cost falls with switching time toward the universal floor; the hard axis pushes the numerical cost below the free-macrospin floor.
+The success rate falls as the thermal stability factor falls, and the pulse that is optimal at zero temperature is not the most reliable one.
 
 ## Kill criterion
 
-A biaxial cost above the free-macrospin cost would mean the hard axis is not being exploited, and the material's headline advantage does not exist.
+A success rate that does not depend on temperature would mean the thermostat is not actually perturbing the trajectory.
 
 ## Material: CrSBr
 
@@ -36,18 +36,18 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Switching time (tau0): 2, 5, 10, 20, 50, 100.
+Thermal stability factor (K/kT): 10, 20, 30, 40, 60, 80.
 
 ## Design
 
 | Field | Value |
 |---|---|
-| Methods | R00, R05, R07 |
-| Ground truth | provisional |
-| Split | train |
+| Methods | R11 |
+| Ground truth | published |
+| Split | control |
 | Seed | 0 |
 | Surface | workbench |
 
 ## Sources
 
-No external reference: the case is checked against the engine's own oracles.
+- https://doi.org/10.1103/PhysRevB.107.214448

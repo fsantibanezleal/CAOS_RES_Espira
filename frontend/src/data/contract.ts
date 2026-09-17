@@ -35,7 +35,16 @@ export interface ParameterProvenance {
   flags: string[];
 }
 
+export interface VariantAxis {
+  name: string;
+  label: string;
+  unit: string;
+  values: number[];
+}
+
 export interface CostRow {
+  /** The value of the case's variant family at this row (a switching time, a hard-axis ratio, ...). */
+  variant: number;
   switching_time_tau0: number;
   switching_time_s: number;
   cost: number;
@@ -88,13 +97,21 @@ export interface CaseInfo {
   reason: string;
   expectation: string;
   includes_biaxial: boolean;
+  code: string;
+  kill_criterion: string;
+  ground_truth: string;
+  split: string;
+  status: string;
+  surface: string;
+  methods: string[];
+  sources: string[];
 }
 
 export interface CaseArtifact {
   schema_version: string;
   case: CaseInfo;
   material: MaterialInfo;
-  switching_times_tau0: number[];
+  axis: VariantAxis;
   cost_curve: CostRow[];
   pulses: ReferencePulse[];
   reference_pulse: ReferencePulse;
@@ -102,19 +119,40 @@ export interface CaseArtifact {
   biaxial_reduction?: BiaxialReduction;
 }
 
-export interface IndexEntry {
+export interface RegistryRow {
   slug: string;
+  code: string;
   title: string;
   category: string;
-  material: string;
+  status: 'baked' | 'planned' | 'blocked';
+  surface: string;
+  blocked_reason: string;
+  split: string;
+  ground_truth: string;
+  variants: number;
+  axis: string;
+  methods: string[];
+}
+
+export interface IndexEntry {
+  slug: string;
+  code: string;
+  title: string;
+  category: string;
+  material: string | null;
   material_name: string;
   includes_biaxial: boolean;
+  axis: string;
 }
 
 export interface ArtifactIndex {
   schema_version: string;
   cases: IndexEntry[];
   categories: Record<string, string[]>;
+  /** How many of the declared cases are baked, planned and blocked. */
+  coverage: Record<string, number>;
+  /** Every declared case, baked or not, so the coverage matrix cannot hide a missing one. */
+  registry: RegistryRow[];
 }
 
 export interface ReliabilityPoint {
