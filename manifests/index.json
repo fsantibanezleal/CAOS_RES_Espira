@@ -2,10 +2,10 @@
   "schema": "espira.manifest-index/1",
   "manifests": [
     {
-      "case": "uniaxial-analytic",
-      "code": "C02",
-      "manifest": "uniaxial-analytic.json",
-      "sha256": "c82d6d86a5a9847d03fb1c72e30c75847aef607a38ecfa2114345885350f2f5c",
+      "case": "free-macrospin",
+      "code": "C01",
+      "manifest": "free-macrospin.json",
+      "sha256": "9bd52eefad500da69f98855a83dd0226879e3daee6cd182a2de4dae565a5cd7a",
       "lane": "precompute",
       "completeness": {
         "expected": 12,
@@ -15,10 +15,36 @@
       }
     },
     {
+      "case": "uniaxial-analytic",
+      "code": "C02",
+      "manifest": "uniaxial-analytic.json",
+      "sha256": "479520c4dc69ed4f71e89276bf91117eb504c5d4a4a5c7b1cbac0dcff15d0d78",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "sot-analytic",
+      "code": "C03",
+      "manifest": "sot-analytic.json",
+      "sha256": "ff26b6bca28491f5bc074e71fc54e03ff7f0c86a5848555a273c44029eb6ecc1",
+      "lane": "live",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
       "case": "biaxial-hard-axis",
       "code": "C04",
       "manifest": "biaxial-hard-axis.json",
-      "sha256": "788b302e05f9483f36d2bcd3f07faa9a16c568ccd4128014beadd7bfdb968158",
+      "sha256": "494b3f6d2326549a2cd34b91bfd055ee6f3666b1e0b05819a37dcf7fbefbf0b6",
       "lane": "precompute",
       "completeness": {
         "expected": 6,
@@ -28,10 +54,36 @@
       }
     },
     {
+      "case": "ocp-family",
+      "code": "C06",
+      "manifest": "ocp-family.json",
+      "sha256": "6d0b83a84eeada63f999c1401bae8c8fc737904ab3788305762f618eace478d2",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "thermal-success-rate",
+      "code": "C07",
+      "manifest": "thermal-success-rate.json",
+      "sha256": "958033bb2c28d7b9b805df2b01e30914f2f288214842eeca80335a72b7b61f7d",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
       "case": "crsbr-field",
       "code": "C11",
       "manifest": "crsbr-field.json",
-      "sha256": "a502455ce11b678d2b928b4529405f46f7d57a20d16a90ede6aa429a1d9faa63",
+      "sha256": "344f9d577683e5772a4f83b664f052d12b5dac5be012d3ca0ee5e65f20a29dcb",
       "lane": "precompute",
       "completeness": {
         "expected": 18,
@@ -44,7 +96,7 @@
       "case": "fe3gete2-field",
       "code": "C12",
       "manifest": "fe3gete2-field.json",
-      "sha256": "2a37e24ccf9a7ea2321e8985b3841a6ecd46f3a3ebd609c48e44748b60a51652",
+      "sha256": "f3ca0827339ada0548e36f7810c4f68c9bcf95bea945d6eb8e97a9578a644da1",
       "lane": "precompute",
       "completeness": {
         "expected": 12,
@@ -57,7 +109,7 @@
       "case": "fe3gate2-field",
       "code": "C13",
       "manifest": "fe3gate2-field.json",
-      "sha256": "069ee71e267b50cc9c77b69fe5810141b1230453a1eb4d29561756d58cc408d6",
+      "sha256": "70cb9761be42124a5095eaa50e33e7ec6d3efcf51c3b3745402e6e4d88a313ed",
       "lane": "precompute",
       "completeness": {
         "expected": 12,
@@ -70,7 +122,7 @@
       "case": "cri3-field",
       "code": "C14",
       "manifest": "cri3-field.json",
-      "sha256": "584b914f332959a76590eadaa7d2f7ed854b12b25ca9832677ac275813a07dd4",
+      "sha256": "d7846b408d670d374296c5ae69bf0f416097d46aba178754b22c7a3fb1a01c39",
       "lane": "precompute",
       "completeness": {
         "expected": 12,
@@ -83,7 +135,7 @@
       "case": "cr2ge2te6-floor",
       "code": "C15",
       "manifest": "cr2ge2te6-floor.json",
-      "sha256": "5483c3127cf0886ef152057b1efd5a4a9b7049eb7e5aece691dd46944f3be093",
+      "sha256": "06ae3523bb7e2e64582c119bb76342e4ab01b245b1a7e22c2ee1eec4dbc83250",
       "lane": "precompute",
       "completeness": {
         "expected": 12,
@@ -96,7 +148,7 @@
       "case": "feps3-negative-control",
       "code": "C18",
       "manifest": "feps3-negative-control.json",
-      "sha256": "2146f125c990ced35cc80ef30c030986e4c87d562d388159ecfbeb62508ecc07",
+      "sha256": "e464440aaded102efddd7f6a49443e57f956f701c5c7b70c7775cc71a8989a07",
       "lane": "precompute",
       "completeness": {
         "expected": 12,
@@ -109,7 +161,7 @@
       "case": "amortized-policy",
       "code": "C26",
       "manifest": "amortized-policy.json",
-      "sha256": "8abe6f439778b655aaadf51a4eedf8fb0190f798cba0c9c2dd7e6457540c9ff9",
+      "sha256": "38524b29aba19b9212920ec5850eaa3d773d363b850ef8cc99c2a530c1a1d0d1",
       "lane": "precompute",
       "completeness": {
         "expected": 12,

@@ -1,6 +1,7 @@
 // Loading the committed artifacts. Cache-busted with the app version because index.html is
 // CDN-cached on GitHub Pages (reference_github_pages_spa_stale_cache).
 
+import { ARTIFACT_SCHEMA_VERSION } from './contract';
 import type { ArtifactIndex, CaseArtifact } from './contract';
 import { APP_VERSION } from '../version';
 
@@ -16,10 +17,21 @@ export async function loadIndex(): Promise<ArtifactIndex> {
   return response.json();
 }
 
+/** The major version of a schema string: an added field is compatible, a moved one is not. */
+function major(version: string): string {
+  return version.split('.')[0];
+}
+
 export async function loadCase(slug: string): Promise<CaseArtifact> {
   const response = await fetch(bust(`${base}artifacts/${slug}.json`));
   if (!response.ok) throw new Error(`${slug}.json ${response.status}`);
-  return response.json();
+  const artifact: CaseArtifact = await response.json();
+  if (major(artifact.schema_version) !== major(ARTIFACT_SCHEMA_VERSION)) {
+    throw new Error(
+      `${slug}.json is schema ${artifact.schema_version}, the app reads ${ARTIFACT_SCHEMA_VERSION}`,
+    );
+  }
+  return artifact;
 }
 
 export async function loadNovel(): Promise<import('./contract').NovelResults> {

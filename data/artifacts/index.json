@@ -1,10 +1,30 @@
 {
-  "schema_version": "2.0.0",
+  "schema_version": "2.1.0",
   "cases": [
+    {
+      "slug": "free-macrospin",
+      "code": "C01",
+      "title": "Free macrospin, no anisotropy",
+      "category": "A. Exact oracles",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Switching time"
+    },
     {
       "slug": "uniaxial-analytic",
       "code": "C02",
       "title": "Uniaxial macrospin, the analytic optimum",
+      "category": "A. Exact oracles",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Switching time"
+    },
+    {
+      "slug": "sot-analytic",
+      "code": "C03",
+      "title": "Spin-orbit torque, the analytic optimum",
       "category": "A. Exact oracles",
       "material": null,
       "material_name": "Synthetic reference macrospin",
@@ -20,6 +40,26 @@
       "material_name": "Synthetic reference macrospin",
       "includes_biaxial": true,
       "axis": "Hard-axis ratio"
+    },
+    {
+      "slug": "ocp-family",
+      "code": "C06",
+      "title": "The optimal control path family (several coexisting optima)",
+      "category": "B. Published replication",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": true,
+      "axis": "Search seed"
+    },
+    {
+      "slug": "thermal-success-rate",
+      "code": "C07",
+      "title": "Thermal success rate against the stability factor",
+      "category": "B. Published replication",
+      "material": "crsbr",
+      "material_name": "CrSBr",
+      "includes_biaxial": false,
+      "axis": "Thermal stability factor"
     },
     {
       "slug": "crsbr-field",
@@ -94,8 +134,14 @@
   ],
   "categories": {
     "A. Exact oracles": [
+      "free-macrospin",
       "uniaxial-analytic",
+      "sot-analytic",
       "biaxial-hard-axis"
+    ],
+    "B. Published replication": [
+      "ocp-family",
+      "thermal-success-rate"
     ],
     "C. Real materials": [
       "crsbr-field",
@@ -110,8 +156,8 @@
     ]
   },
   "coverage": {
-    "baked": 11,
-    "planned": 11,
+    "baked": 15,
+    "planned": 7,
     "blocked": 4
   },
   "registry": [
@@ -120,7 +166,7 @@
       "code": "C01",
       "title": "Free macrospin, no anisotropy",
       "category": "A. Exact oracles",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "control",
@@ -128,7 +174,8 @@
       "variants": 6,
       "axis": "Switching time",
       "methods": [
-        "R05"
+        "R05",
+        "R07"
       ]
     },
     {
@@ -153,7 +200,7 @@
       "code": "C03",
       "title": "Spin-orbit torque, the analytic optimum",
       "category": "A. Exact oracles",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "control",
@@ -201,7 +248,7 @@
       "code": "C06",
       "title": "The optimal control path family (several coexisting optima)",
       "category": "B. Published replication",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "control",
@@ -215,9 +262,9 @@
     {
       "slug": "thermal-success-rate",
       "code": "C07",
-      "title": "Thermal success rate against switching time",
+      "title": "Thermal success rate against the stability factor",
       "category": "B. Published replication",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "control",
@@ -225,7 +272,8 @@
       "variants": 6,
       "axis": "Thermal stability factor",
       "methods": [
-        "R11"
+        "R11",
+        "R12"
       ]
     },
     {

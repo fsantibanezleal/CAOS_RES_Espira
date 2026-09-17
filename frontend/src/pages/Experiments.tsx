@@ -188,7 +188,7 @@ function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boole
                     <span className="prov-badge prov-assumed">{es ? 'supuesto' : 'assumed'}</span>
                   )}
                 </td>
-                <td>{mid.cost_over_free.toFixed(3)}</td>
+                <td>{mid.cost_over_free?.toFixed(3) ?? '-'}</td>
                 <td>{mid.cost_over_floor?.toFixed(2)}</td>
                 <td>{a.biaxial_reduction ? a.biaxial_reduction.biaxial_over_free.toFixed(3) : '-'}</td>
               </tr>

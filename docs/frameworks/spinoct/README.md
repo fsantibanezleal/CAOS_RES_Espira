@@ -30,9 +30,26 @@ in the solvers.
 | `spinoct.thermal.br_cost_reliability_front` | reliability front (M1) | [07](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/07-thermal-and-reliability.md) |
 | `spinoct.lattice.compare_reversal_modes` | two-mode lattice comparison | [08](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/08-beyond-the-macrospin.md) |
 | `spinoct.lattice.LatticeOCPSolver`, `minimum_energy_path`, `cost_floor_from_barrier` | free chain crossover map (M2 v2) | [12](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/12-free-chain-optimal-control-and-the-barrier-floor.md) |
+| `spinoct.analytic.sot.SOTOptimalControl`, `ideal_sot_ratio_beta` | C03, the spin-orbit-torque oracle, and the browser's live lane | [09](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/09-hybrid-field-and-current.md), [source](https://doi.org/10.1103/PhysRevB.105.134404) |
+| `spinoct.thermal.switching_success_rate` | C07, the single-site thermal success rate | [07](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/07-thermal-and-reliability.md) |
+| `spinoct.amortized.evaluate_policy` | C26, the amortized policy and its limit | [11](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/11-amortized-policy.md) |
 
-Not yet surfaced in the product (backlog BL-032): GRAPE and CRAB with the price of realizability, the
-discrete adjoint, the field-plus-current hybrid, the Pareto front, the amortized policy.
+Surfaced but not baked: GRAPE (R08), CRAB (R09) and the field-plus-current hybrid (R13) run in stage
+`infer`, and the two cases that would report them are blocked on measurement rather than baked, because
+the engine's constrained solvers drive a Nelder-Mead simplex over a few dozen parameters and do not
+converge: 90 to 230 seconds per solve and a cost 2.2 times the analytic optimum at two harmonics rising
+to 14 times at six, where a larger search space cannot cost more. Still not surfaced: the discrete
+adjoint (R10) and the Pareto front (R14), backlog BL-032.
+
+## The one method the browser implements itself
+
+The lane gate lets a case run live in the browser only when every method it declares is a closed form
+under the runtime and size budgets. C03 passes, so the web carries its own implementation of that closed
+form in `frontend/src/engine/sotAnalytic.ts`: the complete elliptic integral by the arithmetic-geometric
+mean, and Eqs. 8, 9, 11 and 12 of Phys. Rev. B 105, 134404. It is written independently of the engine's
+path (which goes through SciPy), so the agreement between the two is a check rather than a copy. The
+workbench shows the agreement on the case, and a browser gate fails the build if it ever exceeds a part
+in a million. They currently agree exactly.
 
 ## A runnable example
 

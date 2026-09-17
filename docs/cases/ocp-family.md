@@ -1,6 +1,6 @@
 # The optimal control path family (several coexisting optima)
 
-Case `ocp-family` (C06), category B. Published replication. Planned: declared and runnable, not yet computed.
+Case `ocp-family` (C06), category B. Published replication. Baked: committed artifacts, replayed by the web app.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
@@ -10,11 +10,11 @@ At a biaxial ratio of four and moderate damping, several distinct optimal contro
 
 ## What a domain expert should see
 
-A multi-seed search finds more than one distinct path, with costs close together, and the cheapest is reported.
+A multi-seed search finds more than one distinct converged path, and they are NOT close together. Measured 2026-09-17 at a hard-axis ratio of four, a damping of 0.2 and ten tau0: two families, one passing near the easy plane at 1.5206e-11 T^2 s and one climbing over the hard axis at 2.0250e-11, a spread of 33 per cent. Three of the six seeds land on the expensive family, so a single-seed solver has an even chance of reporting a cost a third too high and calling it the optimum. The cheapest is what the product reports everywhere else, which is why every biaxial bake in this repository runs a multi-seed search.
 
 ## Kill criterion
 
-If every seed converges to the same path, either the search is not exploring or the family does not exist at these parameters; both change what the product may claim.
+If every seed converges to the same path, either the search is not exploring or the family does not exist at these parameters; both change what the product may claim. A seed that converges BELOW the cheapest family would mean the converged flag is not trustworthy.
 
 ## System: a synthetic reference macrospin
 

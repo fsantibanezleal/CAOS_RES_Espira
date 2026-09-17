@@ -1,7 +1,9 @@
 // The web contract: TypeScript types mirroring the baked artifact schema (espiralab.bake).
 // A drift between this and the Python schema fails `tsc`, per ADR-0057's two-contract rule.
 
-export const ARTIFACT_SCHEMA_VERSION = '1.0.0';
+// Kept equal to espiralab.bake.ARTIFACT_SCHEMA_VERSION by a test; the loader refuses an artifact
+// built under a different major version rather than reading fields that may have moved.
+export const ARTIFACT_SCHEMA_VERSION = '2.1.0';
 
 export interface MaterialInfo {
   slug: string;
@@ -49,14 +51,52 @@ export interface CostRow {
   switched?: boolean;
   switching_time_tau0: number;
   switching_time_s: number;
-  cost: number | null;
-  cost_low_damping: number;
-  cost_high_damping: number;
+  /** The field cost in T^2 s. Absent on a case whose observable is not a field cost (see Observable). */
+  cost?: number | null;
+  cost_low_damping?: number;
+  cost_high_damping?: number;
   cost_free: number;
   cost_floor: number;
-  cost_over_floor: number | null;
-  cost_over_free: number;
-  mean_amplitude: number;
+  cost_over_floor?: number | null;
+  cost_over_free?: number;
+  mean_amplitude?: number;
+  /** On a case that does not report a field cost: the closed-form field cost of the same reversal, for
+   * scale only, with the note that says so. Never plotted as the case's own quantity. */
+  field_cost_reference?: number;
+  field_cost_note?: string;
+  /** The case's declared observable value, under its own key, plus one block per method rung. */
+  [key: string]: unknown;
+}
+
+/** What a case actually measures. Most report the field cost; the spin-orbit-torque oracle reports a
+ * current in reduced units and the thermal case a success rate, and neither is a field cost. */
+export interface Observable {
+  key: string;
+  label: string;
+  unit: string;
+  is_field_cost: boolean;
+  note: string;
+}
+
+/** The constants a live-lane case needs to recompute itself in the browser, in SI. */
+export interface LiveInputs {
+  method: string;
+  alpha: number;
+  gamma: number;
+  anisotropy_j: number;
+  mu: number;
+  tau0_s: number;
+  xi: number;
+  beta: number;
+  note: string;
+}
+
+/** One method's row inside a cost row, on a case whose observable is not the field cost. */
+export interface MethodBlock {
+  cost: number | null;
+  switched: boolean;
+  reason: string;
+  [metric: string]: number | boolean | string | null;
 }
 
 export interface ReferencePulse {
@@ -114,6 +154,11 @@ export interface CaseArtifact {
   case: CaseInfo;
   material: MaterialInfo;
   axis: VariantAxis;
+  observable: Observable;
+  /** What the drawn trajectory is, when it is not literally the control the case measures. */
+  pulse_note: string;
+  /** Present only on a case the lane gate put in the live lane. */
+  live_inputs: LiveInputs | null;
   cost_curve: CostRow[];
   pulses: ReferencePulse[];
   reference_pulse: ReferencePulse;
