@@ -45,6 +45,7 @@ const T = {
     meanField: 'Mean field',
     overFloor: 'cost / floor',
     loading: 'Loading baked artifact...',
+    noSwitch: 'no reversal',
     negativeTitle: 'Negative control',
     negativeBody:
       'The macrospin model assumes a single ferromagnetic moment. This material is an antiferromagnet, so these numbers show what the machinery returns when its own assumptions fail. They are not predictions of how it switches.',
@@ -80,6 +81,7 @@ const T = {
     meanField: 'Campo medio',
     overFloor: 'costo / piso',
     loading: 'Cargando artefacto...',
+    noSwitch: 'sin inversion',
     negativeTitle: 'Control negativo',
     negativeBody:
       'El modelo de macrospin supone un unico momento ferromagnetico. Este material es un antiferromagneto, por lo que estos numeros muestran lo que entrega la maquinaria cuando sus propios supuestos fallan. No son predicciones de como conmuta.',
@@ -284,9 +286,17 @@ export function Workbench(): React.JSX.Element {
             <strong>{artifact.axis.label}</strong> ({artifact.axis.values[variant]} {artifact.axis.unit})
             <dl>
               <dt>{t.optCost}</dt>
-              <dd>{sci(costRow.cost)} T^2 s</dd>
+              <dd>
+                {costRow.cost === null ? (
+                  <span className="prov-badge prov-assumed" data-testid="no-switch">
+                    {t.noSwitch}
+                  </span>
+                ) : (
+                  `${sci(costRow.cost)} T^2 s`
+                )}
+              </dd>
               <dt>{t.overFloor}</dt>
-              <dd>{costRow.cost_over_floor?.toFixed(2)}</dd>
+              <dd>{costRow.cost_over_floor?.toFixed(2) ?? '-'}</dd>
               <dt>{t.meanField}</dt>
               <dd>{(costRow.mean_amplitude * 1e3).toFixed(2)} mT</dd>
             </dl>

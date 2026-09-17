@@ -4,7 +4,7 @@ A case is a scientific question the product answers: a system, a variant family,
 pre-declared expectation with the kill criterion that would make it a failure. The 26 cases of the
 validated plan are all declared here, so a missing one cannot hide behind the ones that are baked.
 
-**10 baked, 14 planned, 2 blocked.** Baked cases
+**11 baked, 11 planned, 4 blocked.** Baked cases
 have committed artifacts; planned cases are declared and runnable but not yet computed; blocked
 cases name what is missing. This page and the per-case pages are generated from the registry
 (`python scripts/gen_case_docs.py`).
@@ -65,8 +65,8 @@ Bandwidth, amplitude and slew limits; field together with current.
 
 | Case | Status | Variants | Methods | Ground truth |
 |---|---|---|---|---|
-| C23 [Band-limited control, the price of realizability](crab-bandwidth.md) | planned | 6 x harmonics | R09, R05 | analytic |
-| C24 [Amplitude and slew-rate limited control](grape-amplitude-slew.md) | planned | 6 x amplitude cap | R08, R05 | analytic |
+| C23 [Band-limited control, the price of realizability](crab-bandwidth.md) | blocked (The engine's band-limited solver optimizes with Nelder-Mead,...) | 6 x harmonics | R09, R05 | analytic |
+| C24 [Amplitude and slew-rate limited control](grape-amplitude-slew.md) | blocked (Same engine defect as the band-limited case: the constrained...) | 6 x amplitude cap | R08, R05 | analytic |
 | C25 [Field together with current, the hybrid cost](field-plus-current.md) | planned | 6 x current price | R13 | provisional |
 
 ## F. Screening and learned
@@ -75,7 +75,7 @@ The parameter family as a search space, and the amortized policy on held-out mat
 
 | Case | Status | Variants | Methods | Ground truth |
 |---|---|---|---|---|
-| C26 [The amortized policy on held-out materials](amortized-policy.md) | planned | 6 x damping | R15 | analytic |
+| C26 [The amortized policy on held-out materials](amortized-policy.md) | baked | 6 x damping | R15, R05 | analytic |
 
 ## Surfaces
 
