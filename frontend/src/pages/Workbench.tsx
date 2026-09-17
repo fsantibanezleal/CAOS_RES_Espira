@@ -20,6 +20,11 @@ const T = {
     cost: 'Cost curve',
     pulse: 'Pulse',
     context: 'Context',
+    killCriterion: 'Kill criterion',
+    design: 'Design',
+    methods: 'Methods',
+    groundTruth: 'Ground truth',
+    split: 'Split',
     reason: 'Why this case',
     expectation: 'Expected behaviour',
     easyAxis: 'Easy axis',
@@ -45,6 +50,11 @@ const T = {
     cost: 'Curva de costo',
     pulse: 'Pulso',
     context: 'Contexto',
+    killCriterion: 'Criterio de refutacion',
+    design: 'Diseno',
+    methods: 'Metodos',
+    groundTruth: 'Verdad de referencia',
+    split: 'Particion',
     reason: 'Por que este caso',
     expectation: 'Comportamiento esperado',
     easyAxis: 'Eje facil',
@@ -90,7 +100,7 @@ export function Workbench(): React.JSX.Element {
     if (slug)
       loadCase(slug).then((a) => {
         setArtifact(a);
-        setVariant(Math.floor(a.switching_times_tau0.length / 2));
+        setVariant(Math.floor(a.axis.values.length / 2));
       });
   }, [slug]);
 
@@ -118,9 +128,9 @@ export function Workbench(): React.JSX.Element {
     <div className="wb">
       <div className="wb-top">
         <CaseSelector cases={cases} selectedId={slug} onSelect={setSlug} lang={lang} />
-        <div className="wb-variants" role="tablist" aria-label={t.variant}>
-          <span className="wb-variants-label">{t.variant}</span>
-          {artifact.switching_times_tau0.map((tt, i) => (
+        <div className="wb-variants" role="tablist" aria-label={artifact.axis.label}>
+          <span className="wb-variants-label">{artifact.axis.label}</span>
+          {artifact.axis.values.map((tt, i) => (
             <button
               key={tt}
               role="tab"
@@ -128,7 +138,7 @@ export function Workbench(): React.JSX.Element {
               className={variant === i ? 'chip active' : 'chip'}
               onClick={() => setVariant(i)}
             >
-              {tt} tau0
+              {tt} {artifact.axis.unit}
             </button>
           ))}
         </div>
@@ -154,7 +164,7 @@ export function Workbench(): React.JSX.Element {
                 label: t.cost,
                 content: (
                   <div className="wb-instrument">
-                    <CostChart rows={artifact.cost_curve} theme={theme} />
+                    <CostChart rows={artifact.cost_curve} axis={artifact.axis} theme={theme} />
                   </div>
                 ),
               },
@@ -176,6 +186,13 @@ export function Workbench(): React.JSX.Element {
                     <p>{artifact.case.reason}</p>
                     <h4>{t.expectation}</h4>
                     <p>{artifact.case.expectation}</p>
+                    <h4>{t.killCriterion}</h4>
+                    <p>{artifact.case.kill_criterion}</p>
+                    <h4>{t.design}</h4>
+                    <p className="muted">
+                      {t.methods}: {artifact.case.methods.join(', ')} &middot; {t.groundTruth}:{' '}
+                      {artifact.case.ground_truth} &middot; {t.split}: {artifact.case.split}
+                    </p>
                     <h4>{m.name}</h4>
                     <p>{m.notes}</p>
                   </div>
@@ -193,7 +210,7 @@ export function Workbench(): React.JSX.Element {
             </div>
           )}
           <div className="wb-variant-readout">
-            <strong>{t.atThisVariant}</strong> ({artifact.switching_times_tau0[variant]} tau0)
+            <strong>{artifact.axis.label}</strong> ({artifact.axis.values[variant]} {artifact.axis.unit})
             <dl>
               <dt>{t.optCost}</dt>
               <dd>{sci(costRow.cost)} T^2 s</dd>

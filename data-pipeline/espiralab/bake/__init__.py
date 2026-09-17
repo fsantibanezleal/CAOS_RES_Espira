@@ -1,18 +1,18 @@
-"""The canonical bake: run the engine over the materials and cases, write committed artifacts.
+"""The canonical bake: run the engine over the registry's baked cases and write committed artifacts.
 
-This is the offline truth of the product (ADR-0069). For each case it drives the `spinoct` engine to
-compute, at each switching time in the sweep:
+This is the offline truth of the product (ADR-0069). A case declares a system (a material or a synthetic
+reference macrospin) and a variant family; the bake computes, at every variant:
 
-- the analytic optimal control path cost and pulse (the exact uniaxial result);
-- the universal floor and the free-macrospin cost, with the floor's uncertainty band from the material
-  damping range;
-- the trajectory on the sphere and the pulse waveform for the workbench viz;
-- the conventional baseline costs (static field), so the reduction factor is honest;
-- for a biaxial case, the numerical image-based optimal control path and the cost reduction the hard
-  axis buys, which has no closed form.
+- the optimal control path and its cost, against the free-macrospin cost and the universal floor, with
+  the floor's uncertainty band from the damping range;
+- the trajectory on the sphere and the pulse waveform the workbench draws;
+- the conventional static-field baseline, so the reduction factor is honest;
+- for a case with a hard axis, the numerical image-based optimal control path, which has no closed form.
 
-The web app never recomputes any of this; it reads the committed JSON. The bake is deterministic and
-seeded, and it is an explicit, versioned operation, not something a deploy re-runs.
+Two variant families are supported: a switching-time sweep (the usual one) and a hard-axis-ratio sweep
+(the biaxial mechanism's signature, where the switching time is held fixed). The web app never
+recomputes any of this; it reads the committed JSON. The bake is deterministic and seeded, and it is an
+explicit, versioned operation, not something a deploy re-runs.
 """
 
 from __future__ import annotations
@@ -29,98 +29,179 @@ from spinoct.analytic import (
 from spinoct.control import ConstantFieldProtocol, static_switching_field
 from spinoct.dynamics import MacrospinSystem
 from spinoct.numeric import ImageOCPSolver
+from spinoct.units import bohr_magnetons_to_j_per_t, mev_to_joules
 
-from ..cases import CASES, Case, validate_registry
+from ..cases import CASES, Case, baked_cases, coverage_counts, validate_registry
 from ..materials import get_material
 
-__all__ = ["bake_all", "bake_case", "ARTIFACT_SCHEMA_VERSION"]
+__all__ = ["ARTIFACT_SCHEMA_VERSION", "bake_all", "bake_case"]
 
 #: The artifact schema version. Bump when the JSON shape changes; the web contract mirrors it.
-ARTIFACT_SCHEMA_VERSION = "1.0.0"
+ARTIFACT_SCHEMA_VERSION = "2.0.0"
 
-#: A coarse grid for the committed trajectory and pulse, so the artifact is small enough for the Pages
-#: payload budget while still resolving the waveform. The full-resolution curve is reproducible from
-#: the seed and the closed form; only the decimated view is committed.
+#: Samples along the trajectory and pulse the workbench draws.
 _TRAJECTORY_SAMPLES = 160
+#: The switching time, in tau0, at which a case that sweeps something other than time is computed.
+_FIXED_TIME_TAU0 = 10.0
+#: Image count and seeds for the numerical biaxial solves.
+_IMAGES = 60
+_SEEDS = 4
+_MAX_ITERATIONS = 2500
 
 
-def _system_for(material_slug: str, uniaxial: bool = True) -> MacrospinSystem:
-    material = get_material(material_slug)
+def _damping_band(case: Case) -> tuple[float, float]:
+    if case.material is not None:
+        material = get_material(case.material)
+        return material.damping_low, material.damping_high
+    damping = case.synthetic.damping
+    return damping, damping
+
+
+def _system(case: Case, variant: float | None = None, uniaxial: bool = True) -> MacrospinSystem:
+    """The macrospin for a case, at a variant when the case sweeps the hard-axis ratio."""
+    if case.material is not None:
+        material = get_material(case.material)
+        mu, anisotropy, alpha = material.moment_j_per_t, material.anisotropy_j, material.damping
+        ratio, label = material.hard_axis_ratio, material.name
+    else:
+        synthetic = case.synthetic
+        mu = bohr_magnetons_to_j_per_t(synthetic.moment_bohr)
+        anisotropy = mev_to_joules(synthetic.anisotropy_mev)
+        alpha, ratio, label = synthetic.damping, synthetic.hard_axis_ratio, "synthetic reference"
+    if case.axis.name == "hard_axis_ratio" and variant is not None:
+        ratio = variant
     return MacrospinSystem(
-        mu=material.moment_j_per_t,
-        anisotropy_j=material.anisotropy_j,
-        alpha=material.damping,
-        hard_axis_ratio=0.0 if uniaxial else material.hard_axis_ratio,
-        label=material.name,
+        mu=mu,
+        anisotropy_j=anisotropy,
+        alpha=alpha,
+        hard_axis_ratio=0.0 if uniaxial else ratio,
+        label=label,
     )
 
 
-def _cost_curve(material_slug: str, switching_times_tau0: tuple[float, ...]) -> list[dict]:
-    """The analytic cost curve over the switching-time sweep, with the damping uncertainty band."""
-    material = get_material(material_slug)
-    system = _system_for(material_slug)
+def _system_block(case: Case) -> dict:
+    """The material block, or the equivalent self-describing block for a synthetic system."""
+    if case.material is not None:
+        return get_material(case.material).describe()
+    s = case.synthetic
+    note = (
+        "A synthetic reference macrospin, not a material: these values are definitional, chosen at the "
+        "scale of the van der Waals family so the oracle is comparable with the real cases."
+    )
+    definitional = {
+        "provenance": "assumed",
+        "method": "definition of the reference system",
+        "sources": [],
+        "note": note,
+        "flags": ["assumed"],
+    }
+    values = {
+        "moment": s.moment_bohr,
+        "anisotropy": s.anisotropy_mev,
+        "hard_axis_ratio": s.hard_axis_ratio,
+        "damping": s.damping,
+        "ordering_temperature": 0.0,
+    }
+    return {
+        "slug": "synthetic-reference",
+        "name": "Synthetic reference macrospin",
+        "family": "synthetic",
+        "spin": 1.5,
+        "moment_bohr": s.moment_bohr,
+        "anisotropy_mev": s.anisotropy_mev,
+        "hard_axis_ratio": s.hard_axis_ratio,
+        "damping": s.damping,
+        "damping_low": s.damping,
+        "damping_high": s.damping,
+        "curie_kelvin": 0.0,
+        "easy_axis": "z, by construction",
+        "notes": note,
+        "sources": [],
+        "provenance": {
+            name: dict(definitional, value=value, low=None, high=None,
+                       input={"value": value, "unit": "definition", "basis": "none"})
+            for name, value in values.items()
+        },
+        "flags": [f"{name}: assumed" for name in values],
+    }
+
+
+def _time_for(case: Case, variant: float) -> float:
+    """The switching time, in tau0, at which a variant is computed."""
+    return variant if case.axis.name == "switching_time" else _FIXED_TIME_TAU0
+
+
+def _cost_row(case: Case, variant: float) -> dict:
+    """One row of the cost curve: the optimum at this variant against its references."""
+    t_tau0 = _time_for(case, variant)
+    system = _system(case, variant, uniaxial=True)
+    switching_time = system.switching_time_from_tau0(t_tau0)
+    optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
+    free = cost_free_macrospin(switching_time, system.alpha, system.gamma)
     floor = cost_infinite_time(system)
+    low, high = _damping_band(case)
+    band = [
+        UniaxialOptimalControl.for_switching_time(
+            MacrospinSystem(mu=system.mu, anisotropy_j=system.anisotropy_j, alpha=alpha), switching_time
+        ).cost()
+        for alpha in (low, high)
+    ]
 
-    # The floor is linear in the damping, so its band comes straight from the damping range.
-    low_system = MacrospinSystem(
-        mu=system.mu, anisotropy_j=system.anisotropy_j, alpha=material.damping_low
-    )
-    high_system = MacrospinSystem(
-        mu=system.mu, anisotropy_j=system.anisotropy_j, alpha=material.damping_high
-    )
-
-    rows = []
-    for t_tau0 in switching_times_tau0:
-        switching_time = system.switching_time_from_tau0(t_tau0)
-        optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
-        free = cost_free_macrospin(switching_time, system.alpha, system.gamma)
-        rows.append(
-            {
-                "switching_time_tau0": t_tau0,
-                "switching_time_s": switching_time,
-                "cost": optimal.cost(),
-                "cost_low_damping": cost_infinite_time(low_system)
-                if t_tau0 > 1e6
-                else UniaxialOptimalControl.for_switching_time(low_system, switching_time).cost(),
-                "cost_high_damping": UniaxialOptimalControl.for_switching_time(
-                    high_system, switching_time
-                ).cost(),
-                "cost_free": free,
-                "cost_floor": floor,
-                "cost_over_floor": optimal.cost() / floor if floor > 0 else None,
-                "cost_over_free": optimal.cost() / free,
-                "mean_amplitude": optimal.mean_amplitude(),
-            }
-        )
-    return rows
+    cost = optimal.cost()
+    row = {
+        "variant": variant,
+        "switching_time_tau0": t_tau0,
+        "switching_time_s": switching_time,
+        "cost": cost,
+        "cost_low_damping": band[0],
+        "cost_high_damping": band[1],
+        "cost_free": free,
+        "cost_floor": floor,
+        "cost_over_floor": cost / floor if floor > 0 else None,
+        "cost_over_free": cost / free,
+        "mean_amplitude": optimal.mean_amplitude(),
+    }
+    if case.axis.name == "hard_axis_ratio":
+        # The hard axis has no closed form: the reported cost is the numerical optimum.
+        biaxial = _biaxial(case, variant, t_tau0)
+        row["cost"] = biaxial["biaxial_cost"]
+        row["cost_over_free"] = biaxial["biaxial_over_free"]
+        row["cost_over_floor"] = biaxial["biaxial_cost"] / floor if floor > 0 else None
+        row["uniaxial_cost"] = cost
+        # The meaningful measure of the mechanism: what the hard axis buys against the same system
+        # without it. Above one the hard axis helps; below one it charges more than it saves.
+        row["reduction_vs_uniaxial"] = biaxial["reduction_vs_uniaxial"]
+        row["converged"] = biaxial["converged"]
+    return row
 
 
-def _reference_pulse(material_slug: str, t_tau0: float) -> dict:
-    """The trajectory on the sphere and the pulse waveform at a reference switching time."""
-    system = _system_for(material_slug)
+def _pulse(case: Case, variant: float) -> dict:
+    """The trajectory on the sphere and the pulse waveform at one variant."""
+    t_tau0 = _time_for(case, variant)
+    system = _system(case, variant, uniaxial=True)
     switching_time = system.switching_time_from_tau0(t_tau0)
     optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
     grid = np.linspace(0.0, switching_time, _TRAJECTORY_SAMPLES)
     moment = optimal.moment(grid)
     field = optimal.field_vector(grid)
-    amplitude = optimal.field_amplitude(grid)
     return {
+        "variant": variant,
         "switching_time_tau0": t_tau0,
         "switching_time_s": switching_time,
         "time_s": grid.tolist(),
         "sx": moment[:, 0].tolist(),
         "sy": moment[:, 1].tolist(),
         "sz": moment[:, 2].tolist(),
-        "field_amplitude_t": amplitude.tolist(),
+        "field_amplitude_t": optimal.field_amplitude(grid).tolist(),
         "field_x_t": field[:, 0].tolist(),
         "field_y_t": field[:, 1].tolist(),
         "field_z_t": field[:, 2].tolist(),
     }
 
 
-def _static_baseline(material_slug: str, t_tau0: float) -> dict:
-    """The static-field baseline at a long switching time, for the honest reduction factor."""
-    system = _system_for(material_slug)
+def _static_baseline(case: Case, t_tau0: float) -> dict:
+    """The static-field baseline, for the honest reduction factor."""
+    system = _system(case, uniaxial=True)
     switching_time = system.switching_time_from_tau0(t_tau0)
     protocol = ConstantFieldProtocol(system, amplitude=1.2 * static_switching_field(system))
     result = protocol.run(switching_time, n_steps=4001)
@@ -134,21 +215,19 @@ def _static_baseline(material_slug: str, t_tau0: float) -> dict:
     }
 
 
-def _biaxial_reduction(material_slug: str, t_tau0: float) -> dict:
+def _biaxial(case: Case, ratio: float, t_tau0: float) -> dict:
     """The numerical biaxial optimal control path and the reduction the hard axis buys."""
-    material = get_material(material_slug)
-    uniaxial_system = _system_for(material_slug, uniaxial=True)
-    biaxial_system = _system_for(material_slug, uniaxial=False)
+    uniaxial_system = _system(case, ratio, uniaxial=True)
+    biaxial_system = _system(case, ratio, uniaxial=False)
     switching_time = uniaxial_system.switching_time_from_tau0(t_tau0)
     free = cost_free_macrospin(switching_time, uniaxial_system.alpha, uniaxial_system.gamma)
-
-    solver = ImageOCPSolver(biaxial_system, n_images=60, switching_time=switching_time)
-    result = solver.solve_best(n_seeds=4, max_iterations=2500)
-
+    result = ImageOCPSolver(biaxial_system, n_images=_IMAGES, switching_time=switching_time).solve_best(
+        n_seeds=_SEEDS, max_iterations=_MAX_ITERATIONS
+    )
     uniaxial = UniaxialOptimalControl.for_switching_time(uniaxial_system, switching_time)
     return {
         "switching_time_tau0": t_tau0,
-        "hard_axis_ratio": material.hard_axis_ratio,
+        "hard_axis_ratio": ratio,
         "uniaxial_cost": uniaxial.cost(),
         "biaxial_cost": result.cost,
         "cost_free": free,
@@ -159,50 +238,52 @@ def _biaxial_reduction(material_slug: str, t_tau0: float) -> dict:
 
 
 def bake_case(case: Case) -> dict:
-    """Bake one case into its artifact dictionary.
-
-    Args:
-        case: the case to bake.
-
-    Returns:
-        The artifact, a plain JSON-serializable dictionary.
-    """
-    material = get_material(case.material)
-    reference_t = case.switching_times_tau0[len(case.switching_times_tau0) // 2]
-
+    """Bake one case into its artifact dictionary."""
+    variants = case.axis.values
+    reference = variants[len(variants) // 2]
     artifact = {
         "schema_version": ARTIFACT_SCHEMA_VERSION,
         "case": {
             "slug": case.slug,
+            "code": case.code,
             "title": case.title,
             "category": case.category,
             "material": case.material,
             "reason": case.reason,
             "expectation": case.expectation,
+            "kill_criterion": case.kill_criterion,
+            "ground_truth": case.ground_truth,
+            "split": case.split,
+            "status": case.status,
+            "surface": case.surface,
+            "methods": list(case.methods),
+            "sources": list(case.sources),
             "includes_biaxial": case.includes_biaxial,
         },
-        "material": material.describe(),
-        "switching_times_tau0": list(case.switching_times_tau0),
-        "cost_curve": _cost_curve(case.material, case.switching_times_tau0),
-        # One pulse and trajectory per switching-time variant, so the variant bar drives the instrument.
-        "pulses": [_reference_pulse(case.material, t_tau0) for t_tau0 in case.switching_times_tau0],
-        "reference_pulse": _reference_pulse(case.material, reference_t),
-        "static_baseline": _static_baseline(case.material, case.switching_times_tau0[-1]),
+        "material": _system_block(case),
+        "axis": {
+            "name": case.axis.name,
+            "label": case.axis.label,
+            "unit": case.axis.unit,
+            "values": list(variants),
+        },
+        "cost_curve": [_cost_row(case, v) for v in variants],
+        "pulses": [_pulse(case, v) for v in variants],
+        "reference_pulse": _pulse(case, reference),
+        "static_baseline": _static_baseline(case, _time_for(case, variants[-1])),
     }
-    if case.includes_biaxial:
-        artifact["biaxial_reduction"] = _biaxial_reduction(case.material, reference_t)
+    if case.includes_biaxial and case.axis.name != "hard_axis_ratio":
+        ratio = (
+            get_material(case.material).hard_axis_ratio
+            if case.material is not None
+            else case.synthetic.hard_axis_ratio
+        )
+        artifact["biaxial_reduction"] = _biaxial(case, ratio, _time_for(case, reference))
     return artifact
 
 
 def bake_all(output_dir: Path) -> dict:
-    """Bake every case and write the artifacts plus a top-level index.
-
-    Args:
-        output_dir: the directory to write ``<case>.json`` files and ``index.json`` into.
-
-    Returns:
-        The index dictionary that was written.
-    """
+    """Bake every workbench case and write the artifacts plus the coverage index."""
     validate_registry()
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -210,22 +291,45 @@ def bake_all(output_dir: Path) -> dict:
         "schema_version": ARTIFACT_SCHEMA_VERSION,
         "cases": [],
         "categories": {},
+        "coverage": coverage_counts(),
+        "registry": [
+            {
+                "slug": case.slug,
+                "code": case.code,
+                "title": case.title,
+                "category": case.category,
+                "status": case.status,
+                "surface": case.surface,
+                "blocked_reason": case.blocked_reason,
+                "split": case.split,
+                "ground_truth": case.ground_truth,
+                "variants": len(case.axis.values),
+                "axis": case.axis.label,
+                "methods": list(case.methods),
+            }
+            for case in CASES.values()
+        ],
     }
-    for slug, case in CASES.items():
+    for slug, case in baked_cases("workbench").items():
         artifact = bake_case(case)
-        path = output_dir / f"{slug}.json"
-        path.write_text(json.dumps(artifact, indent=2), encoding="utf-8", newline="\n")
+        (output_dir / f"{slug}.json").write_text(
+            json.dumps(artifact, indent=2), encoding="utf-8", newline="\n"
+        )
         index["cases"].append(
             {
                 "slug": slug,
+                "code": case.code,
                 "title": case.title,
                 "category": case.category,
                 "material": case.material,
-                "material_name": get_material(case.material).name,
+                "material_name": artifact["material"]["name"],
                 "includes_biaxial": case.includes_biaxial,
+                "axis": case.axis.label,
             }
         )
         index["categories"].setdefault(case.category, []).append(slug)
 
-    (output_dir / "index.json").write_text(json.dumps(index, indent=2), encoding="utf-8", newline="\n")
+    (output_dir / "index.json").write_text(
+        json.dumps(index, indent=2), encoding="utf-8", newline="\n"
+    )
     return index

@@ -44,9 +44,29 @@ def check(artifacts: Path) -> list[str]:
             errors.append(f"{slug}: schema {artifact.get('schema_version')} != index {index.get('schema_version')}")
         if artifact.get("case", {}).get("slug") != slug:
             errors.append(f"{slug}: artifact names a different case")
-        variants = artifact.get("switching_times_tau0", [])
+        axis = artifact.get("axis", {})
+        variants = axis.get("values", [])
+        if len(variants) < 6:
+            errors.append(f"{slug}: {len(variants)} variants, fewer than the six the case contract requires")
         if len(artifact.get("pulses", [])) != len(variants) or len(artifact.get("cost_curve", [])) != len(variants):
             errors.append(f"{slug}: pulses/cost_curve do not match the {len(variants)} variants")
+        if [row.get("variant") for row in artifact.get("cost_curve", [])] != list(variants):
+            errors.append(f"{slug}: the cost curve does not follow the declared {axis.get('name')} variants")
+        for field in ("kill_criterion", "expectation", "reason"):
+            if not str(artifact.get("case", {}).get(field, "")).strip():
+                errors.append(f"{slug}: the artifact carries no {field}")
+
+    registry = index.get("registry", [])
+    if len(registry) < 26:
+        errors.append(f"the index declares {len(registry)} registry rows, fewer than the planned 26 cases")
+    baked = {row["slug"] for row in registry if row["status"] == "baked" and row["surface"] == "workbench"}
+    if baked != declared:
+        errors.append(f"registry baked cases and index cases differ: {sorted(baked ^ declared)}")
+    for row in registry:
+        if row["status"] == "blocked" and not row["blocked_reason"].strip():
+            errors.append(f"registry {row['slug']}: blocked without a reason")
+        if row["variants"] < 6:
+            errors.append(f"registry {row['slug']}: {row['variants']} variants, fewer than six")
 
     for name in ("novel.json", "lattice_ocp.json"):
         if not (artifacts / name).exists():

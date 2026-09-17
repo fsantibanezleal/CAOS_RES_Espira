@@ -9,6 +9,7 @@ import { loadCase, loadIndex, loadLatticeOCP, loadNovel } from '../data/load';
 import { useTheme } from '../theme';
 import { CrossoverChart } from '../viz/CrossoverChart';
 import { ChainMap } from '../viz/ChainMap';
+import { CoverageMatrix } from '../viz/CoverageMatrix';
 
 function Chips<T extends number>({
   label,
@@ -286,19 +287,21 @@ function Lattice({ novel, es }: { novel: NovelResults; es: boolean }) {
 export function Experiments(): React.JSX.Element {
   const lang = useShellLang();
   const es = lang === 'es';
+  const [index, setIndex] = useState<ArtifactIndex | null>(null);
   const [artifacts, setArtifacts] = useState<CaseArtifact[]>([]);
   const [novel, setNovel] = useState<NovelResults | null>(null);
   const [chain, setChain] = useState<LatticeOCPArtifact | null>(null);
 
   useEffect(() => {
     loadIndex().then(async (ix: ArtifactIndex) => {
+      setIndex(ix);
       setArtifacts(await Promise.all(ix.cases.map((c) => loadCase(c.slug))));
     });
     loadNovel().then(setNovel);
     loadLatticeOCP().then(setChain);
   }, []);
 
-  if (!artifacts.length || !novel || !chain) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
+  if (!artifacts.length || !novel || !chain || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
   return (
     <article className="prose">
@@ -306,6 +309,11 @@ export function Experiments(): React.JSX.Element {
       <Tabs
         ariaLabel="experiments"
         tabs={[
+          {
+            id: 'coverage',
+            label: es ? 'Cobertura' : 'Coverage',
+            content: <CoverageMatrix index={index} es={es} />,
+          },
           {
             id: 'materials',
             label: es ? 'Materiales' : 'Materials',

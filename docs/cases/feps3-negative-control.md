@@ -1,6 +1,8 @@
 # FePS3, negative control
 
-Case `feps3-negative-control`, category `negative-control`. Generated from the registry by `scripts/gen_case_docs.py`.
+Case `feps3-negative-control` (C18), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+
+Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
@@ -8,7 +10,11 @@ An Ising antiferromagnet where uniform ferromagnetic-macrospin reversal is not t
 
 ## What a domain expert should see
 
-The macrospin optimal-control numbers are computed but flagged as not physically representative of the true antiferromagnetic switching; a number is not the same as a result.
+The macrospin numbers are computed and shown with an explicit banner: they are what the machinery returns when its own assumptions fail, not predictions.
+
+## Kill criterion
+
+Presenting these numbers without that warning anywhere they appear would make the product dishonest, which is the failure this case guards against.
 
 ## Material: FePS3
 
@@ -30,12 +36,18 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Switching times, in units of the Larmor timescale tau0: 5, 20, 50.
+Switching time (tau0): 2, 5, 10, 20, 50, 100.
 
-## What the bake computes
+## Design
 
-For every variant: the analytic optimal pulse, its trajectory on the sphere, and its cost against the
-free-macrospin cost and the universal floor (with the band from the damping range). A static-field
-baseline at the longest switching time. Numerical biaxial solve: No: the material is treated as uniaxial, where the analytic optimum is exact.
+| Field | Value |
+|---|---|
+| Methods | R00, R05 |
+| Ground truth | provisional |
+| Split | control |
+| Seed | 0 |
+| Surface | workbench |
 
-Artifact: `data/artifacts/feps3-negative-control.json`.
+## Sources
+
+No external reference: the case is checked against the engine's own oracles.

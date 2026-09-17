@@ -1,12 +1,23 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "case": {
     "slug": "cr2ge2te6-floor",
+    "code": "C15",
     "title": "Cr2Ge2Te6, the low-damping floor",
-    "category": "damping-extreme",
+    "category": "C. Real materials",
     "material": "cr2ge2te6",
     "reason": "The record-low-damping member, which sets the best-case universal floor because that floor is linear in the damping.",
-    "expectation": "The lowest universal floor of the family; a wide uncertainty band because the floor tracks the measured damping range directly.",
+    "expectation": "The lowest universal floor of the family, with a narrow band because the damping is measured rather than assumed.",
+    "kill_criterion": "A floor that does not scale linearly with the damping would falsify the floor formula the product quotes everywhere.",
+    "ground_truth": "provisional",
+    "split": "test",
+    "status": "baked",
+    "surface": "workbench",
+    "methods": [
+      "R00",
+      "R05"
+    ],
+    "sources": [],
     "includes_biaxial": false
   },
   "material": {
@@ -123,16 +134,22 @@
       "hard_axis_ratio: assumed"
     ]
   },
-  "switching_times_tau0": [
-    2.0,
-    5.0,
-    10.0,
-    20.0,
-    50.0,
-    100.0
-  ],
+  "axis": {
+    "name": "switching_time",
+    "label": "Switching time",
+    "unit": "tau0",
+    "values": [
+      2.0,
+      5.0,
+      10.0,
+      20.0,
+      50.0,
+      100.0
+    ]
+  },
   "cost_curve": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 2.6985135237408737e-11,
       "cost": 1.1795759181045324e-11,
@@ -145,6 +162,7 @@
       "mean_amplitude": 0.661150976829342
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 6.746283809352184e-11,
       "cost": 4.718304287327459e-12,
@@ -157,6 +175,7 @@
       "mean_amplitude": 0.26446039073173677
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 1.349256761870437e-10,
       "cost": 2.3591532417160293e-12,
@@ -169,6 +188,7 @@
       "mean_amplitude": 0.13223019536586839
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 2.698513523740874e-10,
       "cost": 1.1795788169619748e-12,
@@ -181,6 +201,7 @@
       "mean_amplitude": 0.06611509768293419
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 6.746283809352185e-10,
       "cost": 4.718376758644298e-13,
@@ -193,6 +214,7 @@
       "mean_amplitude": 0.026446039073173676
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 1.349256761870437e-09,
       "cost": 2.3592981834979865e-13,
@@ -207,6 +229,7 @@
   ],
   "pulses": [
     {
+      "variant": 2.0,
       "switching_time_tau0": 2.0,
       "switching_time_s": 2.6985135237408737e-11,
       "time_s": [
@@ -1507,6 +1530,7 @@
       ]
     },
     {
+      "variant": 5.0,
       "switching_time_tau0": 5.0,
       "switching_time_s": 6.746283809352184e-11,
       "time_s": [
@@ -2807,6 +2831,7 @@
       ]
     },
     {
+      "variant": 10.0,
       "switching_time_tau0": 10.0,
       "switching_time_s": 1.349256761870437e-10,
       "time_s": [
@@ -4107,6 +4132,7 @@
       ]
     },
     {
+      "variant": 20.0,
       "switching_time_tau0": 20.0,
       "switching_time_s": 2.698513523740874e-10,
       "time_s": [
@@ -5407,6 +5433,7 @@
       ]
     },
     {
+      "variant": 50.0,
       "switching_time_tau0": 50.0,
       "switching_time_s": 6.746283809352185e-10,
       "time_s": [
@@ -6707,6 +6734,7 @@
       ]
     },
     {
+      "variant": 100.0,
       "switching_time_tau0": 100.0,
       "switching_time_s": 1.349256761870437e-09,
       "time_s": [
@@ -8008,6 +8036,7 @@
     }
   ],
   "reference_pulse": {
+    "variant": 20.0,
     "switching_time_tau0": 20.0,
     "switching_time_s": 2.698513523740874e-10,
     "time_s": [

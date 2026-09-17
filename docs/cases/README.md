@@ -1,42 +1,84 @@
 # Cases
 
-A case is a scientific question the product answers with a baked result: a material, a regime, and a
-family of variants. The validated plan (programme plan section 4) defines 26 cases in six categories.
-This page is the coverage matrix against that plan; each baked case has its own page, generated from the
-registry.
+A case is a scientific question the product answers: a system, a variant family, and a
+pre-declared expectation with the kill criterion that would make it a failure. The 26 cases of the
+validated plan are all declared here, so a missing one cannot hide behind the ones that are baked.
 
-## Categories of the plan
+**10 baked, 14 planned, 2 blocked.** Baked cases
+have committed artifacts; planned cases are declared and runnable but not yet computed; blocked
+cases name what is missing. This page and the per-case pages are generated from the registry
+(`python scripts/gen_case_docs.py`).
 
-| Category | Purpose |
-|---|---|
-| A. Positive controls | Exact oracles the numerical methods must reproduce |
-| B. Published replication | Reproduce the lineage papers' figures and tables |
-| C. Real materials, macrospin | Each van der Waals magnet from primary-source parameters, including a negative control |
-| D. Beyond macrospin | Chains, 2D patches, and a continuum cross-check |
-| E. Constrained and hybrid control | Bandwidth, amplitude and slew limits; field plus current |
-| F. Screening and learned | Screening over the parameter database; the amortized policy on held-out materials |
+## A. Exact oracles
 
-## Coverage matrix
+Closed-form or exactly-known answers every numerical method must reproduce.
 
-| Plan case | Baked as | Status |
-|---|---|---|
-| C01 free macrospin; C02 uniaxial analytic; C03 SOT analytic; C04 biaxial perturbative | engine test suite (positive controls) | validated in `spinoct`, not baked as product cases |
-| C05 biaxial numerical OCP replication (PRB 107 214448) | engine test suite | not baked |
-| C06 six-OCP family; C07 thermal success table; C08 SOT down-chirp; C09 longitudinal stabilization | partially in the engine (C09 underlies the reliability front) | not baked |
-| C10 the kickoff paper's own figures | none | blocked: the full text is Cloudflare-blocked (backlog BL-002) |
-| C11 CrSBr | [crsbr-field](crsbr-field.md) | baked, includes the biaxial solve |
-| C12 Fe3GeTe2 | [fe3gete2-field](fe3gete2-field.md) | baked |
-| C13 Fe3GaTe2 | [fe3gate2-field](fe3gate2-field.md) | baked |
-| C14 CrI3 | [cri3-field](cri3-field.md) | baked |
-| C15 Cr2Ge2Te6 | [cr2ge2te6-floor](cr2ge2te6-floor.md) | baked |
-| C16 Fe5GeTe2; C17 CrCl3 versus CrBr3 | none | parameters not yet transcribed |
-| C18 FePS3 negative control | [feps3-negative-control](feps3-negative-control.md) | baked with 3 variants; the case contract requires 6 |
-| C19 1D chain | the free chain crossover map (`data/artifacts/lattice_ocp.json`, Experiments page) | baked as a J/K = 10 map over length, time and damping; the Nanosystems standing-spin-wave replication is not baked |
-| C20, C21 2D patches; C22 continuum cross-check | none | not started |
-| C23 bandwidth-constrained CRAB; C24 constrained GRAPE; C25 field plus SOT | solvers in the engine | not baked |
-| C26 screening and the amortized policy | the policy in the engine | not baked |
+| Case | Status | Variants | Methods | Ground truth |
+|---|---|---|---|---|
+| C01 [Free macrospin, no anisotropy](free-macrospin.md) | planned | 6 x switching time | R05 | analytic |
+| C02 [Uniaxial macrospin, the analytic optimum](uniaxial-analytic.md) | baked | 6 x switching time | R05, R07 | analytic |
+| C03 [Spin-orbit torque, the analytic optimum](sot-analytic.md) | planned | 6 x switching time | R06 | analytic |
+| C04 [Biaxial anisotropy, the hard-axis cost reduction](biaxial-hard-axis.md) | baked | 6 x hard-axis ratio | R07 | provisional |
 
-Cross-material results (the reliability front for CrSBr, the two-mode lattice comparison, the free chain
-map) are shown only on the Experiments page, never in the single-case workbench.
+## B. Published replication
 
-Regenerate the per-case pages after any registry or material change: `python scripts/gen_case_docs.py`.
+Figures and tables of the lineage papers, reproduced or refuted.
+
+| Case | Status | Variants | Methods | Ground truth |
+|---|---|---|---|---|
+| C05 [Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)](prb107-biaxial-figures.md) | blocked (The published figure values have not been digitized from the...) | 6 x switching time | R07 | published |
+| C06 [The optimal control path family (several coexisting optima)](ocp-family.md) | planned | 6 x search seed | R07 | published |
+| C07 [Thermal success rate against switching time](thermal-success-rate.md) | planned | 6 x thermal stability factor | R11 | published |
+| C08 [Spin-orbit torque, the simplified down-chirp protocol](sot-down-chirp.md) | planned | 6 x switching time | R06, R04 | published |
+| C09 [Longitudinal stabilization, the cost of reliability](longitudinal-stabilization.md) | baked | 6 x longitudinal field | R11, R12 | published |
+| C10 [The kickoff paper's own switching energies](kickoff-replication.md) | blocked (The full text is behind a Cloudflare challenge and has not b...) | 6 x switching time | R05, R07 | published |
+
+## C. Real materials
+
+Each van der Waals magnet from primary-source parameters, with a negative control.
+
+| Case | Status | Variants | Methods | Ground truth |
+|---|---|---|---|---|
+| C11 [CrSBr, field-driven reversal](crsbr-field.md) | baked | 6 x switching time | R00, R05, R07 | provisional |
+| C12 [Fe3GeTe2, field-driven reversal](fe3gete2-field.md) | baked | 6 x switching time | R00, R05 | provisional |
+| C13 [Fe3GaTe2, field-driven reversal](fe3gate2-field.md) | baked | 6 x switching time | R00, R05 | provisional |
+| C14 [CrI3, field-driven reversal](cri3-field.md) | baked | 6 x switching time | R00, R05 | provisional |
+| C15 [Cr2Ge2Te6, the low-damping floor](cr2ge2te6-floor.md) | baked | 6 x switching time | R00, R05 | provisional |
+| C16 [Fe5GeTe2, the near-room-temperature metal](fe5gete2-field.md) | planned | 6 x switching time | R00, R05 | provisional |
+| C17 [CrCl3 against CrBr3, the anisotropy-sign contrast](crcl3-crbr3-contrast.md) | planned | 6 x switching time | R00, R05 | provisional |
+| C18 [FePS3, negative control](feps3-negative-control.md) | baked | 6 x switching time | R00, R05 | provisional |
+
+## D. Beyond the macrospin
+
+Chains, patches and the continuum limit, where the single-moment picture fails.
+
+| Case | Status | Variants | Methods | Ground truth |
+|---|---|---|---|---|
+| C19 [The spin chain, where uniform rotation stops being optimal](chain-crossover.md) | baked | 9 x chain length | R07, R16 | provisional |
+| C20 [A two-dimensional CrSBr patch, size sweep](patch-2d-crsbr.md) | planned | 6 x patch width | R16 | provisional |
+| C21 [A two-dimensional Fe3GaTe2 patch, perpendicular anisotropy](patch-2d-fe3gate2.md) | planned | 6 x patch width | R16 | provisional |
+| C22 [Continuum cross-check against a micromagnetic solver](continuum-cross-check.md) | planned | 6 x sites per wall width | R16 | provisional |
+
+## E. Constrained and hybrid control
+
+Bandwidth, amplitude and slew limits; field together with current.
+
+| Case | Status | Variants | Methods | Ground truth |
+|---|---|---|---|---|
+| C23 [Band-limited control, the price of realizability](crab-bandwidth.md) | planned | 6 x harmonics | R09, R05 | analytic |
+| C24 [Amplitude and slew-rate limited control](grape-amplitude-slew.md) | planned | 6 x amplitude cap | R08, R05 | analytic |
+| C25 [Field together with current, the hybrid cost](field-plus-current.md) | planned | 6 x current price | R13 | provisional |
+
+## F. Screening and learned
+
+The parameter family as a search space, and the amortized policy on held-out materials.
+
+| Case | Status | Variants | Methods | Ground truth |
+|---|---|---|---|---|
+| C26 [The amortized policy on held-out materials](amortized-policy.md) | planned | 6 x damping | R15 | analytic |
+
+## Surfaces
+
+Baked cases marked `workbench` are selectable in the App; those marked `experiments` are cross-case
+results shown on the Experiments page (the reliability front and the free chain crossover map).
+Cross-case results never appear in the single-case workbench.

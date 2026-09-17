@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from espiralab.cases import CASES
+from espiralab.cases import CASES, baked_cases
 from espiralab.materials import get_material
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -74,21 +74,35 @@ def test_checker_catches_a_ratio_below_the_floor(artifact_copy: Path) -> None:
 
 
 def test_index_matches_the_registry() -> None:
+    """The index ships the baked workbench cases, and declares the whole registry with its statuses."""
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    assert sorted(e["slug"] for e in index["cases"]) == sorted(CASES)
+    assert sorted(e["slug"] for e in index["cases"]) == sorted(baked_cases("workbench"))
     for entry in index["cases"]:
         case = CASES[entry["slug"]]
         assert entry["category"] == case.category
         assert entry["material"] == case.material
+    assert sorted(r["slug"] for r in index["registry"]) == sorted(CASES)
+    assert index["coverage"]["baked"] + index["coverage"]["planned"] + index["coverage"]["blocked"] == len(CASES)
+    for row in index["registry"]:
+        case = CASES[row["slug"]]
+        assert row["status"] == case.status and row["variants"] == len(case.axis.values)
+        assert bool(row["blocked_reason"]) == (case.status == "blocked")
 
 
-@pytest.mark.parametrize("slug", sorted(CASES))
+@pytest.mark.parametrize("slug", sorted(baked_cases("workbench")))
 def test_artifact_is_current_with_the_database_and_registry(slug: str) -> None:
     """A stale bake ships old parameters or an old sweep: the artifact must match the source of truth."""
     artifact = json.loads((ARTIFACTS / f"{slug}.json").read_text(encoding="utf-8"))
     case = CASES[slug]
-    assert artifact["switching_times_tau0"] == list(case.switching_times_tau0)
-    assert artifact["material"] == json.loads(json.dumps(get_material(case.material).describe()))
+    assert artifact["axis"]["values"] == list(case.axis.values)
+    assert artifact["axis"]["name"] == case.axis.name
+    assert artifact["case"]["kill_criterion"] == case.kill_criterion
+    assert artifact["case"]["status"] == case.status
+    if case.material is not None:
+        assert artifact["material"] == json.loads(json.dumps(get_material(case.material).describe()))
+    else:
+        assert artifact["material"]["slug"] == "synthetic-reference"
+        assert artifact["material"]["anisotropy_mev"] == case.synthetic.anisotropy_mev
 
 
 def test_manuscript_facts_are_generated_from_the_shipped_map() -> None:

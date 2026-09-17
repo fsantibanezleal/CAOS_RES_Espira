@@ -1,20 +1,20 @@
-# CrSBr, field-driven reversal
+# Longitudinal stabilization, the cost of reliability
 
-Case `crsbr-field` (C11), category C. Real materials. Baked: committed artifacts, replayed by the web app.
+Case `longitudinal-stabilization` (C09), category B. Published replication. Baked: committed artifacts, replayed by the web app.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-The kickoff material and, because of its triaxial anisotropy, the natural host of the biaxial cost-reduction mechanism.
+A field along the moment is invisible to the optimal pulse dynamics but removes the hyperbolic instability that thermal fluctuations excite. The published work shows the stabilization; what it costs is our own addition, and manuscript M1.
 
 ## What a domain expert should see
 
-The optimal pulse cost falls with switching time toward the universal floor; the hard axis pushes the numerical cost below the free-macrospin floor.
+The success rate rises with the longitudinal field, and the added cost grows with its square, so there is a front rather than a free lunch.
 
 ## Kill criterion
 
-A biaxial cost above the free-macrospin cost would mean the hard axis is not being exploited, and the material's headline advantage does not exist.
+A longitudinal field that changes the zero-temperature trajectory would mean it is not longitudinal in the implementation.
 
 ## Material: CrSBr
 
@@ -36,18 +36,18 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Switching time (tau0): 2, 5, 10, 20, 50, 100.
+Longitudinal field (B_r / (K/mu)): 0, 0.5, 1, 1.5, 2, 2.5.
 
 ## Design
 
 | Field | Value |
 |---|---|
-| Methods | R00, R05, R07 |
-| Ground truth | provisional |
-| Split | train |
+| Methods | R11, R12 |
+| Ground truth | published |
+| Split | control |
 | Seed | 0 |
-| Surface | workbench |
+| Surface | experiments |
 
 ## Sources
 
-No external reference: the case is checked against the engine's own oracles.
+- https://doi.org/10.48550/arXiv.2312.11293
