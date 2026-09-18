@@ -237,6 +237,17 @@ def _observable_row(case: Case, variant: float, t_tau0: float, row: dict) -> dic
     """
     from ..stages.infer import _run_method
 
+    if case.primary_method == "R16":
+        # An energy barrier of a chain has no single-moment reversal to compare with; carrying one, even
+        # for scale, would put a number in the row that belongs to a different question.
+        row.pop("cost")
+        for derived in ("cost_over_floor", "cost_over_free", "cost_low_damping", "cost_high_damping",
+                        "mean_amplitude", "cost_free", "cost_floor"):
+            row.pop(derived, None)
+        result = _run_method(case, "R16", variant, t_tau0)
+        row["r16"] = {"cost": result.cost, "switched": result.switched, "reason": result.reason, **result.metrics}
+        row[case.observable.key] = result.metrics.get(case.observable.key)
+        return row
     row["field_cost_reference"] = row.pop("cost")
     row["field_cost_note"] = (
         "The closed-form field cost of the same reversal, for scale only. This case does not report a "
@@ -338,6 +349,52 @@ def _chirp_pulse(case: Case, amplitude_over_j0: float) -> dict:
     }
 
 
+def _barrier_path(case: Case, width_sites: float) -> dict:
+    """The minimum energy path of the chain, drawn in the two views the workbench has.
+
+    There is no pulse and no time here. The sphere shows the site at the middle of the chain as the
+    path carries the wall through it, and the second view shows the energy along the path in units of
+    the anisotropy energy per site, against the path coordinate. The block declares both axes, so the
+    app does not label a path coordinate as time or an energy as a field.
+    """
+    import math
+
+    from spinoct.lattice import SpinChain, minimum_energy_path
+
+    reference = _system(case, width_sites, uniaxial=True)
+    exchange_over_k = 2.0 * width_sites**2
+    n_sites = max(24, int(round(12 * width_sites)))
+    chain = SpinChain(
+        n_sites=n_sites, mu=reference.mu, anisotropy_j=reference.anisotropy_j,
+        exchange_j=exchange_over_k * reference.anisotropy_j, alpha=reference.alpha,
+    )
+    path = minimum_energy_path(chain, initial="wall", max_iterations=200000)
+    centre = path.images[:, n_sites // 2, :]
+    coordinate = np.linspace(0.0, 1.0, path.images.shape[0])
+    energy = np.asarray(path.energies) / reference.anisotropy_j
+    continuum = 2.0 * math.sqrt(2.0 * exchange_over_k)
+    return {
+        "variant": width_sites,
+        "switching_time_tau0": 0.0,
+        "switching_time_s": 0.0,
+        "time_s": coordinate.tolist(),
+        "sx": centre[:, 0].tolist(),
+        "sy": centre[:, 1].tolist(),
+        "sz": centre[:, 2].tolist(),
+        "field_amplitude_t": energy.tolist(),
+        "field_x_t": [continuum] * coordinate.size,
+        "field_y_t": [0.0] * coordinate.size,
+        "field_z_t": [0.0] * coordinate.size,
+        "signal_label": "energy along the path",
+        "signal_unit": "K",
+        "signal_scale": 1.0,
+        "signal_series": ["E / K", "continuum wall energy"],
+        "x_label": "path coordinate",
+        "x_unit": "fraction",
+        "x_scale": 1.0,
+    }
+
+
 def _pulse(case: Case, variant: float) -> dict:
     """The trajectory on the sphere and the pulse waveform at one variant.
 
@@ -347,6 +404,8 @@ def _pulse(case: Case, variant: float) -> dict:
     t_tau0 = _time_for(case, variant)
     if case.primary_method == "R04":
         return _chirp_pulse(case, variant)
+    if case.primary_method == "R16":
+        return _barrier_path(case, variant)
     if case.axis.name == "seed":
         return _numeric_pulse(case, variant, t_tau0, seed=int(variant))
     if case.axis.name == "hard_axis_ratio":
@@ -437,6 +496,13 @@ def _pulse_note(case: Case) -> str:
             "The drawn path is the numerical biaxial optimum on the solver's own image grid, not the "
             "closed-form uniaxial path: with a hard axis there is no closed form, and the shape of the "
             "path is what the hard axis changes."
+        )
+    if case.primary_method == "R16":
+        return (
+            "No pulse: this case measures an energy barrier. The sphere shows the site at the middle of "
+            "the chain as the minimum energy path carries the wall through it, and the second view shows "
+            "the energy along the path against the continuum wall energy, both against the path "
+            "coordinate rather than time."
         )
     if case.primary_method == "R04":
         return (

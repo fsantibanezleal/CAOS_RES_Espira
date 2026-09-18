@@ -184,6 +184,19 @@
       }
     },
     {
+      "case": "continuum-cross-check",
+      "code": "C22",
+      "manifest": "continuum-cross-check.json",
+      "sha256": "654773f13e861a494a6929adfe1b83447e473a45cd552fc64a292078b62bb8e4",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
       "case": "crab-bandwidth",
       "code": "C23",
       "manifest": "crab-bandwidth.json",
