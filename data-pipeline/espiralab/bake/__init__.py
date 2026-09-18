@@ -195,6 +195,25 @@ def _cost_row(case: Case, variant: float) -> dict:
         row.update({k: v for k, v in solved.metrics.items() if k != "solve_ms"})
         return row
 
+    if case.primary_method != "R05":
+        # A constrained or hybrid case reports what ITS method costs, against the closed form as the
+        # reference the constraint is priced against. The cost is None when the pulse did not reverse
+        # the moment, which at a tight amplitude cap is the answer, not a gap.
+        from ..stages.infer import _run_method
+
+        solved = _run_method(case, case.primary_method, variant, t_tau0)
+        row["cost"] = solved.cost
+        row["switched"] = solved.switched
+        row["reason"] = solved.reason
+        row["analytic_cost"] = cost
+        row["cost_over_analytic"] = solved.cost / cost if (solved.cost is not None and cost > 0) else None
+        row["cost_over_free"] = solved.cost / free if solved.cost is not None else None
+        row["cost_over_floor"] = (
+            solved.cost / floor if (solved.cost is not None and floor > 0) else None
+        )
+        row.update({k: v for k, v in solved.metrics.items() if k != "solve_ms"})
+        return row
+
     if case.axis.name == "hard_axis_ratio":
         # The hard axis has no closed form: the reported cost is the numerical optimum.
         biaxial = _biaxial(case, variant, t_tau0)
@@ -279,6 +298,46 @@ def _numeric_pulse(case: Case, variant: float, t_tau0: float, seed: int | None =
     }
 
 
+def _chirp_pulse(case: Case, amplitude_over_j0: float) -> dict:
+    """The chirped current and the zero-temperature trajectory it drives, at the source's settings.
+
+    The signal is a CURRENT in units of j0, not a field, and the pulse block says so, so the app labels
+    the axis correctly instead of calling it a field in millitesla.
+    """
+    import math
+
+    from spinoct.analytic.sot import ChirpedRotatingCurrent, ideal_sot_ratio_beta
+    from spinoct.control.hybrid import integrate_llg_sot
+
+    system = _system(case, uniaxial=True)
+    pulse = ChirpedRotatingCurrent.at_source_settings(system, xi=1.0, amplitude_over_j0=amplitude_over_j0)
+    beta = ideal_sot_ratio_beta(system.alpha)
+    grid = np.linspace(0.0, pulse.switching_time, 3001)
+    current = pulse.current_table(grid)
+    moment = integrate_llg_sot(
+        np.array([0.0, 0.0, 1.0]), np.zeros_like(current), current, grid, system, math.cos(beta), math.sin(beta)
+    )
+    keep = slice(None, None, max(1, grid.size // _TRAJECTORY_SAMPLES))
+    j0 = system.anisotropy_j / system.mu
+    in_j0 = current[keep] / j0
+    return {
+        "variant": amplitude_over_j0,
+        "switching_time_tau0": pulse.switching_time / system.tau0,
+        "switching_time_s": pulse.switching_time,
+        "time_s": grid[keep].tolist(),
+        "sx": moment[keep, 0].tolist(),
+        "sy": moment[keep, 1].tolist(),
+        "sz": moment[keep, 2].tolist(),
+        "field_amplitude_t": np.linalg.norm(in_j0, axis=1).tolist(),
+        "field_x_t": in_j0[:, 0].tolist(),
+        "field_y_t": in_j0[:, 1].tolist(),
+        "field_z_t": in_j0[:, 2].tolist(),
+        "signal_label": "current",
+        "signal_unit": "j0",
+        "signal_scale": 1.0,
+    }
+
+
 def _pulse(case: Case, variant: float) -> dict:
     """The trajectory on the sphere and the pulse waveform at one variant.
 
@@ -286,6 +345,8 @@ def _pulse(case: Case, variant: float) -> dict:
     case is about: the workbench must show what the method produced.
     """
     t_tau0 = _time_for(case, variant)
+    if case.primary_method == "R04":
+        return _chirp_pulse(case, variant)
     if case.axis.name == "seed":
         return _numeric_pulse(case, variant, t_tau0, seed=int(variant))
     if case.axis.name == "hard_axis_ratio":
@@ -300,6 +361,8 @@ def _pulse(case: Case, variant: float) -> dict:
         from ..stages.train import load_or_train_policy
 
         optimal = load_or_train_policy().pulse(system, switching_time)
+    elif case.primary_method in ("R08", "R09", "R13"):
+        return _constrained_pulse(case, variant, t_tau0)
     else:
         optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
     grid = np.linspace(0.0, switching_time, _TRAJECTORY_SAMPLES)
@@ -375,6 +438,13 @@ def _pulse_note(case: Case) -> str:
             "closed-form uniaxial path: with a hard axis there is no closed form, and the shape of the "
             "path is what the hard axis changes."
         )
+    if case.primary_method == "R04":
+        return (
+            "The drawn path is the zero-temperature trajectory under the chirped current, and the pulse "
+            "tab shows the CURRENT in units of j0, not a field. Below about 0.21 j0 that trajectory does "
+            "not leave the pole; the switching probability comes from 1,000 stochastic copies, which are "
+            "not drawn."
+        )
     if case.primary_method == "R11":
         return (
             "The drawn path is the zero-temperature optimal trajectory, which is the pulse under test. "
@@ -383,7 +453,93 @@ def _pulse_note(case: Case) -> str:
         )
     if case.primary_method == "R15":
         return "The drawn path is the one the learned policy emitted, not the closed-form optimum."
+    if case.primary_method in ("R08", "R09"):
+        return (
+            "The drawn path is the realizable pulse this constraint allows and the trajectory it "
+            "produces, not the unconstrained optimum. Comparing its shape with the exact-oracle case is "
+            "the point: that is what the constraint costs."
+        )
+    if case.primary_method == "R13":
+        return (
+            "The drawn field is the field half of the co-optimized protocol; the current half carries "
+            "the rest of the cost and is not drawn. The trajectory is integrated under both."
+        )
     return ""
+
+
+#: The constrained solvers take tens of seconds, and the release asks for the same cell twice (its cost
+#: row and its drawn pulse). They are deterministic and seeded, so one solve per cell is remembered.
+_SOLVER_CACHE: dict[tuple[str, float], object] = {}
+#: The spin-orbit-torque coupling of the hybrid case, matching stage infer's.
+_SOT_COUPLING = 0.05
+
+
+def _solve_constrained(case: Case, variant: float, t_tau0: float):
+    """Run the case's constrained solver once and remember the full result, waveform included."""
+    from spinoct.control.constrained import CRABSolver, GRAPESolver
+    from spinoct.control.hybrid import HybridSolver
+
+    key = (case.slug, variant)
+    cached = _SOLVER_CACHE.get(key)
+    if cached is not None:
+        return cached
+    system = _system(case, variant, uniaxial=True)
+    switching_time = system.switching_time_from_tau0(t_tau0)
+    if case.primary_method == "R09":
+        solved = CRABSolver(system, switching_time, n_harmonics=int(variant)).solve()
+    elif case.primary_method == "R08":
+        solved = GRAPESolver(
+            system, switching_time, amplitude_cap=variant * system.anisotropy_field
+        ).solve()
+    else:
+        solved = HybridSolver(
+            system,
+            switching_time,
+            circuit_field=1.0,
+            circuit_current=variant,
+            xi_f=_SOT_COUPLING,
+            xi_d=_SOT_COUPLING,
+        ).solve()
+    _SOLVER_CACHE[key] = solved
+    return solved
+
+
+def _constrained_pulse(case: Case, variant: float, t_tau0: float) -> dict:
+    """The pulse a constrained or hybrid solver produced, on its own integration grid.
+
+    These cases exist to show what a realizable pulse looks like, so drawing the unconstrained
+    closed-form pulse instead would show the opposite of the point. The trajectory is integrated under
+    the solved control with the same integrator the solver reports with.
+    """
+    from spinoct.control.hybrid import integrate_llg_sot
+    from spinoct.dynamics.llg import integrate_llg_tabulated
+
+    system = _system(case, variant, uniaxial=True)
+    switching_time = system.switching_time_from_tau0(t_tau0)
+    solved = _solve_constrained(case, variant, t_tau0)
+    field, times = solved.field, solved.times
+    if case.primary_method == "R13":
+        moment = integrate_llg_sot(
+            np.array([0.0, 0.0, 1.0]), field, solved.current, times, system, _SOT_COUPLING, _SOT_COUPLING
+        )
+    else:
+        moment = integrate_llg_tabulated(np.array([0.0, 0.0, 1.0]), field, times, system)
+    # Thin to the sample count the workbench draws; the solver grid is thousands of steps.
+    step = max(1, times.size // _TRAJECTORY_SAMPLES)
+    keep = slice(None, None, step)
+    return {
+        "variant": variant,
+        "switching_time_tau0": t_tau0,
+        "switching_time_s": switching_time,
+        "time_s": times[keep].tolist(),
+        "sx": moment[keep, 0].tolist(),
+        "sy": moment[keep, 1].tolist(),
+        "sz": moment[keep, 2].tolist(),
+        "field_amplitude_t": np.linalg.norm(field[keep], axis=1).tolist(),
+        "field_x_t": field[keep, 0].tolist(),
+        "field_y_t": field[keep, 1].tolist(),
+        "field_z_t": field[keep, 2].tolist(),
+    }
 
 
 def _static_baseline(case: Case, t_tau0: float) -> dict:
@@ -511,7 +667,7 @@ def bake_all(output_dir: Path) -> dict:
     for slug, case in baked_cases("workbench").items():
         artifact = bake_case(case)
         (output_dir / f"{slug}.json").write_text(
-            json.dumps(artifact, indent=2), encoding="utf-8", newline="\n"
+            json.dumps(artifact, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
         )
         index["cases"].append(
             {
@@ -528,6 +684,6 @@ def bake_all(output_dir: Path) -> dict:
         index["categories"].setdefault(case.category, []).append(slug)
 
     (output_dir / "index.json").write_text(
-        json.dumps(index, indent=2), encoding="utf-8", newline="\n"
+        json.dumps(index, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
     )
     return index

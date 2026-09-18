@@ -4,7 +4,7 @@ A case is a scientific question the product answers: a system, a variant family,
 pre-declared expectation with the kill criterion that would make it a failure. The 26 cases of the
 validated plan are all declared here, so a missing one cannot hide behind the ones that are baked.
 
-**15 baked, 7 planned, 4 blocked.** Baked cases
+**20 baked, 4 planned, 2 blocked.** Baked cases
 have committed artifacts; planned cases are declared and runnable but not yet computed; blocked
 cases name what is missing. This page and the per-case pages are generated from the registry
 (`python scripts/gen_case_docs.py`).
@@ -29,7 +29,7 @@ Figures and tables of the lineage papers, reproduced or refuted.
 | C05 [Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)](prb107-biaxial-figures.md) | blocked (The published figure values have not been digitized from the...) | 6 x switching time | R07 | published |
 | C06 [The optimal control path family (several coexisting optima)](ocp-family.md) | baked | 6 x search seed | R07 | published |
 | C07 [Thermal success rate against the stability factor](thermal-success-rate.md) | baked | 6 x thermal stability factor | R11, R12 | published |
-| C08 [Spin-orbit torque, the simplified down-chirp protocol](sot-down-chirp.md) | planned | 6 x switching time | R06, R04 | published |
+| C08 [Spin-orbit torque, the simplified down-chirp protocol](sot-down-chirp.md) | baked | 6 x current amplitude | R04 | published |
 | C09 [Longitudinal stabilization, the cost of reliability](longitudinal-stabilization.md) | baked | 6 x longitudinal field | R11, R12 | published |
 | C10 [The kickoff paper's own switching energies](kickoff-replication.md) | blocked (The full text is behind a Cloudflare challenge and has not b...) | 6 x switching time | R05, R07 | published |
 
@@ -45,7 +45,7 @@ Each van der Waals magnet from primary-source parameters, with a negative contro
 | C14 [CrI3, field-driven reversal](cri3-field.md) | baked | 6 x switching time | R00, R05 | provisional |
 | C15 [Cr2Ge2Te6, the low-damping floor](cr2ge2te6-floor.md) | baked | 6 x switching time | R00, R05 | provisional |
 | C16 [Fe5GeTe2, the near-room-temperature metal](fe5gete2-field.md) | planned | 6 x switching time | R00, R05 | provisional |
-| C17 [CrCl3 against CrBr3, the anisotropy-sign contrast](crcl3-crbr3-contrast.md) | planned | 6 x switching time | R00, R05 | provisional |
+| C17 [CrBr3 against CrCl3, a bit and a non-bit](crcl3-crbr3-contrast.md) | baked | 6 x switching time | R00, R05 | provisional |
 | C18 [FePS3, negative control](feps3-negative-control.md) | baked | 6 x switching time | R00, R05 | provisional |
 
 ## D. Beyond the macrospin
@@ -65,9 +65,9 @@ Bandwidth, amplitude and slew limits; field together with current.
 
 | Case | Status | Variants | Methods | Ground truth |
 |---|---|---|---|---|
-| C23 [Band-limited control, the price of realizability](crab-bandwidth.md) | blocked (The engine's band-limited solver optimizes with Nelder-Mead,...) | 6 x harmonics | R09, R05 | analytic |
-| C24 [Amplitude and slew-rate limited control](grape-amplitude-slew.md) | blocked (Same engine defect as the band-limited case: the constrained...) | 6 x amplitude cap | R08, R05 | analytic |
-| C25 [Field together with current, the hybrid cost](field-plus-current.md) | planned | 6 x current price | R13 | provisional |
+| C23 [Band-limited control, the price of realizability](crab-bandwidth.md) | baked | 6 x harmonics | R09, R05 | analytic |
+| C24 [Amplitude and slew-rate limited control](grape-amplitude-slew.md) | baked | 6 x amplitude cap | R08, R05 | analytic |
+| C25 [Field together with current, the hybrid cost](field-plus-current.md) | baked | 6 x current price | R13 | provisional |
 
 ## F. Screening and learned
 

@@ -10,6 +10,7 @@ Methods implemented here:
 |---|---|
 | R00 | the conventional static antiparallel field, the baseline the reduction factor is quoted against |
 | R05 | the closed-form uniaxial optimal control path |
+| R04 | the source's simplified chirped rotating current, its switching probability at temperature |
 | R06 | the closed-form spin-orbit-torque optimal protocol |
 | R07 | the numerical image-based optimal control path (the only one that sees a hard axis) |
 | R08 | GRAPE under an amplitude cap, the constraint a driver actually has |
@@ -48,7 +49,7 @@ from ..core.manifest import MethodResult
 
 __all__ = ["IMPLEMENTED_METHODS", "InferenceRun", "infer_case"]
 
-IMPLEMENTED_METHODS = ("R00", "R05", "R06", "R07", "R08", "R09", "R11", "R12", "R13", "R15")
+IMPLEMENTED_METHODS = ("R00", "R04", "R05", "R06", "R07", "R08", "R09", "R11", "R12", "R13", "R15")
 
 #: Seeds and iteration cap for the numerical solver in the release bake. The image count comes from the
 #: engine's resolution rule, which scales with the switching time.
@@ -92,6 +93,54 @@ def _system(case: Case, variant: float, uniaxial: bool = True):
     return bake_system(case, variant, uniaxial=uniaxial)
 
 
+#: The source's published switching probabilities for the chirped current (Vlasov et al., Phys. Rev. B
+#: 105, 134404, after Eq. 15), keyed by the amplitude in j0; "practically unity" is recorded as 1.0.
+_R04_PUBLISHED = {0.17: 0.89, 0.18: 0.97, 0.20: 1.0}
+#: The source's settings for the chirped current: the stability factor and the ensemble size here.
+_R04_STABILITY = 60.0
+_R04_COPIES = 1000
+_R04_STEPS = 3000
+
+
+def _chirped_current(case: Case, amplitude_over_j0: float) -> MethodResult:
+    """R04 at the source's settings: T = T0, f_max = 1.4 f_r, the ideal coupling ratio, Delta = 60."""
+    import math
+
+    from spinoct.analytic.sot import ChirpedRotatingCurrent
+    from spinoct.thermal import sot_switching_success_rate
+
+    system = _system(case, amplitude_over_j0, uniaxial=True)
+    beta = ideal_sot_ratio_beta(system.alpha)
+    xi_f, xi_d = _SOT_COUPLING * math.cos(beta), _SOT_COUPLING * math.sin(beta)
+    pulse = ChirpedRotatingCurrent.at_source_settings(system, xi=_SOT_COUPLING, amplitude_over_j0=amplitude_over_j0)
+    temperature = system.anisotropy_j / (BOLTZMANN_J_PER_K * _R04_STABILITY)
+    ensemble = sot_switching_success_rate(
+        system, pulse.current, pulse.switching_time, temperature, xi_f, xi_d,
+        n_copies=_R04_COPIES, n_steps=_R04_STEPS, seed=case.seed,
+    )
+    j0 = system.anisotropy_j / (system.mu * _SOT_COUPLING)
+    optimal_mean = 4.0 * system.alpha * j0 / (math.pi * math.sqrt(1.0 + system.alpha**2))
+    metrics = {
+        "success_rate": ensemble.success_rate,
+        "confidence95": ensemble.confidence95,
+        "final_sz_mean": ensemble.final_sz_mean,
+        "stability_factor": _R04_STABILITY,
+        "amplitude_over_optimal_mean_current": pulse.amplitude / optimal_mean,
+        "current_cost_reduced": pulse.cost(),
+    }
+    published = _R04_PUBLISHED.get(round(amplitude_over_j0, 2))
+    if published is not None:
+        metrics["published_rate"] = published
+        metrics["gap_to_published"] = ensemble.success_rate - published
+    return MethodResult(
+        method="R04",
+        variant=amplitude_over_j0,
+        cost=None,
+        switched=ensemble.success_rate >= 0.5,
+        reason="a current cost in reduced units; the case reports a switching probability, not a field cost",
+        metrics=metrics,
+    )
+
 def _path_signature(images: np.ndarray) -> dict[str, float]:
     """Numbers that tell two optimal paths apart, for the case whose subject is the search.
 
@@ -109,7 +158,22 @@ def _path_signature(images: np.ndarray) -> dict[str, float]:
     }
 
 
+#: Every solver here is deterministic and seeded, so the same cell always returns the same row. The
+#: release asks for a cell up to three times (the cost curve, the drawn pulse, and the method matrix),
+#: and the constrained solvers take tens of seconds each, so the answer is remembered for the run.
+_CELL_CACHE: dict[tuple[str, str, float, float], MethodResult] = {}
+
+
 def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> MethodResult:
+    key = (case.slug, method, variant, t_tau0)
+    cached = _CELL_CACHE.get(key)
+    if cached is None:
+        cached = _compute_method(case, method, variant, t_tau0)
+        _CELL_CACHE[key] = cached
+    return cached
+
+
+def _compute_method(case: Case, method: str, variant: float, t_tau0: float) -> MethodResult:
     system = _system(case, variant, uniaxial=True)
     switching_time = system.switching_time_from_tau0(t_tau0)
 
@@ -138,7 +202,7 @@ def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> Metho
             cost=result.cost,
             switched=bool(result.switched),
             metrics={
-                "over_optimal": result.cost / optimal.cost() if optimal.cost() > 0 else float("inf"),
+                "over_optimal": result.cost / optimal.cost() if optimal.cost() > 0 else None,
                 "amplitude_t": 1.2 * static_switching_field(system),
             },
         )
@@ -181,7 +245,7 @@ def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> Metho
             result = solver.solve_best(n_seeds=_SEEDS, max_iterations=_MAX_ITERATIONS)
         uniaxial = UniaxialOptimalControl.for_switching_time(system, switching_time)
         metrics = {
-            "over_analytic": result.cost / uniaxial.cost() if uniaxial.cost() > 0 else float("inf"),
+            "over_analytic": result.cost / uniaxial.cost() if uniaxial.cost() > 0 else None,
             "converged": float(result.converged),
             "images": float(images),
             "solve_ms": (time.perf_counter() - started) * 1e3,
@@ -190,6 +254,9 @@ def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> Metho
             metrics.update(_path_signature(result.images))
             metrics["iterations"] = float(result.iterations)
         return MethodResult(method=method, variant=variant, cost=result.cost, switched=True, metrics=metrics)
+
+    if method == "R04":
+        return _chirped_current(case, variant)
 
     if method in ("R11", "R12"):
         # The stability factor K/kT is the case's variant; the temperature follows from it, which keeps
@@ -242,7 +309,7 @@ def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> Metho
                 "success_rate": front.success_rate,
                 "confidence95": front.confidence95,
                 "added_cost": front.added_cost,
-                "added_cost_over_optimal": front.added_cost / optimal.cost() if optimal.cost() > 0 else float("inf"),
+                "added_cost_over_optimal": front.added_cost / optimal.cost() if optimal.cost() > 0 else None,
                 "longitudinal_field_over_anisotropy": front.longitudinal_field_over_anisotropy,
                 "hyperbolic_fraction": front.hyperbolic_fraction,
                 "temperature_k": temperature,
@@ -265,10 +332,10 @@ def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> Metho
             switched=bool(result.switched),
             reason="" if result.switched else "no reversal under this amplitude cap",
             metrics={
-                "over_analytic": result.cost / optimal.cost() if result.switched else float("inf"),
+                "over_analytic": result.cost / optimal.cost() if result.switched else None,
                 "peak_amplitude_t": result.peak_amplitude,
                 "infidelity": result.infidelity,
-                "cap_over_anisotropy_field": variant if cap is not None else float("nan"),
+                "cap_over_anisotropy_field": variant if cap is not None else None,
             },
         )
 
@@ -285,7 +352,7 @@ def _run_method(case: Case, method: str, variant: float, t_tau0: float) -> Metho
             switched=bool(result.switched),
             reason="" if result.switched else "no reversal at this bandwidth",
             metrics={
-                "over_analytic": result.cost / optimal.cost() if result.switched else float("inf"),
+                "over_analytic": result.cost / optimal.cost() if result.switched else None,
                 "harmonics": float(harmonics),
                 "peak_amplitude_t": result.peak_amplitude,
                 "infidelity": result.infidelity,

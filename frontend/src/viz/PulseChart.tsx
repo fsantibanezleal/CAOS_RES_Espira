@@ -35,9 +35,15 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
     if (!ref.current) return;
     // Time in picoseconds for a readable axis.
     const t = pulse.time_s.map((s) => s * 1e12);
-    const amp = pulse.field_amplitude_t.map((b) => b * 1e3); // mT
-    const bx = pulse.field_x_t.map((b) => b * 1e3);
-    const by = pulse.field_y_t.map((b) => b * 1e3);
+    // A field is stored in tesla and shown in mT; a case whose signal is a current declares its own
+    // label, unit and scale, and is never labelled a field.
+    const scale = pulse.signal_scale ?? 1e3;
+    const signalLabel = pulse.signal_label ?? 'field';
+    const signalUnit = pulse.signal_unit ?? 'mT';
+    const symbol = pulse.signal_label === 'current' ? 'j' : 'b';
+    const amp = pulse.field_amplitude_t.map((b) => b * scale);
+    const bx = pulse.field_x_t.map((b) => b * scale);
+    const by = pulse.field_y_t.map((b) => b * scale);
 
     const stroke = cssVar('--color-fg', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
     const grid = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
@@ -51,13 +57,13 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
       scales: { x: { time: false } },
       axes: [
         { label: 'time  (ps)', stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
-        { label: 'field  (mT)', stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
+        { label: `${signalLabel}  (${signalUnit})`, stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
       ],
       series: [
         { label: 't (ps)' },
-        { label: '|b|', stroke: accent, width: 2.5 },
-        { label: 'b_x', stroke: '#f59e0b', width: 1.3 },
-        { label: 'b_y', stroke: '#10b981', width: 1.3 },
+        { label: `|${symbol}|`, stroke: accent, width: 2.5 },
+        { label: `${symbol}_x`, stroke: '#f59e0b', width: 1.3 },
+        { label: `${symbol}_y`, stroke: '#10b981', width: 1.3 },
       ],
       legend: { show: true },
     };

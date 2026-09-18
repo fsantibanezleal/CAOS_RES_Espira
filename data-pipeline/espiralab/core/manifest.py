@@ -37,7 +37,8 @@ class MethodResult:
         switched: whether the moment reversed.
         applicable: False when the method is not defined for this case, with the reason recorded.
         reason: why a cell is not applicable or has no cost.
-        metrics: any further numbers the method reports.
+        metrics: any further numbers the method reports; None where a quantity does not exist
+            (a ratio to a cost that was never produced), never infinity, which is not JSON.
     """
 
     method: str
@@ -46,7 +47,7 @@ class MethodResult:
     switched: bool
     applicable: bool = True
     reason: str = ""
-    metrics: dict[str, float] = field(default_factory=dict)
+    metrics: dict[str, float | None] = field(default_factory=dict)
 
     def describe(self) -> dict[str, object]:
         return asdict(self)
@@ -101,7 +102,7 @@ class Manifest:
 
     def write(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(self.describe(), indent=2), encoding="utf-8", newline="\n")
+        path.write_text(json.dumps(self.describe(), indent=2, allow_nan=False), encoding="utf-8", newline="\n")
 
 
 def build_manifest(

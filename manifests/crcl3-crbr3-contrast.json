@@ -1,0 +1,209 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "crcl3-crbr3-contrast",
+  "code": "C17",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.14.000",
+  "seed": 0,
+  "split": "test",
+  "ground_truth": "provisional",
+  "methods": [
+    "R00",
+    "R05"
+  ],
+  "variants": [
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    50.0,
+    100.0
+  ],
+  "artifact": {
+    "path": "crcl3-crbr3-contrast.json",
+    "bytes": 274201,
+    "sha256": "19c1705517643e8af0542f133416df1bb283ab150daaf1a7b20af9c3b2a26f04"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 4563.882,
+    "artifact_bytes": 274201,
+    "methods": [
+      "R00",
+      "R05"
+    ],
+    "reasons": [
+      "runtime 4564 ms over the 250 ms budget"
+    ]
+  },
+  "completeness": {
+    "expected": 12,
+    "produced": 12,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R00",
+      "variant": 2.0,
+      "cost": 2.119199513971308e-12,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 0.1458871767285901,
+        "amplitude_t": 0.3109677389575189
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 5.0,
+      "cost": 5.29799878492827e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 0.9117706094467853,
+        "amplitude_t": 0.3109677389575189
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 10.0,
+      "cost": 1.059599756985654e-11,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 3.6467361264771725,
+        "amplitude_t": 0.3109677389575189
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 20.0,
+      "cost": 2.119199513971308e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 14.581406483305457,
+        "amplitude_t": 0.3109677389575189
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 50.0,
+      "cost": 5.29799878492827e-11,
+      "switched": false,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 90.89232749712936,
+        "amplitude_t": 0.3109677389575189
+      }
+    },
+    {
+      "method": "R00",
+      "variant": 100.0,
+      "cost": 1.059599756985654e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_optimal": 360.1663597363757,
+        "amplitude_t": 0.3109677389575189
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 2.0,
+      "cost": 1.452629053144189e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000050650429155,
+        "cost_over_floor": 246.76603391245789,
+        "mean_amplitude_t": 0.8141523414078949,
+        "peak_amplitude_t": 0.8141502795496207
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 5.0,
+      "cost": 5.8106707213811365e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0000316564129972,
+        "cost_over_floor": 98.70903829046135,
+        "mean_amplitude_t": 0.325660936563158,
+        "peak_amplitude_t": 0.325655781934606
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 10.0,
+      "cost": 2.9056112650773305e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0001266241487838,
+        "cost_over_floor": 49.35920608379307,
+        "mean_amplitude_t": 0.162830468281579,
+        "peak_amplitude_t": 0.16282015914686834
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 20.0,
+      "cost": 1.4533574085583732e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0005064725438595,
+        "cost_over_floor": 24.688976362614348,
+        "mean_amplitude_t": 0.0814152341407895,
+        "peak_amplitude_t": 0.081394616850748
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 50.0,
+      "cost": 5.828873493305138e-13,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0031644011564715,
+        "cost_over_floor": 9.90182587224895,
+        "mean_amplitude_t": 0.0325660936563158,
+        "peak_amplitude_t": 0.032514567596374465
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 100.0,
+      "cost": 2.941973141970365e-13,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0126425727279469,
+        "cost_over_floor": 4.997690515342724,
+        "mean_amplitude_t": 0.0162830468281579,
+        "peak_amplitude_t": 0.016180118057747737
+      }
+    }
+  ],
+  "parameter_flags": [
+    "anisotropy: converted from meV (spin-operator)",
+    "damping: assumed",
+    "hard_axis_ratio: assumed"
+  ]
+}
