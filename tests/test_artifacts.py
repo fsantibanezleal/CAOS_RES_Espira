@@ -118,3 +118,78 @@ def test_manuscript_facts_are_generated_from_the_shipped_map() -> None:
     assert facts["best_key"] == best["key"]
     assert facts["best_saving_percent"] == round(100 * best["saving"], 1)
     assert facts["min_ratio_over_floor"] == round(min(c["best_ratio"] / c["floor_ratio"] for c in cases), 4)
+
+
+# ------------------------------------------------------------------ manuscript M1 against its artifacts
+
+
+def _m1_tables() -> dict[str, list[list[str]]]:
+    """The rows of each tabular in M1, keyed by the table label, as cell strings."""
+    import re
+
+    tex = (ROOT / "manuscripts" / "reliability-realizability" / "tex" / "main.tex").read_text(encoding="utf-8")
+    tables = {}
+    for match in re.finditer(r"\\label\{(tab:[a-z]+)\}.*?\\midrule(.*?)\\bottomrule", tex, flags=re.S):
+        rows = []
+        for line in match.group(2).strip().splitlines():
+            line = line.strip().rstrip("\\").strip()
+            if line:
+                rows.append([cell.strip() for cell in line.split("&")])
+        tables[match.group(1)] = rows
+    return tables
+
+
+def _number(cell: str) -> float:
+    r"""A table cell as a float: `$0.735 \pm 0.035$` gives 0.735, `$6.1\times10^{-12}$` gives 6.1e-12."""
+    import re
+
+    cell = cell.replace("$", "")
+    cell = cell.split(r"\pm")[0].strip()
+    scientific = re.fullmatch(r"([0-9.]+)\s*\\times\s*10\^\{(-?[0-9]+)\}", cell)
+    if scientific:
+        return float(scientific.group(1)) * 10.0 ** int(scientific.group(2))
+    return float(cell)
+
+
+def test_m1_table_1_reproduces_from_the_reliability_front() -> None:
+    """Every number M1 prints in its front table must come from the committed artifact.
+
+    Version 1 of M1 printed a correct table and then misread it in prose. This does not check prose,
+    but it does make the table the thing the prose must be reconciled with, never a hand-typed copy.
+    """
+    points = json.loads((ARTIFACTS / "novel.json").read_text(encoding="utf-8"))["reliability_front"]["points"]
+    rows = _m1_tables()["tab:front"]
+    assert len(rows) == len(points)
+    for row, point in zip(rows, points, strict=True):
+        assert _number(row[0]) == pytest.approx(point["br_over_anisotropy"])
+        assert _number(row[1]) == pytest.approx(point["hyperbolic_fraction"], abs=0.005)
+        assert _number(row[2]) == pytest.approx(point["success_rate"], abs=0.0005)
+        assert _number(row[3]) == pytest.approx(point["added_cost"], rel=0.05, abs=1e-13)
+
+
+def test_m1_table_2_reproduces_from_case_c07() -> None:
+    rows_tex = _m1_tables()["tab:delta"]
+    curve = json.loads((ARTIFACTS / "thermal-success-rate.json").read_text(encoding="utf-8"))["cost_curve"]
+    assert len(rows_tex) == len(curve)
+    for row, point in zip(rows_tex, curve, strict=True):
+        assert _number(row[0]) == pytest.approx(point["variant"])
+        assert _number(row[1]) == pytest.approx(point["r11"]["temperature_k"], abs=0.005)
+        assert _number(row[2]) == pytest.approx(point["r11"]["success_rate"], abs=0.0005)
+        assert _number(row[3]) == pytest.approx(point["r12"]["success_rate"], abs=0.0005)
+
+
+def test_m1_quotes_the_added_cost_against_the_bare_cost_correctly() -> None:
+    """The sentence version 1 got wrong, pinned: the added cost as a multiple of the bare optimal cost.
+
+    An earlier text said the added cost stays "well below the bare switching cost". The artifact says 2.5
+    times at one anisotropy field and 15.8 times at two and a half, and the manuscript must quote those.
+    """
+    tex = (ROOT / "manuscripts" / "reliability-realizability" / "tex" / "main.tex").read_text(encoding="utf-8")
+    points = json.loads((ARTIFACTS / "novel.json").read_text(encoding="utf-8"))["reliability_front"]["points"]
+    bare = json.loads((ARTIFACTS / "thermal-success-rate.json").read_text(encoding="utf-8"))["cost_curve"][0][
+        "field_cost_reference"
+    ]
+    multiples = {p["br_over_anisotropy"]: p["added_cost"] / bare for p in points}
+    assert f"{multiples[1.0]:.1f} times" in tex
+    assert f"{multiples[2.5]:.1f} times" in tex
+    assert "well below the bare" not in tex

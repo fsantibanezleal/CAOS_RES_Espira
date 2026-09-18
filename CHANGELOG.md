@@ -4,6 +4,25 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.07.001] - 2026-09-18
+
+### Fixed
+- Both manuscripts are at version 3 in the repository, matching the published records (M1
+  10.5281/zenodo.22822132, M2 10.5281/zenodo.22822159). The repository still held the version 2
+  sources, whose bodies narrated their own corrections.
+- M1 misread its own reliability table, and the app repeated it. The added cost of the longitudinal
+  field is 2.5 times the bare switching cost at one anisotropy field and 15.8 times at 2.5, not below
+  it; and at the front's stability factor of 20 the bare pulse already reverses every copy, so the field
+  buys no reliability there (case C07 shows it pays only below a factor of about ten). The Experiments
+  page and the artifact's note now say so.
+- The artifact's note under the two-mode lattice comparison still stated manuscript M2 version 1's
+  withdrawn conclusion as fact. It now says what that comparison shows and why the free search
+  overturns it.
+
+### Added
+- Three tests pin M1 to its artifacts: both of its tables reproduce from the committed data, and the
+  cost multiples it quotes must match. They fail on the version 1 source.
+
 ## [0.07.000] - 2026-09-17
 
 ### Added
