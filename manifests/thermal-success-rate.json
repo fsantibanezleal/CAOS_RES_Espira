@@ -4,7 +4,7 @@
   "code": "C07",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.15.000",
+  "engine_version": "0.16.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "published",
@@ -27,7 +27,7 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.018,
+    "runtime_ms": 0.022,
     "artifact_bytes": 277032,
     "methods": [
       "R11",
