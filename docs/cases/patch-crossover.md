@@ -10,7 +10,7 @@ A chain is one dimension; a real element is a patch. The chain's question (C19) 
 
 ## What a domain expert should see
 
-Declared before the bake: the barrier argument carries over with a two-dimensional wall, so the crossover moves to a different length scale. Measured 2026-09-18: the smallest patch (W = 4, under two wall widths) reverses uniformly, and a non-uniform reversal is cheaper from W = 8 on, at 0.9575, 0.7130 and 0.5738 of the uniform cost at W = 8, 12 and 16, against floors of 0.8089, 0.6055 and 0.4615. The patch crossover sits at the chain's length scale in wall widths.
+Declared before the bake: the barrier argument carries over with a two-dimensional wall, so the crossover moves to a different length scale. Measured 2026-09-18: the smallest patch (W = 4, under two wall widths) reverses uniformly, and a non-uniform reversal is cheaper from W = 8 on, at 0.9575, 0.7130, 0.5738, 0.4957 and 0.5156 of the uniform cost at W = 8, 12, 16, 24 and 32, against floors of 0.8089, 0.6055, 0.4615, 0.3242 and 0.2533. The rise from W = 24 to 32 is a limit of the search, which stops at its iteration cap on the largest patches; every ratio is still an upper bound, so the true optimum is bracketed, not located.
 
 ## Kill criterion
 

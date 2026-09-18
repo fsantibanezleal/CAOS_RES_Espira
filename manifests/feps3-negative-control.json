@@ -27,14 +27,14 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 3370.252,
+    "runtime_ms": 3705.202,
     "artifact_bytes": 265811,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 3370 ms over the 250 ms budget"
+      "runtime 3705 ms over the 250 ms budget"
     ]
   },
   "completeness": {

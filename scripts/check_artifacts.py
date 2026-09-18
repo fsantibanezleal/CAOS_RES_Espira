@@ -8,8 +8,9 @@ Checks:
 - the free chain map is internally consistent: every case key is unique, its best ratio lies between
   its minimum-energy-path floor and the uniform bound (the floor is a rigorous lower bound, and uniform
   rotation is always a feasible candidate), and its reversal map has one row of N sites per time sample;
-- the two-dimensional patch sweep (C20, C21) meets the same bounds, every barrier behind a floor
-  converged, every patch is square, and its column-averaged map has one value per column.
+- the two-dimensional patch sweep (C20, C21) meets the same bounds, a floor is reported only from a
+  converged path (null otherwise), every patch is square, and its column-averaged map has one value
+  per column.
 """
 
 from __future__ import annotations
@@ -112,11 +113,15 @@ def check(artifacts: Path) -> list[str]:
             ratio, floor = case["best_ratio"], case["floor_ratio"]
             if ratio > 1.0 + TOLERANCE:
                 errors.append(f"patch_ocp {case['key']}: best ratio {ratio} above the uniform bound")
-            if ratio < floor * (1.0 - TOLERANCE):
-                errors.append(f"patch_ocp {case['key']}: best ratio {ratio} below its floor {floor}")
-            # An unconverged string gives a barrier that is not a floor, so the lower bound would be false.
+            # An unconverged string's top energy is not the saddle, so its floor bounds nothing: it must
+            # be withheld (null), and a converged one must be present and below the best ratio.
             if not case["barrier_converged"]:
-                errors.append(f"patch_ocp {case['key']}: minimum energy path did not converge")
+                if floor is not None or case["barrier_over_nk"] is not None:
+                    errors.append(f"patch_ocp {case['key']}: reports a floor from an unconverged path")
+            elif floor is None:
+                errors.append(f"patch_ocp {case['key']}: converged path but no floor")
+            elif ratio < floor * (1.0 - TOLERANCE):
+                errors.append(f"patch_ocp {case['key']}: best ratio {ratio} below its floor {floor}")
             if case["n_sites"] != case["width"] ** 2:
                 errors.append(f"patch_ocp {case['key']}: {case['n_sites']} sites on a {case['width']}-wide square")
             sz = case["sz_map"]["sz_by_column"]
