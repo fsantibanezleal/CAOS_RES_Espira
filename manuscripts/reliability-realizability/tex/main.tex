@@ -9,6 +9,26 @@
 
 \newcommand{\doi}[1]{DOI: \href{https://doi.org/#1}{#1}}
 
+\newcommand{\doctype}{Preprint}
+\newcommand{\docversion}{v3}
+\newcommand{\docdate}{18 September 2026}
+\newcommand{\doclicense}{CC BY 4.0}
+\newcommand{\versiondoi}{10.5281/zenodo.22822132}
+\newcommand{\conceptdoi}{10.5281/zenodo.22736005}
+\newcommand{\docrepo}{github.com/fsantibanezleal/CAOS\_RES\_Espira}
+
+\newcommand{\headerblock}{%
+\begin{center}
+\fbox{\parbox{0.9\textwidth}{\small\raggedright
+\textbf{\doctype} \quad$\cdot$\quad \docversion, \docdate \quad$\cdot$\quad Licence \doclicense\\[2pt]
+CAOS open-research programme \quad$\cdot$\quad Espira\\[2pt]
+Version DOI \href{https://doi.org/\versiondoi}{\texttt{\versiondoi}} \quad$\cdot$\quad
+concept DOI (always latest) \href{https://doi.org/\conceptdoi}{\texttt{\conceptdoi}}\\[2pt]
+Not peer reviewed. Source code, data and computational records: \texttt{\docrepo}
+}}
+\end{center}
+\vspace{4pt}}
+
 \title{The Cost of Reliability in Optimal Magnetization Switching:\\
 A Longitudinal-Field Front for Van der Waals Magnets}
 \author{Felipe Santib\'a\~nez-Leal\\
@@ -17,6 +37,7 @@ A Longitudinal-Field Front for Van der Waals Magnets}
 
 \begin{document}
 \maketitle
+\headerblock
 
 \begin{abstract}
 Optimal control theory delivers magnetic-field pulses that reverse a magnetic moment for the least
@@ -29,11 +50,14 @@ free: it costs the square of its amplitude integrated over the pulse. We compute
 the cost-reliability front of that longitudinal field. Using an open-source engine that solves optimal
 control over the Landau-Lifshitz-Gilbert equation and a thermostat validated against the Boltzmann
 distribution, we reproduce the published stabilization physics for CrSBr, the half-hyperbolic bare
-path and the counterintuitive success dip near a half anisotropy field, and we add the missing axis:
-the added switching cost, which grows quadratically and reaches roughly $1.5\times10^{-10}$~T$^2$~s at
-twice the anisotropy field for a demanding thermal-stability factor of twenty. The front makes the
-reliability-versus-energy trade explicit and quantitative, and it is reproducible from committed
-artifacts and a live instance.
+path and the counterintuitive success dip near one anisotropy field, and we add the missing axis:
+the added switching cost, which grows quadratically with the field. The price is not small: a field of
+one anisotropy field already costs 2.5 times the bare optimal switching cost, and two anisotropy fields
+cost ten times it. Nor is the benefit universal. At a thermal-stability factor of twenty the bare
+optimal pulse already reverses every one of 400 copies, so the field buys nothing and costs a great
+deal; the reliability gain appears only below a stability factor of about ten, where it lifts the
+success rate from 0.81 to 0.96 at a factor of two. The front makes the reliability-versus-energy trade
+explicit and quantitative, and it is reproducible from committed artifacts and a live instance.
 \end{abstract}
 
 \section{Introduction}
@@ -55,8 +79,9 @@ the dynamics about the optimal control path shows that the perturbation growth i
 eigenvalues of the energy Hessian, and that a large part of a bare reversal is dynamically unstable
 (hyperbolic), which is the primary cause of the pulse and the moment losing phase
 lock~\citep{badarneh2023stability}. A constant longitudinal field, parallel to the instantaneous moment
-direction, shifts those eigenvalues and removes the hyperbolic domain, driving the switching success
-rate to unity.
+direction, shifts those eigenvalues and removes the hyperbolic domain, which in that study drives the
+switching success rate to unity; how much reliability it adds depends on how often the bare pulse fails
+in the first place, which Section~\ref{sec:results} measures.
 
 Because the optimal pulse is perpendicular, the longitudinal field does no work at leading order and is
 frequently treated as a cost-free stabilizer. This is misleading. The switching cost is the time
@@ -121,10 +146,10 @@ with provenance. All computation is done by \texttt{spinoct}, an open-source (MI
 optimal control over LLG dynamics; the results here are reproducible from committed artifacts.
 
 \section{Results}
+\label{sec:results}
 
-We compute the cost-reliability front for CrSBr at a thermal stability factor
-$\Delta = K/(k_B T) = 20$, a demanding, sub-memory-grade regime chosen so the reliability gain is
-visible. Table~\ref{tab:front} reports the hyperbolic fraction of the path, the Monte-Carlo success
+We first compute the cost-reliability front for CrSBr at a thermal stability factor
+$\Delta = K/(k_B T) = 20$. Table~\ref{tab:front} reports the hyperbolic fraction of the path, the Monte-Carlo success
 rate over $400$ copies with its binomial confidence interval, and the added cost, as the longitudinal
 field is swept in units of the anisotropy field $K/\mu$.
 
@@ -153,15 +178,57 @@ to zero once $B_r \ge K/\mu$, exactly as the linearized stability analysis
 predicts~\citep{badarneh2023stability}. Second, the success rate shows a shallow, counterintuitive dip
 around $B_r \approx K/\mu$ before recovering to unity, the same non-monotonicity reported in the
 stabilization study, which arises because the eigenvalue ratio passes through $-1$ near the barrier top
-in that range. Third, and new here, the added cost grows quadratically with the field, reaching
-$1.5\times10^{-10}$~T$^2$~s at $B_r = 2.5\,K/\mu$. This is the price of driving the reliability from a
-partly unstable bare pulse to certain switching.
+in that range. Third, and new here, the added cost grows quadratically with the field. Measured against
+the bare optimal cost at this switching time, $9.7\times10^{-12}$~T$^2$~s, it is 0.63 times the bare cost
+at half an anisotropy field, 2.5 times at one, 10.1 times at two and 15.8 times at two and a half.
 
-The consequence for device design is that the longitudinal field is not a free stabilizer to be turned
-up without limit. The front in Table~\ref{tab:front} lets a designer read off the smallest field that
-reaches a target reliability and pay only that cost. For CrSBr at $\Delta = 20$, a field of about one
-anisotropy field already removes the dynamical instability, and the residual success-rate deficit is
-closed by a modest further increase at a cost that remains well below the bare switching cost.
+Read together, the first and third features say something the stability analysis alone does not. At
+$\Delta = 20$ the bare pulse is dynamically half-hyperbolic and yet reverses every copy: the thermal
+kicks are too weak, over ten Larmor times, to exploit the instability. The longitudinal field removes an
+instability that was not costing anything, at a price several times the switching itself.
+
+\subsection*{Where the field pays: the stability-factor dependence}
+
+The reliability gain therefore has to be looked for at lower stability. Table~\ref{tab:delta} repeats
+the measurement across the stability factor, comparing the bare optimal pulse with the same pulse plus a
+longitudinal field of two anisotropy fields, over 600 stochastic copies per point with 900 integration
+steps.
+
+\begin{table}[h]
+\centering
+\caption{Success rate of the bare optimal pulse and of the same pulse with $B_r = 2\,K/\mu$, against the
+thermal stability factor, for CrSBr at ten Larmor times; 600 copies per point, 95 per cent binomial
+intervals. The added cost of the longitudinal field is $9.8\times10^{-11}$~T$^2$~s at every point, 10.1
+times the bare optimal cost. The single-site temperatures are sub-kelvin because one CrSBr site carries
+an anisotropy of 1.7~K in temperature units; device-grade stability comes from the exchange-coupled
+volume, not from one site.}
+\label{tab:delta}
+\begin{tabular}{cccc}
+\toprule
+$\Delta = K/(k_B T)$ & temperature (K) & bare pulse & with $B_r = 2\,K/\mu$ \\
+\midrule
+1 & 1.74 & $0.735 \pm 0.035$ & $0.860 \pm 0.028$ \\
+2 & 0.87 & $0.810 \pm 0.031$ & $0.963 \pm 0.015$ \\
+3 & 0.58 & $0.870 \pm 0.027$ & $0.983 \pm 0.010$ \\
+5 & 0.35 & $0.932 \pm 0.020$ & $0.995 \pm 0.006$ \\
+10 & 0.17 & $0.983 \pm 0.010$ & $1.000 \pm 0.003$ \\
+20 & 0.09 & $0.998 \pm 0.003$ & $1.000 \pm 0.003$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The longitudinal field raises the success rate at every stability factor, and the gain is large where
+the bare pulse is fragile: from 0.81 to 0.96 at $\Delta = 2$, a halving and more of the failure rate, and
+from 0.87 to 0.98 at $\Delta = 3$. Above $\Delta \approx 10$ the bare pulse already succeeds
+essentially always and the gain falls inside the confidence interval. At $\Delta = 20$ this independent
+run, with more copies and a finer step, gives $0.998 \pm 0.003$ for the bare pulse, consistent with the
+$1.000 \pm 0.005$ of Table~\ref{tab:front}.
+
+The consequence for device design is that the longitudinal field is a stabilizer with a steep price,
+worth paying only where the bare pulse actually fails. Table~\ref{tab:front} lets a designer read off the
+smallest field that removes the dynamical instability; Table~\ref{tab:delta} tells them whether, at their
+stability factor, removing it buys any reliability at all. For a single CrSBr site at ten Larmor times
+the answer is yes below a stability factor of about ten and no above it.
 
 \section{Discussion}
 
@@ -182,9 +249,11 @@ simulation, is a well-posed question this front makes answerable and which we le
 
 We have quantified the cost of reliability in optimal magnetization switching. For monolayer CrSBr, a
 longitudinal field of order the anisotropy field removes the dynamical instability of the bare optimal
-pulse and drives the switching success rate to unity, at an added switching cost that grows
-quadratically with the field and that we report as a front. The reliability-versus-energy trade is now
-explicit and quantitative, computed by an open engine and reproducible from committed artifacts and a
+pulse, at an added switching cost that grows quadratically with the field and exceeds the bare cost
+already at one anisotropy field. Whether that buys reliability depends on the thermal stability: below
+a stability factor of about ten it lifts the success rate substantially, and above it the bare pulse is
+already reliable and the field only adds cost. The reliability-versus-energy trade is now explicit and
+quantitative, computed by an open engine and reproducible from committed artifacts and a
 live instance at \url{https://espira.fasl-work.com}.
 
 \section*{Data and code availability}
@@ -193,8 +262,10 @@ The engine \texttt{spinoct} is open source (MIT) at
 \url{https://github.com/fsantibanezleal/CAOS_SpinOCT}. The product, the curated material parameter
 database, the canonical bake and the companion web application are open (MIT) at
 \url{https://github.com/fsantibanezleal/CAOS_RES_Espira}, with a live instance at
-\url{https://espira.fasl-work.com}. Every number in Table~\ref{tab:front} is reproduced from a
-committed artifact.
+\url{https://espira.fasl-work.com}. Every number in Table~\ref{tab:front} is reproduced from the
+committed artifact \texttt{data/artifacts/novel.json}, and every number in Table~\ref{tab:delta} from the
+committed artifact \texttt{data/artifacts/thermal-success-rate.json} (case C07 of the product's case
+registry, release 0.07.000).
 
 \begin{thebibliography}{9}
 \bibitem{badarneh2026} M. H. Badarneh, P. Cai, E. J. G. Santos,
