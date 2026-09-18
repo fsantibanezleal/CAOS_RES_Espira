@@ -29,3 +29,8 @@ fe3gate2,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no
 cri3,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
 cr2ge2te6,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
 feps3,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,"Modelled as uniaxial: no distinct hard axis enters the macrospin."
+crbr3,moment,3.0,mu_B,per-ion,,,,,,,,derived,spin length and g = 2,10.1103/PhysRevB.104.L020402,"S = 3/2 Cr(III) from the neutron Hamiltonian, g = 2."
+crbr3,anisotropy,0.02,meV,spin-operator,1.5,,,,,,,measured,inelastic neutron scattering fit,10.1103/PhysRevB.104.L020402,"D_z in H = sum J S.S + sum A.(S x S) + D_z (S^z)^2 with D_z = -0.02 meV (easy axis), J1 = -1.48 meV. A fit below the 0.35 meV elastic resolution: the anisotropy gap itself is not resolved."
+crbr3,damping,0.01,dimensionless,none,,,,,,0.005,0.02,assumed,,,No measured Gilbert damping found.
+crbr3,ordering_temperature,32,K,none,,,,,,,,measured,magnetization (bulk single crystal),10.1103/PhysRevB.104.L020402,Bulk crystal used for the neutron measurement.
+crbr3,hard_axis_ratio,0,ratio,none,,,,,,,,assumed,,,Modelled as uniaxial: no distinct hard axis enters the macrospin.

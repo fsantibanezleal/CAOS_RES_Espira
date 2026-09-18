@@ -1,40 +1,40 @@
 {
   "schema": "espira.manifest/2",
-  "case": "amortized-policy",
-  "code": "C26",
+  "case": "grape-amplitude-slew",
+  "code": "C24",
   "status": "baked",
   "engine": "spinoct",
   "engine_version": "0.14.000",
   "seed": 0,
-  "split": "test",
+  "split": "control",
   "ground_truth": "analytic",
   "methods": [
-    "R15",
+    "R08",
     "R05"
   ],
   "variants": [
-    0.005,
-    0.01,
-    0.05,
-    0.1,
-    0.2,
-    0.5
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    1.0,
+    2.0
   ],
   "artifact": {
-    "path": "amortized-policy.json",
-    "bytes": 270754,
-    "sha256": "38524b29aba19b9212920ec5850eaa3d773d363b850ef8cc99c2a530c1a1d0d1"
+    "path": "grape-amplitude-slew.json",
+    "bytes": 252818,
+    "sha256": "9ed94288f03565142cde6ad36eb9149b535ca14a27c58ef7de13a74f4826cc5d"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.246,
-    "artifact_bytes": 270754,
+    "runtime_ms": 0.243,
+    "artifact_bytes": 252818,
     "methods": [
-      "R15",
+      "R08",
       "R05"
     ],
     "reasons": [
-      "methods ['R15'] have no closed form for the browser"
+      "methods ['R08'] have no closed form for the browser"
     ]
   },
   "completeness": {
@@ -45,92 +45,92 @@
   },
   "results": [
     {
-      "method": "R15",
-      "variant": 0.005,
-      "cost": 9.544360367286965e-12,
-      "switched": true,
-      "applicable": true,
-      "reason": "",
-      "metrics": {
-        "cost_ratio_to_analytic": 0.9856083666183518,
-        "predicted_p": 1.6031155829513741,
-        "true_p": 1.5915348380986427,
-        "damping": 0.005
-      }
-    },
-    {
-      "method": "R15",
-      "variant": 0.01,
-      "cost": 9.580464546830477e-12,
-      "switched": true,
-      "applicable": true,
-      "reason": "",
-      "metrics": {
-        "cost_ratio_to_analytic": 0.9891685782587475,
-        "predicted_p": 1.600186487377937,
-        "true_p": 1.5914910524895713,
-        "damping": 0.01
-      }
-    },
-    {
-      "method": "R15",
-      "variant": 0.05,
-      "cost": 1.0820322127565362e-11,
-      "switched": true,
-      "applicable": true,
-      "reason": "",
-      "metrics": {
-        "cost_ratio_to_analytic": 1.1111492712653135,
-        "predicted_p": 1.5087510226751586,
-        "true_p": 1.5900842837183702,
-        "damping": 0.05
-      }
-    },
-    {
-      "method": "R15",
-      "variant": 0.1,
-      "cost": 1.8439116744083496e-11,
-      "switched": true,
-      "applicable": true,
-      "reason": "",
-      "metrics": {
-        "cost_ratio_to_analytic": 1.8623029865332787,
-        "predicted_p": 1.1803526072052224,
-        "true_p": 1.5856193484728645,
-        "damping": 0.1
-      }
-    },
-    {
-      "method": "R15",
-      "variant": 0.2,
+      "method": "R08",
+      "variant": 0.3,
       "cost": null,
       "switched": false,
       "applicable": true,
-      "reason": "the emitted pulse did not reverse the moment",
+      "reason": "no reversal under this amplitude cap",
       "metrics": {
-        "cost_ratio_to_analytic": 4.107906055277608,
-        "predicted_p": 0.7466151835004214,
-        "true_p": 1.5668097390624143,
-        "damping": 0.2
+        "over_analytic": null,
+        "peak_amplitude_t": 0.3664789949118495,
+        "infidelity": 0.4958661222703035,
+        "cap_over_anisotropy_field": 0.3
       }
     },
     {
-      "method": "R15",
+      "method": "R08",
+      "variant": 0.4,
+      "cost": null,
+      "switched": false,
+      "applicable": true,
+      "reason": "no reversal under this amplitude cap",
+      "metrics": {
+        "over_analytic": null,
+        "peak_amplitude_t": 0.48863865988246596,
+        "infidelity": 0.1196518038844458,
+        "cap_over_anisotropy_field": 0.4
+      }
+    },
+    {
+      "method": "R08",
       "variant": 0.5,
-      "cost": null,
-      "switched": false,
+      "cost": 1.074270269038583e-11,
+      "switched": true,
       "applicable": true,
-      "reason": "the emitted pulse did not reverse the moment",
+      "reason": "",
       "metrics": {
-        "cost_ratio_to_analytic": 5.371759913347324,
-        "predicted_p": 0.536094125418688,
-        "true_p": 1.4123690631701884,
-        "damping": 0.5
+        "over_analytic": 1.0849851205678784,
+        "peak_amplitude_t": 0.6107983248530825,
+        "infidelity": 3.6153603434341264e-05,
+        "cap_over_anisotropy_field": 0.5
+      }
+    },
+    {
+      "method": "R08",
+      "variant": 0.6,
+      "cost": 9.988553684830696e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.0088180261875541,
+        "peak_amplitude_t": 0.6651086780347272,
+        "infidelity": 2.8309276646598658e-05,
+        "cap_over_anisotropy_field": 0.6
+      }
+    },
+    {
+      "method": "R08",
+      "variant": 1.0,
+      "cost": 9.931634599576033e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.0030693461432936,
+        "peak_amplitude_t": 0.6406247469700009,
+        "infidelity": 2.484927589524455e-05,
+        "cap_over_anisotropy_field": 1.0
+      }
+    },
+    {
+      "method": "R08",
+      "variant": 2.0,
+      "cost": 9.931634574957829e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "over_analytic": 1.003069343656919,
+        "peak_amplitude_t": 0.6406234966626942,
+        "infidelity": 2.484923337919831e-05,
+        "cap_over_anisotropy_field": 2.0
       }
     },
     {
       "method": "R05",
-      "variant": 0.005,
+      "variant": 0.3,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
@@ -144,49 +144,7 @@
     },
     {
       "method": "R05",
-      "variant": 0.01,
-      "cost": 9.901244253712093e-12,
-      "switched": true,
-      "applicable": true,
-      "reason": "",
-      "metrics": {
-        "cost_over_free": 1.0123963262715845,
-        "cost_over_floor": 5.045935374895447,
-        "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
-      }
-    },
-    {
-      "method": "R05",
-      "variant": 0.05,
-      "cost": 9.901244253712093e-12,
-      "switched": true,
-      "applicable": true,
-      "reason": "",
-      "metrics": {
-        "cost_over_free": 1.0123963262715845,
-        "cost_over_floor": 5.045935374895447,
-        "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
-      }
-    },
-    {
-      "method": "R05",
-      "variant": 0.1,
-      "cost": 9.901244253712093e-12,
-      "switched": true,
-      "applicable": true,
-      "reason": "",
-      "metrics": {
-        "cost_over_free": 1.0123963262715845,
-        "cost_over_floor": 5.045935374895447,
-        "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
-      }
-    },
-    {
-      "method": "R05",
-      "variant": 0.2,
+      "variant": 0.4,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
@@ -201,6 +159,48 @@
     {
       "method": "R05",
       "variant": 0.5,
+      "cost": 9.901244253712093e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0123963262715845,
+        "cost_over_floor": 5.045935374895447,
+        "mean_amplitude_t": 0.5454480461323823,
+        "peak_amplitude_t": 0.5420673027305187
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 0.6,
+      "cost": 9.901244253712093e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0123963262715845,
+        "cost_over_floor": 5.045935374895447,
+        "mean_amplitude_t": 0.5454480461323823,
+        "peak_amplitude_t": 0.5420673027305187
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 1.0,
+      "cost": 9.901244253712093e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "cost_over_free": 1.0123963262715845,
+        "cost_over_floor": 5.045935374895447,
+        "mean_amplitude_t": 0.5454480461323823,
+        "peak_amplitude_t": 0.5420673027305187
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 2.0,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
