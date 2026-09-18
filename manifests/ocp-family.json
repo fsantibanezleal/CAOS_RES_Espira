@@ -4,7 +4,7 @@
   "code": "C06",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.12.000",
+  "engine_version": "0.14.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "published",
@@ -26,14 +26,13 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 6024.807,
+    "runtime_ms": 0.027,
     "artifact_bytes": 112186,
     "methods": [
       "R07"
     ],
     "reasons": [
-      "methods ['R07'] have no closed form for the browser",
-      "runtime 6025 ms over the 250 ms budget"
+      "methods ['R07'] have no closed form for the browser"
     ]
   },
   "completeness": {
@@ -54,7 +53,7 @@
         "over_analytic": 1.4428192798747166,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 904.2810999962967,
+        "solve_ms": 1160.8388000167906,
         "mid_azimuth_deg": 62.385583466895085,
         "max_abs_sx": 0.58743382218775,
         "max_abs_sy": 0.9812105862874281,
@@ -73,7 +72,7 @@
         "over_analytic": 1.4428192528206225,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 1382.3935999826062,
+        "solve_ms": 1941.180199966766,
         "mid_azimuth_deg": 62.39207639592312,
         "max_abs_sx": 0.5873718635865053,
         "max_abs_sy": 0.9812065241160804,
@@ -92,7 +91,7 @@
         "over_analytic": 1.442857178097665,
         "converged": 0.0,
         "images": 60.0,
-        "solve_ms": 1870.796999981394,
+        "solve_ms": 2272.272999980487,
         "mid_azimuth_deg": 62.634364969183345,
         "max_abs_sx": 0.5894499808821968,
         "max_abs_sy": 0.9812143796793729,
@@ -111,7 +110,7 @@
         "over_analytic": 1.9213912535434723,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 759.0449999843258,
+        "solve_ms": 919.9799000052735,
         "mid_azimuth_deg": -20.72000606944021,
         "max_abs_sx": 0.9371856339330727,
         "max_abs_sy": 0.9071014541144508,
@@ -130,7 +129,7 @@
         "over_analytic": 1.921391246778381,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 495.2151000034064,
+        "solve_ms": 594.2512000328861,
         "mid_azimuth_deg": -20.72332640600105,
         "max_abs_sx": 0.9372119390524426,
         "max_abs_sy": 0.907093583454645,
@@ -149,7 +148,7 @@
         "over_analytic": 1.9213912447731654,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 612.7283999812789,
+        "solve_ms": 743.5144000337459,
         "mid_azimuth_deg": -20.718669301751873,
         "max_abs_sx": 0.9372138794224806,
         "max_abs_sy": 0.9070889448996048,

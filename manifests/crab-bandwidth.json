@@ -1,40 +1,40 @@
 {
   "schema": "espira.manifest/2",
-  "case": "amortized-policy",
-  "code": "C26",
+  "case": "crab-bandwidth",
+  "code": "C23",
   "status": "baked",
   "engine": "spinoct",
   "engine_version": "0.14.000",
   "seed": 0,
-  "split": "test",
+  "split": "control",
   "ground_truth": "analytic",
   "methods": [
-    "R15",
+    "R09",
     "R05"
   ],
   "variants": [
-    0.005,
-    0.01,
-    0.05,
-    0.1,
-    0.2,
-    0.5
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    6.0,
+    8.0
   ],
   "artifact": {
-    "path": "amortized-policy.json",
-    "bytes": 270754,
-    "sha256": "38524b29aba19b9212920ec5850eaa3d773d363b850ef8cc99c2a530c1a1d0d1"
+    "path": "crab-bandwidth.json",
+    "bytes": 252726,
+    "sha256": "6e48525444ab9af8f7fea47782977aada67749359f79a955ef5e9a98b6ae6acb"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.246,
-    "artifact_bytes": 270754,
+    "runtime_ms": 0.273,
+    "artifact_bytes": 252726,
     "methods": [
-      "R15",
+      "R09",
       "R05"
     ],
     "reasons": [
-      "methods ['R15'] have no closed form for the browser"
+      "methods ['R09'] have no closed form for the browser"
     ]
   },
   "completeness": {
@@ -45,92 +45,92 @@
   },
   "results": [
     {
-      "method": "R15",
-      "variant": 0.005,
-      "cost": 9.544360367286965e-12,
+      "method": "R09",
+      "variant": 1.0,
+      "cost": 2.1452888435152356e-11,
       "switched": true,
       "applicable": true,
       "reason": "",
       "metrics": {
-        "cost_ratio_to_analytic": 0.9856083666183518,
-        "predicted_p": 1.6031155829513741,
-        "true_p": 1.5915348380986427,
-        "damping": 0.005
+        "over_analytic": 2.166686113930521,
+        "harmonics": 1.0,
+        "peak_amplitude_t": 1.6093891181842903,
+        "infidelity": 3.067116670973924e-06
       }
     },
     {
-      "method": "R15",
-      "variant": 0.01,
-      "cost": 9.580464546830477e-12,
+      "method": "R09",
+      "variant": 2.0,
+      "cost": 1.3741136636447697e-11,
       "switched": true,
       "applicable": true,
       "reason": "",
       "metrics": {
-        "cost_ratio_to_analytic": 0.9891685782587475,
-        "predicted_p": 1.600186487377937,
-        "true_p": 1.5914910524895713,
-        "damping": 0.01
+        "over_analytic": 1.387819175483524,
+        "harmonics": 2.0,
+        "peak_amplitude_t": 0.9550593571299743,
+        "infidelity": 6.5578331837068404e-06
       }
     },
     {
-      "method": "R15",
-      "variant": 0.05,
-      "cost": 1.0820322127565362e-11,
+      "method": "R09",
+      "variant": 3.0,
+      "cost": 1.2187826572452355e-11,
       "switched": true,
       "applicable": true,
       "reason": "",
       "metrics": {
-        "cost_ratio_to_analytic": 1.1111492712653135,
-        "predicted_p": 1.5087510226751586,
-        "true_p": 1.5900842837183702,
-        "damping": 0.05
+        "over_analytic": 1.2309388860781811,
+        "harmonics": 3.0,
+        "peak_amplitude_t": 0.7980263710506202,
+        "infidelity": 6.261607404745018e-06
       }
     },
     {
-      "method": "R15",
-      "variant": 0.1,
-      "cost": 1.8439116744083496e-11,
+      "method": "R09",
+      "variant": 4.0,
+      "cost": 1.1475592978098071e-11,
       "switched": true,
       "applicable": true,
       "reason": "",
       "metrics": {
-        "cost_ratio_to_analytic": 1.8623029865332787,
-        "predicted_p": 1.1803526072052224,
-        "true_p": 1.5856193484728645,
-        "damping": 0.1
+        "over_analytic": 1.1590051395606906,
+        "harmonics": 4.0,
+        "peak_amplitude_t": 0.7366238366317959,
+        "infidelity": 7.930439238912346e-06
       }
     },
     {
-      "method": "R15",
-      "variant": 0.2,
-      "cost": null,
-      "switched": false,
+      "method": "R09",
+      "variant": 6.0,
+      "cost": 1.1396855158166298e-11,
+      "switched": true,
       "applicable": true,
-      "reason": "the emitted pulse did not reverse the moment",
+      "reason": "",
       "metrics": {
-        "cost_ratio_to_analytic": 4.107906055277608,
-        "predicted_p": 0.7466151835004214,
-        "true_p": 1.5668097390624143,
-        "damping": 0.2
+        "over_analytic": 1.1510528238805424,
+        "harmonics": 6.0,
+        "peak_amplitude_t": 0.7207357713316712,
+        "infidelity": 8.234387918970576e-06
       }
     },
     {
-      "method": "R15",
-      "variant": 0.5,
-      "cost": null,
-      "switched": false,
+      "method": "R09",
+      "variant": 8.0,
+      "cost": 1.1305254959340674e-11,
+      "switched": true,
       "applicable": true,
-      "reason": "the emitted pulse did not reverse the moment",
+      "reason": "",
       "metrics": {
-        "cost_ratio_to_analytic": 5.371759913347324,
-        "predicted_p": 0.536094125418688,
-        "true_p": 1.4123690631701884,
-        "damping": 0.5
+        "over_analytic": 1.1418014412786757,
+        "harmonics": 8.0,
+        "peak_amplitude_t": 0.7199870858499834,
+        "infidelity": 8.590044846601419e-06
       }
     },
     {
       "method": "R05",
-      "variant": 0.005,
+      "variant": 1.0,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
@@ -144,7 +144,7 @@
     },
     {
       "method": "R05",
-      "variant": 0.01,
+      "variant": 2.0,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
@@ -158,7 +158,7 @@
     },
     {
       "method": "R05",
-      "variant": 0.05,
+      "variant": 3.0,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
@@ -172,7 +172,7 @@
     },
     {
       "method": "R05",
-      "variant": 0.1,
+      "variant": 4.0,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
@@ -186,7 +186,7 @@
     },
     {
       "method": "R05",
-      "variant": 0.2,
+      "variant": 6.0,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,
@@ -200,7 +200,7 @@
     },
     {
       "method": "R05",
-      "variant": 0.5,
+      "variant": 8.0,
       "cost": 9.901244253712093e-12,
       "switched": true,
       "applicable": true,

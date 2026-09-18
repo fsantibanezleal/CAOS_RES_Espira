@@ -22,7 +22,7 @@ def main() -> int:
     output = Path(sys.argv[1]) if len(sys.argv) > 1 else root / "data" / "artifacts"
     output.mkdir(parents=True, exist_ok=True)
     (output / "novel.json").write_text(
-        json.dumps(bake_novel_results(), indent=2), encoding="utf-8", newline="\n"
+        json.dumps(bake_novel_results(), indent=2, allow_nan=False), encoding="utf-8", newline="\n"
     )
     print(f"novel results written to {output / 'novel.json'}")
     return 0

@@ -80,6 +80,19 @@
       }
     },
     {
+      "case": "sot-down-chirp",
+      "code": "C08",
+      "manifest": "sot-down-chirp.json",
+      "sha256": "508a8724b30d1b387e91f9cb1168b98a6875ec6f8bdd075551f1f916b4818511",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
       "case": "crsbr-field",
       "code": "C11",
       "manifest": "crsbr-field.json",
@@ -145,6 +158,19 @@
       }
     },
     {
+      "case": "crcl3-crbr3-contrast",
+      "code": "C17",
+      "manifest": "crcl3-crbr3-contrast.json",
+      "sha256": "19c1705517643e8af0542f133416df1bb283ab150daaf1a7b20af9c3b2a26f04",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
       "case": "feps3-negative-control",
       "code": "C18",
       "manifest": "feps3-negative-control.json",
@@ -153,6 +179,45 @@
       "completeness": {
         "expected": 12,
         "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "crab-bandwidth",
+      "code": "C23",
+      "manifest": "crab-bandwidth.json",
+      "sha256": "6e48525444ab9af8f7fea47782977aada67749359f79a955ef5e9a98b6ae6acb",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "grape-amplitude-slew",
+      "code": "C24",
+      "manifest": "grape-amplitude-slew.json",
+      "sha256": "9ed94288f03565142cde6ad36eb9149b535ca14a27c58ef7de13a74f4826cc5d",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 12,
+        "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "field-plus-current",
+      "code": "C25",
+      "manifest": "field-plus-current.json",
+      "sha256": "0b30af6f0c9435f2d80e694098b04afc2fc6eaa7bdb357029b8c17ca81b307c5",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
         "not_applicable": 0,
         "missing": 0
       }

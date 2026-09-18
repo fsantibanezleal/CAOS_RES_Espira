@@ -46,6 +46,12 @@ a units failure rather than a rounding one:
 | C03, the spin-orbit-torque oracle | the average optimal current | reduced units `j0` |
 | C07, the thermal case | the switching success rate | fraction of an ensemble of 600 copies |
 
+A case also declares which rung produces its number. Most report the closed form (R05); the constrained
+cases report what THEIR solver costs (R08 under an amplitude cap, R09 band limited, R13 the joint
+field-plus-current optimum), with the closed form kept alongside as the reference the constraint is
+priced against. Where the constraint makes the reversal impossible, as under a tight amplitude cap, the
+cost is `null` with the reason, because that is the answer and not a gap.
+
 So a case declares an `observable` (its key in the cost-curve row, its label, its unit, and whether it
 is a field cost), the artifact carries the declaration, and the app plots and reads what the case
 declared instead of assuming every number is a cost. On such a case the field-derived ratios are not
