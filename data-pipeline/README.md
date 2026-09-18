@@ -16,12 +16,14 @@ consumes its artifacts and never recomputes them.
 | `espiralab/bake/__init__.py` | The per-case bake: analytic optimal pulse and cost curve, the universal floor with its damping band, the free-macrospin reference, a static baseline, and for CrSBr the numerical biaxial optimum |
 | `espiralab/bake/novel.py` | The reliability front (R12) and the two-mode lattice comparison |
 | `espiralab/bake/lattice_ocp.py` | The free chain optimal control crossover map: 61 chains, three starts each, the minimum-energy-path floor; parallel and checkpointed |
+| `espiralab/bake/patch_ocp.py` | The two-dimensional patch sweep (C20, C21): 12 square patches at two anisotropy regimes, three starts each, the minimum-energy-path floor; parallel and checkpointed |
 | `espiralab/core/` | The seeded generator, the Contract 2 manifest, and the measured live-versus-precompute gate |
 | `espiralab/stages/` | The nine named stages, from `ingest` to `validate` |
 | `espiralab/pipeline.py` | The orchestrator and its command line |
 | `run.py` | Run the release sequence, or a single stage |
 | `run_novel.py` | Bake the cross-case novel results |
 | `run_lattice_ocp.py` | Bake (or resume) the crossover map |
+| `run_patch_ocp.py` | Bake (or resume) the two-dimensional patch sweep |
 
 ## The release sequence
 
@@ -35,6 +37,7 @@ export and validate, and refuses to call a release canonical when validate finds
 ./scripts/setup.sh                 # or scripts/setup.ps1
 ./scripts/precompute.sh            # python data-pipeline/run.py data/artifacts
 python data-pipeline/run_lattice_ocp.py data/artifacts 28   # hours; set ESPIRA_CHECKPOINT_DIR first
+python data-pipeline/run_patch_ocp.py data/artifacts 12     # hours; the 32 x 32 patches dominate
 ```
 
 Tests never write `data/artifacts/`; the smoke test bakes into a temporary directory.

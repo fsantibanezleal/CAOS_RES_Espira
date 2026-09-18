@@ -226,8 +226,8 @@
     ]
   },
   "coverage": {
-    "baked": 21,
-    "planned": 3,
+    "baked": 23,
+    "planned": 1,
     "blocked": 2
   },
   "registry": [
@@ -551,34 +551,36 @@
       ]
     },
     {
-      "slug": "patch-2d-crsbr",
+      "slug": "patch-crossover",
       "code": "C20",
-      "title": "A two-dimensional CrSBr patch, size sweep",
+      "title": "A two-dimensional patch, where uniform rotation stops being optimal",
       "category": "D. Beyond the macrospin",
-      "status": "planned",
-      "surface": "workbench",
+      "status": "baked",
+      "surface": "experiments",
       "blocked_reason": "",
       "split": "control",
       "ground_truth": "provisional",
       "variants": 6,
-      "axis": "Patch width",
+      "axis": "Patch side",
       "methods": [
+        "R07",
         "R16"
       ]
     },
     {
-      "slug": "patch-2d-fe3gate2",
+      "slug": "patch-narrow-wall",
       "code": "C21",
-      "title": "A two-dimensional Fe3GaTe2 patch, perpendicular anisotropy",
+      "title": "A two-dimensional patch with a narrow wall",
       "category": "D. Beyond the macrospin",
-      "status": "planned",
-      "surface": "workbench",
+      "status": "baked",
+      "surface": "experiments",
       "blocked_reason": "",
       "split": "control",
       "ground_truth": "provisional",
       "variants": 6,
-      "axis": "Patch width",
+      "axis": "Patch side",
       "methods": [
+        "R07",
         "R16"
       ]
     },

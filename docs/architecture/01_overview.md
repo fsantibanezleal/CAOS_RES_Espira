@@ -44,6 +44,7 @@ Three bakes produce the artifacts:
 3. **Free chain crossover map** (`run_lattice_ocp.py`): 61 chains solved over every site's trajectory from
    three starts, with the minimum-energy-path floor (manuscript M2 version 2). Parallel over cases and
    checkpointed, because it takes hours.
+4. **Two-dimensional patch sweep** (`run_patch_ocp.py`): the same search on square patches of side 4 to 32 at two anisotropy regimes (cases C20 and C21), on the engine's `SpinPatch` lattice. Parallel and checkpointed.
 
 ## What is not yet on the staged base
 

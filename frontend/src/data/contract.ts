@@ -280,6 +280,38 @@ export interface LatticeOCPArtifact {
   cases: LatticeOCPCase[];
 }
 
+// ---- the two-dimensional patch sweep (data/artifacts/patch_ocp.json), cases C20 and C21 ----
+
+export interface PatchOCPCase {
+  key: string;
+  exchange_over_k: number;
+  wall_width_sites: number;
+  alpha: number;
+  switching_tau0: number;
+  width: number;
+  n_sites: number;
+  n_images: number;
+  uniform_bound_t2s: number;
+  /** Null with floor_ratio when the minimum energy path did not converge: then it bounds nothing. */
+  barrier_over_nk: number | null;
+  barrier_converged: boolean;
+  floor_ratio: number | null;
+  best_start: 'uniform' | 'wall' | 'mep';
+  best_ratio: number;
+  best_nonuniformity: number;
+  saving: number;
+  starts: Record<'uniform' | 'wall' | 'mep', LatticeStart>;
+  /** s_z averaged along y, one column per x, because the wall travels along x. */
+  sz_map: { times_over_t: number[]; sz_by_column: number[][] };
+}
+
+export interface PatchOCPArtifact {
+  schema: string;
+  description: string;
+  reference: { mu_bohr: number; anisotropy_mev: number };
+  cases: PatchOCPCase[];
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {

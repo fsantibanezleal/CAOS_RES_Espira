@@ -19,8 +19,8 @@ python data-pipeline/run.py all [artifacts_dir] [manifests_dir]
 | `validate` | the written release | the problems; any problem refuses the release |
 
 Individual stages run alone for inspection: `python data-pipeline/run.py ingest`, `dataset`, `train`,
-`validate`. The cross-case novel results (`run_novel.py`) and the free chain crossover map
-(`run_lattice_ocp.py`) are separate entry points because they carry a Monte-Carlo or multi-hour cost.
+`validate`. The cross-case novel results (`run_novel.py`), the free chain crossover map
+(`run_lattice_ocp.py`) and the two-dimensional patch sweep (`run_patch_ocp.py`) are separate entry points because they carry a Monte-Carlo or multi-hour cost.
 
 ## The result schema, and why a missing cell is a failure
 

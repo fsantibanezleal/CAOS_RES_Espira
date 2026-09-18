@@ -2,7 +2,7 @@
   "schema": "espira.benchmark/1",
   "engine": {
     "name": "spinoct",
-    "version": "0.15.000"
+    "version": "0.16.000"
   },
   "cases": [
     {

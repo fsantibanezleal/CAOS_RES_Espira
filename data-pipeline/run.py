@@ -3,8 +3,8 @@
     python data-pipeline/run.py [stage] [artifacts_dir] [manifests_dir]
 
 `stage` defaults to `all`, the release sequence: ingest, preprocess, dataset, features, train, infer,
-evaluate, export, validate. The free chain crossover map is a separate, hours-long bake
-(`run_lattice_ocp.py`), and the cross-case novel results are written by `run_novel.py`.
+evaluate, export, validate. The free chain crossover map and the two-dimensional patch sweep are
+separate, hours-long bakes (`run_lattice_ocp.py`, `run_patch_ocp.py`), and the cross-case novel results are written by `run_novel.py`.
 """
 
 from __future__ import annotations
