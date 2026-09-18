@@ -253,18 +253,38 @@ CASES: dict[str, Case] = {
         code="C08",
         title="Spin-orbit torque, the simplified down-chirp protocol",
         category="B. Published replication",
-        reason="The published simplified current protocol, which trades a little cost for a pulse a "
-        "circuit can actually produce.",
-        expectation="The simplified protocol costs more than the exact optimum by a modest factor and "
-        "still reverses the moment.",
-        kill_criterion="A simplified protocol that beats the exact optimum would mean the optimum is not "
-        "optimal, and the analytic derivation is wrong.",
-        axis=_time_axis(),
-        status="planned",
+        reason="At the ideal ratio of the spin-orbit-torque couplings the optimal current rotates at the "
+        "precession frequency and reverses its rotation at the barrier crossing. The source replaces it "
+        "by a current a circuit can produce: constant amplitude, frequency swept linearly from 1.4 times "
+        "the resonant frequency to minus that (its Eq. 15), and reports the switching probability at a "
+        "thermal stability factor of 60. Those probabilities are the published ground truth.",
+        expectation="The source reports a switching probability of 0.89 at 0.17 j0, 0.97 at 0.18 j0 and "
+        "practically one at 0.20 j0. Measured 2026-09-18 with 1,000 stochastic copies per point, this "
+        "engine does NOT reproduce them: 0.009 at 0.17 j0, 0.043 at 0.18, 0.22 at 0.20, 0.59 at 0.22 and "
+        "0.90 at 0.25, the same curve shifted up by about 1.4 in amplitude, with a zero-temperature "
+        "threshold of 0.21 j0. Ruled out: the rotation sense, the starting tilt, the coupling convention, "
+        "the chirp tuning, thermal noise, the pulse length and a factor of two in the time unit. The case "
+        "is a recorded non-replication, not a hidden one; the sweep extends past the published amplitudes "
+        "so the engine's own curve is visible.",
+        kill_criterion="Quoting the source's probabilities as reproduced when the engine does not reproduce "
+        "them. Equally, a chirped pulse that switches in the counter-rotating sense would mean the "
+        "spin-orbit torque enters with the wrong handedness.",
+        axis=VariantAxis("current_amplitude", "Current amplitude", "j0", (0.17, 0.18, 0.20, 0.22, 0.25, 0.30)),
+        status="baked",
         ground_truth="published",
         split="control",
         synthetic=SyntheticSystem(),
-        methods=("R06", "R04"),
+        primary_method="R04",
+        observable=Observable(
+            key="success_rate",
+            label="Switching probability",
+            unit="fraction of copies",
+            is_field_cost=False,
+            note="A replication of published switching probabilities, so the case reports the fraction of "
+            "1,000 stochastic copies that reversed, at a thermal stability factor of 60, beside the "
+            "published value where the source gives one.",
+        ),
+        methods=("R04",),
         sources=("10.1103/PhysRevB.105.134404",),
     ),
     "longitudinal-stabilization": Case(
@@ -405,33 +425,51 @@ CASES: dict[str, Case] = {
         code="C16",
         title="Fe5GeTe2, the near-room-temperature metal",
         category="C. Real materials",
-        reason="A metallic member whose ordering temperature is near room temperature with a weaker "
-        "perpendicular anisotropy, which moves it to a different corner of the parameter space.",
-        expectation="A lower anisotropy than Fe3GeTe2 gives a lower floor and a longer natural timescale.",
+        reason="A metallic member whose ordering temperature is near room temperature (310 K in bulk "
+        "single crystals), which would move the family into the regime a device operates in.",
+        expectation="Not computable yet, because the material's anisotropy is not one number. Bulk "
+        "ferromagnetic resonance at 290 K finds an easy PLANE with no uniaxial anisotropy inside it "
+        "(Bera 2024), which leaves no bistable state to switch between; bulk magnetometry and flake "
+        "measurements report a weak perpendicular anisotropy, and flakes thinner than six layers cant "
+        "in-plane (ACS Nano 2022, layer-dependent domains). The declared premise, a weaker perpendicular "
+        "anisotropy than Fe3GeTe2, holds only in some of those regimes. The case bakes once a primary "
+        "source gives a quantitative perpendicular anisotropy, a moment and a damping measured in the "
+        "same regime.",
         kill_criterion="Parameters that cannot be traced to a primary source must not enter; a case "
-        "without provenance is not a case.",
+        "without provenance is not a case. Mixing an anisotropy from one temperature or thickness with a "
+        "damping from another would be the same failure in a quieter form.",
         axis=_time_axis(),
         status="planned",
         ground_truth="provisional",
         split="test",
         methods=("R00", "R05"),
+        sources=("10.1103/PhysRevB.110.224401", "10.1021/acsnano.2c01948", "10.1088/2053-1583/ac2028"),
     ),
     "crcl3-crbr3-contrast": Case(
         slug="crcl3-crbr3-contrast",
         code="C17",
-        title="CrCl3 against CrBr3, the anisotropy-sign contrast",
+        title="CrBr3 against CrCl3, a bit and a non-bit",
         category="C. Real materials",
-        reason="Two members of one chemical family with opposite anisotropy character, easy-plane against "
-        "easy-axis. The optimal control problem changes qualitatively between them.",
-        expectation="The easy-plane member has no barrier along the field axis in the macrospin picture, "
-        "so the product must refuse the uniaxial machinery rather than produce a number.",
+        reason="Two members of one chemical family with opposite anisotropy character. CrBr3 has a weak "
+        "easy axis (a single-ion term fitted to inelastic neutron scattering, Cai 2021) and is a "
+        "switchable bit. CrCl3 has an easy PLANE that is the dipolar shape anisotropy barely overcoming "
+        "the weak spin-orbit coupling of the light ligand, with no measurable preference inside the plane "
+        "and antiferromagnetic stacking in bulk (Schneeloch 2022): it has no bistable single-domain state "
+        "at all.",
+        expectation="CrBr3 switches like the rest of the easy-axis family, with the lowest anisotropy "
+        "of the materials here (0.045 meV per site), so the lowest floor and the longest natural "
+        "timescale. CrCl3 is refused: with no barrier there is no bit to write, and the product must not "
+        "produce a switching cost for it. It enters no parameter table, and this case says why.",
         kill_criterion="Producing a switching cost for an easy-plane material through the easy-axis "
-        "solution would be exactly the error the negative control exists to catch.",
+        "solution would be exactly the error the negative control exists to catch. For CrBr3, quoting "
+        "its anisotropy as resolved when it is a fit below the instrument resolution would overstate it.",
         axis=_time_axis(),
-        status="planned",
+        status="baked",
         ground_truth="provisional",
         split="test",
+        material="crbr3",
         methods=("R00", "R05"),
+        sources=("10.1103/PhysRevB.104.L020402", "10.1038/s41535-022-00473-3"),
     ),
     "feps3-negative-control": Case(
         slug="feps3-negative-control",
@@ -531,17 +569,19 @@ CASES: dict[str, Case] = {
         category="E. Constrained and hybrid control",
         reason="An arbitrary-waveform optimum is not what an antenna emits. Restricting the pulse to a "
         "few harmonics prices what realizability costs.",
-        expectation="The cost rises as the bandwidth falls, gently at first and then sharply once the "
-        "pulse can no longer follow the precession.",
+        expectation="The cost falls monotonically as the bandwidth grows and flattens out well above the "
+        "unconstrained optimum: the gap that remains is the price of realizability. Measured 2026-09-17 "
+        "on the reference macrospin at ten tau0, against the closed form: 2.15 at one harmonic, 1.39 at "
+        "two, 1.23 at three, 1.16 at four, 1.15 at six and 1.14 at eight. The floor of about 14 per cent "
+        "is the cost of a pulse that must be band limited and must vanish at both ends of the window.",
         kill_criterion="A band-limited pulse cheaper than the unconstrained optimum would mean the "
-        "unconstrained solver is stuck in a local minimum.",
+        "unconstrained solver is stuck in a local minimum, or that the band-limited pulse did not "
+        "finish the reversal and banked the saving. A cost that RISES with bandwidth is equally a "
+        "failure: more harmonics is a strictly larger feasible set. That is what caught the engine's "
+        "previous solver, which returned 2.2 times the optimum at two harmonics and 14 times at six.",
         axis=VariantAxis("harmonics", "Harmonics", "count", (1.0, 2.0, 3.0, 4.0, 6.0, 8.0)),
-        status="blocked",
-        blocked_reason="The engine's band-limited solver optimizes with Nelder-Mead, which does not "
-        "converge at this parameter count: measured 2026-09-17, 90 to 230 seconds per solve and a cost "
-        "2.2 times the analytic optimum at two harmonics rising to 14 times at six, where more harmonics "
-        "should cost less. Baking it would ship optimizer artifacts as a price of realizability. Needs "
-        "the engine's constrained solvers on a gradient method (programme backlog BL-036).",
+        status="baked",
+        primary_method="R09",
         ground_truth="analytic",
         split="control",
         synthetic=SyntheticSystem(),
@@ -555,14 +595,18 @@ CASES: dict[str, Case] = {
         reason="A driver has a maximum field and a maximum rate of change. The optimum under those two "
         "limits is what an engineer can actually ask for.",
         expectation="Below a critical amplitude cap the moment cannot be reversed in the given time at "
-        "any cost, and the solver must report failure rather than a number.",
+        "any cost, and the solver must report failure rather than a number. Above it the cost falls back "
+        "onto the unconstrained optimum, because a cap that does not bind costs nothing. Measured "
+        "2026-09-17 on the reference macrospin at ten tau0, where the unconstrained optimum itself peaks "
+        "at 0.63 anisotropy fields: no reversal at 0.3 or 0.4 per component, 1.08 times the optimum at "
+        "0.5, 1.008 at 0.6, and 1.003 from one upwards. The threshold sits between 0.4 and 0.5, and a "
+        "cap binds per component, so the magnitude it allows is larger by the square root of two.",
         kill_criterion="A reported reversal under a cap that cannot physically reverse the moment means "
-        "the constraint is not being enforced.",
-        axis=VariantAxis("amplitude_cap", "Amplitude cap", "K/mu", (0.5, 1.0, 1.5, 2.0, 3.0, 5.0)),
-        status="blocked",
-        blocked_reason="Same engine defect as the band-limited case: the constrained solver optimizes "
-        "with Nelder-Mead and does not converge at this parameter count, so the reported cost under a cap "
-        "would be an optimizer artifact rather than the price of the constraint (programme backlog BL-036).",
+        "the constraint is not being enforced. A cost BELOW the unconstrained optimum means the pulse "
+        "did not finish the reversal, which is the failure the reversal threshold exists to catch.",
+        axis=VariantAxis("amplitude_cap", "Amplitude cap", "K/mu", (0.3, 0.4, 0.5, 0.6, 1.0, 2.0)),
+        status="baked",
+        primary_method="R08",
         ground_truth="analytic",
         split="control",
         synthetic=SyntheticSystem(),
@@ -576,14 +620,19 @@ CASES: dict[str, Case] = {
         reason="The kickoff paper names hybridization with current- and light-driven approaches as the "
         "open design space. The two-term cost prices the trade directly.",
         expectation="As the relative price of current falls, the optimum shifts from field-dominated to "
-        "current-dominated; whether the mixture ever beats both pure protocols is the open question. A "
-        "first solve at equal prices reverses the moment and puts 95 per cent of the weighted cost on the "
-        "field, which is the honest null prior. Measured 2026-09-17: five minutes per solve, so the sweep "
-        "waits for the engine's constrained solvers to move to a gradient method (programme backlog BL-036).",
+        "current-dominated. Measured 2026-09-17 on the reference macrospin at ten tau0 with a "
+        "spin-orbit-torque coupling of 0.05 on both the field-like and damping-like channels: the share "
+        "of the weighted cost carried by the field falls from 0.96 at a price of 0.1 to 0.72 at 0.01, "
+        "0.21 at 0.001 and 0.11 at 0.0001, and the field cost itself drops to 0.4 per cent of the "
+        "field-only optimum, which is the current doing the work, so the crossover is inside that window and the originally "
+        "declared sweep (0.1 to 30) sat entirely on the field-dominated side. The quantity plotted is the "
+        "FIELD cost, which is comparable with every other case; the weighted cost mixes two units and is "
+        "meaningful only at a fixed price.",
         kill_criterion="A hybrid that beats both pure protocols at every price would be too good: it "
         "would mean the two cost terms are not being weighed consistently.",
-        axis=VariantAxis("current_price", "Current price", "C_j / C_b", (0.1, 0.3, 1.0, 3.0, 10.0, 30.0)),
-        status="planned",
+        axis=VariantAxis("current_price", "Current price", "C_j / C_b", (0.0001, 0.001, 0.01, 0.1, 1.0, 10.0)),
+        status="baked",
+        primary_method="R13",
         ground_truth="provisional",
         split="control",
         synthetic=SyntheticSystem(),

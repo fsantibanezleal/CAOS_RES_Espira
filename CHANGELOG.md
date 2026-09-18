@@ -4,6 +4,68 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.08.000] - 2026-09-17
+
+### Added
+- C23, C24 and C25 baked, taking the matrix to 20 of 26 cases and leaving two blocked. They had been
+  blocked on a measured engine defect (finding F-014): the constrained solvers did not converge, so the
+  cost they reported was an optimizer artifact rather than the price of a physical constraint. The engine
+  was fixed instead of the cases being baked anyway (spinoct 0.13.000, which drives all three on the
+  exact adjoint gradient), and the cases now measure what they were declared to measure:
+  - **C23, the price of bandwidth.** The cost falls monotonically with the number of harmonics, 2.17 at
+    one to 1.14 at eight, against the closed-form optimum. The floor of about 14 per cent is what a pulse
+    that must be band limited and must vanish at both ends of the window costs.
+  - **C24, the amplitude cap.** No reversal at all below about 0.45 anisotropy fields per component; 1.08
+    times the optimum at 0.5, and 1.003 once the cap stops binding. The impossible points report no cost
+    with the reason, which is the answer rather than a gap.
+  - **C25, field against current.** The share of the weighted cost carried by the field falls from 0.96
+    at a current price of 0.1 to 0.11 at 1e-4, and the field cost itself to 0.4 per cent of the
+    field-only optimum, so the crossover is inside the swept window. The declared
+    sweep (0.1 to 30) had sat entirely on the field-dominated side and was corrected from measurement.
+- **C08, the chirped spin-orbit-torque current, a published replication that does not reproduce.**
+  The source reports switching probabilities of 0.89, 0.97 and about 1 at 0.17, 0.18 and 0.20 j0 for
+  its simplified constant-amplitude, linearly chirped current at a thermal stability factor of 60. Over
+  1,000 stochastic copies per point the engine gives 0.009, 0.043 and 0.22, and 0.90 at 0.25 j0: the
+  same curve shifted by about 1.4 in amplitude. Rotation sense, starting tilt, coupling convention,
+  chirp tuning, thermal noise, pulse length and a factor of two in the time unit were each ruled out.
+  The artifact carries the published value and the gap at each reported amplitude, the chart draws
+  both, and a test fails if the gap disappears from the data.
+- **C17, CrBr3 against CrCl3: a bit and a non-bit.** CrBr3 enters Contract 1 from an inelastic neutron
+  scattering fit (D_z = -0.02 meV on spin operators, 0.045 meV per site, flagged as a fit below the
+  instrument resolution) and bakes as the weakest easy axis of the family. CrCl3 is refused: its easy
+  plane is dipolar shape anisotropy with no measurable preference inside the plane, so it has no
+  bistable state to switch, and the case says why instead of producing a number.
+- A case declares which rung produces its number, so a constrained case reports what ITS solver costs
+  with the closed form kept alongside as the reference the constraint is priced against, and the drawn
+  pulse is the realizable one rather than the unconstrained optimum.
+
+### Changed
+- The engine pin moves to spinoct 0.14.0, whose spin-orbit-torque integrator now solves the Gilbert-form
+  equation it cites; it had used the couplings directly as explicit coefficients, 2 to 22 per cent off.
+  C25 is baked on the corrected equation.
+- C16 (Fe5GeTe2) stays planned with its premise corrected from the primary sources: its anisotropy is
+  not one number (an easy plane at 290 K in bulk resonance, a weak perpendicular anisotropy in
+  magnetometry and flakes, in-plane canting below six layers), and the declared "weaker perpendicular
+  anisotropy" held only in some regimes.
+- Every cell is solved once per release. The constrained solvers take tens of seconds and the release
+  asks for the same cell up to three times (its cost row, its drawn pulse, and the method matrix); the
+  solvers are deterministic and seeded, so the answer is remembered for the run.
+
+### Fixed
+- **A shipped artifact was not valid JSON.** A C24 point whose pulse could not reverse the moment
+  carried `over_analytic: Infinity`, which Python writes by default and browsers refuse, so the whole
+  case failed to load in the app and every browser gate that opened it crashed. A ratio to a cost that
+  was never produced is now `null`, every artifact writer refuses non-finite numbers
+  (`allow_nan=False`), and a test parses every shipped file with those constants rejected.
+- A switching probability was drawn on a logarithmic axis, which stretched the tail near zero and
+  crushed the region near one, where the published replication targets sit. A bounded fraction is now
+  drawn on a linear 0 to 1 axis, and either axis goes logarithmic only when its values span more than a
+  factor of twenty. The chart also draws a replication case's published values beside the engine's.
+- The barrier floors behind the free-chain map and manuscript M2 come from a minimum-energy-path solver
+  that reports non-convergence but still returns a barrier (it returned 43 times the true value on a
+  wide wall, fixed in the engine at 0.15.000). A test now recomputes the barrier of every chain the
+  product ships and requires convergence and agreement: all nine converge and reproduce.
+
 ## [0.07.001] - 2026-09-18
 
 ### Fixed

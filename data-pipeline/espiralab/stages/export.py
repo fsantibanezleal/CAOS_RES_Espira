@@ -72,10 +72,10 @@ def export_all(output: Path, manifests: Path) -> dict:
         "complete": all(s["complete"] for s in scores),
     }
     (output / "benchmark.json").write_text(
-        json.dumps(benchmark, indent=2), encoding="utf-8", newline="\n"
+        json.dumps(benchmark, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
     )
     (manifests / "index.json").write_text(
-        json.dumps({"schema": "espira.manifest-index/1", "manifests": manifest_index}, indent=2),
+        json.dumps({"schema": "espira.manifest-index/1", "manifests": manifest_index}, indent=2, allow_nan=False),
         encoding="utf-8",
         newline="\n",
     )

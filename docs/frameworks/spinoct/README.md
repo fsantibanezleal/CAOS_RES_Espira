@@ -14,7 +14,7 @@ positive controls before it is trusted.
 ## Install and pin
 
 ```bash
-pip install spinoct==0.10.0     # pinned in data-pipeline/requirements.txt
+pip install spinoct==0.14.0     # pinned in data-pipeline/requirements.txt
 ```
 
 Pure numpy and scipy. The unit-constant gate in the engine repository asserts the unit of every literal
@@ -34,12 +34,21 @@ in the solvers.
 | `spinoct.thermal.switching_success_rate` | C07, the single-site thermal success rate | [07](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/07-thermal-and-reliability.md) |
 | `spinoct.amortized.evaluate_policy` | C26, the amortized policy and its limit | [11](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/11-amortized-policy.md) |
 
-Surfaced but not baked: GRAPE (R08), CRAB (R09) and the field-plus-current hybrid (R13) run in stage
-`infer`, and the two cases that would report them are blocked on measurement rather than baked, because
-the engine's constrained solvers drive a Nelder-Mead simplex over a few dozen parameters and do not
-converge: 90 to 230 seconds per solve and a cost 2.2 times the analytic optimum at two harmonics rising
-to 14 times at six, where a larger search space cannot cost more. Still not surfaced: the discrete
-adjoint (R10) and the Pareto front (R14), backlog BL-032.
+| `spinoct.control.CRABSolver`, `GRAPESolver`, `HybridSolver` | C23, C24 and C25, the price of realizability | [13](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/13-constrained-control-and-the-price-of-realizability.md) |
+
+Still not surfaced: the discrete adjoint as a rung of its own (R10) and the Pareto front (R14), backlog
+BL-032. The adjoint itself is what drives the constrained solvers.
+
+## The engine defect this product found
+
+The three constrained rungs ran and did not converge, which is not the same as working. Espira's C23
+declares that the cost must fall as the bandwidth grows, because more harmonics is a strictly larger
+feasible set; measured against that, the engine returned 2.2 times the analytic optimum at two harmonics
+and 14 times at six, at 90 to 230 seconds per solve. The cases were held at `blocked` with the
+measurement rather than baked, and the engine was fixed (spinoct 0.13.000): all three solvers now run on
+the exact adjoint gradient through their linear control bases, and CRAB falls monotonically from 2.15 to
+1.13 times the optimum across one to six harmonics. Two further defects surfaced in the fixing, both
+recorded on theory page 13.
 
 ## The one method the browser implements itself
 

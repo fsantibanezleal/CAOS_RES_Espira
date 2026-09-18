@@ -70,14 +70,16 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
     const grid = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
     const accent = cssVar('--color-accent', '#3b82f6');
 
-    // A log axis cannot show a zero, and the search-seed family is indexed from zero.
-    const logX = t.every((v) => v > 0);
+    // A log axis cannot show a zero (the search-seed family is indexed from zero), and it only helps
+    // when the sweep spans decades: over a factor of two it spends the width on empty space.
+    const logX = t.every((v) => v > 0) && Math.max(...t) / Math.min(...t) > 20;
     // The x series' formatter is what the legend shows at the cursor; the default is locale number
     // formatting, which renders 0.327 as "0,327" in some locales and a date when time is left on.
     const series: uPlot.Series[] = [{ label: `${axis.label} (${axis.unit})`, value: (_u, v) => tick(v) }];
     const data: (number | null)[][] = [t];
     let yLabel: string;
     let logY: boolean;
+    let bounded = false;
 
     if (observable.is_field_cost) {
       yLabel = 'switching cost  Phi  (T^2 s)';
@@ -112,7 +114,14 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
       const values = rows
         .flatMap((r) => methods.map((method) => metricOf(r, method, observable.key)))
         .filter((v): v is number => v !== null && v > 0);
-      logY = values.length > 0 && Math.max(...values) / Math.min(...values) > 20;
+      // A bounded fraction (a switching probability) is always drawn on a linear 0 to 1 axis: a log axis
+      // stretches the tail near zero and crushes the region near one, which is where a published
+      // replication target usually sits. Other quantities go log when they span decades.
+      const allValues = rows.flatMap((r) =>
+        methods.flatMap((method) => [metricOf(r, method, observable.key), metricOf(r, method, 'published_rate')]),
+      );
+      bounded = allValues.every((v) => v === null || (v >= 0 && v <= 1));
+      logY = !bounded && values.length > 0 && Math.max(...values) / Math.min(...values) > 20;
       methods.forEach((method, i) => {
         const column = rows.map((r) => metricOf(r, method, observable.key));
         if (column.every((v) => v === null)) return;
@@ -124,6 +133,19 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
           value: (_u, v) => tick(v),
         });
         data.push(column);
+        // A replication case carries the source's published values beside the engine's own; drawing
+        // them on the same axes is what makes a gap visible instead of a footnote.
+        const published = rows.map((r) => metricOf(r, method, 'published_rate'));
+        if (published.some((v) => v !== null)) {
+          series.push({
+            label: `${method}  published`,
+            stroke: '#ef4444',
+            width: 0,
+            points: { show: true, size: 9, fill: '#ef4444' },
+            value: (_u, v) => tick(v),
+          });
+          data.push(published);
+        }
       });
     }
 
@@ -133,7 +155,10 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
       height,
       // uPlot treats x as a time axis by default, which turns a switching time of 2 tau0 into a date in
       // 1969. Every axis here is a physical quantity, never a timestamp.
-      scales: { x: { time: false, distr: logX ? 3 : 1 }, y: { distr: logY ? 3 : 1 } },
+      scales: {
+        x: { time: false, distr: logX ? 3 : 1 },
+        y: bounded ? { distr: 1, range: [0, 1] } : { distr: logY ? 3 : 1 },
+      },
       axes: [
         {
           label: `${axis.label}  (${axis.unit})`,

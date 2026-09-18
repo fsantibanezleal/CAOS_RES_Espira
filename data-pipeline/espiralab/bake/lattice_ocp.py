@@ -159,7 +159,7 @@ def bake_lattice_ocp(output: Path, workers: int | None = None, checkpoint_dir: P
             futures = {pool.submit(_solve_case, case): case for case in pending}
             for future in as_completed(futures):
                 record = future.result()
-                (checkpoint_dir / f"{record['key']}.json").write_text(json.dumps(record), encoding="utf-8", newline="\n")
+                (checkpoint_dir / f"{record['key']}.json").write_text(json.dumps(record, allow_nan=False), encoding="utf-8", newline="\n")
                 print(
                     f"  {record['key']:32s} best={record['best_start']:7s} ratio={record['best_ratio']:.4f} "
                     f"floor={record['floor_ratio']:.4f} nonunif={record['best_nonuniformity']:.3f}",
@@ -182,5 +182,5 @@ def bake_lattice_ocp(output: Path, workers: int | None = None, checkpoint_dir: P
         "reference": {"mu_bohr": _MU_BOHR, "anisotropy_mev": _K_MEV},
         "cases": records,
     }
-    (output / "lattice_ocp.json").write_text(json.dumps(artifact, separators=(",", ":")), encoding="utf-8", newline="\n")
+    (output / "lattice_ocp.json").write_text(json.dumps(artifact, separators=(",", ":"), allow_nan=False), encoding="utf-8", newline="\n")
     return artifact

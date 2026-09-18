@@ -1,0 +1,133 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "field-plus-current",
+  "code": "C25",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.14.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "provisional",
+  "methods": [
+    "R13"
+  ],
+  "variants": [
+    0.0001,
+    0.001,
+    0.01,
+    0.1,
+    1.0,
+    10.0
+  ],
+  "artifact": {
+    "path": "field-plus-current.json",
+    "bytes": 466239,
+    "sha256": "0b30af6f0c9435f2d80e694098b04afc2fc6eaa7bdb357029b8c17ca81b307c5"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 0.01,
+    "artifact_bytes": 466239,
+    "methods": [
+      "R13"
+    ],
+    "reasons": [
+      "methods ['R13'] have no closed form for the browser"
+    ]
+  },
+  "completeness": {
+    "expected": 6,
+    "produced": 6,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R13",
+      "variant": 0.0001,
+      "cost": 4.2340114590749953e-14,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "weighted_cost": 3.9905441911950147e-13,
+        "current_cost_reduced": 3.5671430452875147e-09,
+        "field_fraction": 0.10610110441621426,
+        "current_price": 0.0001
+      }
+    },
+    {
+      "method": "R13",
+      "variant": 0.001,
+      "cost": 6.125654326152068e-13,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "weighted_cost": 2.9560509436002662e-12,
+        "current_cost_reduced": 2.3434855109850594e-09,
+        "field_fraction": 0.20722424758659416,
+        "current_price": 0.001
+      }
+    },
+    {
+      "method": "R13",
+      "variant": 0.01,
+      "cost": 6.764898000306862e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "weighted_cost": 9.35355561932913e-12,
+        "current_cost_reduced": 2.588657619022267e-10,
+        "field_fraction": 0.7232434675779545,
+        "current_price": 0.01
+      }
+    },
+    {
+      "method": "R13",
+      "variant": 0.1,
+      "cost": 1.2017443513252392e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "weighted_cost": 1.2489697315912705e-11,
+        "current_cost_reduced": 4.722538026603134e-12,
+        "field_fraction": 0.9621885310175908,
+        "current_price": 0.1
+      }
+    },
+    {
+      "method": "R13",
+      "variant": 1.0,
+      "cost": 1.2878602519628297e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "weighted_cost": 1.2929370770088696e-11,
+        "current_cost_reduced": 5.076825046039935e-14,
+        "field_fraction": 0.9960734167684442,
+        "current_price": 1.0
+      }
+    },
+    {
+      "method": "R13",
+      "variant": 10.0,
+      "cost": 1.297001715181435e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "weighted_cost": 1.2975131766308174e-11,
+        "current_cost_reduced": 5.114614493823982e-16,
+        "field_fraction": 0.9996058140613951,
+        "current_price": 10.0
+      }
+    }
+  ],
+  "parameter_flags": [
+    "synthetic system"
+  ]
+}
