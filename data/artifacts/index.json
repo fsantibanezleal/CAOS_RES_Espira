@@ -62,6 +62,16 @@
       "axis": "Thermal stability factor"
     },
     {
+      "slug": "sot-down-chirp",
+      "code": "C08",
+      "title": "Spin-orbit torque, the simplified down-chirp protocol",
+      "category": "B. Published replication",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Current amplitude"
+    },
+    {
       "slug": "crsbr-field",
       "code": "C11",
       "title": "CrSBr, field-driven reversal",
@@ -112,6 +122,16 @@
       "axis": "Switching time"
     },
     {
+      "slug": "crcl3-crbr3-contrast",
+      "code": "C17",
+      "title": "CrBr3 against CrCl3, a bit and a non-bit",
+      "category": "C. Real materials",
+      "material": "crbr3",
+      "material_name": "CrBr3",
+      "includes_biaxial": false,
+      "axis": "Switching time"
+    },
+    {
       "slug": "feps3-negative-control",
       "code": "C18",
       "title": "FePS3, negative control",
@@ -120,6 +140,36 @@
       "material_name": "FePS3",
       "includes_biaxial": false,
       "axis": "Switching time"
+    },
+    {
+      "slug": "crab-bandwidth",
+      "code": "C23",
+      "title": "Band-limited control, the price of realizability",
+      "category": "E. Constrained and hybrid control",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Harmonics"
+    },
+    {
+      "slug": "grape-amplitude-slew",
+      "code": "C24",
+      "title": "Amplitude and slew-rate limited control",
+      "category": "E. Constrained and hybrid control",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Amplitude cap"
+    },
+    {
+      "slug": "field-plus-current",
+      "code": "C25",
+      "title": "Field together with current, the hybrid cost",
+      "category": "E. Constrained and hybrid control",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Current price"
     },
     {
       "slug": "amortized-policy",
@@ -141,7 +191,8 @@
     ],
     "B. Published replication": [
       "ocp-family",
-      "thermal-success-rate"
+      "thermal-success-rate",
+      "sot-down-chirp"
     ],
     "C. Real materials": [
       "crsbr-field",
@@ -149,16 +200,22 @@
       "fe3gate2-field",
       "cri3-field",
       "cr2ge2te6-floor",
+      "crcl3-crbr3-contrast",
       "feps3-negative-control"
+    ],
+    "E. Constrained and hybrid control": [
+      "crab-bandwidth",
+      "grape-amplitude-slew",
+      "field-plus-current"
     ],
     "F. Screening and learned": [
       "amortized-policy"
     ]
   },
   "coverage": {
-    "baked": 15,
-    "planned": 7,
-    "blocked": 4
+    "baked": 20,
+    "planned": 4,
+    "blocked": 2
   },
   "registry": [
     {
@@ -281,15 +338,14 @@
       "code": "C08",
       "title": "Spin-orbit torque, the simplified down-chirp protocol",
       "category": "B. Published replication",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "control",
       "ground_truth": "published",
       "variants": 6,
-      "axis": "Switching time",
+      "axis": "Current amplitude",
       "methods": [
-        "R06",
         "R04"
       ]
     },
@@ -433,9 +489,9 @@
     {
       "slug": "crcl3-crbr3-contrast",
       "code": "C17",
-      "title": "CrCl3 against CrBr3, the anisotropy-sign contrast",
+      "title": "CrBr3 against CrCl3, a bit and a non-bit",
       "category": "C. Real materials",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "test",
@@ -534,9 +590,9 @@
       "code": "C23",
       "title": "Band-limited control, the price of realizability",
       "category": "E. Constrained and hybrid control",
-      "status": "blocked",
+      "status": "baked",
       "surface": "workbench",
-      "blocked_reason": "The engine's band-limited solver optimizes with Nelder-Mead, which does not converge at this parameter count: measured 2026-09-17, 90 to 230 seconds per solve and a cost 2.2 times the analytic optimum at two harmonics rising to 14 times at six, where more harmonics should cost less. Baking it would ship optimizer artifacts as a price of realizability. Needs the engine's constrained solvers on a gradient method (programme backlog BL-036).",
+      "blocked_reason": "",
       "split": "control",
       "ground_truth": "analytic",
       "variants": 6,
@@ -551,9 +607,9 @@
       "code": "C24",
       "title": "Amplitude and slew-rate limited control",
       "category": "E. Constrained and hybrid control",
-      "status": "blocked",
+      "status": "baked",
       "surface": "workbench",
-      "blocked_reason": "Same engine defect as the band-limited case: the constrained solver optimizes with Nelder-Mead and does not converge at this parameter count, so the reported cost under a cap would be an optimizer artifact rather than the price of the constraint (programme backlog BL-036).",
+      "blocked_reason": "",
       "split": "control",
       "ground_truth": "analytic",
       "variants": 6,
@@ -568,7 +624,7 @@
       "code": "C25",
       "title": "Field together with current, the hybrid cost",
       "category": "E. Constrained and hybrid control",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "control",

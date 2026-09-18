@@ -135,7 +135,7 @@ def train_policy(write: bool = True) -> TrainedPolicy:
     }
     if write:
         CHECKPOINT_PATH.parent.mkdir(parents=True, exist_ok=True)
-        CHECKPOINT_PATH.write_text(json.dumps(checkpoint, indent=2), encoding="utf-8", newline="\n")
+        CHECKPOINT_PATH.write_text(json.dumps(checkpoint, indent=2, allow_nan=False), encoding="utf-8", newline="\n")
         REGISTRY_PATH.write_text(
             json.dumps(
                 {
@@ -163,6 +163,7 @@ def train_policy(write: bool = True) -> TrainedPolicy:
                     ],
                 },
                 indent=2,
+                allow_nan=False,
             ),
             encoding="utf-8",
             newline="\n",

@@ -110,6 +110,11 @@ export interface ReferencePulse {
   field_x_t: number[];
   field_y_t: number[];
   field_z_t: number[];
+  /** What the signal arrays carry when it is not an applied field in tesla (a current in j0). */
+  signal_label?: string;
+  signal_unit?: string;
+  /** The factor from the stored values to the displayed unit; absent means tesla shown in mT. */
+  signal_scale?: number;
 }
 
 export interface StaticBaseline {

@@ -1,6 +1,6 @@
 # Field together with current, the hybrid cost
 
-Case `field-plus-current` (C25), category E. Constrained and hybrid control. Planned: declared and runnable, not yet computed.
+Case `field-plus-current` (C25), category E. Constrained and hybrid control. Baked: committed artifacts, replayed by the web app.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
@@ -10,7 +10,7 @@ The kickoff paper names hybridization with current- and light-driven approaches 
 
 ## What a domain expert should see
 
-As the relative price of current falls, the optimum shifts from field-dominated to current-dominated; whether the mixture ever beats both pure protocols is the open question. A first solve at equal prices reverses the moment and puts 95 per cent of the weighted cost on the field, which is the honest null prior. Measured 2026-09-17: five minutes per solve, so the sweep waits for the engine's constrained solvers to move to a gradient method (programme backlog BL-036).
+As the relative price of current falls, the optimum shifts from field-dominated to current-dominated. Measured 2026-09-17 on the reference macrospin at ten tau0 with a spin-orbit-torque coupling of 0.05 on both the field-like and damping-like channels: the share of the weighted cost carried by the field falls from 0.96 at a price of 0.1 to 0.72 at 0.01, 0.21 at 0.001 and 0.11 at 0.0001, and the field cost itself drops to 0.4 per cent of the field-only optimum, which is the current doing the work, so the crossover is inside that window and the originally declared sweep (0.1 to 30) sat entirely on the field-dominated side. The quantity plotted is the FIELD cost, which is comparable with every other case; the weighted cost mixes two units and is meaningful only at a fixed price.
 
 ## Kill criterion
 
@@ -25,7 +25,7 @@ van der Waals family, so the oracle is comparable with the real cases. These val
 
 ## Variants
 
-Current price (C_j / C_b): 0.1, 0.3, 1, 3, 10, 30.
+Current price (C_j / C_b): 0.0001, 0.001, 0.01, 0.1, 1, 10.
 
 ## Design
 
