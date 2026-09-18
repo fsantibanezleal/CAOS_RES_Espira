@@ -4,7 +4,7 @@
   "code": "C02",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.15.000",
+  "engine_version": "0.16.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "analytic",
@@ -27,7 +27,7 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 24855.551,
+    "runtime_ms": 22119.482,
     "artifact_bytes": 270687,
     "methods": [
       "R05",
@@ -35,7 +35,7 @@
     ],
     "reasons": [
       "methods ['R07'] have no closed form for the browser",
-      "runtime 24856 ms over the 250 ms budget"
+      "runtime 22119 ms over the 250 ms budget"
     ]
   },
   "completeness": {
@@ -140,7 +140,7 @@
         "over_analytic": 1.0001097223696922,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 392.8083999780938
+        "solve_ms": 515.2191000524908
       }
     },
     {
@@ -154,7 +154,7 @@
         "over_analytic": 1.0006834665790152,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 410.86070000892505
+        "solve_ms": 564.6623999928124
       }
     },
     {
@@ -168,7 +168,7 @@
         "over_analytic": 1.0027015076965036,
         "converged": 1.0,
         "images": 60.0,
-        "solve_ms": 523.1559000094421
+        "solve_ms": 675.4807000397705
       }
     },
     {
@@ -182,7 +182,7 @@
         "over_analytic": 1.0070030927315803,
         "converged": 1.0,
         "images": 73.0,
-        "solve_ms": 922.6995999924839
+        "solve_ms": 1208.8221000158228
       }
     },
     {
@@ -196,7 +196,7 @@
         "over_analytic": 1.0073406166843575,
         "converged": 0.0,
         "images": 155.0,
-        "solve_ms": 6668.77220000606
+        "solve_ms": 8418.02209999878
       }
     },
     {
@@ -210,7 +210,7 @@
         "over_analytic": 1.0095566539928704,
         "converged": 0.0,
         "images": 255.0,
-        "solve_ms": 15936.87430000864
+        "solve_ms": 10736.688300035894
       }
     }
   ],

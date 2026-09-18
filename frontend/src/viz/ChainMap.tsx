@@ -6,9 +6,14 @@ import { useEffect, useRef, useState } from 'react';
 import type { LatticeOCPCase } from '../data/contract';
 
 interface Props {
-  item: LatticeOCPCase;
+  /** Only the reversal map and the column count are read, so a patch passes its y-averaged map. */
+  item: Pick<LatticeOCPCase, 'n_sites'> & { sz_map: { times_over_t: number[]; sz: number[][] } };
   theme: 'light' | 'dark';
   es: boolean;
+  /** The horizontal axis label and the hover noun: a site on a chain, a column of sites on a patch. */
+  axisLabel?: { en: string; es: string; noun: { en: string; es: string } };
+  /** Distinct per use, so two maps in different tabs never share a test id. */
+  testId?: string;
 }
 
 const HEIGHT = 340;
@@ -23,7 +28,7 @@ function colour(sz: number): [number, number, number] {
   return [0, 1, 2].map((k) => Math.round(neutral[k] + (end[k] - neutral[k]) * w)) as [number, number, number];
 }
 
-export function ChainMap({ item, theme, es }: Props): React.JSX.Element {
+export function ChainMap({ item, theme, es, axisLabel, testId = 'chain-map' }: Props): React.JSX.Element {
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(640);
@@ -68,7 +73,7 @@ export function ChainMap({ item, theme, es }: Props): React.JSX.Element {
     ctx.fillStyle = text;
     ctx.font = '12px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(es ? 'sitio' : 'site', PAD.left + plotW / 2, HEIGHT - 8);
+    ctx.fillText(axisLabel ? (es ? axisLabel.es : axisLabel.en) : es ? 'sitio' : 'site', PAD.left + plotW / 2, HEIGHT - 8);
     for (const s of [0, Math.floor((cols - 1) / 2), cols - 1]) {
       ctx.fillText(String(s), PAD.left + (s + 0.5) * cw, PAD.top + plotH + 14);
     }
@@ -82,7 +87,7 @@ export function ChainMap({ item, theme, es }: Props): React.JSX.Element {
     ctx.textAlign = 'center';
     ctx.fillText('t / T', 0, 0);
     ctx.restore();
-  }, [item, width, theme, es, rows, cols]);
+  }, [item, width, theme, es, rows, cols, axisLabel]);
 
   const onMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -103,7 +108,7 @@ export function ChainMap({ item, theme, es }: Props): React.JSX.Element {
     <div ref={wrap} style={{ width: '100%' }}>
       <canvas
         ref={canvas}
-        data-testid="chain-map"
+        data-testid={testId}
         data-sites={cols}
         data-rows={rows}
         onMouseMove={onMove}
@@ -112,7 +117,7 @@ export function ChainMap({ item, theme, es }: Props): React.JSX.Element {
       />
       <p className="muted" style={{ minHeight: '1.4em', margin: '4px 0 0' }}>
         {hover
-          ? `${es ? 'sitio' : 'site'} ${hover.site}, t/T = ${hover.time.toFixed(3)}, s_z = ${hover.sz.toFixed(3)}`
+          ? `${axisLabel ? axisLabel.noun[es ? 'es' : 'en'] : es ? 'sitio' : 'site'} ${hover.site}, t/T = ${hover.time.toFixed(3)}, s_z = ${hover.sz.toFixed(3)}`
           : es
             ? 'Azul: arriba (s_z = +1). Rojo: abajo (s_z = -1). Pase el cursor para leer valores.'
             : 'Blue: up (s_z = +1). Red: down (s_z = -1). Hover to read values.'}
