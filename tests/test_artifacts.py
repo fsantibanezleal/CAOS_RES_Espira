@@ -120,6 +120,79 @@ def test_manuscript_facts_are_generated_from_the_shipped_map() -> None:
     assert facts["min_ratio_over_floor"] == round(min(c["best_ratio"] / c["floor_ratio"] for c in cases), 4)
 
 
+# ------------------------------------------------------------------ the constrained cases' inequalities
+
+
+def _artifact(slug: str) -> dict:
+    return json.loads((ARTIFACTS / f"{slug}.json").read_text(encoding="utf-8"))
+
+
+def test_more_bandwidth_never_costs_more_in_the_shipped_artifact() -> None:
+    """C23's declared inequality, asserted on what was actually shipped.
+
+    More harmonics is a strictly larger feasible set, so the cost cannot rise with bandwidth. The engine
+    once returned 2.2 times the analytic optimum at two harmonics and 14 times at six; the case was held
+    blocked until the engine could satisfy this, and the artifact must keep satisfying it.
+    """
+    rows = _artifact("crab-bandwidth")["cost_curve"]
+    harmonics = [row["variant"] for row in rows]
+    assert harmonics == sorted(harmonics)
+    costs = [row["cost"] for row in rows]
+    assert all(cost is not None for cost in costs), "every bandwidth in the sweep must reverse the moment"
+    for lower, higher in zip(costs, costs[1:], strict=False):
+        assert higher <= lower * 1.01, f"more bandwidth cost more: {costs}"
+
+
+def test_no_constrained_case_reports_a_cost_below_the_analytic_optimum() -> None:
+    """The floor: the closed form is the cheapest complete FIELD-DRIVEN reversal at that switching time.
+
+    A field-only constrained solver can match it or pay more. A cost below it means the pulse stopped
+    part way and banked the saving, which is the failure the engine's reversal threshold exists to
+    prevent. The hybrid case is deliberately excluded: there the current does part of the work, so its
+    field cost can and does fall far below the field-only optimum (0.001 of it at the cheapest current),
+    and applying this floor to it would be asserting the wrong physics.
+    """
+    for slug in ("crab-bandwidth", "grape-amplitude-slew"):
+        for row in _artifact(slug)["cost_curve"]:
+            if row["cost"] is None:
+                assert row.get("switched") is False, f"{slug} has no cost but claims to have switched"
+                assert row.get("reason"), f"{slug} reports no cost without saying why"
+                continue
+            assert row["cost"] >= row["analytic_cost"] * 0.995, (
+                f"{slug} at variant {row['variant']} costs less than the analytic optimum"
+            )
+
+
+def test_a_cap_that_cannot_reverse_the_moment_reports_no_cost() -> None:
+    """C24 exists to find the amplitude below which there is no answer; the artifact must show it.
+
+    A sweep where every cap succeeds would mean the swept window never reaches the constraint, and the
+    case would be measuring nothing.
+    """
+    rows = _artifact("grape-amplitude-slew")["cost_curve"]
+    failures = [row for row in rows if row["cost"] is None]
+    successes = [row for row in rows if row["cost"] is not None]
+    assert failures, "no amplitude cap in the sweep was tight enough to prevent a reversal"
+    assert successes, "no amplitude cap in the sweep allowed a reversal"
+    # And the failures are the tight caps, not scattered: the threshold is a threshold.
+    assert max(row["variant"] for row in failures) < min(row["variant"] for row in successes)
+
+
+def test_the_hybrid_moves_cost_onto_the_current_as_it_gets_cheaper() -> None:
+    """C25's declared behaviour: a cheaper current shifts the optimum away from the field."""
+    rows = _artifact("field-plus-current")["cost_curve"]
+    prices = [row["variant"] for row in rows]
+    shares = [row["field_fraction"] for row in rows]
+    assert prices == sorted(prices)
+    assert shares[0] < shares[-1], f"a cheaper current did not shift cost onto the current: {shares}"
+
+
+def test_every_hybrid_point_actually_reversed_the_moment() -> None:
+    """The hybrid has no field-cost floor, so what keeps it honest is that every point is a reversal."""
+    for row in _artifact("field-plus-current")["cost_curve"]:
+        assert row["switched"] is True and row["cost"] is not None, row["variant"]
+
+
 # ------------------------------------------------------------------ manuscript M1 against its artifacts
 
 
@@ -193,3 +266,64 @@ def test_m1_quotes_the_added_cost_against_the_bare_cost_correctly() -> None:
     assert f"{multiples[1.0]:.1f} times" in tex
     assert f"{multiples[2.5]:.1f} times" in tex
     assert "well below the bare" not in tex
+
+
+def test_the_chirp_replication_records_the_published_values_and_the_gap() -> None:
+    """C08 is a non-replication, and the shipped artifact must say so, value by value.
+
+    Every amplitude the source reports carries the published probability beside the engine's, so the
+    gap is in the data the app draws, not only in prose. The engine's own curve must rise with the
+    amplitude, which is what a switching threshold is.
+    """
+    rows = _artifact("sot-down-chirp")["cost_curve"]
+    published = {row["variant"]: row["r04"].get("published_rate") for row in rows}
+    assert {v for v, p in published.items() if p is not None} == {0.17, 0.18, 0.20}
+    rates = [row["success_rate"] for row in rows]
+    assert rates == sorted(rates), f"switching probability does not rise with the amplitude: {rates}"
+    at_017 = next(row for row in rows if row["variant"] == 0.17)["r04"]
+    assert at_017["gap_to_published"] < -0.5, "the engine now reproduces the published value at 0.17 j0"
+
+
+def test_every_shipped_barrier_came_from_a_converged_minimum_energy_path() -> None:
+    """The barrier floors in the free-chain map and in manuscript M2 rest on the string method.
+
+    That solver reports `converged = False` when it hits its iteration cap and still returns a barrier:
+    at J/K = 40 on 53 sites it returned 764 K, forty times the continuum wall energy. The lattice bake
+    never recorded convergence, so this recomputes the barrier of every distinct chain the product
+    ships (seconds each) and requires both convergence and agreement with the shipped value.
+    """
+    from spinoct.lattice import SpinChain, minimum_energy_path
+    from spinoct.units import bohr_magnetons_to_j_per_t, mev_to_joules
+
+    data = json.loads((ARTIFACTS / "lattice_ocp.json").read_text(encoding="utf-8"))
+    reference = data["reference"]
+    mu = bohr_magnetons_to_j_per_t(reference["mu_bohr"])
+    anisotropy = mev_to_joules(reference["anisotropy_mev"])
+    chains = {}
+    for case in data["cases"]:
+        chains.setdefault((case["n_sites"], case["exchange_over_k"]), set()).add(case["barrier_over_nk"])
+    for (n_sites, exchange_over_k), shipped in chains.items():
+        chain = SpinChain(
+            n_sites=n_sites, mu=mu, anisotropy_j=anisotropy, exchange_j=exchange_over_k * anisotropy, alpha=0.1
+        )
+        path = minimum_energy_path(chain, initial="wall")
+        assert path.converged, f"N = {n_sites}: the barrier behind a shipped floor did not converge"
+        for value in shipped:
+            assert path.barrier / (n_sites * anisotropy) == pytest.approx(value, rel=1e-6)
+
+
+def test_every_shipped_file_is_strict_json() -> None:
+    """Python's json writes Infinity and NaN by default; browsers refuse both.
+
+    A C24 row that did not switch carried `over_analytic: Infinity`, and the whole artifact failed to
+    parse in the app, which only a browser gate noticed. Every shipped JSON file must parse with those
+    constants rejected, and the writers now refuse to produce them.
+    """
+
+    def reject(name: str) -> None:
+        raise ValueError(f"non-finite constant {name}")
+
+    shipped = [*ARTIFACTS.glob("*.json"), *(ROOT / "manifests").glob("*.json"), *(ROOT / "models").glob("*.json")]
+    assert shipped
+    for path in shipped:
+        json.loads(path.read_text(encoding="utf-8"), parse_constant=reject)

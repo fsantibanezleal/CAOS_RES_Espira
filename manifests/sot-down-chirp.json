@@ -1,0 +1,151 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "sot-down-chirp",
+  "code": "C08",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.14.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "published",
+  "methods": [
+    "R04"
+  ],
+  "variants": [
+    0.17,
+    0.18,
+    0.2,
+    0.22,
+    0.25,
+    0.3
+  ],
+  "artifact": {
+    "path": "sot-down-chirp.json",
+    "bytes": 257756,
+    "sha256": "508a8724b30d1b387e91f9cb1168b98a6875ec6f8bdd075551f1f916b4818511"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 0.013,
+    "artifact_bytes": 257756,
+    "methods": [
+      "R04"
+    ],
+    "reasons": [
+      "methods ['R04'] have no closed form for the browser"
+    ]
+  },
+  "completeness": {
+    "expected": 6,
+    "produced": 6,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R04",
+      "variant": 0.17,
+      "cost": null,
+      "switched": false,
+      "applicable": true,
+      "reason": "a current cost in reduced units; the case reports a switching probability, not a field cost",
+      "metrics": {
+        "success_rate": 0.009,
+        "confidence95": 0.005853480195575962,
+        "final_sz_mean": 0.9715576312575447,
+        "stability_factor": 60.0,
+        "amplitude_over_optimal_mean_current": 1.341836155384193,
+        "current_cost_reduced": 3.533027919832631e-12,
+        "published_rate": 0.89,
+        "gap_to_published": -0.881
+      }
+    },
+    {
+      "method": "R04",
+      "variant": 0.18,
+      "cost": null,
+      "switched": false,
+      "applicable": true,
+      "reason": "a current cost in reduced units; the case reports a switching probability, not a field cost",
+      "metrics": {
+        "success_rate": 0.043,
+        "confidence95": 0.012573212859090549,
+        "final_sz_mean": 0.903834628464529,
+        "stability_factor": 60.0,
+        "amplitude_over_optimal_mean_current": 1.4207676939362042,
+        "current_cost_reduced": 3.960903273445577e-12,
+        "published_rate": 0.97,
+        "gap_to_published": -0.9269999999999999
+      }
+    },
+    {
+      "method": "R04",
+      "variant": 0.2,
+      "cost": null,
+      "switched": false,
+      "applicable": true,
+      "reason": "a current cost in reduced units; the case reports a switching probability, not a field cost",
+      "metrics": {
+        "success_rate": 0.224,
+        "confidence95": 0.02584109669499342,
+        "final_sz_mean": 0.5527770939266905,
+        "stability_factor": 60.0,
+        "amplitude_over_optimal_mean_current": 1.5786307710402272,
+        "current_cost_reduced": 4.890004041290838e-12,
+        "published_rate": 1.0,
+        "gap_to_published": -0.776
+      }
+    },
+    {
+      "method": "R04",
+      "variant": 0.22,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a current cost in reduced units; the case reports a switching probability, not a field cost",
+      "metrics": {
+        "success_rate": 0.587,
+        "confidence95": 0.030517583941065848,
+        "final_sz_mean": -0.112498298841533,
+        "stability_factor": 60.0,
+        "amplitude_over_optimal_mean_current": 1.7364938481442498,
+        "current_cost_reduced": 5.916904889961913e-12
+      }
+    },
+    {
+      "method": "R04",
+      "variant": 0.25,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a current cost in reduced units; the case reports a switching probability, not a field cost",
+      "metrics": {
+        "success_rate": 0.899,
+        "confidence95": 0.018676547818052457,
+        "final_sz_mean": -0.6662699261939222,
+        "stability_factor": 60.0,
+        "amplitude_over_optimal_mean_current": 1.9732884638002839,
+        "current_cost_reduced": 7.640631314516934e-12
+      }
+    },
+    {
+      "method": "R04",
+      "variant": 0.3,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a current cost in reduced units; the case reports a switching probability, not a field cost",
+      "metrics": {
+        "success_rate": 0.964,
+        "confidence95": 0.011546379796282473,
+        "final_sz_mean": -0.7902570683451371,
+        "stability_factor": 60.0,
+        "amplitude_over_optimal_mean_current": 2.3679461565603406,
+        "current_cost_reduced": 1.1002509092904385e-11
+      }
+    }
+  ],
+  "parameter_flags": [
+    "synthetic system"
+  ]
+}
