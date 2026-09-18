@@ -138,7 +138,7 @@ def test_patch_upper_bound_is_not_monotone_in_size() -> None:
     rises = []
     for jk in {c["exchange_over_k"] for c in cases}:
         ratios = [c["best_ratio"] for c in sorted((c for c in cases if c["exchange_over_k"] == jk), key=lambda c: c["width"])]
-        rises += [b - a for a, b in zip(ratios, ratios[1:]) if b > a]
+        rises += [b - a for a, b in zip(ratios[:-1], ratios[1:], strict=True) if b > a]
     assert rises
 
 
