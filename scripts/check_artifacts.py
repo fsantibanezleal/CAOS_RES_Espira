@@ -4,10 +4,12 @@ without installing the engine. Exit non-zero on any drift.
 Checks:
 - index.json lists every case file and every case file is listed (declared equals shipped);
 - each case artifact is non-empty, carries the index's schema version, and has one pulse per variant;
-- novel.json and lattice_ocp.json exist and parse;
+- novel.json, lattice_ocp.json and patch_ocp.json exist and parse;
 - the free chain map is internally consistent: every case key is unique, its best ratio lies between
   its minimum-energy-path floor and the uniform bound (the floor is a rigorous lower bound, and uniform
-  rotation is always a feasible candidate), and its reversal map has one row of N sites per time sample.
+  rotation is always a feasible candidate), and its reversal map has one row of N sites per time sample;
+- the two-dimensional patch sweep (C20, C21) meets the same bounds, every barrier behind a floor
+  converged, every patch is square, and its column-averaged map has one value per column.
 """
 
 from __future__ import annotations
@@ -17,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -100,6 +102,29 @@ def check(artifacts: Path) -> list[str]:
             if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
                 errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
 
+    patch_path = artifacts / "patch_ocp.json"
+    if patch_path.exists():
+        patch = json.loads(patch_path.read_text(encoding="utf-8"))
+        keys = [c["key"] for c in patch["cases"]]
+        if len(keys) != len(set(keys)):
+            errors.append("patch_ocp: duplicate case keys")
+        for case in patch["cases"]:
+            ratio, floor = case["best_ratio"], case["floor_ratio"]
+            if ratio > 1.0 + TOLERANCE:
+                errors.append(f"patch_ocp {case['key']}: best ratio {ratio} above the uniform bound")
+            if ratio < floor * (1.0 - TOLERANCE):
+                errors.append(f"patch_ocp {case['key']}: best ratio {ratio} below its floor {floor}")
+            # An unconverged string gives a barrier that is not a floor, so the lower bound would be false.
+            if not case["barrier_converged"]:
+                errors.append(f"patch_ocp {case['key']}: minimum energy path did not converge")
+            if case["n_sites"] != case["width"] ** 2:
+                errors.append(f"patch_ocp {case['key']}: {case['n_sites']} sites on a {case['width']}-wide square")
+            sz = case["sz_map"]["sz_by_column"]
+            if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["width"] for row in sz):
+                errors.append(f"patch_ocp {case['key']}: reversal map shape mismatch")
+    else:
+        errors.append("missing patch_ocp.json")
+
     return errors
 
 
@@ -111,7 +136,7 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json consistent")
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json consistent")
     return 0
 
 

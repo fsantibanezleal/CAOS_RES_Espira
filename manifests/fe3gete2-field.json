@@ -4,7 +4,7 @@
   "code": "C12",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.15.000",
+  "engine_version": "0.16.000",
   "seed": 0,
   "split": "train",
   "ground_truth": "provisional",
@@ -27,14 +27,14 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 5994.942,
+    "runtime_ms": 3547.108,
     "artifact_bytes": 268324,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 5995 ms over the 250 ms budget"
+      "runtime 3547 ms over the 250 ms budget"
     ]
   },
   "completeness": {

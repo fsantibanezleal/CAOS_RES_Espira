@@ -4,7 +4,7 @@
   "code": "C18",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.15.000",
+  "engine_version": "0.16.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "provisional",
@@ -27,14 +27,14 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 6335.785,
+    "runtime_ms": 3370.252,
     "artifact_bytes": 265811,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 6336 ms over the 250 ms budget"
+      "runtime 3370 ms over the 250 ms budget"
     ]
   },
   "completeness": {

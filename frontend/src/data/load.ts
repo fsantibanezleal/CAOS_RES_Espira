@@ -51,3 +51,9 @@ export async function loadBenchmark(): Promise<import('./contract').Benchmark> {
   if (!response.ok) throw new Error(`benchmark.json ${response.status}`);
   return response.json();
 }
+
+export async function loadPatchOCP(): Promise<import('./contract').PatchOCPArtifact> {
+  const response = await fetch(bust(`${base}artifacts/patch_ocp.json`));
+  if (!response.ok) throw new Error(`patch_ocp.json ${response.status}`);
+  return response.json();
+}

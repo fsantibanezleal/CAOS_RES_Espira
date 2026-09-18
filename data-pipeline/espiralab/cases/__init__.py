@@ -510,39 +510,60 @@ CASES: dict[str, Case] = {
         methods=("R07", "R16"),
         sources=("10.1103/PhysRevB.107.214448", "10.17586/2220-8054-2020-11-3-294-300"),
     ),
-    "patch-2d-crsbr": Case(
-        slug="patch-2d-crsbr",
+    "patch-crossover": Case(
+        slug="patch-crossover",
         code="C20",
-        title="A two-dimensional CrSBr patch, size sweep",
+        title="A two-dimensional patch, where uniform rotation stops being optimal",
         category="D. Beyond the macrospin",
-        reason="A chain is one dimension; a real element is a patch. The crossover length in two "
-        "dimensions is the quantity a device designer actually needs.",
-        expectation="The same barrier argument applies with a two-dimensional wall, so the crossover "
-        "moves to a different length scale.",
-        kill_criterion="A two-dimensional result that contradicts the one-dimensional limit at small "
-        "width would mean the lattice generalization is wrong.",
-        axis=VariantAxis("patch_width", "Patch width", "sites", (4.0, 8.0, 12.0, 16.0, 24.0, 32.0)),
-        status="planned",
+        reason="A chain is one dimension; a real element is a patch. The chain's question (C19) asked on "
+        "a square W x W patch with nearest-neighbour exchange, at the chain map's J/K = 10 (a wall about "
+        "2.2 sites wide), alpha = 0.5 and T = 160 tau0, where the chain answer is clearest. Material-free: "
+        "the result is in sites and wall widths, because no material in the database has its exchange and "
+        "anisotropy measured together.",
+        expectation="Declared before the bake: the barrier argument carries over with a two-dimensional "
+        "wall, so the crossover moves to a different length scale. Measured 2026-09-18: the smallest "
+        "patch (W = 4, under two wall widths) reverses uniformly, and a non-uniform reversal is cheaper "
+        "from W = 8 on, at 0.9575, 0.7130 and 0.5738 of the uniform cost at W = 8, 12 and 16, against "
+        "floors of 0.8089, 0.6055 and 0.4615. The patch crossover sits at the chain's length scale in "
+        "wall widths.",
+        kill_criterion="A cost below the minimum-energy-path floor, a cost above the uniform bound, or a "
+        "floor taken from an unconverged path: any of them means the solver, the floor or the "
+        "two-dimensional lattice energy is wrong.",
+        axis=VariantAxis("patch_width", "Patch side", "sites", (4.0, 8.0, 12.0, 16.0, 24.0, 32.0)),
+        status="baked",
+        surface="experiments",
         ground_truth="provisional",
         split="control",
-        methods=("R16",),
+        synthetic=SyntheticSystem(damping=0.5),
+        methods=("R07", "R16"),
+        sources=("10.1103/PhysRevB.107.214448", "10.1016/j.cpc.2015.07.001"),
     ),
-    "patch-2d-fe3gate2": Case(
-        slug="patch-2d-fe3gate2",
+    "patch-narrow-wall": Case(
+        slug="patch-narrow-wall",
         code="C21",
-        title="A two-dimensional Fe3GaTe2 patch, perpendicular anisotropy",
+        title="A two-dimensional patch with a narrow wall",
         category="D. Beyond the macrospin",
-        reason="The perpendicular-anisotropy metal in two dimensions, the geometry closest to a "
-        "magnetic memory cell.",
-        expectation="Strong perpendicular anisotropy narrows the wall, which pushes the crossover to "
-        "larger patches than the weakly anisotropic case.",
-        kill_criterion="A wall width that does not follow the square root of the exchange over the "
-        "anisotropy would mean the energetics are wrong.",
-        axis=VariantAxis("patch_width", "Patch width", "sites", (4.0, 8.0, 12.0, 16.0, 24.0, 32.0)),
-        status="planned",
+        reason="Stronger anisotropy is what a memory cell wants for retention, and it narrows the wall. "
+        "The patch sweep of C20 repeated at J/K = 2.5 (a wall about 1.1 sites wide, half as wide), with "
+        "the same damping and switching time, asks how that moves the crossover. Material-free, as C20.",
+        expectation="Declared before the bake: the narrower wall pushes the crossover to larger patches "
+        "than the weakly anisotropic case. Refuted by the measurement of 2026-09-18: a non-uniform "
+        "reversal is already cheaper on the smallest patch (0.9412 of the uniform cost at W = 4, where "
+        "J/K = 10 reverses uniformly), and 0.5653, 0.4933 and 0.5440 at W = 8, 12 and 16. The crossover "
+        "tracks the wall width, so a narrower wall moves it to smaller patches. At fixed switching time "
+        "the upper bound rises from W = 12 to W = 16 while the floor keeps falling (0.3150 to 0.2461), so "
+        "the true optimum is only bracketed there.",
+        kill_criterion="The same bounds as C20; and the declared expectation is falsified if the smallest "
+        "side at which a non-uniform reversal wins is not larger at J/K = 2.5 than at J/K = 10, which is "
+        "what the measurement found.",
+        axis=VariantAxis("patch_width", "Patch side", "sites", (4.0, 8.0, 12.0, 16.0, 24.0, 32.0)),
+        status="baked",
+        surface="experiments",
         ground_truth="provisional",
         split="control",
-        methods=("R16",),
+        synthetic=SyntheticSystem(damping=0.5),
+        methods=("R07", "R16"),
+        sources=("10.1103/PhysRevB.107.214448", "10.1016/j.cpc.2015.07.001"),
     ),
     "continuum-cross-check": Case(
         slug="continuum-cross-check",
