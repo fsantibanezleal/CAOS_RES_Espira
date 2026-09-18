@@ -23,14 +23,14 @@ and the companion web app.
 ## Manuscript
 
 1. The Cost of Reliability in Optimal Magnetization Switching: A Longitudinal-Field Front for Van der
-Waals Magnets. Preprint, 2026, CC-BY, Zenodo concept DOI
+Waals Magnets. Preprint, 2026, CC-BY, version 3, version DOI
+[10.5281/zenodo.22822132](https://doi.org/10.5281/zenodo.22822132), concept DOI
 [10.5281/zenodo.22736005](https://doi.org/10.5281/zenodo.22736005). Source under
 `manuscripts/reliability-realizability/`.
 
 2. Domain Walls Become the Optimal Reversal of a Spin Chain: Free Optimal Control Beyond the Macrospin
-and an Energy-Barrier Floor on the Switching Cost. Preprint, 2026, CC-BY, version 2 (corrects version
-1, whose two-mode comparison concluded that uniform rotation is always optimal), version DOI
-[10.5281/zenodo.22749089](https://doi.org/10.5281/zenodo.22749089), concept DOI
+and an Energy-Barrier Floor on the Switching Cost. Preprint, 2026, CC-BY, version 3, version DOI
+[10.5281/zenodo.22822159](https://doi.org/10.5281/zenodo.22822159), concept DOI
 [10.5281/zenodo.22736065](https://doi.org/10.5281/zenodo.22736065). Source and the table generator under
 `manuscripts/beyond-macrospin/`.
 
