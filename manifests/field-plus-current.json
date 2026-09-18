@@ -4,7 +4,7 @@
   "code": "C25",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.14.000",
+  "engine_version": "0.15.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "provisional",
@@ -26,7 +26,7 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.01,
+    "runtime_ms": 0.057,
     "artifact_bytes": 466239,
     "methods": [
       "R13"

@@ -159,7 +159,10 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
   };
 
   const i = Math.max(0, Math.min(cursor, pulse.sx.length - 1));
-  const tps = (pulse.time_s[i] * 1e12).toFixed(2);
+  // Time in ps, or the case's own x axis (a path coordinate for a barrier).
+  const xValue = (pulse.time_s[i] * (pulse.x_scale ?? 1e12)).toFixed(2);
+  const xName = pulse.x_label === 'path coordinate' ? 'path' : 't';
+  const xUnit = pulse.x_unit === 'fraction' ? '' : ` ${pulse.x_unit ?? 'ps'}`;
 
   return (
     <div className="sphere-panel">
@@ -175,7 +178,7 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
       </div>
       <div className="sphere-scrub">
         <label>
-          t = {tps} ps, s = ({pulse.sx[i].toFixed(2)}, {pulse.sy[i].toFixed(2)},{' '}
+          {xName} = {xValue}{xUnit}, s = ({pulse.sx[i].toFixed(2)}, {pulse.sy[i].toFixed(2)},{' '}
           {pulse.sz[i].toFixed(2)})
         </label>
         <input

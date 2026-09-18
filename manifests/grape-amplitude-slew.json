@@ -4,7 +4,7 @@
   "code": "C24",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.14.000",
+  "engine_version": "0.15.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "analytic",
@@ -27,7 +27,7 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.243,
+    "runtime_ms": 0.683,
     "artifact_bytes": 252818,
     "methods": [
       "R08",
