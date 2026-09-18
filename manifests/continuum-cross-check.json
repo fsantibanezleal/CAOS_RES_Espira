@@ -1,0 +1,157 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "continuum-cross-check",
+  "code": "C22",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.15.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "analytic",
+  "methods": [
+    "R16"
+  ],
+  "variants": [
+    1.0,
+    2.0,
+    4.0,
+    6.0,
+    8.0,
+    12.0
+  ],
+  "artifact": {
+    "path": "continuum-cross-check.json",
+    "bytes": 48635,
+    "sha256": "654773f13e861a494a6929adfe1b83447e473a45cd552fc64a292078b62bb8e4"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 0.029,
+    "artifact_bytes": 48635,
+    "methods": [
+      "R16"
+    ],
+    "reasons": [
+      "methods ['R16'] have no closed form for the browser"
+    ]
+  },
+  "completeness": {
+    "expected": 6,
+    "produced": 6,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R16",
+      "variant": 1.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "barrier_over_continuum": 0.9547431260271432,
+        "deficit_times_width_squared": 0.045256873972856826,
+        "barrier_over_k": 3.8189725041085727,
+        "continuum_over_k": 4.0,
+        "exchange_over_k": 2.0,
+        "n_sites": 24.0,
+        "converged": 1.0,
+        "iterations": 311.0
+      }
+    },
+    {
+      "method": "R16",
+      "variant": 2.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "barrier_over_continuum": 0.9891132646415023,
+        "deficit_times_width_squared": 0.04354694143399085,
+        "barrier_over_k": 7.912906117132018,
+        "continuum_over_k": 8.0,
+        "exchange_over_k": 8.0,
+        "n_sites": 24.0,
+        "converged": 1.0,
+        "iterations": 276.0
+      }
+    },
+    {
+      "method": "R16",
+      "variant": 4.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "barrier_over_continuum": 0.9973453831572815,
+        "deficit_times_width_squared": 0.042473869483496074,
+        "barrier_over_k": 15.957526130516504,
+        "continuum_over_k": 16.0,
+        "exchange_over_k": 32.0,
+        "n_sites": 48.0,
+        "converged": 1.0,
+        "iterations": 1050.0
+      }
+    },
+    {
+      "method": "R16",
+      "variant": 6.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "barrier_over_continuum": 0.9988129210751814,
+        "deficit_times_width_squared": 0.04273484129347027,
+        "barrier_over_k": 23.971510105804352,
+        "continuum_over_k": 24.0,
+        "exchange_over_k": 72.0,
+        "n_sites": 72.0,
+        "converged": 1.0,
+        "iterations": 2342.0
+      }
+    },
+    {
+      "method": "R16",
+      "variant": 8.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "barrier_over_continuum": 0.9993227534575081,
+        "deficit_times_width_squared": 0.04334377871948192,
+        "barrier_over_k": 31.97832811064026,
+        "continuum_over_k": 32.0,
+        "exchange_over_k": 128.0,
+        "n_sites": 96.0,
+        "converged": 1.0,
+        "iterations": 4152.0
+      }
+    },
+    {
+      "method": "R16",
+      "variant": 12.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "barrier_over_continuum": 0.9996857363072348,
+        "deficit_times_width_squared": 0.045253971758191014,
+        "barrier_over_k": 47.98491534274727,
+        "continuum_over_k": 48.0,
+        "exchange_over_k": 288.0,
+        "n_sites": 144.0,
+        "converged": 1.0,
+        "iterations": 9322.0
+      }
+    }
+  ],
+  "parameter_flags": [
+    "synthetic system"
+  ]
+}

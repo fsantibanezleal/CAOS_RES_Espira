@@ -327,3 +327,14 @@ def test_every_shipped_file_is_strict_json() -> None:
     assert shipped
     for path in shipped:
         json.loads(path.read_text(encoding="utf-8"), parse_constant=reject)
+
+
+def test_the_lattice_barrier_converges_onto_the_continuum_wall_energy() -> None:
+    """C22 in the shipped data: from below, monotonically, with the deficit falling as 1 / w^2."""
+    rows = _artifact("continuum-cross-check")["cost_curve"]
+    ratios = [row["barrier_over_continuum"] for row in rows]
+    assert all(row["r16"]["converged"] == 1.0 for row in rows), "an unconverged path was shipped"
+    assert all(ratio < 1.0 for ratio in ratios), f"a lattice barrier exceeds the continuum value: {ratios}"
+    assert ratios == sorted(ratios), f"the barrier does not approach the continuum monotonically: {ratios}"
+    scaled = [row["r16"]["deficit_times_width_squared"] for row in rows]
+    assert max(scaled) / min(scaled) < 1.2, f"the deficit does not scale as 1 / w^2: {scaled}"
