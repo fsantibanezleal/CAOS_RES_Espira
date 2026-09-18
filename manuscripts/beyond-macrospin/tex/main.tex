@@ -7,14 +7,35 @@
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 \newcommand{\doi}[1]{DOI: \href{https://doi.org/#1}{#1}}
 
+\newcommand{\doctype}{Preprint}
+\newcommand{\docversion}{v3}
+\newcommand{\docdate}{18 September 2026}
+\newcommand{\doclicense}{CC BY 4.0}
+\newcommand{\versiondoi}{10.5281/zenodo.22822159}
+\newcommand{\conceptdoi}{10.5281/zenodo.22736065}
+\newcommand{\docrepo}{github.com/fsantibanezleal/CAOS\_RES\_Espira}
+
+\newcommand{\headerblock}{%
+\begin{center}
+\fbox{\parbox{0.9\textwidth}{\small\raggedright
+\textbf{\doctype} \quad$\cdot$\quad \docversion, \docdate \quad$\cdot$\quad Licence \doclicense\\[2pt]
+CAOS open-research programme \quad$\cdot$\quad Espira\\[2pt]
+Version DOI \href{https://doi.org/\versiondoi}{\texttt{\versiondoi}} \quad$\cdot$\quad
+concept DOI (always latest) \href{https://doi.org/\conceptdoi}{\texttt{\conceptdoi}}\\[2pt]
+Not peer reviewed. Source code, data and computational records: \texttt{\docrepo}
+}}
+\end{center}
+\vspace{4pt}}
+
 \title{Domain Walls Become the Optimal Reversal of a Spin Chain:\\
 Free Optimal Control Beyond the Macrospin and an Energy-Barrier Floor on the Switching Cost}
 \author{Felipe Santib\'a\~nez-Leal\\
 \small CAOS open-research programme, Santiago, Chile}
-\date{2026, version 2}
+\date{2026}
 
 \begin{document}
 \maketitle
+\headerblock
 
 \begin{abstract}
 Optimal control of magnetization switching has been solved almost entirely for a single rotating
@@ -30,19 +51,10 @@ domain wall entering at an open end, strictly cheaper than uniform rotation. Ove
 $N$ from 4 to 32, two damping values) 28 reverse more cheaply through a wall, by up to 51 percent, and
 every cost lies above its barrier floor. The saving at fixed switching time is not monotone in
 length: a longer wall needs more time to cross. One case was verified by grid refinement, local
-consistency, and open-loop forward dynamics. This version corrects version 1, whose comparison of two
-fixed modes concluded that uniform rotation is always the field-cost optimum.
+consistency, and open-loop forward dynamics. A comparison restricted to two fixed modes, uniform
+rotation against a constant-speed wall, reaches the opposite conclusion, because that wall is not the
+optimal one.
 \end{abstract}
-
-\section*{Correction to version 1}
-
-Version 1 compared a uniform rotation with a constant-speed domain wall at a short switching time and
-concluded that uniform rotation is the field-cost optimum, adding that walls lower the energy barrier
-but not the field cost. Both statements are withdrawn. The comparison was correct for the two modes and
-the short time it tested, but the constant-speed wall is not the optimal wall, and the free search
-reported here finds wall-mediated reversals cheaper than uniform rotation at long switching times. The
-barrier floor of Section~\ref{sec:floor} shows that the energy barrier and the field cost are linked,
-not opposed.
 
 \section{Introduction}
 
@@ -183,6 +195,14 @@ with length while uniform rotation climbs $NK$. Whether a pulse can approach the
 of time, because the wall must also be moved across the chain. The optimal reversal is therefore
 uniform for short chains or short times and wall-mediated for long chains at long times, with an
 optimal length that grows with the switching time.
+
+The free search matters for this conclusion. Restricting the comparison to two fixed modes, a uniform
+rotation against a domain wall swept at constant speed, finds uniform rotation cheaper at every chain
+length at short switching time, and invites the reading that walls lower the energy barrier but not
+the field cost. That reading does not survive the free search: the constant-speed wall is not the
+optimal wall, the optimal wall is cheaper than uniform rotation at long switching time, and the
+barrier floor of Section~\ref{sec:floor} links the energy barrier and the field cost rather than
+opposing them.
 
 The trajectories reported are the cheapest found, not certified global optima; most nonuniform solves
 stopped before their convergence criterion, so the true savings are at least those quoted. The study is
