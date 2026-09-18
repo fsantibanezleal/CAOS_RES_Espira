@@ -4,7 +4,7 @@
   "code": "C22",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.15.000",
+  "engine_version": "0.16.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "analytic",
@@ -26,7 +26,7 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.029,
+    "runtime_ms": 0.02,
     "artifact_bytes": 48635,
     "methods": [
       "R16"

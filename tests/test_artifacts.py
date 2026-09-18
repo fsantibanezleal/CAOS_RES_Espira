@@ -73,6 +73,75 @@ def test_checker_catches_a_ratio_below_the_floor(artifact_copy: Path) -> None:
     assert any("below its floor" in e for e in check(artifact_copy))
 
 
+def test_checker_catches_a_floor_from_an_unconverged_patch_path(artifact_copy: Path) -> None:
+    def mutate(d):
+        case = next(c for c in d["cases"] if c["floor_ratio"] is not None)
+        case["barrier_converged"] = False
+
+    _rewrite(artifact_copy / "patch_ocp.json", mutate)
+    assert any("reports a floor from an unconverged path" in e for e in check(artifact_copy))
+
+
+def test_checker_catches_a_converged_patch_path_without_its_floor(artifact_copy: Path) -> None:
+    def mutate(d):
+        next(c for c in d["cases"] if c["barrier_converged"])["floor_ratio"] = None
+
+    _rewrite(artifact_copy / "patch_ocp.json", mutate)
+    assert any("converged path but no floor" in e for e in check(artifact_copy))
+
+
+def test_checker_catches_a_patch_map_of_the_wrong_width(artifact_copy: Path) -> None:
+    def mutate(d):
+        d["cases"][0]["sz_map"]["sz_by_column"][0].pop()
+
+    _rewrite(artifact_copy / "patch_ocp.json", mutate)
+    assert any("reversal map shape mismatch" in e for e in check(artifact_copy))
+
+
+def _patch_cases() -> list[dict]:
+    return json.loads((ARTIFACTS / "patch_ocp.json").read_text(encoding="utf-8"))["cases"]
+
+
+def _crossover_side(cases: list[dict], exchange_over_k: float) -> int | None:
+    beaten = [c["width"] for c in cases if c["exchange_over_k"] == exchange_over_k and c["best_ratio"] < 1.0]
+    return min(beaten) if beaten else None
+
+
+def test_patch_sweep_covers_both_regimes_on_the_declared_sides() -> None:
+    from espiralab.bake.patch_ocp import GRID
+
+    cases = _patch_cases()
+    assert sorted(c["key"] for c in cases) == sorted(case.key for case in GRID)
+    for c in cases:
+        assert c["wall_width_sites"] == pytest.approx((c["exchange_over_k"] / 2.0) ** 0.5)
+    # C20 is the J/K = 10 regime and C21 the J/K = 2.5 one; each declares the sides the bake solves.
+    for slug, exchange_over_k in (("patch-crossover", 10.0), ("patch-narrow-wall", 2.5)):
+        sides = sorted(float(c.width) for c in GRID if c.exchange_over_k == exchange_over_k)
+        assert sides == list(CASES[slug].axis.values)
+        assert CASES[slug].surface == "experiments" and CASES[slug].status == "baked"
+
+
+def test_stronger_anisotropy_moves_the_patch_crossover_to_smaller_sides() -> None:
+    """The measured C20/C21 result the Experiments tab states: the narrower wall (J/K = 2.5) already
+    beats uniform rotation on the smallest patch, where the wider wall (J/K = 10) does not."""
+    cases = _patch_cases()
+    wide, narrow = _crossover_side(cases, 10.0), _crossover_side(cases, 2.5)
+    assert narrow is not None and wide is not None
+    assert narrow < wide
+    smallest = min(c["width"] for c in cases)
+    assert next(c for c in cases if c["exchange_over_k"] == 10.0 and c["width"] == smallest)["best_ratio"] == 1.0
+
+
+def test_patch_upper_bound_is_not_monotone_in_size() -> None:
+    """The tab says the upper bound does not always fall with size; hold it to a measured rise."""
+    cases = _patch_cases()
+    rises = []
+    for jk in {c["exchange_over_k"] for c in cases}:
+        ratios = [c["best_ratio"] for c in sorted((c for c in cases if c["exchange_over_k"] == jk), key=lambda c: c["width"])]
+        rises += [b - a for a, b in zip(ratios[:-1], ratios[1:], strict=True) if b > a]
+    assert rises
+
+
 def test_index_matches_the_registry() -> None:
     """The index ships the baked workbench cases, and declares the whole registry with its statuses."""
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))

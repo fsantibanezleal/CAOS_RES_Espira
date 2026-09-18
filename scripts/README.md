@@ -11,8 +11,9 @@ Versions live in the `requirements-*.txt` files, never here.
 | `smoke.sh` / `smoke.ps1` | Check the committed artifacts, then run the tests (the bake smoke writes only to a temporary directory) |
 | `dev.sh` / `dev.ps1` | Copy the artifacts into the frontend and start the Vite dev server (the dormant `app/` is skipped) |
 
-The free chain crossover map has its own entry point, `python data-pipeline/run_lattice_ocp.py
-[output] [workers]`, because it takes hours; set `ESPIRA_CHECKPOINT_DIR` to a large disk first.
+The free chain crossover map and the two-dimensional patch sweep have their own entry points,
+`python data-pipeline/run_lattice_ocp.py [output] [workers]` and `run_patch_ocp.py`, because they take hours;
+set `ESPIRA_CHECKPOINT_DIR` to a large disk first.
 
 ## Guards (run in CI, runnable locally)
 

@@ -16,6 +16,8 @@ interface Props {
 }
 
 const PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'];
+/** Axis ticks without the browser locale, so a Spanish page never prints "0,8" beside a legend's "0.8353". */
+const localeFree = (_u: uPlot, splits: number[]) => splits.map((v) => String(+v.toFixed(6)));
 
 function cssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;
@@ -66,7 +68,13 @@ export function CrossoverChart({ cases, selectedT, theme, es }: Props): React.JS
       scales: { x: { time: false }, y: { range: [0, 1.08] } },
       axes: [
         { label: es ? 'longitud de la cadena  N (sitios)' : 'chain length  N (sites)', stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
-        { label: es ? 'costo / costo uniforme' : 'cost / uniform cost', stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
+        {
+          label: es ? 'costo / costo uniforme' : 'cost / uniform cost',
+          stroke,
+          grid: { stroke: grid },
+          ticks: { stroke: grid },
+          values: localeFree,
+        },
       ],
       series,
       legend: { show: true },
