@@ -529,3 +529,10 @@
   overflow-y: auto;
   min-height: 0;
 }
+
+/* A chart that shares its stack with a note sizes itself from this box, never from the stack. */
+.wb-chart-box {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+}

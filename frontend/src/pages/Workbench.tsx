@@ -259,7 +259,11 @@ export function Workbench(): React.JSX.Element {
                 content: (
                   <div className="wb-instrument">
                     <div className="wb-instrument-stack">
-                      <PulseChart pulse={pulse} theme={theme} />
+                      {/* The chart sizes itself from this box, which holds only the chart: sizing from
+                          the stack, which also holds the note, drew the legend over the note. */}
+                      <div className="wb-chart-box">
+                        <PulseChart pulse={pulse} theme={theme} />
+                      </div>
                       {artifact.pulse_note && (
                         <p className="wb-pulse-note">
                           <strong>{t.drawnPath}.</strong> {artifact.pulse_note}
@@ -380,10 +384,12 @@ export function Workbench(): React.JSX.Element {
                   <dd>{((costRow.mean_amplitude ?? 0) * 1e3).toFixed(2)} mT</dd>
                 </>
               ) : (
-                <>
-                  <dt>{t.fieldReference}</dt>
-                  <dd>{costRow.field_cost_reference ? `${sci(costRow.field_cost_reference)} T^2 s` : '-'}</dd>
-                </>
+                costRow.field_cost_reference !== undefined && (
+                  <>
+                    <dt>{t.fieldReference}</dt>
+                    <dd>{`${sci(costRow.field_cost_reference)} T^2 s`}</dd>
+                  </>
+                )
               )}
             </dl>
             {!observable.is_field_cost && (
@@ -410,10 +416,16 @@ export function Workbench(): React.JSX.Element {
           <dl>
             <dt>{t.easyAxis}</dt>
             <dd>{m.easy_axis}</dd>
-            <dt>{t.floor}</dt>
-            <dd>{sci(costRow.cost_floor)} T^2 s</dd>
-            <dt>{t.reduction}</dt>
-            <dd>{sb.reduction_factor ? `${sb.reduction_factor.toFixed(0)}x` : 'n/a'}</dd>
+            {/* The floor and the static-field reduction describe a single-moment reversal; a case that
+                is not one (a chain barrier) carries neither, and shows neither. */}
+            {costRow.cost_floor !== undefined && (
+              <>
+                <dt>{t.floor}</dt>
+                <dd>{sci(costRow.cost_floor)} T^2 s</dd>
+                <dt>{t.reduction}</dt>
+                <dd>{sb.reduction_factor ? `${sb.reduction_factor.toFixed(0)}x` : 'n/a'}</dd>
+              </>
+            )}
           </dl>
           {bx && (
             <div className="wb-biaxial">

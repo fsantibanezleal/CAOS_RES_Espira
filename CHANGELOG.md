@@ -4,6 +4,35 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.09.000] - 2026-09-18
+
+### Added
+- **C22, the continuum cross-check**, baked (21 of 26). The free-chain results rest on the
+  minimum-energy-path barrier of a discrete chain, and in the continuum limit that barrier must become the
+  Bloch-wall energy `2 sqrt(2 J K)`. Over one to twelve sites per wall width the lattice barrier approaches
+  it from below, 0.9547 to 0.9997 of it, and the deficit falls as one over the width squared (deficit
+  times width squared between 0.0425 and 0.0453). The plan asked for agreement with a micromagnetic code;
+  a closed-form limit is a stronger reference, with no discretization of its own.
+- The pulse view reads a declared x axis and declared series, so a case that is not a pulse (a barrier,
+  drawn against its path coordinate with the continuum energy beside it) is never labelled as time or as
+  a field.
+
+### Changed
+- The engine pin moves to spinoct 0.15.0, whose string method converges for wide walls; before it, the
+  solver diverged above J/K of about 24 and still returned a barrier (43 times the continuum value at
+  J/K = 40), and C22's sweep reaches J/K = 288.
+
+### Fixed
+- **Text was drawn over text on every case with a note, live since 0.07.000.** The pulse chart sized
+  itself from a box it shared with the "about the drawn path" note, so its legend covered the note. The
+  chart now sizes from a box of its own, and the observable gate checks, on every case in the Pulse and
+  Trajectory views, that no legend, caption or note overlaps another; it fails on the old build for all
+  six affected cases.
+- The pulse chart printed decimals in the browser's locale ("0,05"); it now formats numbers explicitly.
+- A case that is not a single-moment reversal carries no universal floor or static-field reduction, and
+  the TypeScript contract now says so: those fields were declared always present, so the compiler could
+  not see the readout formatting an absent floor, which stopped the workbench from rendering C22.
+
 ## [0.08.000] - 2026-09-17
 
 ### Added

@@ -4,7 +4,7 @@ A case is a scientific question the product answers: a system, a variant family,
 pre-declared expectation with the kill criterion that would make it a failure. The 26 cases of the
 validated plan are all declared here, so a missing one cannot hide behind the ones that are baked.
 
-**20 baked, 4 planned, 2 blocked.** Baked cases
+**21 baked, 3 planned, 2 blocked.** Baked cases
 have committed artifacts; planned cases are declared and runnable but not yet computed; blocked
 cases name what is missing. This page and the per-case pages are generated from the registry
 (`python scripts/gen_case_docs.py`).
@@ -57,7 +57,7 @@ Chains, patches and the continuum limit, where the single-moment picture fails.
 | C19 [The spin chain, where uniform rotation stops being optimal](chain-crossover.md) | baked | 9 x chain length | R07, R16 | provisional |
 | C20 [A two-dimensional CrSBr patch, size sweep](patch-2d-crsbr.md) | planned | 6 x patch width | R16 | provisional |
 | C21 [A two-dimensional Fe3GaTe2 patch, perpendicular anisotropy](patch-2d-fe3gate2.md) | planned | 6 x patch width | R16 | provisional |
-| C22 [Continuum cross-check against a micromagnetic solver](continuum-cross-check.md) | planned | 6 x sites per wall width | R16 | provisional |
+| C22 [Continuum cross-check: the lattice wall barrier against the closed form](continuum-cross-check.md) | baked | 6 x sites per wall width | R16 | analytic |
 
 ## E. Constrained and hybrid control
 

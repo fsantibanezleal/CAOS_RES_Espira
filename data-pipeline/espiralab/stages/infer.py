@@ -19,6 +19,7 @@ Methods implemented here:
 | R12 | the same pulse with a longitudinal field, the reliability bought and its added cost |
 | R13 | the joint field-plus-current optimum under a two-term cost |
 | R15 | the amortized policy, emitting a pulse with no optimization at inference |
+| R16 | the chain's minimum-energy-path barrier, against the continuum wall energy |
 
 Where a case sweeps a control parameter (harmonics, an amplitude cap, the price of current, the damping),
 the variant sets that parameter and the switching time is held at the case's fixed time.
@@ -49,7 +50,7 @@ from ..core.manifest import MethodResult
 
 __all__ = ["IMPLEMENTED_METHODS", "InferenceRun", "infer_case"]
 
-IMPLEMENTED_METHODS = ("R00", "R04", "R05", "R06", "R07", "R08", "R09", "R11", "R12", "R13", "R15")
+IMPLEMENTED_METHODS = ("R00", "R04", "R05", "R06", "R07", "R08", "R09", "R11", "R12", "R13", "R15", "R16")
 
 #: Seeds and iteration cap for the numerical solver in the release bake. The image count comes from the
 #: engine's resolution rule, which scales with the switching time.
@@ -139,6 +140,49 @@ def _chirped_current(case: Case, amplitude_over_j0: float) -> MethodResult:
         switched=ensemble.success_rate >= 0.5,
         reason="a current cost in reduced units; the case reports a switching probability, not a field cost",
         metrics=metrics,
+    )
+
+#: Chain length in wall widths, so the wall sits well inside the chain at the saddle, and the string
+#: method's iteration cap, generous because the stable step shrinks as the exchange stiffens.
+_CHAIN_WIDTHS = 12
+_MEP_ITERATIONS = 200000
+
+
+def _continuum_barrier(case: Case, width_sites: float) -> MethodResult:
+    """R16 on the continuum axis: the lattice wall barrier against 2 sqrt(2 J K)."""
+    import math
+
+    from spinoct.lattice import SpinChain, minimum_energy_path
+
+    reference = _system(case, width_sites, uniaxial=True)
+    exchange_over_k = 2.0 * width_sites**2
+    n_sites = max(24, int(round(_CHAIN_WIDTHS * width_sites)))
+    chain = SpinChain(
+        n_sites=n_sites,
+        mu=reference.mu,
+        anisotropy_j=reference.anisotropy_j,
+        exchange_j=exchange_over_k * reference.anisotropy_j,
+        alpha=reference.alpha,
+    )
+    path = minimum_energy_path(chain, initial="wall", max_iterations=_MEP_ITERATIONS)
+    continuum = 2.0 * math.sqrt(2.0 * exchange_over_k) * reference.anisotropy_j
+    ratio = path.barrier / continuum
+    return MethodResult(
+        method="R16",
+        variant=width_sites,
+        cost=None,
+        switched=bool(path.converged),
+        reason="" if path.converged else "the minimum energy path did not converge",
+        metrics={
+            "barrier_over_continuum": ratio if path.converged else None,
+            "deficit_times_width_squared": (1.0 - ratio) * width_sites**2 if path.converged else None,
+            "barrier_over_k": path.barrier / reference.anisotropy_j,
+            "continuum_over_k": continuum / reference.anisotropy_j,
+            "exchange_over_k": exchange_over_k,
+            "n_sites": float(n_sites),
+            "converged": float(path.converged),
+            "iterations": float(path.iterations),
+        },
     )
 
 def _path_signature(images: np.ndarray) -> dict[str, float]:
@@ -257,6 +301,9 @@ def _compute_method(case: Case, method: str, variant: float, t_tau0: float) -> M
 
     if method == "R04":
         return _chirped_current(case, variant)
+
+    if method == "R16" and case.axis.name == "lattice_spacing":
+        return _continuum_barrier(case, variant)
 
     if method in ("R11", "R12"):
         # The stability factor K/kT is the case's variant; the temperature follows from it, which keeps
