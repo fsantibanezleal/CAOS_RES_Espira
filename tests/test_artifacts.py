@@ -73,12 +73,21 @@ def test_checker_catches_a_ratio_below_the_floor(artifact_copy: Path) -> None:
     assert any("below its floor" in e for e in check(artifact_copy))
 
 
-def test_checker_catches_an_unconverged_patch_barrier(artifact_copy: Path) -> None:
+def test_checker_catches_a_floor_from_an_unconverged_patch_path(artifact_copy: Path) -> None:
     def mutate(d):
-        d["cases"][0]["barrier_converged"] = False
+        case = next(c for c in d["cases"] if c["floor_ratio"] is not None)
+        case["barrier_converged"] = False
 
     _rewrite(artifact_copy / "patch_ocp.json", mutate)
-    assert any("did not converge" in e for e in check(artifact_copy))
+    assert any("reports a floor from an unconverged path" in e for e in check(artifact_copy))
+
+
+def test_checker_catches_a_converged_patch_path_without_its_floor(artifact_copy: Path) -> None:
+    def mutate(d):
+        next(c for c in d["cases"] if c["barrier_converged"])["floor_ratio"] = None
+
+    _rewrite(artifact_copy / "patch_ocp.json", mutate)
+    assert any("converged path but no floor" in e for e in check(artifact_copy))
 
 
 def test_checker_catches_a_patch_map_of_the_wrong_width(artifact_copy: Path) -> None:

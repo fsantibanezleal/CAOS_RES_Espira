@@ -10,7 +10,7 @@ Stronger anisotropy is what a memory cell wants for retention, and it narrows th
 
 ## What a domain expert should see
 
-Declared before the bake: the narrower wall pushes the crossover to larger patches than the weakly anisotropic case. Refuted by the measurement of 2026-09-18: a non-uniform reversal is already cheaper on the smallest patch (0.9412 of the uniform cost at W = 4, where J/K = 10 reverses uniformly), and 0.5653, 0.4933 and 0.5440 at W = 8, 12 and 16. The crossover tracks the wall width, so a narrower wall moves it to smaller patches. At fixed switching time the upper bound rises from W = 12 to W = 16 while the floor keeps falling (0.3150 to 0.2461), so the true optimum is only bracketed there.
+Declared before the bake: the narrower wall pushes the crossover to larger patches than the weakly anisotropic case. Refuted by the measurement of 2026-09-18: a non-uniform reversal is already cheaper on the smallest patch (0.9412 of the uniform cost at W = 4, where J/K = 10 reverses uniformly), and 0.5653, 0.4933, 0.5440, 0.4916 and 0.5930 at W = 8, 12, 16, 24 and 32. The crossover tracks the wall width, so a narrower wall moves it to smaller patches. Above W = 12 the upper bound no longer falls steadily while the floor does (0.3150, 0.2461 and 0.1702 at W = 12, 16 and 24): the searches stop at their iteration cap there, so the true optimum is only bracketed. At W = 32 the minimum energy path did not converge within its cap, so that patch reports no floor rather than a number that would bound nothing.
 
 ## Kill criterion
 

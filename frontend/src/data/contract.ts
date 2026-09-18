@@ -292,9 +292,10 @@ export interface PatchOCPCase {
   n_sites: number;
   n_images: number;
   uniform_bound_t2s: number;
-  barrier_over_nk: number;
+  /** Null with floor_ratio when the minimum energy path did not converge: then it bounds nothing. */
+  barrier_over_nk: number | null;
   barrier_converged: boolean;
-  floor_ratio: number;
+  floor_ratio: number | null;
   best_start: 'uniform' | 'wall' | 'mep';
   best_ratio: number;
   best_nonuniformity: number;

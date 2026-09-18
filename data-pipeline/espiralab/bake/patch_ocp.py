@@ -125,6 +125,7 @@ def _solve_case(case: PatchCase) -> dict:
         "barrier_over_nk": mep.barrier / (patch.n_sites * anisotropy),
         "barrier_converged": bool(mep.converged),
         "floor_ratio": floor / bound,
+        **_withheld_if_unconverged(mep.converged),
         "best_start": best_start,
         "best_ratio": best_cost / bound,
         "best_nonuniformity": best_nonuniformity,
@@ -132,6 +133,15 @@ def _solve_case(case: PatchCase) -> dict:
         "starts": starts,
         "sz_map": {"times_over_t": (rows / rows[-1]).round(4).tolist(), "sz_by_column": sz_map.tolist()},
     }
+
+
+def _withheld_if_unconverged(converged: bool) -> dict:
+    """An unconverged string's top energy is not the saddle, so neither it nor its floor is a bound.
+
+    Both are then withheld (null) rather than reported as numbers a reader would take for bounds; the
+    path still served as a start for the control search, which needs no convergence to be feasible.
+    """
+    return {} if converged else {"barrier_over_nk": None, "floor_ratio": None}
 
 
 def bake_patch_ocp(output: Path, workers: int | None = None, checkpoint_dir: Path | None = None) -> dict:
@@ -156,11 +166,13 @@ def bake_patch_ocp(output: Path, workers: int | None = None, checkpoint_dir: Pat
                 )
                 print(
                     f"  {record['key']:36s} best={record['best_start']:7s} ratio={record['best_ratio']:.4f} "
-                    f"floor={record['floor_ratio']:.4f} nonunif={record['best_nonuniformity']:.3f}",
+                    f"floor={record['floor_ratio'] if record['floor_ratio'] is None else round(record['floor_ratio'], 4)} nonunif={record['best_nonuniformity']:.3f}",
                     flush=True,
                 )
 
     records = [json.loads((checkpoint_dir / f"{c.key}.json").read_text(encoding="utf-8")) for c in GRID]
+    for record in records:  # checkpoints written before the rule carry the unconverged numbers
+        record.update(_withheld_if_unconverged(record["barrier_converged"]))
     if {c.key for c in GRID} != {r["key"] for r in records}:
         raise RuntimeError("declared and shipped patch cases differ")
     artifact = {
@@ -169,7 +181,8 @@ def bake_patch_ocp(output: Path, workers: int | None = None, checkpoint_dir: Pat
             "Free optimal control of a square W x W patch versus uniform rotation, at two anisotropy "
             "regimes. best_ratio is the cost of the cheapest explicit trajectory found over the uniform "
             "bound on the same grid (an upper bound on the true optimum); floor_ratio is the "
-            "minimum-energy-path floor 4 alpha dE/(gamma mu) over the same bound (a rigorous lower bound)."
+            "minimum-energy-path floor 4 alpha dE/(gamma mu) over the same bound (a rigorous lower bound), "
+            "null with the barrier where the path did not converge, because then it bounds nothing."
         ),
         "reference": {"mu_bohr": _MU_BOHR, "anisotropy_mev": _K_MEV},
         "cases": records,

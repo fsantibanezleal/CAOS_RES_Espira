@@ -185,6 +185,8 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
   );
   const startName = (s: string) => (START_NAMES[s] ? START_NAMES[s][es ? 'es' : 'en'] : s);
   const first = data.cases[0];
+  // A path that did not converge gives no bound, so its floor and barrier are withheld, and said so.
+  const unconverged = es ? 'sin converger' : 'path not converged';
   // Regime, then side: the artifact's own order is the order the solves finished in.
   const ordered = useMemo(
     () => [...data.cases].sort((a, b) => b.exchange_over_k - a.exchange_over_k || a.width - b.width),
@@ -224,8 +226,8 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
       </p>
       <p className="muted">
         {es
-          ? 'Cada razon es el costo de una trayectoria factible explicita sobre el costo uniforme en la misma malla, una cota superior del optimo verdadero; el piso 4 alpha dE / (gamma mu) es una cota inferior rigurosa. A tiempo de conmutacion fijo la cota superior no siempre decrece con el tamano, por lo que el optimo verdadero queda en el intervalo entre ambas.'
-          : 'Each ratio is the cost of an explicit feasible trajectory over the uniform cost on the same grid, an upper bound on the true optimum; the floor 4 alpha dE / (gamma mu) is a rigorous lower bound. At fixed switching time the upper bound does not always fall with size, so the true optimum is only located within the interval between the two.'}
+          ? 'Cada razon es el costo de una trayectoria factible explicita sobre el costo uniforme en la misma malla, una cota superior del optimo verdadero; el piso 4 alpha dE / (gamma mu) es una cota inferior rigurosa. A tiempo de conmutacion fijo la cota superior no siempre decrece con el tamano: en los parches mayores las busquedas se detienen en su tope de iteraciones, asi que ese aumento es un limite de la busqueda, no de la fisica, y el optimo verdadero solo queda acotado entre ambas.'
+          : 'Each ratio is the cost of an explicit feasible trajectory over the uniform cost on the same grid, an upper bound on the true optimum; the floor 4 alpha dE / (gamma mu) is a rigorous lower bound. At fixed switching time the upper bound does not always fall with size: on the largest patches the searches stop at their iteration cap, so that rise is a limit of the search, not of the physics, and the true optimum is only bracketed between the two.'}
       </p>
       <Chips label={es ? 'Regimen' : 'Regime'} values={regimes} active={jk} onPick={setJK} format={(v) => `J/K = ${v}`} />
       <Chips label={es ? 'Lado' : 'Side'} values={widths} active={w} onPick={setSide} format={(v) => `W = ${v}`} />
@@ -241,11 +243,11 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
           </div>
           <div>
             <dt>{es ? 'Piso MEP / uniforme' : 'MEP floor / uniform'}</dt>
-            <dd>{item.floor_ratio.toFixed(4)}</dd>
+            <dd data-testid="patch-floor">{item.floor_ratio == null ? unconverged : item.floor_ratio.toFixed(4)}</dd>
           </div>
           <div>
             <dt>{es ? 'Barrera / (N K)' : 'Barrier / (N K)'}</dt>
-            <dd>{item.barrier_over_nk.toFixed(4)}</dd>
+            <dd>{item.barrier_over_nk == null ? unconverged : item.barrier_over_nk.toFixed(4)}</dd>
           </div>
           <div>
             <dt>{es ? 'Lado / ancho de pared' : 'Side / wall width'}</dt>
@@ -300,7 +302,7 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
                 <td>{c.width}</td>
                 <td>{(c.width / c.wall_width_sites).toFixed(1)}</td>
                 <td>{c.best_ratio.toFixed(4)}</td>
-                <td>{c.floor_ratio.toFixed(3)}</td>
+                <td>{c.floor_ratio == null ? (es ? 'sin converger' : 'not converged') : c.floor_ratio.toFixed(3)}</td>
                 <td>{c.starts.uniform.ratio.toFixed(4)}</td>
                 <td>{c.starts.wall.ratio.toFixed(4)}</td>
                 <td>{c.starts.mep.ratio.toFixed(4)}</td>

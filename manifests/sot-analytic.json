@@ -26,7 +26,7 @@
   },
   "lane": {
     "lane": "live",
-    "runtime_ms": 0.029,
+    "runtime_ms": 0.017,
     "artifact_bytes": 274087,
     "methods": [
       "R06"

@@ -118,6 +118,19 @@ for (const theme of ['light', 'dark']) {
     check((await map.getAttribute('data-sites')) === '16', `${tag}: map follows the side`);
     await page.screenshot({ path: `${out}/patch-${tag}-narrow.png` });
 
+    // A patch whose path did not converge must say so where the floor would be, never print a number.
+    const withheld = await page.evaluate(async () => {
+      const d = await (await fetch('/artifacts/patch_ocp.json')).json();
+      const c = d.cases.find((x) => x.floor_ratio === null);
+      return c ? { jk: c.exchange_over_k, w: c.width } : null;
+    });
+    if (withheld) {
+      await page.getByRole('button', { name: `J/K = ${withheld.jk}`, exact: true }).click();
+      await page.getByRole('button', { name: `W = ${withheld.w}`, exact: true }).click();
+      const floorText = (await page.getByTestId('patch-floor').innerText()).trim();
+      check(/converg/.test(floorText) && !/\d/.test(floorText), `${tag}: withheld floor reads "${floorText}"`);
+    }
+
     check(errors.length === 0, `${tag}: console errors ${JSON.stringify(errors.slice(0, 3))}`);
     await ctx.close();
   }
