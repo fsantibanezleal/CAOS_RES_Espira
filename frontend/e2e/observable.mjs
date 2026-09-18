@@ -108,6 +108,29 @@ for (const theme of ['light', 'dark']) {
         asNumber <= Math.max(...variants) + 1e-9,
       `${theme} ${slug}: the x readout is a ${artifact.axis.label.toLowerCase()} in range, not a date ("${legendX}")`,
     );
+    // No text block may be drawn over another. A chart that sized itself from a box it shared with a
+    // note drew its legend over the note, and no layout check saw it, because both stayed inside the
+    // instrument and above the footer.
+    for (const tab of ['Pulse', 'Trajectory']) {
+      await page.getByRole('tab', { name: tab }).click();
+      await page.waitForTimeout(350);
+      const collisions = await page.evaluate(() => {
+        const panel = document.querySelector('.subtabpanel:not([hidden])');
+        const blocks = [...(panel?.querySelectorAll('.u-legend, .wb-pulse-note, .sphere-scrub, .sphere-note') ?? [])]
+          .map((el) => ({ name: el.className.split(' ')[0], r: el.getBoundingClientRect() }))
+          .filter((b) => b.r.width > 0 && b.r.height > 0);
+        const hits = [];
+        for (let i = 0; i < blocks.length; i++)
+          for (let j = i + 1; j < blocks.length; j++) {
+            const a = blocks[i].r, b = blocks[j].r;
+            const overlap = Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 &&
+              Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+            if (overlap) hits.push(`${blocks[i].name} / ${blocks[j].name}`);
+          }
+        return hits;
+      });
+      check(collisions.length === 0, `${theme} ${slug} ${tab}: no text drawn over text ${JSON.stringify(collisions)}`);
+    }
     await page.getByRole('tab', { name: 'Trajectory' }).click();
     await page.waitForTimeout(150);
 

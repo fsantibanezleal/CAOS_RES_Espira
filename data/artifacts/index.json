@@ -142,6 +142,16 @@
       "axis": "Switching time"
     },
     {
+      "slug": "continuum-cross-check",
+      "code": "C22",
+      "title": "Continuum cross-check: the lattice wall barrier against the closed form",
+      "category": "D. Beyond the macrospin",
+      "material": null,
+      "material_name": "Synthetic reference macrospin",
+      "includes_biaxial": false,
+      "axis": "Sites per wall width"
+    },
+    {
       "slug": "crab-bandwidth",
       "code": "C23",
       "title": "Band-limited control, the price of realizability",
@@ -203,6 +213,9 @@
       "crcl3-crbr3-contrast",
       "feps3-negative-control"
     ],
+    "D. Beyond the macrospin": [
+      "continuum-cross-check"
+    ],
     "E. Constrained and hybrid control": [
       "crab-bandwidth",
       "grape-amplitude-slew",
@@ -213,8 +226,8 @@
     ]
   },
   "coverage": {
-    "baked": 20,
-    "planned": 4,
+    "baked": 21,
+    "planned": 3,
     "blocked": 2
   },
   "registry": [
@@ -572,13 +585,13 @@
     {
       "slug": "continuum-cross-check",
       "code": "C22",
-      "title": "Continuum cross-check against a micromagnetic solver",
+      "title": "Continuum cross-check: the lattice wall barrier against the closed form",
       "category": "D. Beyond the macrospin",
-      "status": "planned",
+      "status": "baked",
       "surface": "workbench",
       "blocked_reason": "",
       "split": "control",
-      "ground_truth": "provisional",
+      "ground_truth": "analytic",
       "variants": 6,
       "axis": "Sites per wall width",
       "methods": [

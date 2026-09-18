@@ -55,8 +55,9 @@ export interface CostRow {
   cost?: number | null;
   cost_low_damping?: number;
   cost_high_damping?: number;
-  cost_free: number;
-  cost_floor: number;
+  /** Absent on a case that is not a single-moment reversal (a chain barrier). */
+  cost_free?: number;
+  cost_floor?: number;
   cost_over_floor?: number | null;
   cost_over_free?: number;
   mean_amplitude?: number;
@@ -115,6 +116,13 @@ export interface ReferencePulse {
   signal_unit?: string;
   /** The factor from the stored values to the displayed unit; absent means tesla shown in mT. */
   signal_scale?: number;
+  /** Names of the amplitude and first component series, when they are not |b| and b_x; a case with
+   * only these two series (an energy and its continuum reference) sets them. */
+  signal_series?: string[];
+  /** The x axis when it is not time in seconds shown in ps (a path coordinate, for a barrier). */
+  x_label?: string;
+  x_unit?: string;
+  x_scale?: number;
 }
 
 export interface StaticBaseline {

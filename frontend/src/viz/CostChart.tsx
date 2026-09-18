@@ -105,8 +105,8 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
         rows.map((r) => r.cost_high_damping ?? null),
         rows.map((r) => r.cost_low_damping ?? null),
         rows.map((r) => r.cost ?? null),
-        rows.map((r) => r.cost_free),
-        rows.map((r) => r.cost_floor),
+        rows.map((r) => r.cost_free ?? null),
+        rows.map((r) => r.cost_floor ?? null),
       );
     } else {
       yLabel = `${observable.label}  (${observable.unit})`;

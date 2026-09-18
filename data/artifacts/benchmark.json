@@ -2,7 +2,7 @@
   "schema": "espira.benchmark/1",
   "engine": {
     "name": "spinoct",
-    "version": "0.14.000"
+    "version": "0.15.000"
   },
   "cases": [
     {
@@ -340,6 +340,22 @@
       "complete": true
     },
     {
+      "case": "continuum-cross-check",
+      "methods": [
+        {
+          "method": "R16",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": null,
+          "worst_ratio_to_oracle": null,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
       "case": "crab-bandwidth",
       "methods": [
         {
@@ -613,6 +629,19 @@
       "completeness": {
         "expected": 12,
         "produced": 12,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "continuum-cross-check",
+      "code": "C22",
+      "manifest": "continuum-cross-check.json",
+      "sha256": "654773f13e861a494a6929adfe1b83447e473a45cd552fc64a292078b62bb8e4",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
         "not_applicable": 0,
         "missing": 0
       }

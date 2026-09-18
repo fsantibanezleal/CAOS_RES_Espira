@@ -27,14 +27,28 @@ function chartHeight(element: HTMLElement): number {
   return Math.max(_MIN_HEIGHT, (element.parentElement?.clientHeight ?? 0) - _CHROME);
 }
 
+/** A readable, locale-free number: null-safe, plain in [0.01, 1000), exponential otherwise. */
+function plain(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '';
+  if (value === 0) return '0';
+  const magnitude = Math.abs(value);
+  return magnitude >= 0.01 && magnitude < 1000
+    ? Number(value.toPrecision(3)).toString()
+    : value.toExponential(1).replace('e+', 'e');
+}
+
 export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot | null>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-    // Time in picoseconds for a readable axis.
-    const t = pulse.time_s.map((s) => s * 1e12);
+    // Time in picoseconds for a readable axis, unless the case declares another x axis (a barrier is
+    // drawn against its path coordinate, not time).
+    const xScale = pulse.x_scale ?? 1e12;
+    const xLabel = pulse.x_label ?? 'time';
+    const xUnit = pulse.x_unit ?? 'ps';
+    const t = pulse.time_s.map((s) => s * xScale);
     // A field is stored in tesla and shown in mT; a case whose signal is a current declares its own
     // label, unit and scale, and is never labelled a field.
     const scale = pulse.signal_scale ?? 1e3;
@@ -55,19 +69,36 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
       // The x axis is an elapsed time in picoseconds, not a timestamp: uPlot's default time formatting
       // would label a 33 ps pulse with dates in 1969.
       scales: { x: { time: false } },
+      // Explicit, locale-free number formatting: the default printed 0.05 as "0,05" in a
+      // comma-decimal locale.
       axes: [
-        { label: 'time  (ps)', stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
-        { label: `${signalLabel}  (${signalUnit})`, stroke, grid: { stroke: grid }, ticks: { stroke: grid } },
+        {
+          label: `${xLabel}  (${xUnit})`,
+          stroke,
+          grid: { stroke: grid },
+          ticks: { stroke: grid },
+          values: (_u, splits) => splits.map((v) => plain(v)),
+        },
+        {
+          label: `${signalLabel}  (${signalUnit})`,
+          stroke,
+          grid: { stroke: grid },
+          ticks: { stroke: grid },
+          values: (_u, splits) => splits.map((v) => plain(v)),
+        },
       ],
       series: [
-        { label: 't (ps)' },
-        { label: `|${symbol}|`, stroke: accent, width: 2.5 },
-        { label: `${symbol}_x`, stroke: '#f59e0b', width: 1.3 },
-        { label: `${symbol}_y`, stroke: '#10b981', width: 1.3 },
+        { label: `${xLabel} (${xUnit})`, value: (_u, v) => plain(v) },
+        { label: pulse.signal_series?.[0] ?? `|${symbol}|`, stroke: accent, width: 2.5, value: (_u, v) => plain(v) },
+        { label: pulse.signal_series?.[1] ?? `${symbol}_x`, stroke: '#f59e0b', width: 1.3, value: (_u, v) => plain(v) },
+        ...(pulse.signal_series && pulse.signal_series.length < 3
+          ? []
+          : [{ label: `${symbol}_y`, stroke: '#10b981', width: 1.3, value: (_u: uPlot, v: number | null) => plain(v) }]),
       ],
       legend: { show: true },
     };
-    const data: uPlot.AlignedData = [t, amp, bx, by];
+    const data: uPlot.AlignedData =
+      pulse.signal_series && pulse.signal_series.length < 3 ? [t, amp, bx] : [t, amp, bx, by];
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data, ref.current);
 
