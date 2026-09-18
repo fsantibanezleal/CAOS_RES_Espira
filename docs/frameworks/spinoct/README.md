@@ -14,7 +14,7 @@ positive controls before it is trusted.
 ## Install and pin
 
 ```bash
-pip install spinoct==0.15.0     # pinned in data-pipeline/requirements.txt
+pip install spinoct==0.16.0     # pinned in data-pipeline/requirements.txt
 ```
 
 Pure numpy and scipy. The unit-constant gate in the engine repository asserts the unit of every literal

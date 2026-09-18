@@ -33,6 +33,14 @@ time; rerunning resumes from the checkpoints. When all cases exist, the script c
 case shipped and writes `data/artifacts/lattice_ocp.json`. To regenerate the manuscript tables from it:
 `python manuscripts/beyond-macrospin/make_tables.py`.
 
+The two-dimensional patch sweep (cases C20 and C21) works the same way:
+
+```bash
+.venv-pipeline/bin/python data-pipeline/run_patch_ocp.py data/artifacts 12   # one worker per patch
+```
+
+Its twelve square patches (sides 4 to 32 at J/K = 10 and 2.5) are checkpointed as they finish; the 32 x 32 patches take the longest, because every cost gradient costs 60 evaluations whatever the size and each evaluation grows with the number of sites. It writes `data/artifacts/patch_ocp.json`.
+
 ## 4. Check
 
 ```bash

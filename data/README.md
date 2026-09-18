@@ -4,7 +4,7 @@
 
 | Path | What | Git |
 |---|---|---|
-| `artifacts/` | The canonical, committed results the web app replays: `index.json`, one `<case>.json` per case, `novel.json` (the reliability front and the two-mode lattice comparison), `lattice_ocp.json` (the free chain crossover map) | committed |
+| `artifacts/` | The canonical, committed results the web app replays: `index.json`, one `<case>.json` per case, `novel.json` (the reliability front and the two-mode lattice comparison), `lattice_ocp.json` (the free chain crossover map), `patch_ocp.json` (the two-dimensional patch sweep, cases C20 and C21) | committed |
 | `raw/` | Private or large inputs, never committed | git-ignored |
 | `materials/materials.csv` | One row per material: name, family, spin, easy axis, notes | committed |
 | `materials/parameters.csv` | One row per parameter value: published unit and basis, conversion inputs, provenance class, method, DOI(s), note. The only path into the engine | committed |

@@ -68,6 +68,7 @@ jobs:
           [ "$ready" = 1 ] || { echo "the preview server did not answer on :4173"; exit 1; }
           node e2e/workbench-provenance.mjs http://localhost:4173 e2e-shots
           node e2e/free-chain.mjs http://localhost:4173 e2e-shots
+          node e2e/patch.mjs http://localhost:4173 e2e-shots
           node e2e/coverage.mjs http://localhost:4173 e2e-shots
           node e2e/benchmark.mjs http://localhost:4173 e2e-shots
           node e2e/app-layout.mjs http://localhost:4173 e2e-shots

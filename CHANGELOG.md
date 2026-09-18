@@ -4,6 +4,36 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.10.000] - 2026-09-18
+
+### Added
+- **C20 and C21, the chain's crossover on two-dimensional patches**, baked (23 of 26). The free optimal
+  control search runs on square W x W patches (sides 4 to 32) at J/K = 10 and 2.5, on spinoct 0.16's
+  `SpinPatch`, from three starts with the minimum-energy-path floor, in a separate checkpointed bake
+  (`run_patch_ocp.py`, `data/artifacts/patch_ocp.json`). At J/K = 10 the smallest patch reverses
+  uniformly and a non-uniform reversal is cheaper from W = 8; at J/K = 2.5, with a wall half as wide, it
+  is already cheaper at W = 4.
+- **C21's declared expectation is refuted.** It expected the narrower wall to push the crossover to larger
+  patches; the measurement moves it to smaller ones, and the case records both.
+- Experiments gains a Two-dimensional patch tab: a readout, the crossover chart per regime with the floor
+  and the uniform line, the column-averaged reversal map and the table of all twelve patches. A new
+  browser gate (`e2e/patch.mjs`) checks the crossover sentence against the artifact, the chart width
+  when built in a hidden tab, locale-free ticks, the table order, reactivity, and that a withheld floor
+  says so.
+
+### Changed
+- The engine pin moves to spinoct 0.16.0 (the lattice interface that makes the string method and the
+  control solver run on a patch as on a chain).
+- The chain crossover chart's y axis no longer follows the browser locale ("0,8" beside "0.8353").
+
+### Notes
+- On the largest patches the control searches stop at their iteration cap, so each ratio stays an upper
+  bound but above W = 12 it no longer falls steadily with size (it rises between some sides); the true
+  optimum is bracketed between it and the floor, not located.
+- For J/K = 2.5 at W = 32 the minimum energy path did not converge within 200,000 iterations (23 minutes).
+  An unconverged string's top energy is not the saddle, so that patch reports no floor and no barrier,
+  and the artifact checker now rejects a floor from an unconverged path.
+
 ## [0.09.000] - 2026-09-18
 
 ### Added

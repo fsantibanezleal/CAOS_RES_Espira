@@ -16,7 +16,7 @@ request time.
 3. deploys to Pages.
 
 The deploy never runs the bake. Science changes land as committed artifacts first
-(`data-pipeline/run.py`, `data-pipeline/run_lattice_ocp.py`), then deploy replays them (ADR-0069
+(`data-pipeline/run.py`, `data-pipeline/run_lattice_ocp.py`, `data-pipeline/run_patch_ocp.py`), then deploy replays them (ADR-0069
 section 6).
 
 ## One-time settings
