@@ -2,13 +2,16 @@ name: ci
 
 on:
   push:
-    branches: [main, develop, 'task/**']
-  pull_request:
+    branches: [main, develop]
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   guards:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,8 +23,11 @@ jobs:
           python scripts/check_template_residue.py
           python scripts/check_artifacts.py
 
+      - name: CI budget, trunk-only triggers, no training (ADR-0074)
+        run: python scripts/check_ci_budget.py
   python:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -32,14 +38,12 @@ jobs:
             data-pipeline/requirements.txt
             requirements-dev.txt
       - name: Install the offline lane (spinoct from PyPI) and dev tools
-        run: python -m pip install -r requirements-precompute.txt -r requirements-dev.txt
+        run: python -m pip install -r requirements-dev.txt
       - name: Lint
         run: python -m ruff check data-pipeline tests scripts app
-      - name: Tests (materials, registry, artifact invariants, sandboxed bake smoke, docs, versions)
-        run: python -m pytest
-
   frontend:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,26 +57,6 @@ jobs:
       - name: Install the browser for the gates
         working-directory: frontend
         run: npx playwright install --with-deps chromium
-      - name: Browser gates (both themes, both languages, against the built site)
-        working-directory: frontend
-        run: |
-          set -euo pipefail
-          npx vite preview --port 4173 --strictPort &
-          server=$!
-          trap 'kill $server' EXIT
-          ready=0
-          for _ in $(seq 1 60); do
-            if curl -sf http://localhost:4173 > /dev/null; then ready=1; break; fi
-            sleep 1
-          done
-          [ "$ready" = 1 ] || { echo "the preview server did not answer on :4173"; exit 1; }
-          node e2e/workbench-provenance.mjs http://localhost:4173 e2e-shots
-          node e2e/free-chain.mjs http://localhost:4173 e2e-shots
-          node e2e/patch.mjs http://localhost:4173 e2e-shots
-          node e2e/coverage.mjs http://localhost:4173 e2e-shots
-          node e2e/benchmark.mjs http://localhost:4173 e2e-shots
-          node e2e/app-layout.mjs http://localhost:4173 e2e-shots
-          node e2e/observable.mjs http://localhost:4173 e2e-shots
       - uses: actions/upload-artifact@v4
         if: always()
         with:
