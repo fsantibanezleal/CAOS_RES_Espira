@@ -15,6 +15,11 @@ The free chain crossover map and the two-dimensional patch sweep have their own 
 `python data-pipeline/run_lattice_ocp.py [output] [workers]` and `run_patch_ocp.py`, because they take hours;
 set `ESPIRA_CHECKPOINT_DIR` to a large disk first.
 
+`crosscheck_spirit.py` compares the engine's minimum-energy-path barrier with Spirit's geodesic
+nudged elastic band on the same chain. Spirit is not a dependency: install it in a separate
+environment, run the script by hand, and commit the result it writes to
+`data/artifacts/external_crosscheck.json`. CI never installs it.
+
 ## Guards (run in CI, runnable locally)
 
 | Script | What it enforces |
