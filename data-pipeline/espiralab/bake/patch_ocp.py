@@ -68,7 +68,13 @@ _MAP_DECIMALS = 3
 
 def _solve_case(case: PatchCase) -> dict:
     """Solve one patch from all three starts; return the record (runs in a worker process)."""
-    from spinoct.lattice import LatticeOCPSolver, SpinPatch, cost_floor_from_barrier, minimum_energy_path
+    from spinoct.lattice import (
+        LatticeOCPSolver,
+        SpinPatch,
+        cost_floor_from_barrier,
+        minimum_energy_path,
+    )
+    from spinoct.lattice import recommended_images as mep_resolution
     from spinoct.units import bohr_magnetons_to_j_per_t, mev_to_joules
 
     mu = bohr_magnetons_to_j_per_t(_MU_BOHR)
@@ -85,7 +91,12 @@ def _solve_case(case: PatchCase) -> dict:
     n_images = LatticeOCPSolver.recommended_images(patch, switching_time)
     solver = LatticeOCPSolver(patch, n_images, switching_time)
     bound = solver.uniform_bound()
-    mep = minimum_energy_path(patch, initial="wall", max_iterations=200000)
+    # The path has to resolve the wall as it travels, or the climbing image hops between lattice
+    # positions and never settles: at the fixed 33 images the 32 x 32 patch at J/K = 2.5 did not
+    # converge in 200,000 iterations, while its recommended 87 converge in about a thousand. Only the
+    # floor is read from this path; the control search computes its own start, so no cost moves.
+    mep_images = mep_resolution(patch)
+    mep = minimum_energy_path(patch, n_images=mep_images, initial="wall", max_iterations=200000)
     floor = cost_floor_from_barrier(mep.barrier, mu, case.alpha, patch.gamma)
 
     starts = {}
@@ -124,6 +135,7 @@ def _solve_case(case: PatchCase) -> dict:
         "uniform_bound_t2s": bound,
         "barrier_over_nk": mep.barrier / (patch.n_sites * anisotropy),
         "barrier_converged": bool(mep.converged),
+        "mep_images": int(mep_images),
         "floor_ratio": floor / bound,
         **_withheld_if_unconverged(mep.converged),
         "best_start": best_start,
@@ -142,6 +154,60 @@ def _withheld_if_unconverged(converged: bool) -> dict:
     path still served as a start for the control search, which needs no convergence to be feasible.
     """
     return {} if converged else {"barrier_over_nk": None, "floor_ratio": None}
+
+
+def refresh_floors(checkpoint_dir: Path) -> list[dict]:
+    """Recompute every checkpoint's barrier and floor at the resolved path, leaving the costs alone.
+
+    The minimum energy path enters a record in one place, the floor; the control search computes its own
+    start inside the solver and never sees this path. So a change in the path's resolution moves the
+    floor and nothing else, and the hours of control solves already checkpointed do not have to be run
+    again to pick it up. Every other field is written back unchanged, so the checkpoint stays what a
+    fresh solve of the same case would produce.
+    """
+    from spinoct.lattice import SpinPatch, cost_floor_from_barrier, minimum_energy_path
+    from spinoct.lattice import recommended_images as mep_resolution
+    from spinoct.units import bohr_magnetons_to_j_per_t, mev_to_joules
+
+    mu = bohr_magnetons_to_j_per_t(_MU_BOHR)
+    anisotropy = mev_to_joules(_K_MEV)
+    updated = []
+    for case in GRID:
+        path = checkpoint_dir / f"{case.key}.json"
+        if not path.exists():
+            continue
+        record = json.loads(path.read_text(encoding="utf-8"))
+        patch = SpinPatch(
+            width=case.width,
+            height=case.width,
+            mu=mu,
+            anisotropy_j=anisotropy,
+            exchange_j=case.exchange_over_k * anisotropy,
+            alpha=case.alpha,
+        )
+        images = mep_resolution(patch)
+        if record.get("mep_images") == images:
+            continue
+        mep = minimum_energy_path(patch, n_images=images, initial="wall", max_iterations=200000)
+        bound = record["uniform_bound_t2s"]
+        floor = cost_floor_from_barrier(mep.barrier, mu, case.alpha, patch.gamma)
+        record.update(
+            {
+                "barrier_over_nk": mep.barrier / (patch.n_sites * anisotropy),
+                "barrier_converged": bool(mep.converged),
+                "mep_images": int(images),
+                "floor_ratio": floor / bound,
+                **_withheld_if_unconverged(mep.converged),
+            }
+        )
+        path.write_text(json.dumps(record, allow_nan=False), encoding="utf-8", newline="\n")
+        updated.append(record)
+        print(
+            f"  {case.key:36s} images={images:3d} converged={mep.converged} "
+            f"floor={record['floor_ratio'] if record['floor_ratio'] is None else round(record['floor_ratio'], 4)}",
+            flush=True,
+        )
+    return updated
 
 
 def bake_patch_ocp(output: Path, workers: int | None = None, checkpoint_dir: Path | None = None) -> dict:

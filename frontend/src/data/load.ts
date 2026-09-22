@@ -57,3 +57,21 @@ export async function loadPatchOCP(): Promise<import('./contract').PatchOCPArtif
   if (!response.ok) throw new Error(`patch_ocp.json ${response.status}`);
   return response.json();
 }
+
+export async function loadLiveParity(): Promise<import('./contract').LiveParityFixture> {
+  const response = await fetch(bust(`${base}artifacts/live_parity.json`));
+  if (!response.ok) throw new Error(`live_parity.json ${response.status}`);
+  return response.json();
+}
+
+export async function loadPareto(): Promise<import('./contract').ParetoArtifact> {
+  const response = await fetch(bust(`${base}artifacts/pareto.json`));
+  if (!response.ok) throw new Error(`pareto.json ${response.status}`);
+  return response.json();
+}
+
+export async function loadHardAxisMap(): Promise<import('./contract').HardAxisMapArtifact> {
+  const response = await fetch(bust(`${base}artifacts/hard_axis_map.json`));
+  if (!response.ok) throw new Error(`hard_axis_map.json ${response.status}`);
+  return response.json();
+}

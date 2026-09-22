@@ -57,6 +57,24 @@ jobs:
       - name: Install the browser for the gates
         working-directory: frontend
         run: npx playwright install --with-deps chromium
+      # ADR-0074 rule 6: the one expensive verification, run here and not again in the deploy. The gates
+      # read the built site, which is what production serves; they never recompute a result.
+      - name: Browser gates against the built site
+        working-directory: frontend
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          server=$!
+          trap 'kill $server' EXIT
+          ready=0
+          for _ in $(seq 1 60); do
+            if curl -sf http://localhost:4173 > /dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          [ "$ready" = 1 ] || { echo "the preview server did not answer on :4173"; exit 1; }
+          for gate in e2e/*.mjs; do
+            echo "== $gate"
+            node "$gate" http://localhost:4173 e2e-shots
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
