@@ -312,6 +312,122 @@ export interface PatchOCPArtifact {
   cases: PatchOCPCase[];
 }
 
+// ---- the live-lane parity fixture (data/artifacts/live_parity.json) ----
+
+export interface ParityEllipticRow {
+  /** The modulus in the PARAMETER convention, m = k^2. */
+  m: number;
+  k: number;
+}
+
+export interface ParityProtocolRow {
+  switching_time_tau0: number;
+  switching_time_s: number;
+  mean_current_reduced: number;
+  cost_fast_reduced: number;
+  characteristic_time_s: number;
+}
+
+export interface LiveParityFixture {
+  schema: string;
+  case: string;
+  code: string;
+  description: string;
+  inputs: { alpha: number; gamma: number; anisotropy_j: number; mu: number; tau0_s: number; xi: number; beta: number };
+  /** The relative agreement demanded of each group, from the offline lane. */
+  tolerances: { elliptic_k: number; protocol: number };
+  elliptic_k: ParityEllipticRow[];
+  protocol: ParityProtocolRow[];
+}
+
+// ---- the device trade-off front (data/artifacts/pareto.json), rung R14 ----
+
+export interface ParetoPoint {
+  switching_time_tau0: number;
+  switching_time_s: number;
+  cost: number;
+  peak_field_t: number;
+  bandwidth_hz: number;
+  /** True when another protocol beats this one on every objective, the switching time included. With
+   * every point at a different time that can never happen, which is why the question is also asked
+   * with the deadline set aside. */
+  dominated: boolean;
+  /** True when another protocol costs no more, needs no higher a peak field and no wider a band. */
+  dominated_without_time: boolean;
+}
+
+export interface ParetoExponent {
+  /** The fitted log-log slope against the switching time. */
+  slope: number;
+  /** The largest residual of that fit, in log units: a large one means it is not a power law. */
+  max_log_residual: number;
+}
+
+export interface ParetoMaterial {
+  material: string;
+  name: string;
+  damping: number;
+  damping_provenance: string;
+  tau0_s: number;
+  points: ParetoPoint[];
+  front_size: number;
+  /** How many protocols survive once the deadline is fixed and only the supply objectives are ranked. */
+  supply_front_size: number;
+  /** Pairs where the slower protocol needs the wider band, and the worst of them. */
+  bandwidth_inversions: {
+    count: number;
+    worst: { faster_tau0: number; slower_tau0: number; faster_hz: number; slower_hz: number; ratio: number } | null;
+  };
+  exponents: Record<'cost' | 'peak_field_t' | 'bandwidth_hz', ParetoExponent>;
+}
+
+export interface ParetoArtifact {
+  schema: string;
+  description: string;
+  objectives: { key: string; label: string; unit: string }[];
+  materials: ParetoMaterial[];
+}
+
+// ---- where a hard axis pays (data/artifacts/hard_axis_map.json), backlog BL-035 ----
+
+export interface HardAxisPoint {
+  key: string;
+  ratio: number;
+  damping: number;
+  switching_tau0: number;
+  uniaxial_cost: number;
+  biaxial_cost: number;
+  /** Uniaxial closed form over the numerical biaxial cost: above one the hard axis paid for itself. */
+  reduction: number | null;
+  /** The same, divided by the control at this damping and switching time. */
+  reduction_vs_control: number | null;
+  /** The control itself: the solver reproducing the closed form it already knows, at ratio zero. */
+  control: number | null;
+  converged: boolean;
+  /** The uniaxial optimum is its own infinite-time floor here, so the comparison stops existing. */
+  at_floor: boolean;
+  /** The control holds and the solve converged, so the cell is evidence of something. */
+  reliable: boolean;
+  helped: boolean;
+}
+
+export interface HardAxisMapArtifact {
+  schema: string;
+  description: string;
+  axes: { ratio: number[]; damping: number[]; switching_tau0: number[] };
+  summary: {
+    points: number;
+    reliable: number;
+    helped: number;
+    unconverged: number;
+    at_floor: number;
+    control_tolerance: number;
+    worst_control: number;
+    best: { key: string; ratio: number; damping: number; switching_tau0: number; reduction: number; reduction_vs_control: number };
+  };
+  points: HardAxisPoint[];
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {

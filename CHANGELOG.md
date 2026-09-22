@@ -4,6 +4,40 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.11.000] - 2026-09-22
+
+### Added
+- **Where the hard axis pays**, the whole region rather than one line (backlog BL-035, finding F-011).
+  196 numerical solves over hard-axis ratio, damping and switching time, drawn as a heatmap. Each cell
+  is divided by its own control, the same solver reproducing the uniaxial system whose closed form is
+  already known, and a cell where that control drifts by more than 5 per cent or the solve does not
+  converge is crossed out and counted apart: 51 of 196. Of the 145 that remain, the hard axis pays in
+  80, all at short switching times, the best 4.32 times at ratio 4, alpha 0.001 and T = 2 tau0.
+- **The device trade-off front (R14)**, baked per material and surfaced (BL-025). The cost and the peak
+  field fall like 1/T, but the 99 per cent spectral width does not: 11 pairs have the slower protocol
+  demanding the wider band, the worst widening it 1.54 times between 3.10 and 4.02 tau0. The widths hold
+  to four digits from 2,048 to 131,072 samples, so that is the pulse family and not the transform.
+- **The live lane's parity fixture** (BL-008): K(m) from SciPy over a grid reaching m = 0.999, and the
+  closed-form protocol from spinoct over the case's sweep. The Implementation page recomputes both in
+  the browser and shows the worst deviation, measured at 2.4e-16 and 1.3e-16.
+- Three browser gates, `parity`, `pareto` and `hard-axis`, taking the suite to ten.
+
+### Fixed
+- **No browser gate ran anywhere.** The 2026-09-21 CI sweep removed the gate steps but left the
+  Playwright install and the screenshot upload, so CI installed a browser, ran nothing and uploaded an
+  empty folder. The gates run again, once, in CI, which is what ADR-0074 rule 6 allows.
+- The chain crossover chart printed its y axis in the browser's locale ("0,8" beside a legend's
+  "0.8353").
+
+### Changed
+- The engine pin moves to spinoct 0.17.0, whose `recommended_images` resolves a minimum energy path to
+  the wall it follows.
+- **C21 at W = 32 has its floor.** The path there was not unconverged for want of iterations: at 33
+  images, with a wall 1.12 sites wide travelling 32 sites, neighbouring images sat further apart than
+  the wall itself, so the climbing image hopped between lattice positions. At the resolved 87 images it
+  converges in about a thousand iterations and 30 seconds. The floor enters a patch record in one place,
+  and the control search computes its own start, so the recorded costs are untouched.
+
 ## [0.10.000] - 2026-09-18
 
 ### Added
