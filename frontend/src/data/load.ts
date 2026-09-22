@@ -69,3 +69,9 @@ export async function loadPareto(): Promise<import('./contract').ParetoArtifact>
   if (!response.ok) throw new Error(`pareto.json ${response.status}`);
   return response.json();
 }
+
+export async function loadHardAxisMap(): Promise<import('./contract').HardAxisMapArtifact> {
+  const response = await fetch(bust(`${base}artifacts/hard_axis_map.json`));
+  if (!response.ok) throw new Error(`hard_axis_map.json ${response.status}`);
+  return response.json();
+}
