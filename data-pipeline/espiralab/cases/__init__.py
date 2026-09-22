@@ -552,10 +552,12 @@ CASES: dict[str, Case] = {
         "reversal is already cheaper on the smallest patch (0.9412 of the uniform cost at W = 4, where "
         "J/K = 10 reverses uniformly), and 0.5653, 0.4933, 0.5440, 0.4916 and 0.5930 at W = 8, 12, 16, 24 "
         "and 32. The crossover tracks the wall width, so a narrower wall moves it to smaller patches. "
-        "Above W = 12 the upper bound no longer falls steadily while the floor does (0.3150, 0.2461 and 0.1702 at "
-        "W = 12, 16 and 24): the searches stop at their iteration cap there, so the true optimum is only "
-        "bracketed. At W = 32 the minimum energy path did not converge within its cap, so that patch "
-        "reports no floor rather than a number that would bound nothing.",
+        "Above W = 12 the upper bound no longer falls steadily while the floor does (0.3148, 0.2461, 0.1707 "
+        "and 0.1304 at W = 12, 16, 24 and 32): the searches stop at their iteration cap there, so the true "
+        "optimum is only bracketed. The floor at W = 32 was withheld in 0.10.000 because the minimum "
+        "energy path had not converged; at 33 images, with a wall 1.12 sites wide travelling 32 sites, "
+        "neighbouring images sat further apart than the wall itself. Resolved to its wall (87 images, "
+        "spinoct 0.17.000) the same path converges in about a thousand iterations.",
         kill_criterion="The same bounds as C20; and the declared expectation is falsified if the smallest "
         "side at which a non-uniform reversal wins is not larger at J/K = 2.5 than at J/K = 10, which is "
         "what the measurement found.",
