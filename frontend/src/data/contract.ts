@@ -388,6 +388,46 @@ export interface ParetoArtifact {
   materials: ParetoMaterial[];
 }
 
+// ---- where a hard axis pays (data/artifacts/hard_axis_map.json), backlog BL-035 ----
+
+export interface HardAxisPoint {
+  key: string;
+  ratio: number;
+  damping: number;
+  switching_tau0: number;
+  uniaxial_cost: number;
+  biaxial_cost: number;
+  /** Uniaxial closed form over the numerical biaxial cost: above one the hard axis paid for itself. */
+  reduction: number | null;
+  /** The same, divided by the control at this damping and switching time. */
+  reduction_vs_control: number | null;
+  /** The control itself: the solver reproducing the closed form it already knows, at ratio zero. */
+  control: number | null;
+  converged: boolean;
+  /** The uniaxial optimum is its own infinite-time floor here, so the comparison stops existing. */
+  at_floor: boolean;
+  /** The control holds and the solve converged, so the cell is evidence of something. */
+  reliable: boolean;
+  helped: boolean;
+}
+
+export interface HardAxisMapArtifact {
+  schema: string;
+  description: string;
+  axes: { ratio: number[]; damping: number[]; switching_tau0: number[] };
+  summary: {
+    points: number;
+    reliable: number;
+    helped: number;
+    unconverged: number;
+    at_floor: number;
+    control_tolerance: number;
+    worst_control: number;
+    best: { key: string; ratio: number; damping: number; switching_tau0: number; reduction: number; reduction_vs_control: number };
+  };
+  points: HardAxisPoint[];
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {

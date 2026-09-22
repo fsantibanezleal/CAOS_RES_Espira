@@ -9,15 +9,25 @@ import type {
   CaseArtifact,
   LatticeOCPArtifact,
   NovelResults,
+  HardAxisMapArtifact,
   ParetoArtifact,
   PatchOCPArtifact,
 } from '../data/contract';
-import { loadCase, loadIndex, loadLatticeOCP, loadNovel, loadPareto, loadPatchOCP } from '../data/load';
+import {
+  loadCase,
+  loadHardAxisMap,
+  loadIndex,
+  loadLatticeOCP,
+  loadNovel,
+  loadPareto,
+  loadPatchOCP,
+} from '../data/load';
 import { useTheme } from '../theme';
 import { CrossoverChart } from '../viz/CrossoverChart';
 import { ChainMap } from '../viz/ChainMap';
 import { PatchChart } from '../viz/PatchChart';
 import { ParetoChart } from '../viz/ParetoChart';
+import { HardAxisMap } from '../viz/HardAxisMap';
 import { CoverageMatrix } from '../viz/CoverageMatrix';
 
 function Chips<T extends number>({
@@ -165,6 +175,47 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
           </tbody>
         </table>
       </div>
+      <p className="muted">{data.description}</p>
+    </div>
+  );
+}
+
+function HardAxis({ data, es }: { data: HardAxisMapArtifact; es: boolean }) {
+  const { theme } = useTheme();
+  const dampings = data.axes.damping;
+  const [damping, setDamping] = useState(dampings[1] ?? dampings[0]);
+  const active = dampings.includes(damping) ? damping : dampings[0];
+  const scoped = useMemo(() => data.points.filter((p) => p.damping === active), [data, active]);
+  const helpedHere = scoped.filter((p) => p.helped);
+  const longest = Math.max(...helpedHere.map((p) => p.switching_tau0), 0);
+  const { summary } = data;
+
+  return (
+    <div className="prose">
+      <p>
+        {es
+          ? 'Un eje duro es el unico mecanismo de esta literatura que puede batir el costo del macrospin libre: el torque interno hace parte del trabajo. El caso C04 lo mide a lo largo de una linea y encuentra que el beneficio no es monotono. Aqui esta la region completa: razon de eje duro contra tiempo de conmutacion, a cuatro amortiguamientos.'
+          : 'A hard axis is the one mechanism in this literature that can beat the free-macrospin cost: the internal torque does part of the work. Case C04 measures it along one line and finds the benefit is not monotone. Here is the whole region: hard-axis ratio against switching time, at four dampings.'}{' '}
+        <Cite id="badarneh2023" />
+      </p>
+      <p data-testid="hard-axis-verdict">
+        {es
+          ? `Medido: el eje duro paga en ${summary.helped} de las ${summary.reliable} celdas fiables, y todas estan a tiempos de conmutacion cortos. A este amortiguamiento el beneficio llega hasta T = ${longest} tau0 y desaparece despues: a tiempos largos la barrera del propio eje duro cuesta mas de lo que ahorra. El mejor punto de todo el mapa es ${summary.best.reduction_vs_control.toFixed(2)} veces a razon ${summary.best.ratio}, alpha ${summary.best.damping} y T = ${summary.best.switching_tau0} tau0.`
+          : `Measured: the hard axis pays in ${summary.helped} of the ${summary.reliable} reliable cells, and all of them sit at short switching times. At this damping the benefit reaches T = ${longest} tau0 and is gone beyond it: at long times the hard axis's own barrier costs more than it saves. The best point of the whole map is ${summary.best.reduction_vs_control.toFixed(2)} times, at ratio ${summary.best.ratio}, alpha ${summary.best.damping} and T = ${summary.best.switching_tau0} tau0.`}
+      </p>
+      <p className="muted">
+        {es
+          ? `Cada celda se divide por su control: el mismo metodo numerico resolviendo el sistema uniaxial cuya forma cerrada ya se conoce. Donde el control se aparta mas de ${(100 * summary.control_tolerance).toFixed(0)} por ciento o el solver no converge, la celda se dibuja tachada y no cuenta: ${summary.points - summary.reliable} de ${summary.points} (${summary.unconverged} sin converger, ${summary.at_floor} ya en el piso de tiempo infinito, control peor ${(100 * summary.worst_control).toFixed(0)} por ciento).`
+          : `Each cell is divided by its control: the same numerical method solving the uniaxial system whose closed form is already known. Where the control drifts by more than ${(100 * summary.control_tolerance).toFixed(0)} per cent, or the solve does not converge, the cell is drawn crossed out and does not count: ${summary.points - summary.reliable} of ${summary.points} (${summary.unconverged} unconverged, ${summary.at_floor} already at the infinite-time floor, worst control ${(100 * summary.worst_control).toFixed(0)} per cent).`}
+      </p>
+      <Chips
+        label={es ? 'Amortiguamiento' : 'Damping'}
+        values={dampings}
+        active={active}
+        onPick={setDamping}
+        format={(v) => `alpha = ${v}`}
+      />
+      <HardAxisMap data={data} damping={active} theme={theme} es={es} />
       <p className="muted">{data.description}</p>
     </div>
   );
@@ -570,6 +621,7 @@ export function Experiments(): React.JSX.Element {
   const [chain, setChain] = useState<LatticeOCPArtifact | null>(null);
   const [patch, setPatch] = useState<PatchOCPArtifact | null>(null);
   const [pareto, setPareto] = useState<ParetoArtifact | null>(null);
+  const [hardAxis, setHardAxis] = useState<HardAxisMapArtifact | null>(null);
 
   useEffect(() => {
     loadIndex().then(async (ix: ArtifactIndex) => {
@@ -580,9 +632,10 @@ export function Experiments(): React.JSX.Element {
     loadLatticeOCP().then(setChain);
     loadPatchOCP().then(setPatch);
     loadPareto().then(setPareto);
+    loadHardAxisMap().then(setHardAxis);
   }, []);
 
-  if (!artifacts.length || !novel || !chain || !patch || !pareto || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
+  if (!artifacts.length || !novel || !chain || !patch || !pareto || !hardAxis || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
   return (
     <article className="prose">
@@ -623,6 +676,11 @@ export function Experiments(): React.JSX.Element {
             id: 'patch',
             label: es ? 'Parche bidimensional' : 'Two-dimensional patch',
             content: <Patch data={patch} es={es} />,
+          },
+          {
+            id: 'hard-axis',
+            label: es ? 'Donde paga el eje duro' : 'Where the hard axis pays',
+            content: <HardAxis data={hardAxis} es={es} />,
           },
           {
             id: 'tradeoffs',

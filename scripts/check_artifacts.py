@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -103,6 +103,29 @@ def check(artifacts: Path) -> list[str]:
             if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
                 errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
 
+    hard_axis_path = artifacts / "hard_axis_map.json"
+    if hard_axis_path.exists():
+        hard_axis = json.loads(hard_axis_path.read_text(encoding="utf-8"))
+        if hard_axis.get("schema") != "espira.hard-axis-map/1":
+            errors.append(f"hard_axis_map: schema {hard_axis.get('schema')}")
+        axes, points = hard_axis["axes"], hard_axis["points"]
+        expected = len(axes["ratio"]) * len(axes["damping"]) * len(axes["switching_tau0"])
+        if len(points) != expected:
+            errors.append(f"hard_axis_map: {len(points)} points for a {expected}-cell grid")
+        summary = hard_axis["summary"]
+        if summary["reliable"] != sum(1 for p in points if p["reliable"]):
+            errors.append("hard_axis_map: the reliable count disagrees with the cells")
+        if summary["helped"] != sum(1 for p in points if p["helped"]):
+            errors.append("hard_axis_map: the helped count disagrees with the cells")
+        for point in points:
+            # A cell may only claim the hard axis helped where the method reproduced its own control.
+            if point["helped"] and not point["reliable"]:
+                errors.append(f"hard_axis_map {point['key']}: helped without being reliable")
+            if point["ratio"] == 0.0 and point["helped"]:
+                errors.append(f"hard_axis_map {point['key']}: the uniaxial control cannot help")
+    else:
+        errors.append("missing hard_axis_map.json")
+
     pareto_path = artifacts / "pareto.json"
     if pareto_path.exists():
         pareto = json.loads(pareto_path.read_text(encoding="utf-8"))
@@ -179,7 +202,7 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json consistent")
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json consistent")
     return 0
 
 

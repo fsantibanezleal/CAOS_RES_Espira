@@ -15,6 +15,7 @@ consumes its artifacts and never recomputes them.
 | `espiralab/cases/` | The case registry: each case has a category, a reason, an expectation, and a switching-time variant sweep of six values |
 | `espiralab/bake/__init__.py` | The per-case bake: analytic optimal pulse and cost curve, the universal floor with its damping band, the free-macrospin reference, a static baseline, and for CrSBr the numerical biaxial optimum |
 | `espiralab/bake/novel.py` | The reliability front (R12) and the two-mode lattice comparison |
+| `espiralab/bake/hard_axis.py` | Where a hard axis reduces the cost: ratio x damping x switching time, each cell against the numerical control; parallel and checkpointed |
 | `espiralab/bake/pareto.py` | The device trade-off front (R14) per material: switching time, cost, peak field and spectral width, with the fitted exchange rates |
 | `espiralab/bake/parity.py` | The live-lane parity fixture: K(m) from SciPy and the closed-form protocol from spinoct, which the browser recomputes and the parity gate checks |
 | `espiralab/bake/lattice_ocp.py` | The free chain optimal control crossover map: 61 chains, three starts each, the minimum-energy-path floor; parallel and checkpointed |
@@ -26,6 +27,7 @@ consumes its artifacts and never recomputes them.
 | `run_novel.py` | Bake the cross-case novel results |
 | `run_lattice_ocp.py` | Bake (or resume) the crossover map |
 | `run_patch_ocp.py` | Bake (or resume) the two-dimensional patch sweep |
+| `run_hard_axis_map.py` | Bake (or resume) the hard-axis map |
 
 ## The release sequence
 
