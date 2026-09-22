@@ -2,7 +2,7 @@
   "schema": "espira.benchmark/1",
   "engine": {
     "name": "spinoct",
-    "version": "0.16.000"
+    "version": "0.18.000"
   },
   "cases": [
     {
@@ -520,7 +520,7 @@
       "case": "thermal-success-rate",
       "code": "C07",
       "manifest": "thermal-success-rate.json",
-      "sha256": "958033bb2c28d7b9b805df2b01e30914f2f288214842eeca80335a72b7b61f7d",
+      "sha256": "7f670aadd5c245a29727431ab3748b05390395560dc150fadd457c966adaa179",
       "lane": "precompute",
       "completeness": {
         "expected": 12,

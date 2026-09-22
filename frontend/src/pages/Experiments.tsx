@@ -11,6 +11,7 @@ import type {
   NovelResults,
   HardAxisMapArtifact,
   ParetoArtifact,
+  PenaltyTestArtifact,
   PatchOCPArtifact,
 } from '../data/contract';
 import {
@@ -20,6 +21,7 @@ import {
   loadLatticeOCP,
   loadNovel,
   loadPareto,
+  loadPenaltyTest,
   loadPatchOCP,
 } from '../data/load';
 import { useTheme } from '../theme';
@@ -28,6 +30,7 @@ import { ChainMap } from '../viz/ChainMap';
 import { PatchChart } from '../viz/PatchChart';
 import { ParetoChart } from '../viz/ParetoChart';
 import { HardAxisMap } from '../viz/HardAxisMap';
+import { PenaltyChart } from '../viz/PenaltyChart';
 import { CoverageMatrix } from '../viz/CoverageMatrix';
 
 function Chips<T extends number>({
@@ -170,6 +173,110 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
                 <td>{c.starts.uniform.ratio.toFixed(4)}</td>
                 <td>{c.starts.wall.ratio.toFixed(4)}</td>
                 <td>{c.starts.mep.ratio.toFixed(4)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="muted">{data.description}</p>
+    </div>
+  );
+}
+
+function PenaltyTest({ data, es }: { data: PenaltyTestArtifact; es: boolean }) {
+  const { theme } = useTheme();
+  const { verdict } = data;
+  const holds = verdict.rows_agreeing === verdict.testable_rows && verdict.testable_rows > 0;
+  const worst = [...data.per_stability].sort((a, b) => a.gap - b.gap)[0];
+
+  return (
+    <div className="prose">
+      <p>
+        {es
+          ? 'El motor ofrece una penalizacion determinista de inestabilidad: la integral de hiperbolicidad a lo largo del camino, que sale del mismo Hessiano que ya usa el solver y no necesita ningun ensemble. La afirmacion, escrita por el propio motor, es que predice la tasa de exito Monte-Carlo sin correr el ensemble. Nada en el producto la habia puesto a prueba.'
+          : "The engine offers a deterministic instability penalty: the hyperbolicity integral along the path, which comes from the same Hessian the solver already has and needs no ensemble. The claim, written by the engine itself, is that it predicts the Monte-Carlo success rate without running the ensemble. Nothing in the product had tested it."}{' '}
+        <Cite id="badarneh2023" />
+      </p>
+      <p data-testid="penalty-verdict">
+        {es
+          ? `Medido sobre ${data.cells.length} celdas (${data.copies} copias cada una): en ${verdict.testable_rows} de las ${verdict.rows} filas los dos extremos del barrido se separan mas que sus intervalos, asi que la fila puede decidir, y la prediccion acierta en ${verdict.rows_agreeing} de ellas. ${holds ? 'Donde el analisis dice que la inestabilidad desaparecio, el ensemble falla menos.' : 'La penalizacion NO predice el ensemble.'}`
+          : `Measured over ${data.cells.length} cells (${data.copies} copies each): in ${verdict.testable_rows} of the ${verdict.rows} rows the two ends of the sweep separate by more than their intervals, so the row can decide, and the prediction holds in ${verdict.rows_agreeing} of them. ${holds ? 'Where the analysis says the instability is gone, the ensemble fails less.' : 'The penalty does NOT predict the ensemble.'}`}
+      </p>
+      <p data-testid="penalty-ranking">
+        {es
+          ? `En la forma fuerte, ordenar el barrido entero, la afirmacion se parte en dos. La tasa de fallo cae monotonamente con el campo en ${verdict.rows_failing_monotonically} de ${verdict.rows} filas, pero la INTEGRAL de hiperbolicidad no la ordena en ninguna (${verdict.rows_ranked_by_penalty} de ${verdict.rows}): crece hasta un cuarto de campo de anisotropia, donde el fallo medido ya bajo. La FRACCION hiperbolica del camino si la ordena donde no hay empates (${verdict.rows_ranked_by_fraction} de ${verdict.rows}; las demas filas tienen varias celdas con cero fallos). El predictor barato que sirve es cuanto del camino es inestable, no cuanto lo es.`
+          : `In the strong form, ranking the whole sweep, the claim splits in two. The failure rate falls monotonically with the field in ${verdict.rows_failing_monotonically} of ${verdict.rows} rows, but the hyperbolicity INTEGRAL ranks none of them (${verdict.rows_ranked_by_penalty} of ${verdict.rows}): it rises to a peak at a quarter of an anisotropy field, where the measured failure rate has already fallen. The hyperbolic FRACTION of the path does rank it wherever ties do not prevent it (${verdict.rows_ranked_by_fraction} of ${verdict.rows}; the other rows have several cells at zero failures). The cheap predictor that works is how much of the path is unstable, not how unstable it is.`}
+      </p>
+      <p className="muted">
+        {es
+          ? 'Esta prueba encontro un error de signo en el motor: hasta spinoct 0.18.000 el campo longitudinal estabilizador se aplicaba con el signo opuesto al que usa el analisis del mismo modulo, asi que la hiperbolicidad calculada decia que el camino era estable mientras el ensemble empeoraba. Los numeros de arriba son los del motor corregido.'
+          : 'This test found a sign error in the engine: until spinoct 0.18.000 the stabilizing longitudinal field was applied with the opposite sign to the one its own analysis uses, so the computed hyperbolicity reported a stable path while the ensemble got worse. The numbers above are from the corrected engine.'}
+      </p>
+      <div className="wb-variant-readout" data-testid="penalty-readout" data-holds={String(holds)}>
+        <dl className="readout-grid">
+          <div>
+            <dt>{es ? 'Filas que deciden' : 'Rows that can decide'}</dt>
+            <dd>
+              {verdict.testable_rows} / {verdict.rows}
+            </dd>
+          </div>
+          <div>
+            <dt>{es ? 'Filas donde acierta' : 'Rows where it holds'}</dt>
+            <dd>{verdict.rows_agreeing}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Material' : 'Material'}</dt>
+            <dd>{data.material}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Copias por celda' : 'Copies per cell'}</dt>
+            <dd>{data.copies}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Peor fila (brecha)' : 'Weakest row (gap)'}</dt>
+            <dd>
+              K/kT = {worst.stability_factor}, {worst.gap >= 0 ? '+' : ''}
+              {worst.gap.toFixed(3)}
+            </dd>
+          </div>
+          <div>
+            <dt>T / tau0</dt>
+            <dd>{data.switching_time_tau0}</dd>
+          </div>
+        </dl>
+      </div>
+      <h3>{es ? 'Fallos medidos contra el campo' : 'Measured failures against the field'}</h3>
+      <p className="muted">
+        {es
+          ? 'La penalizacion (linea discontinua, escalada a su maximo) cae a cero cuando el campo longitudinal alcanza el campo de anisotropia. Si la afirmacion vale, las tasas de fallo medidas caen con ella.'
+          : 'The penalty (dashed, scaled to its maximum) falls to zero once the longitudinal field reaches the anisotropy field. If the claim holds, the measured failure rates fall with it.'}
+      </p>
+      <PenaltyChart data={data} theme={theme} es={es} />
+      <h3>{es ? 'Fila por fila' : 'Row by row'}</h3>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>K/kT</th>
+              <th>{es ? 'Fallo sin campo' : 'Failure, no field'}</th>
+              <th>{es ? 'Fallo con campo' : 'Failure, full field'}</th>
+              <th>{es ? 'Brecha' : 'Gap'}</th>
+              <th>{es ? 'Correlacion de rangos' : 'Rank correlation'}</th>
+              <th>{es ? 'Decide' : 'Decides'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.per_stability.map((row) => (
+              <tr key={row.stability_factor}>
+                <td>{row.stability_factor}</td>
+                <td>{row.failure_at_zero_field.toFixed(3)}</td>
+                <td>{row.failure_at_full_field.toFixed(3)}</td>
+                <td>
+                  {row.gap >= 0 ? '+' : ''}
+                  {row.gap.toFixed(3)}
+                </td>
+                <td>{row.spearman_penalty_failure.toFixed(2)}</td>
+                <td>{row.separated ? (es ? 'si' : 'yes') : 'no'}</td>
               </tr>
             ))}
           </tbody>
@@ -622,6 +729,7 @@ export function Experiments(): React.JSX.Element {
   const [patch, setPatch] = useState<PatchOCPArtifact | null>(null);
   const [pareto, setPareto] = useState<ParetoArtifact | null>(null);
   const [hardAxis, setHardAxis] = useState<HardAxisMapArtifact | null>(null);
+  const [penalty, setPenalty] = useState<PenaltyTestArtifact | null>(null);
 
   useEffect(() => {
     loadIndex().then(async (ix: ArtifactIndex) => {
@@ -633,9 +741,10 @@ export function Experiments(): React.JSX.Element {
     loadPatchOCP().then(setPatch);
     loadPareto().then(setPareto);
     loadHardAxisMap().then(setHardAxis);
+    loadPenaltyTest().then(setPenalty);
   }, []);
 
-  if (!artifacts.length || !novel || !chain || !patch || !pareto || !hardAxis || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
+  if (!artifacts.length || !novel || !chain || !patch || !pareto || !hardAxis || !penalty || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
   return (
     <article className="prose">
@@ -676,6 +785,11 @@ export function Experiments(): React.JSX.Element {
             id: 'patch',
             label: es ? 'Parche bidimensional' : 'Two-dimensional patch',
             content: <Patch data={patch} es={es} />,
+          },
+          {
+            id: 'penalty',
+            label: es ? 'Penalizacion contra ensemble' : 'Penalty against ensemble',
+            content: <PenaltyTest data={penalty} es={es} />,
           },
           {
             id: 'hard-axis',
