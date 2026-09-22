@@ -81,3 +81,9 @@ export async function loadPenaltyTest(): Promise<import('./contract').PenaltyTes
   if (!response.ok) throw new Error(`penalty_test.json ${response.status}`);
   return response.json();
 }
+
+export async function loadDescriptors(): Promise<import('./contract').DescriptorArtifact> {
+  const response = await fetch(bust(`${base}artifacts/descriptors.json`));
+  if (!response.ok) throw new Error(`descriptors.json ${response.status}`);
+  return response.json();
+}
