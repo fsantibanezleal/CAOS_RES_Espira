@@ -4,6 +4,17 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.13.001] - 2026-09-22
+
+### Added
+- **A results section in the wiki** (backlog BL-030), one page per result that spans cases: the
+  reliability front, the free chain crossover, the two-dimensional patch, the device trade-off, the
+  hard-axis region, the penalty test, the exploitability table and the live-lane parity. Each page states
+  the question as it was declared, the method, the measurement with its numbers, what bounds it (an
+  optimum, an upper bound from an explicit trajectory, or a rigorous lower bound), and what it does not
+  show, including the regions excluded from a claim rather than averaged into it. A test holds every
+  page to naming its artifact and being listed in the index.
+
 ## [0.13.000] - 2026-09-22
 
 ### Added
