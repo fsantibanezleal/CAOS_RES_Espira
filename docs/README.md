@@ -17,6 +17,7 @@ method is documented with its equations and sources in the engine's theory pages
 | [frameworks/spinoct/](frameworks/spinoct/README.md) | The engine: what it implements, how it is pinned, a runnable example |
 | [guides/01_run-the-bake.md](guides/01_run-the-bake.md) | Set up, bake, check, and serve locally |
 | [cases/](cases/README.md) | The case taxonomy, the coverage matrix against the validated 26-case plan, and each baked case |
+| [results/](results/README.md) | The results that span cases: the reliability front, the free chain and patch crossovers, the device trade-off, the hard-axis region, the penalty test, the exploitability table and the live-lane parity |
 
 ## Honesty and data policy
 
