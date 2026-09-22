@@ -17,3 +17,6 @@ frontend/public/
 # bake checkpoints (temporary; point ESPIRA_CHECKPOINT_DIR at E:)
 /data/.checkpoints/
 frontend/e2e-shots/
+
+# Spirit writes a log beside the working directory when scripts/crosscheck_spirit.py runs.
+Log.txt
