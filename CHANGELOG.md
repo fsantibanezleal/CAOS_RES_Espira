@@ -4,6 +4,32 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.13.000] - 2026-09-22
+
+### Added
+- **Exploitability descriptors per material** (backlog BL-026), and the Experiments tab that reads them.
+  Every material in the database reduced to what decides whether it is worth switching: its Larmor time,
+  its infinite-time cost floor, the cost and the hardware demands at three reference switching times,
+  the region where a hard axis pays at its damping, and how many exchange-coupled sites room-temperature
+  retention needs. The database spans a real trade: Cr2Ge2Te6 switches for the lowest cost and the
+  gentlest peak field (0.132 T) and needs 30,317 sites to retain, while FePS3 retains with 97 and demands
+  29.3 T. One anisotropy sets both.
+- **The thermal front per material** (the last piece of BL-032), measured at a stability factor of three,
+  where the bare pulse does lose copies: it recovers 0.883 to 1.000 and charges 2.53 times the optimal
+  cost. The block is a function of the damping alone in reduced units, so materials sharing a damping
+  share it exactly; the artifact says so and a test holds it, rather than presenting seven identical rows
+  as seven measurements.
+- A twelfth browser gate, `e2e/exploitability.mjs`.
+
+### Changed
+- The retention counts are declared optimistic where they are shown: they assume a coherent reversal,
+  and this product's own results (C19 to C22) measure the cheaper route, a domain wall whose barrier
+  saturates instead of growing with the volume.
+- C16 records a second search for its missing parameters (2026-09-22). The room-temperature resonance
+  study gives a moment, an intrinsic damping of 0.0476 and an ordering temperature of 310 K on one
+  crystal, but its anisotropy is the easy plane itself, so there is still no bistable state to switch and
+  the case stays planned.
+
 ## [0.12.000] - 2026-09-22
 
 ### Fixed

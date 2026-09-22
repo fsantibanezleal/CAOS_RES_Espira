@@ -12,7 +12,7 @@ from .routers import content
 
 def create_app() -> FastAPI:
     s = Settings()
-    app = FastAPI(title="Espira (dormant API)", version="0.12.000")
+    app = FastAPI(title="Espira (dormant API)", version="0.13.000")
     app.add_middleware(GZipMiddleware, minimum_size=1024)
     app.add_middleware(
         CORSMiddleware,

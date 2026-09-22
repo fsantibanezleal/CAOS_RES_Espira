@@ -15,6 +15,7 @@ consumes its artifacts and never recomputes them.
 | `espiralab/cases/` | The case registry: each case has a category, a reason, an expectation, and a switching-time variant sweep of six values |
 | `espiralab/bake/__init__.py` | The per-case bake: analytic optimal pulse and cost curve, the universal floor with its damping band, the free-macrospin reference, a static baseline, and for CrSBr the numerical biaxial optimum |
 | `espiralab/bake/novel.py` | The reliability front (R12) and the two-mode lattice comparison |
+| `espiralab/bake/descriptors.py` | Exploitability per material: timescale, floor, hardware demands, the hard-axis region at its damping, retention site counts and the thermal front |
 | `espiralab/bake/penalty_test.py` | Does the deterministic instability penalty predict the Monte-Carlo success rate: the grid, the verdict, and which of the two predictors ranks it |
 | `espiralab/bake/hard_axis.py` | Where a hard axis reduces the cost: ratio x damping x switching time, each cell against the numerical control; parallel and checkpointed |
 | `espiralab/bake/pareto.py` | The device trade-off front (R14) per material: switching time, cost, peak field and spectral width, with the fitted exchange rates |

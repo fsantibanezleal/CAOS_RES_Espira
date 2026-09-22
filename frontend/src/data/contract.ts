@@ -478,6 +478,83 @@ export interface PenaltyTestArtifact {
   };
 }
 
+// ---- exploitability descriptors per material (data/artifacts/descriptors.json), backlog BL-026 ----
+
+export interface DescriptorReferenceTime {
+  switching_time_tau0: number;
+  switching_time_s: number;
+  cost: number;
+  cost_over_floor: number | null;
+  cost_over_free: number | null;
+  /** Null where the optimum is already its infinite-time floor, so there is no pulse to measure. */
+  peak_field_t: number | null;
+  bandwidth_hz: number | null;
+  at_floor: boolean;
+}
+
+export interface DescriptorRetention {
+  stability_factor: number;
+  /** Sites needed if the element reversed coherently; the optimistic end, see retention_note. */
+  sites_needed_coherent: number;
+}
+
+export interface MaterialDescriptors {
+  material: string;
+  name: string;
+  family: string;
+  easy_axis: string;
+  moment_bohr: number;
+  anisotropy_mev: number;
+  damping: number;
+  hard_axis_ratio: number;
+  curie_kelvin: number;
+  above_room_temperature: boolean;
+  tau0_s: number;
+  cost_floor: number;
+  anisotropy_field_t: number;
+  /** The single-site anisotropy in temperature units, which is why retention needs many sites. */
+  single_site_kelvin: number;
+  reference_times: DescriptorReferenceTime[];
+  retention: DescriptorRetention[];
+  /** The thermal front at this material's damping: what the stabilizing field buys and charges. */
+  reliability: {
+    stability_factor: number;
+    switching_time_tau0: number;
+    br_over_anisotropy: number;
+    copies: number;
+    temperature_k: number;
+    bare_success: number;
+    bare_confidence95: number;
+    stabilised_success: number;
+    stabilised_confidence95: number;
+    hyperbolic_fraction_bare: number;
+    added_cost: number;
+    added_cost_over_optimal: number | null;
+  };
+  hard_axis: {
+    available: boolean;
+    map_damping?: number;
+    damping_decades_away?: number;
+    helped_cells?: number;
+    best_reduction?: number;
+    best_ratio?: number | null;
+    pays_up_to_tau0?: number;
+  };
+  provenance: Record<string, string>;
+  flags: string[];
+}
+
+export interface DescriptorArtifact {
+  schema: string;
+  description: string;
+  room_temperature_k: number;
+  retention_note: string;
+  reliability_note: string;
+  reference_times_tau0: number[];
+  retention_factors: number[];
+  materials: MaterialDescriptors[];
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {
