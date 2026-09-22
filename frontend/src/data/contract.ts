@@ -340,6 +340,54 @@ export interface LiveParityFixture {
   protocol: ParityProtocolRow[];
 }
 
+// ---- the device trade-off front (data/artifacts/pareto.json), rung R14 ----
+
+export interface ParetoPoint {
+  switching_time_tau0: number;
+  switching_time_s: number;
+  cost: number;
+  peak_field_t: number;
+  bandwidth_hz: number;
+  /** True when another protocol beats this one on every objective, the switching time included. With
+   * every point at a different time that can never happen, which is why the question is also asked
+   * with the deadline set aside. */
+  dominated: boolean;
+  /** True when another protocol costs no more, needs no higher a peak field and no wider a band. */
+  dominated_without_time: boolean;
+}
+
+export interface ParetoExponent {
+  /** The fitted log-log slope against the switching time. */
+  slope: number;
+  /** The largest residual of that fit, in log units: a large one means it is not a power law. */
+  max_log_residual: number;
+}
+
+export interface ParetoMaterial {
+  material: string;
+  name: string;
+  damping: number;
+  damping_provenance: string;
+  tau0_s: number;
+  points: ParetoPoint[];
+  front_size: number;
+  /** How many protocols survive once the deadline is fixed and only the supply objectives are ranked. */
+  supply_front_size: number;
+  /** Pairs where the slower protocol needs the wider band, and the worst of them. */
+  bandwidth_inversions: {
+    count: number;
+    worst: { faster_tau0: number; slower_tau0: number; faster_hz: number; slower_hz: number; ratio: number } | null;
+  };
+  exponents: Record<'cost' | 'peak_field_t' | 'bandwidth_hz', ParetoExponent>;
+}
+
+export interface ParetoArtifact {
+  schema: string;
+  description: string;
+  objectives: { key: string; label: string; unit: string }[];
+  materials: ParetoMaterial[];
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {

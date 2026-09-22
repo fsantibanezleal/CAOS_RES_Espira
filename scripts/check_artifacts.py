@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -103,6 +103,28 @@ def check(artifacts: Path) -> list[str]:
             if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
                 errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
 
+    pareto_path = artifacts / "pareto.json"
+    if pareto_path.exists():
+        pareto = json.loads(pareto_path.read_text(encoding="utf-8"))
+        if pareto.get("schema") != "espira.pareto/1":
+            errors.append(f"pareto: schema {pareto.get('schema')}")
+        for entry in pareto.get("materials", []):
+            points = entry["points"]
+            if len(points) < 12:
+                errors.append(f"pareto {entry['material']}: {len(points)} points, too few for a trade-off")
+            if entry["front_size"] != sum(1 for p in points if not p["dominated"]):
+                errors.append(f"pareto {entry['material']}: front size disagrees with the dominated flags")
+            times = [p["switching_time_tau0"] for p in points]
+            if times != sorted(times) or len(set(times)) != len(times):
+                errors.append(f"pareto {entry['material']}: switching times are not a strictly rising sweep")
+            # Every objective is positive and finite, or a log axis and a fitted slope are meaningless.
+            for p in points:
+                if min(p["cost"], p["peak_field_t"], p["bandwidth_hz"]) <= 0.0:
+                    errors.append(f"pareto {entry['material']}: a non-positive objective at T = {p['switching_time_tau0']}")
+                    break
+    else:
+        errors.append("missing pareto.json")
+
     parity_path = artifacts / "live_parity.json"
     if parity_path.exists():
         parity = json.loads(parity_path.read_text(encoding="utf-8"))
@@ -157,7 +179,7 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json consistent")
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json consistent")
     return 0
 
 
