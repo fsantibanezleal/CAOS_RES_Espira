@@ -58,6 +58,30 @@ for (const theme of ['light', 'dark']) {
     const badges = await page.locator('[data-testid="live-parity"] .prov-badge').allInnerTexts();
     check(badges.length === 2 && badges.every((b) => /within|dentro/.test(b)), `${tag}: verdicts ${JSON.stringify(badges)}`);
 
+    // The external cross-check lives on the same page: an independent code, the same barrier.
+    const external = page.getByTestId('external-crosscheck');
+    await external.waitFor({ timeout: 15000 });
+    const claim = await page.evaluate(async () => {
+      const d = await (await fetch('/artifacts/external_crosscheck.json')).json();
+      return {
+        worst: d.worst_relative_difference,
+        tolerance: d.tolerance,
+        agrees: d.agrees,
+        rows: d.rows.length,
+        spirit: d.engines.spirit,
+      };
+    });
+    check(
+      (await external.getAttribute('data-agrees')) === String(claim.agrees) && claim.agrees,
+      `${tag}: the two codes agree (${claim.worst.toExponential(1)} against ${claim.tolerance.toExponential(0)})`,
+    );
+    const shownWorst = (await page.getByTestId('crosscheck-worst').innerText()).trim();
+    check(shownWorst === claim.worst.toExponential(2), `${tag}: the page shows the measured deviation (${shownWorst})`);
+    const crossRows = await page.locator('[data-testid="external-crosscheck"] tbody tr').count();
+    check(crossRows === claim.rows, `${tag}: cross-check table lists ${crossRows} of ${claim.rows} chains`);
+    const external_text = await external.innerText();
+    check(external_text.includes(claim.spirit), `${tag}: the external engine version is named (${claim.spirit})`);
+
     await panel.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `${out}/parity-${tag}.png` });
     check(errors.length === 0, `${tag}: console errors ${JSON.stringify(errors.slice(0, 3))}`);

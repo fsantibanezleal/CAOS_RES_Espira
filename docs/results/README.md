@@ -15,6 +15,7 @@ the bake that wrote it.
 | [06_penalty-prediction.md](06_penalty-prediction.md) | Can a deterministic penalty replace the stochastic ensemble? | `penalty_test.json` | Experiments, Penalty against ensemble |
 | [07_exploitability.md](07_exploitability.md) | Which material is worth switching at all? | `descriptors.json` | Experiments, Exploitability by material |
 | [08_live-lane-parity.md](08_live-lane-parity.md) | Does the browser compute the same thing as the engine? | `live_parity.json` | Implementation, Live-lane parity |
+| [09_external-crosscheck.md](09_external-crosscheck.md) | Does an independent code get the same barrier? | `external_crosscheck.json` | Implementation, External cross-check |
 
 ## What a result page states
 

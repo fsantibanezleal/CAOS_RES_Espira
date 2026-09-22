@@ -87,3 +87,9 @@ export async function loadDescriptors(): Promise<import('./contract').Descriptor
   if (!response.ok) throw new Error(`descriptors.json ${response.status}`);
   return response.json();
 }
+
+export async function loadExternalCrosscheck(): Promise<import('./contract').ExternalCrosscheck> {
+  const response = await fetch(bust(`${base}artifacts/external_crosscheck.json`));
+  if (!response.ok) throw new Error(`external_crosscheck.json ${response.status}`);
+  return response.json();
+}

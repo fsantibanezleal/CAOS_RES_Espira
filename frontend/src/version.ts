@@ -1,2 +1,2 @@
 // The single source of truth for the displayed app version. Kept in sync with VERSION and CHANGELOG.
-export const APP_VERSION = '0.13.001';
+export const APP_VERSION = '0.14.000';
