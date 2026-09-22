@@ -1,0 +1,656 @@
+{
+  "schema": "espira.descriptors/1",
+  "description": "Exploitability descriptors per material, derived from the Contract 1 parameters: the Larmor time, the infinite-time cost floor, the cost and the hardware demands at three reference switching times, the region where a hard axis pays at that damping, and the number of exchange-coupled sites a room-temperature retention target needs. Each material carries the provenance of the parameters the descriptors rest on.",
+  "room_temperature_k": 300.0,
+  "reliability_note": "The reliability block is measured per material but is a function of the damping alone: at a fixed switching time in Larmor units, a fixed stability factor and a field in units of the material's own anisotropy field, the reduced dynamics carry no other material parameter. Materials that share a damping therefore share these numbers exactly, which is a check on that reduction rather than a coincidence, and what separates them is the absolute cost scale reported beside it.",
+  "retention_note": "The site counts assume the element reverses coherently, so its barrier is the number of sites times the single-site anisotropy. The free optimal control results of this product (C19 to C22) measure the cheaper way out: above a crossover size the reversal nucleates a domain wall whose barrier saturates at the wall energy rather than growing with the volume. These counts are therefore the optimistic end, and a real element of that size retains less.",
+  "reference_times_tau0": [
+    2.0,
+    10.0,
+    50.0
+  ],
+  "retention_factors": [
+    40.0,
+    60.0
+  ],
+  "materials": [
+    {
+      "material": "crsbr",
+      "name": "CrSBr",
+      "family": "semiconductor",
+      "easy_axis": "in-plane b axis (triaxial: b easy, z hard)",
+      "moment_bohr": 3.0,
+      "anisotropy_mev": 0.15,
+      "damping": 0.01,
+      "hard_axis_ratio": 3.0,
+      "curie_kelvin": 146.0,
+      "above_room_temperature": false,
+      "tau0_s": 3.2872477207460065e-12,
+      "cost_floor": 1.9622217721956554e-13,
+      "anisotropy_field_t": 0.8637992748819967,
+      "single_site_kelvin": 1.7406777182325122,
+      "reference_times": [
+        {
+          "switching_time_tau0": 2.0,
+          "switching_time_s": 6.574495441492013e-12,
+          "cost": 4.842096843813964e-11,
+          "cost_over_floor": 246.76603391245794,
+          "cost_over_free": 1.0000050650429158,
+          "peak_field_t": 2.7224855692262904,
+          "bandwidth_hz": 152028657962.40802,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 10.0,
+          "switching_time_s": 3.2872477207460065e-11,
+          "cost": 9.6853708835911e-12,
+          "cost_over_floor": 49.35920608379306,
+          "cost_over_free": 1.0001266241487838,
+          "peak_field_t": 0.5514401507731551,
+          "bandwidth_hz": 91217194777.44482,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 50.0,
+          "switching_time_s": 1.6436238603730032e-10,
+          "cost": 1.942957831101712e-12,
+          "cost_over_floor": 9.901825872248947,
+          "cost_over_free": 1.0031644011564713,
+          "peak_field_t": 0.1173630931637204,
+          "bandwidth_hz": 72973755821.95586,
+          "at_floor": false
+        }
+      ],
+      "retention": [
+        {
+          "stability_factor": 40.0,
+          "sites_needed_coherent": 6893.866609716144
+        },
+        {
+          "stability_factor": 60.0,
+          "sites_needed_coherent": 10340.799914574214
+        }
+      ],
+      "reliability": {
+        "stability_factor": 3.0,
+        "switching_time_tau0": 10.0,
+        "br_over_anisotropy": 1.0,
+        "copies": 600,
+        "temperature_k": 0.580225906077504,
+        "bare_success": 0.8833333333333333,
+        "bare_confidence95": 0.02568716353298609,
+        "stabilised_success": 1.0,
+        "stabilised_confidence95": 0.003266666666666667,
+        "hyperbolic_fraction_bare": 0.49916805324459235,
+        "added_cost": 2.4527772152445692e-11,
+        "added_cost_over_optimal": 2.532455643386925
+      },
+      "hard_axis": {
+        "available": true,
+        "map_damping": 0.01,
+        "damping_decades_away": 0.0,
+        "helped_cells": 23,
+        "best_reduction": 4.3142467194855705,
+        "best_ratio": 4.0,
+        "pays_up_to_tau0": 20.0
+      },
+      "provenance": {
+        "moment": "derived",
+        "anisotropy": "assumed",
+        "damping": "assumed"
+      },
+      "flags": [
+        "anisotropy: assumed",
+        "hard_axis_ratio: assumed",
+        "damping: assumed",
+        "damping: wide damping band"
+      ]
+    },
+    {
+      "material": "fe3gete2",
+      "name": "Fe3GeTe2",
+      "family": "itinerant metal",
+      "easy_axis": "out-of-plane c axis",
+      "moment_bohr": 1.58,
+      "anisotropy_mev": 0.3551233811707494,
+      "damping": 0.01,
+      "hard_axis_ratio": 0.0,
+      "curie_kelvin": 130.0,
+      "above_room_temperature": false,
+      "tau0_s": 7.312742097768829e-13,
+      "cost_floor": 8.820643422139e-13,
+      "anisotropy_field_t": 3.882978723404256,
+      "single_site_kelvin": 4.121035712182098,
+      "reference_times": [
+        {
+          "switching_time_tau0": 2.0,
+          "switching_time_s": 1.4625484195537659e-12,
+          "cost": 2.1766351938372508e-10,
+          "cost_over_floor": 246.76603391245786,
+          "cost_over_free": 1.0000050650429155,
+          "peak_field_t": 12.238206082686231,
+          "bandwidth_hz": 683404190512.1735,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 10.0,
+          "switching_time_s": 7.312742097768829e-12,
+          "cost": 4.3537995646501275e-11,
+          "cost_over_floor": 49.35920608379308,
+          "cost_over_free": 1.000126624148784,
+          "peak_field_t": 2.4788517829857044,
+          "bandwidth_hz": 410042514307.3041,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 50.0,
+          "switching_time_s": 3.6563710488844145e-11,
+          "cost": 8.734047524721846e-12,
+          "cost_over_floor": 9.90182587224895,
+          "cost_over_free": 1.0031644011564715,
+          "peak_field_t": 0.527574410999469,
+          "bandwidth_hz": 328034011445.8433,
+          "at_floor": false
+        }
+      ],
+      "retention": [
+        {
+          "stability_factor": 40.0,
+          "sites_needed_coherent": 2911.889349691166
+        },
+        {
+          "stability_factor": 60.0,
+          "sites_needed_coherent": 4367.834024536749
+        }
+      ],
+      "reliability": {
+        "stability_factor": 3.0,
+        "switching_time_tau0": 10.0,
+        "br_over_anisotropy": 1.0,
+        "copies": 600,
+        "temperature_k": 1.373678570727366,
+        "bare_success": 0.8833333333333333,
+        "bare_confidence95": 0.02568716353298609,
+        "stabilised_success": 1.0,
+        "stabilised_confidence95": 0.003266666666666667,
+        "hyperbolic_fraction_bare": 0.49916805324459235,
+        "added_cost": 1.1025804277673751e-10,
+        "added_cost_over_optimal": 2.5324556433869247
+      },
+      "hard_axis": {
+        "available": true,
+        "map_damping": 0.01,
+        "damping_decades_away": 0.0,
+        "helped_cells": 23,
+        "best_reduction": 4.3142467194855705,
+        "best_ratio": 4.0,
+        "pays_up_to_tau0": 20.0
+      },
+      "provenance": {
+        "moment": "measured",
+        "anisotropy": "derived",
+        "damping": "assumed"
+      },
+      "flags": [
+        "anisotropy: converted from erg/cm3 (volume)",
+        "damping: assumed",
+        "damping: wide damping band",
+        "hard_axis_ratio: assumed"
+      ]
+    },
+    {
+      "material": "fe3gate2",
+      "name": "Fe3GaTe2",
+      "family": "itinerant metal",
+      "easy_axis": "out-of-plane c axis",
+      "moment_bohr": 1.82,
+      "anisotropy_mev": 0.31,
+      "damping": 0.01,
+      "hard_axis_ratio": 0.0,
+      "curie_kelvin": 380.0,
+      "above_room_temperature": true,
+      "tau0_s": 9.649662664125374e-13,
+      "cost_floor": 6.684491751435749e-13,
+      "anisotropy_field_t": 2.942612914433176,
+      "single_site_kelvin": 3.597400617680525,
+      "reference_times": [
+        {
+          "switching_time_tau0": 2.0,
+          "switching_time_s": 1.9299325328250748e-12,
+          "cost": 1.6495055182223394e-10,
+          "cost_over_floor": 246.76603391245794,
+          "cost_over_free": 1.0000050650429158,
+          "peak_field_t": 9.274401389671977,
+          "bandwidth_hz": 517899823827.9834,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 10.0,
+          "switching_time_s": 9.649662664125373e-12,
+          "cost": 3.299412059245318e-11,
+          "cost_over_floor": 49.35920608379304,
+          "cost_over_free": 1.0001266241487834,
+          "peak_field_t": 1.8785323817547028,
+          "bandwidth_hz": 310739894296.79004,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 50.0,
+          "switching_time_s": 4.824831332062687e-11,
+          "cost": 6.6188673367201195e-12,
+          "cost_over_floor": 9.90182587224895,
+          "cost_over_free": 1.0031644011564718,
+          "peak_field_t": 0.39980833934893767,
+          "bandwidth_hz": 248591915437.432,
+          "at_floor": false
+        }
+      ],
+      "retention": [
+        {
+          "stability_factor": 40.0,
+          "sites_needed_coherent": 3335.7419079271663
+        },
+        {
+          "stability_factor": 60.0,
+          "sites_needed_coherent": 5003.612861890749
+        }
+      ],
+      "reliability": {
+        "stability_factor": 3.0,
+        "switching_time_tau0": 10.0,
+        "br_over_anisotropy": 1.0,
+        "copies": 600,
+        "temperature_k": 1.1991335392268416,
+        "bare_success": 0.8833333333333333,
+        "bare_confidence95": 0.02568716353298609,
+        "stabilised_success": 1.0,
+        "stabilised_confidence95": 0.003266666666666667,
+        "hyperbolic_fraction_bare": 0.49916805324459235,
+        "added_cost": 8.355614689294688e-11,
+        "added_cost_over_optimal": 2.532455643386927
+      },
+      "hard_axis": {
+        "available": true,
+        "map_damping": 0.01,
+        "damping_decades_away": 0.0,
+        "helped_cells": 23,
+        "best_reduction": 4.3142467194855705,
+        "best_ratio": 4.0,
+        "pays_up_to_tau0": 20.0
+      },
+      "provenance": {
+        "moment": "computed",
+        "anisotropy": "computed",
+        "damping": "assumed"
+      },
+      "flags": [
+        "damping: assumed",
+        "damping: wide damping band",
+        "hard_axis_ratio: assumed"
+      ]
+    },
+    {
+      "material": "cri3",
+      "name": "CrI3",
+      "family": "semiconductor",
+      "easy_axis": "out-of-plane (Ising-like)",
+      "moment_bohr": 3.0,
+      "anisotropy_mev": 0.495,
+      "damping": 0.01,
+      "hard_axis_ratio": 0.0,
+      "curie_kelvin": 45.0,
+      "above_room_temperature": false,
+      "tau0_s": 9.961356729533354e-13,
+      "cost_floor": 6.475331848245663e-13,
+      "anisotropy_field_t": 2.8505376071105895,
+      "single_site_kelvin": 5.74423647016729,
+      "reference_times": [
+        {
+          "switching_time_tau0": 2.0,
+          "switching_time_s": 1.992271345906671e-12,
+          "cost": 1.5978919584586076e-10,
+          "cost_over_floor": 246.76603391245786,
+          "cost_over_free": 1.0000050650429158,
+          "peak_field_t": 8.984202378446756,
+          "bandwidth_hz": 501694571275.9465,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 10.0,
+          "switching_time_s": 9.961356729533354e-12,
+          "cost": 3.1961723915850605e-11,
+          "cost_over_floor": 49.359206083793026,
+          "cost_over_free": 1.0001266241487832,
+          "peak_field_t": 1.8197524975514103,
+          "bandwidth_hz": 301016742765.5679,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 50.0,
+          "switching_time_s": 4.980678364766677e-11,
+          "cost": 6.411760842635652e-12,
+          "cost_over_floor": 9.901825872248951,
+          "cost_over_free": 1.003164401156472,
+          "peak_field_t": 0.38729820744027743,
+          "bandwidth_hz": 240813394212.45428,
+          "at_floor": false
+        }
+      ],
+      "retention": [
+        {
+          "stability_factor": 40.0,
+          "sites_needed_coherent": 2089.0504877927706
+        },
+        {
+          "stability_factor": 60.0,
+          "sites_needed_coherent": 3133.575731689156
+        }
+      ],
+      "reliability": {
+        "stability_factor": 3.0,
+        "switching_time_tau0": 10.0,
+        "br_over_anisotropy": 1.0,
+        "copies": 600,
+        "temperature_k": 1.9147454900557632,
+        "bare_success": 0.8833333333333333,
+        "bare_confidence95": 0.02568716353298609,
+        "stabilised_success": 1.0,
+        "stabilised_confidence95": 0.003266666666666667,
+        "hyperbolic_fraction_bare": 0.49916805324459235,
+        "added_cost": 8.094164810307082e-11,
+        "added_cost_over_optimal": 2.5324556433869283
+      },
+      "hard_axis": {
+        "available": true,
+        "map_damping": 0.01,
+        "damping_decades_away": 0.0,
+        "helped_cells": 23,
+        "best_reduction": 4.3142467194855705,
+        "best_ratio": 4.0,
+        "pays_up_to_tau0": 20.0
+      },
+      "provenance": {
+        "moment": "derived",
+        "anisotropy": "measured",
+        "damping": "assumed"
+      },
+      "flags": [
+        "anisotropy: converted from meV (spin-operator)",
+        "damping: assumed",
+        "hard_axis_ratio: assumed"
+      ]
+    },
+    {
+      "material": "cr2ge2te6",
+      "name": "Cr2Ge2Te6",
+      "family": "semiconductor",
+      "easy_axis": "out-of-plane c axis (weak)",
+      "moment_bohr": 2.8,
+      "anisotropy_mev": 0.03410875482784004,
+      "damping": 0.0007,
+      "hard_axis_ratio": 0.0,
+      "curie_kelvin": 61.0,
+      "above_room_temperature": false,
+      "tau0_s": 1.3492567618704369e-11,
+      "cost_floor": 3.3464470672835704e-15,
+      "anisotropy_field_t": 0.21045084062440025,
+      "single_site_kelvin": 0.39581566350317854,
+      "reference_times": [
+        {
+          "switching_time_tau0": 2.0,
+          "switching_time_s": 2.6985135237408737e-11,
+          "cost": 1.1795759181045324e-11,
+          "cost_over_floor": 3524.8605293554992,
+          "cost_over_free": 1.0000000248236662,
+          "peak_field_t": 0.6612983005443994,
+          "bandwidth_hz": 37039344437.46663,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 10.0,
+          "switching_time_s": 1.349256761870437e-10,
+          "cost": 2.3591532417160293e-12,
+          "cost_over_floor": 704.9725258708596,
+          "cost_over_free": 1.0000006205915934,
+          "peak_field_t": 0.1323775519052717,
+          "bandwidth_hz": 22223606662.479977,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 50.0,
+          "switching_time_s": 6.746283809352185e-10,
+          "cost": 4.718376758644298e-13,
+          "cost_over_floor": 140.99660516890745,
+          "cost_over_free": 1.0000155147609522,
+          "peak_field_t": 0.02659355973468575,
+          "bandwidth_hz": 17778885329.983982,
+          "at_floor": false
+        }
+      ],
+      "retention": [
+        {
+          "stability_factor": 40.0,
+          "sites_needed_coherent": 30317.142817931046
+        },
+        {
+          "stability_factor": 60.0,
+          "sites_needed_coherent": 45475.71422689656
+        }
+      ],
+      "reliability": {
+        "stability_factor": 3.0,
+        "switching_time_tau0": 10.0,
+        "br_over_anisotropy": 1.0,
+        "copies": 600,
+        "temperature_k": 0.1319385545010595,
+        "bare_success": 1.0,
+        "bare_confidence95": 0.003266666666666667,
+        "stabilised_success": 1.0,
+        "stabilised_confidence95": 0.003266666666666667,
+        "hyperbolic_fraction_bare": 0.49916805324459235,
+        "added_cost": 5.9757983344349476e-12,
+        "added_cost_over_optimal": 2.5330267778994293
+      },
+      "hard_axis": {
+        "available": true,
+        "map_damping": 0.001,
+        "damping_decades_away": 0.15490195998574308,
+        "helped_cells": 23,
+        "best_reduction": 4.315879491351827,
+        "best_ratio": 4.0,
+        "pays_up_to_tau0": 50.0
+      },
+      "provenance": {
+        "moment": "measured",
+        "anisotropy": "derived",
+        "damping": "measured"
+      },
+      "flags": [
+        "anisotropy: converted from erg/cm3 (volume)",
+        "hard_axis_ratio: assumed"
+      ]
+    },
+    {
+      "material": "feps3",
+      "name": "FePS3",
+      "family": "Ising antiferromagnet",
+      "easy_axis": "out-of-plane (strong Ising)",
+      "moment_bohr": 4.0,
+      "anisotropy_mev": 10.64,
+      "damping": 0.01,
+      "hard_axis_ratio": 0.0,
+      "curie_kelvin": 118.0,
+      "above_room_temperature": false,
+      "tau0_s": 6.179037069071441e-14,
+      "cost_floor": 1.0439019828080888e-11,
+      "anisotropy_field_t": 45.95412142372223,
+      "single_site_kelvin": 123.47207281329285,
+      "reference_times": [
+        {
+          "switching_time_tau0": 2.0,
+          "switching_time_s": 1.2358074138142881e-13,
+          "cost": 2.575995520909028e-09,
+          "cost_over_floor": 246.76603391245783,
+          "cost_over_free": 1.0000050650429155,
+          "peak_field_t": 144.8362322828386,
+          "bandwidth_hz": 8087924603600.107,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 10.0,
+          "switching_time_s": 6.17903706907144e-13,
+          "cost": 5.152617310070462e-10,
+          "cost_over_floor": 49.359206083793026,
+          "cost_over_free": 1.0001266241487832,
+          "peak_field_t": 29.33661602113182,
+          "bandwidth_hz": 4852754762160.064,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 50.0,
+          "switching_time_s": 3.0895185345357202e-12,
+          "cost": 1.0336535661461109e-10,
+          "cost_over_floor": 9.901825872248947,
+          "cost_over_free": 1.0031644011564715,
+          "peak_field_t": 6.243716556309926,
+          "bandwidth_hz": 3882203809728.052,
+          "at_floor": false
+        }
+      ],
+      "retention": [
+        {
+          "stability_factor": 40.0,
+          "sites_needed_coherent": 97.18796912193811
+        },
+        {
+          "stability_factor": 60.0,
+          "sites_needed_coherent": 145.78195368290716
+        }
+      ],
+      "reliability": {
+        "stability_factor": 3.0,
+        "switching_time_tau0": 10.0,
+        "br_over_anisotropy": 1.0,
+        "copies": 600,
+        "temperature_k": 41.157357604430956,
+        "bare_success": 0.8833333333333333,
+        "bare_confidence95": 0.02568716353298609,
+        "stabilised_success": 1.0,
+        "stabilised_confidence95": 0.003266666666666667,
+        "hyperbolic_fraction_bare": 0.49916805324459235,
+        "added_cost": 1.304877478510111e-09,
+        "added_cost_over_optimal": 2.532455643386927
+      },
+      "hard_axis": {
+        "available": true,
+        "map_damping": 0.01,
+        "damping_decades_away": 0.0,
+        "helped_cells": 23,
+        "best_reduction": 4.3142467194855705,
+        "best_ratio": 4.0,
+        "pays_up_to_tau0": 20.0
+      },
+      "provenance": {
+        "moment": "derived",
+        "anisotropy": "derived",
+        "damping": "assumed"
+      },
+      "flags": [
+        "anisotropy: converted from meV (spin-operator)",
+        "damping: assumed",
+        "hard_axis_ratio: assumed"
+      ]
+    },
+    {
+      "material": "crbr3",
+      "name": "CrBr3",
+      "family": "semiconductor",
+      "easy_axis": "out-of-plane c axis (weak)",
+      "moment_bohr": 3.0,
+      "anisotropy_mev": 0.045,
+      "damping": 0.01,
+      "hard_axis_ratio": 0.0,
+      "curie_kelvin": 32.0,
+      "above_room_temperature": false,
+      "tau0_s": 1.0957492402486686e-11,
+      "cost_floor": 5.886665316586966e-14,
+      "anisotropy_field_t": 0.25913978246459907,
+      "single_site_kelvin": 0.5222033154697536,
+      "reference_times": [
+        {
+          "switching_time_tau0": 2.0,
+          "switching_time_s": 2.1914984804973372e-11,
+          "cost": 1.452629053144189e-11,
+          "cost_over_floor": 246.76603391245789,
+          "cost_over_free": 1.0000050650429155,
+          "peak_field_t": 0.8167456707678871,
+          "bandwidth_hz": 45608597388.72242,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 10.0,
+          "switching_time_s": 1.0957492402486686e-10,
+          "cost": 2.9056112650773305e-12,
+          "cost_over_floor": 49.35920608379307,
+          "cost_over_free": 1.0001266241487838,
+          "peak_field_t": 0.16543204523194652,
+          "bandwidth_hz": 27365158433.23345,
+          "at_floor": false
+        },
+        {
+          "switching_time_tau0": 50.0,
+          "switching_time_s": 5.478746201243343e-10,
+          "cost": 5.828873493305138e-13,
+          "cost_over_floor": 9.90182587224895,
+          "cost_over_free": 1.0031644011564715,
+          "peak_field_t": 0.035208927949116134,
+          "bandwidth_hz": 21892126746.586758,
+          "at_floor": false
+        }
+      ],
+      "retention": [
+        {
+          "stability_factor": 40.0,
+          "sites_needed_coherent": 22979.555365720476
+        },
+        {
+          "stability_factor": 60.0,
+          "sites_needed_coherent": 34469.33304858071
+        }
+      ],
+      "reliability": {
+        "stability_factor": 3.0,
+        "switching_time_tau0": 10.0,
+        "br_over_anisotropy": 1.0,
+        "copies": 600,
+        "temperature_k": 0.17406777182325123,
+        "bare_success": 0.8833333333333333,
+        "bare_confidence95": 0.02568716353298609,
+        "stabilised_success": 1.0,
+        "stabilised_confidence95": 0.003266666666666667,
+        "hyperbolic_fraction_bare": 0.49916805324459235,
+        "added_cost": 7.358331645733709e-12,
+        "added_cost_over_optimal": 2.532455643386925
+      },
+      "hard_axis": {
+        "available": true,
+        "map_damping": 0.01,
+        "damping_decades_away": 0.0,
+        "helped_cells": 23,
+        "best_reduction": 4.3142467194855705,
+        "best_ratio": 4.0,
+        "pays_up_to_tau0": 20.0
+      },
+      "provenance": {
+        "moment": "derived",
+        "anisotropy": "measured",
+        "damping": "assumed"
+      },
+      "flags": [
+        "anisotropy: converted from meV (spin-operator)",
+        "damping: assumed",
+        "hard_axis_ratio: assumed"
+      ]
+    }
+  ]
+}

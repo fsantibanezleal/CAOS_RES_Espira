@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useShellLang, Tabs, Cite } from '@fasl-work/caos-app-shell';
 import type {
   ArtifactIndex,
+  DescriptorArtifact,
   CaseArtifact,
   LatticeOCPArtifact,
   NovelResults,
@@ -16,6 +17,7 @@ import type {
 } from '../data/contract';
 import {
   loadCase,
+  loadDescriptors,
   loadHardAxisMap,
   loadIndex,
   loadLatticeOCP,
@@ -173,6 +175,129 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
                 <td>{c.starts.uniform.ratio.toFixed(4)}</td>
                 <td>{c.starts.wall.ratio.toFixed(4)}</td>
                 <td>{c.starts.mep.ratio.toFixed(4)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="muted">{data.description}</p>
+    </div>
+  );
+}
+
+/** Plain and locale-free, with a unit-aware short form for the wide dynamic ranges here. */
+function shortNumber(value: number | null | undefined, digits = 3): string {
+  if (value == null || !Number.isFinite(value)) return '-';
+  const absolute = Math.abs(value);
+  if (absolute !== 0 && (absolute < 0.01 || absolute >= 10000)) return value.toExponential(2);
+  return String(Number(value.toPrecision(digits)));
+}
+
+function Exploitability({ data, es }: { data: DescriptorArtifact; es: boolean }) {
+  const times = data.reference_times_tau0;
+  const [time, setTime] = useState(times[1] ?? times[0]);
+  const activeTime = times.includes(time) ? time : times[0];
+  const retentions = data.retention_factors;
+  const [retention, setRetention] = useState(retentions[0]);
+  const activeRetention = retentions.includes(retention) ? retention : retentions[0];
+
+  const rows = useMemo(
+    () =>
+      data.materials
+        .map((m) => ({
+          material: m,
+          at: m.reference_times.find((r) => r.switching_time_tau0 === activeTime) ?? m.reference_times[0],
+          sites:
+            m.retention.find((r) => r.stability_factor === activeRetention)?.sites_needed_coherent ?? null,
+        }))
+        .sort((a, b) => a.at.cost - b.at.cost),
+    [data, activeTime, activeRetention],
+  );
+  const warm = data.materials.filter((m) => m.above_room_temperature);
+  const cheapest = rows[0];
+  const gentlest = [...rows].sort((a, b) => (a.at.peak_field_t ?? Infinity) - (b.at.peak_field_t ?? Infinity))[0];
+  // The other end of the same trade: the material that retains with the fewest sites is the one that
+  // demands the largest field, because both follow the anisotropy.
+  const fewestSites = [...rows].sort((a, b) => (a.sites ?? Infinity) - (b.sites ?? Infinity))[0];
+
+  return (
+    <div className="prose">
+      <p>
+        {es
+          ? 'El banco de trabajo responde un caso a la vez. Un disenador que elige entre estos materiales pregunta otra cosa: con lo que esta medido de cada uno, cual se puede conmutar barato, de forma fiable y con un generador que exista. Esta tabla reduce cada material de la base a esos numeros, todos derivados de sus parametros del Contrato 1 y de los resultados del propio producto.'
+          : 'The workbench answers one case at a time. A designer choosing between these materials asks something else: given what is actually measured about each, which can be switched cheaply, reliably, and with a generator that exists. This table reduces every material in the database to those numbers, all derived from its Contract 1 parameters and the product’s own results.'}
+      </p>
+      <p data-testid="exploitability-verdict">
+        {es
+          ? `Medido a T = ${activeTime} tau0: el costo mas bajo y el campo pico mas bajo son ambos de ${cheapest.material.name} (${shortNumber(cheapest.at.cost)} T^2 s, ${shortNumber(gentlest.at.peak_field_t)} T), y eso mismo le cuesta ${Math.round(cheapest.sites ?? 0).toLocaleString('en-US')} sitios para retener a K/kT = ${activeRetention}. En el otro extremo, ${fewestSites.material.name} retiene con ${Math.round(fewestSites.sites ?? 0).toLocaleString('en-US')} sitios y exige ${shortNumber(fewestSites.at.peak_field_t)} T. La anisotropia fija los dos: la que abarata el pulso es la que obliga a un elemento mas grande. De los ${data.materials.length} materiales, ${warm.length} ordena por encima de temperatura ambiente (${warm.map((m) => m.name).join(', ') || 'ninguno'}).`
+          : `Measured at T = ${activeTime} tau0: the lowest cost and the lowest peak field are both ${cheapest.material.name} (${shortNumber(cheapest.at.cost)} T^2 s, ${shortNumber(gentlest.at.peak_field_t)} T), and that same softness costs it ${Math.round(cheapest.sites ?? 0).toLocaleString('en-US')} sites to retain at K/kT = ${activeRetention}. At the other end, ${fewestSites.material.name} retains with ${Math.round(fewestSites.sites ?? 0).toLocaleString('en-US')} sites and demands ${shortNumber(fewestSites.at.peak_field_t)} T. One anisotropy sets both: what makes the pulse cheap is what forces a larger element. Of the ${data.materials.length} materials, ${warm.length} orders above room temperature (${warm.map((m) => m.name).join(', ') || 'none'}).`}
+      </p>
+      <p className="muted" data-testid="exploitability-caveat">
+        {es
+          ? 'Los sitios que se listan suponen una inversion coherente, asi que la barrera es el numero de sitios por la anisotropia de un sitio. Los resultados de control optimo libre de este mismo producto (C19 a C22) miden la salida mas barata: sobre un tamano de cruce la inversion nuclea una pared de dominio cuya barrera se satura en la energia de pared en vez de crecer con el volumen. Estos numeros son el extremo optimista.'
+          : data.retention_note}
+      </p>
+      <p className="muted" data-testid="exploitability-reliability-note">
+        {es
+          ? 'La fiabilidad se mide por material pero solo depende del amortiguamiento: a tiempo de conmutacion reducido fijo, factor de estabilidad fijo y campo en unidades del campo de anisotropia del propio material, ningun otro parametro entra en la dinamica reducida. Los materiales que comparten alpha comparten esas dos columnas exactamente, lo que comprueba la reduccion en vez de ser una coincidencia. La medicion es a K/kT = 3, donde el pulso desnudo si pierde copias.'
+          : data.reliability_note}
+      </p>
+      <Chips
+        label={es ? 'Tiempo de conmutacion' : 'Switching time'}
+        values={times}
+        active={activeTime}
+        onPick={setTime}
+        format={(v) => `T = ${v} tau0`}
+      />
+      <Chips
+        label={es ? 'Retencion' : 'Retention'}
+        values={retentions}
+        active={activeRetention}
+        onPick={setRetention}
+        format={(v) => `K/kT = ${v}`}
+      />
+      <div className="table-wrap">
+        <table data-testid="exploitability-table">
+          <thead>
+            <tr>
+              <th>{es ? 'Material' : 'Material'}</th>
+              <th>tau0 (ps)</th>
+              <th>{es ? 'Costo' : 'Cost'} (T^2 s)</th>
+              <th>{es ? 'Costo / piso' : 'Cost / floor'}</th>
+              <th>{es ? 'Campo pico' : 'Peak field'} (T)</th>
+              <th>{es ? 'Ancho de banda' : 'Bandwidth'} (Hz)</th>
+              <th>{es ? 'Sitios para retener' : 'Sites to retain'}</th>
+              <th>{es ? 'Fiabilidad, desnuda / con campo' : 'Reliability, bare / with field'}</th>
+              <th>T_C (K)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({ material, at, sites }) => (
+              <tr key={material.material} data-material={material.material}>
+                <td>
+                  {material.name}{' '}
+                  {material.provenance.damping === 'assumed' && (
+                    <span className="prov-badge prov-assumed">{es ? 'alpha supuesto' : 'assumed alpha'}</span>
+                  )}
+                </td>
+                <td>{shortNumber(material.tau0_s * 1e12)}</td>
+                <td>{shortNumber(at.cost)}</td>
+                <td>{shortNumber(at.cost_over_floor)}</td>
+                <td>{shortNumber(at.peak_field_t)}</td>
+                <td>{shortNumber(at.bandwidth_hz)}</td>
+                <td>{sites == null ? '-' : Math.round(sites).toLocaleString('en-US')}</td>
+                <td>
+                  {material.reliability.bare_success.toFixed(3)} / {material.reliability.stabilised_success.toFixed(3)}{' '}
+                  <span className="muted">
+                    ({es ? 'cuesta' : 'costs'} {shortNumber(material.reliability.added_cost_over_optimal, 3)}x)
+                  </span>
+                </td>
+                <td>
+                  {material.curie_kelvin}
+                  {material.above_room_temperature && (
+                    <span className="prov-badge prov-measured">{es ? 'sobre ambiente' : 'above room'}</span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -730,6 +855,7 @@ export function Experiments(): React.JSX.Element {
   const [pareto, setPareto] = useState<ParetoArtifact | null>(null);
   const [hardAxis, setHardAxis] = useState<HardAxisMapArtifact | null>(null);
   const [penalty, setPenalty] = useState<PenaltyTestArtifact | null>(null);
+  const [descriptors, setDescriptors] = useState<DescriptorArtifact | null>(null);
 
   useEffect(() => {
     loadIndex().then(async (ix: ArtifactIndex) => {
@@ -742,9 +868,10 @@ export function Experiments(): React.JSX.Element {
     loadPareto().then(setPareto);
     loadHardAxisMap().then(setHardAxis);
     loadPenaltyTest().then(setPenalty);
+    loadDescriptors().then(setDescriptors);
   }, []);
 
-  if (!artifacts.length || !novel || !chain || !patch || !pareto || !hardAxis || !penalty || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
+  if (!artifacts.length || !novel || !chain || !patch || !pareto || !hardAxis || !penalty || !descriptors || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
   return (
     <article className="prose">
@@ -785,6 +912,11 @@ export function Experiments(): React.JSX.Element {
             id: 'patch',
             label: es ? 'Parche bidimensional' : 'Two-dimensional patch',
             content: <Patch data={patch} es={es} />,
+          },
+          {
+            id: 'exploitability',
+            label: es ? 'Explotabilidad por material' : 'Exploitability by material',
+            content: <Exploitability data={descriptors} es={es} />,
           },
           {
             id: 'penalty',

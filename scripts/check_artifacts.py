@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "penalty_test.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "penalty_test.json", "descriptors.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -102,6 +102,31 @@ def check(artifacts: Path) -> list[str]:
             sz = case["sz_map"]["sz"]
             if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
                 errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
+
+    descriptors_path = artifacts / "descriptors.json"
+    if descriptors_path.exists():
+        descriptors = json.loads(descriptors_path.read_text(encoding="utf-8"))
+        if descriptors.get("schema") != "espira.descriptors/1":
+            errors.append(f"descriptors: schema {descriptors.get('schema')}")
+        if not str(descriptors.get("retention_note", "")).strip():
+            errors.append("descriptors: the retention counts carry no caveat")
+        for entry in descriptors.get("materials", []):
+            if len(entry["reference_times"]) != len(descriptors["reference_times_tau0"]):
+                errors.append(f"descriptors {entry['material']}: reference times do not match the declared sweep")
+            if entry["tau0_s"] <= 0 or entry["cost_floor"] <= 0:
+                errors.append(f"descriptors {entry['material']}: a non-positive timescale or floor")
+            for row in entry["reference_times"]:
+                # A cost below the material's own infinite-time floor would break the bound the whole
+                # product rests on.
+                if row["cost"] < entry["cost_floor"] * (1.0 - TOLERANCE):
+                    errors.append(f"descriptors {entry['material']}: cost below its own floor")
+            for row in entry["retention"]:
+                if row["sites_needed_coherent"] <= 0:
+                    errors.append(f"descriptors {entry['material']}: a non-positive site count")
+            if "damping" not in entry["provenance"]:
+                errors.append(f"descriptors {entry['material']}: no provenance for the damping it rests on")
+    else:
+        errors.append("missing descriptors.json")
 
     penalty_path = artifacts / "penalty_test.json"
     if penalty_path.exists():
@@ -227,7 +252,7 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json, penalty_test.json consistent")
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json, penalty_test.json, descriptors.json consistent")
     return 0
 
 
