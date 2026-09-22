@@ -555,6 +555,32 @@ export interface DescriptorArtifact {
   materials: MaterialDescriptors[];
 }
 
+// ---- the external cross-check (data/artifacts/external_crosscheck.json), backlog BL-013 ----
+
+export interface CrosscheckRow {
+  n_sites: number;
+  exchange_over_k: number;
+  images: number;
+  spinoct_barrier_over_k: number;
+  spinoct_converged: boolean;
+  spirit_barrier_over_k: number;
+  spirit_saddle_image: number;
+  relative_difference: number;
+}
+
+export interface ExternalCrosscheck {
+  schema: string;
+  description: string;
+  engines: Record<string, string>;
+  anisotropy_mev: number;
+  moment_bohr: number;
+  tolerance: number;
+  measured_on: string;
+  worst_relative_difference: number;
+  agrees: boolean;
+  rows: CrosscheckRow[];
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {

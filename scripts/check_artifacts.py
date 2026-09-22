@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "penalty_test.json", "descriptors.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "penalty_test.json", "descriptors.json", "external_crosscheck.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -102,6 +102,28 @@ def check(artifacts: Path) -> list[str]:
             sz = case["sz_map"]["sz"]
             if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
                 errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
+
+    external_path = artifacts / "external_crosscheck.json"
+    if external_path.exists():
+        external = json.loads(external_path.read_text(encoding="utf-8"))
+        if external.get("schema") != "espira.external-crosscheck/1":
+            errors.append(f"external_crosscheck: schema {external.get('schema')}")
+        if not external.get("engines", {}).get("spirit"):
+            errors.append("external_crosscheck: no external engine version recorded")
+        worst = max((r["relative_difference"] for r in external.get("rows", [])), default=None)
+        if worst is None:
+            errors.append("external_crosscheck: no rows")
+        else:
+            if abs(worst - external["worst_relative_difference"]) > 1e-12:
+                errors.append("external_crosscheck: the worst difference disagrees with the rows")
+            # The claim is agreement between two independent codes; it has to hold in the artifact.
+            if external["agrees"] != (worst <= external["tolerance"]):
+                errors.append("external_crosscheck: the verdict disagrees with its own tolerance")
+            for row in external["rows"]:
+                if not row["spinoct_converged"]:
+                    errors.append(f"external_crosscheck N={row['n_sites']}: our own path did not converge")
+    else:
+        errors.append("missing external_crosscheck.json")
 
     descriptors_path = artifacts / "descriptors.json"
     if descriptors_path.exists():
@@ -252,7 +274,7 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json, penalty_test.json, descriptors.json consistent")
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json, penalty_test.json, descriptors.json, external_crosscheck.json consistent")
     return 0
 
 

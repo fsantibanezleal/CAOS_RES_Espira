@@ -1,0 +1,46 @@
+{
+  "schema": "espira.external-crosscheck/1",
+  "description": "The minimum-energy-path barrier of an open spin chain, computed twice: by spinoct's climbing-image string method and by Spirit's geodesic nudged elastic band, from the same tanh-wall initial path and the same Hamiltonian. The two codes share no code and no method.",
+  "engines": {
+    "spinoct": "0.18.000",
+    "spirit": "2.2.0"
+  },
+  "anisotropy_mev": 0.15,
+  "moment_bohr": 3.0,
+  "tolerance": 1e-05,
+  "measured_on": "2026-09-22",
+  "worst_relative_difference": 3.108231726356383e-07,
+  "agrees": true,
+  "rows": [
+    {
+      "n_sites": 8,
+      "exchange_over_k": 10.0,
+      "images": 33,
+      "spinoct_barrier_over_k": 7.747499683713447,
+      "spinoct_converged": true,
+      "spirit_barrier_over_k": 7.74749755859375,
+      "spirit_saddle_image": 16,
+      "relative_difference": 2.742974874297071e-07
+    },
+    {
+      "n_sites": 12,
+      "exchange_over_k": 10.0,
+      "images": 33,
+      "spinoct_barrier_over_k": 8.699063779716958,
+      "spinoct_converged": true,
+      "spirit_barrier_over_k": 8.699061075846355,
+      "spirit_saddle_image": 16,
+      "relative_difference": 3.108231726356383e-07
+    },
+    {
+      "n_sites": 16,
+      "exchange_over_k": 10.0,
+      "images": 33,
+      "spinoct_barrier_over_k": 8.839570760182632,
+      "spinoct_converged": true,
+      "spirit_barrier_over_k": 8.839569091796875,
+      "spirit_saddle_image": 16,
+      "relative_difference": 1.8874058502639253e-07
+    }
+  ]
+}
