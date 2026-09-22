@@ -14,6 +14,7 @@ from pathlib import Path
 import spinoct
 
 from ..bake import bake_all
+from ..bake.descriptors import bake_descriptors
 from ..bake.pareto import bake_pareto_fronts
 from ..bake.parity import bake_live_parity
 from ..bake.penalty_test import bake_penalty_test
@@ -80,6 +81,10 @@ def export_all(output: Path, manifests: Path) -> dict:
     # The device trade-off front (R14): milliseconds per point over the closed-form family.
     (output / "pareto.json").write_text(
         json.dumps(bake_pareto_fronts(), indent=2, allow_nan=False), encoding="utf-8", newline="\n"
+    )
+    # Exploitability descriptors (BL-026): pure arithmetic over Contract 1 plus the hard-axis map.
+    (output / "descriptors.json").write_text(
+        json.dumps(bake_descriptors(output), indent=2, allow_nan=False), encoding="utf-8", newline="\n"
     )
     # Does the penalty predict the ensemble (BL-020): 30 ensembles of 1,000 copies, about half a
     # minute, and it guards a claim the engine makes about itself.
