@@ -434,7 +434,13 @@ CASES: dict[str, Case] = {
         "in-plane (ACS Nano 2022, layer-dependent domains). The declared premise, a weaker perpendicular "
         "anisotropy than Fe3GeTe2, holds only in some of those regimes. The case bakes once a primary "
         "source gives a quantitative perpendicular anisotropy, a moment and a damping measured in the "
-        "same regime.",
+        "same regime. Searched again 2026-09-22 and the block stands: the room-temperature resonance "
+        "study does give a moment (saturation magnetization 0.36 T, effective 4 pi M of 3,340 Oe), an "
+        "intrinsic damping of 0.0476 once the eddy-current contribution is removed, and an ordering "
+        "temperature of 310 K, all on one bulk crystal, but its anisotropy IS the easy plane: the hard "
+        "axis lies along c and no uniaxial anisotropy is reported inside the plane, so there is still no "
+        "bistable state to switch. Flake work reports a perpendicular easy axis below about 200 K and "
+        "through imaging, without a quantitative anisotropy constant beside a damping on one sample.",
         kill_criterion="Parameters that cannot be traced to a primary source must not enter; a case "
         "without provenance is not a case. Mixing an anisotropy from one temperature or thickness with a "
         "damping from another would be the same failure in a quieter form.",
