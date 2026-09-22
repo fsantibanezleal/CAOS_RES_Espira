@@ -23,8 +23,8 @@ and the companion web app.
 ## Manuscript
 
 1. The Cost of Reliability in Optimal Magnetization Switching: A Longitudinal-Field Front for Van der
-Waals Magnets. Preprint, 2026, CC-BY, version 3, version DOI
-[10.5281/zenodo.22822132](https://doi.org/10.5281/zenodo.22822132), concept DOI
+Waals Magnets. Preprint, 2026, CC-BY, version 4, version DOI
+[10.5281/zenodo.22902338](https://doi.org/10.5281/zenodo.22902338), concept DOI
 [10.5281/zenodo.22736005](https://doi.org/10.5281/zenodo.22736005). Source under
 `manuscripts/reliability-realizability/`.
 
