@@ -48,3 +48,20 @@ def test_relative_links_resolve() -> None:
             if not (page.parent / target).resolve().exists():
                 broken.append(f"{page.relative_to(ROOT)} -> {target}")
     assert not broken, broken
+
+
+def test_every_results_page_names_its_artifact_and_is_indexed() -> None:
+    """The results wiki is only useful while each page still points at the artifact it describes, and
+    while the section index lists every page. A result whose artifact was renamed, or a page nobody
+    links to, is how a wiki starts drifting from the product."""
+    results = ROOT / "docs" / "results"
+    pages = sorted(p for p in results.glob("*.md") if p.name != "README.md")
+    assert len(pages) >= 8, "one page per cross-case result"
+    index = (results / "README.md").read_text(encoding="utf-8")
+    artifacts = {p.name for p in (ROOT / "data" / "artifacts").glob("*.json")}
+    for page in pages:
+        assert page.name in index, f"{page.name} is not in the results index"
+        text = page.read_text(encoding="utf-8")
+        named = {a for a in artifacts if a in text}
+        assert named, f"{page.name} names no artifact"
+    assert "results/README.md" in (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
