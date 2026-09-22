@@ -1,10 +1,18 @@
 // Implementation: how the product is built, the engine, the pipeline, the honesty of the lanes.
 
+import { useEffect, useState } from 'react';
 import { useShellLang, Cite, Refs } from '@fasl-work/caos-app-shell';
+import type { LiveParityFixture } from '../data/contract';
+import { loadLiveParity } from '../data/load';
+import { LiveParity } from '../viz/LiveParity';
 
 export function Implementation(): React.JSX.Element {
   const lang = useShellLang();
   const es = lang === 'es';
+  const [parity, setParity] = useState<LiveParityFixture | null>(null);
+  useEffect(() => {
+    loadLiveParity().then(setParity).catch(() => setParity(null));
+  }, []);
   return (
     <article className="prose">
       <h1>{es ? 'Implementacion' : 'Implementation'}</h1>
@@ -34,6 +42,18 @@ export function Implementation(): React.JSX.Element {
           : 'The canonical truth is baked offline with spinoct and committed as checksummed JSON artifacts. This web page replays those artifacts, with one exception: the lane gate measures runtime and artifact size, and the spin-orbit-torque oracle (C03) passes it, so the browser evaluates that closed form itself and shows the agreement with the committed artifact. The heavy atomistic engine (VAMPIRE) is called as a separate process for verification, never linked, keeping spinoct MIT-licensed.'}{' '}
         <Cite id="evans2014" />
       </p>
+      <h2>{es ? 'Paridad del carril en vivo' : 'Live-lane parity'}</h2>
+      <p>
+        {es
+          ? 'El carril en vivo tiene dos implementaciones de la misma forma cerrada: la del motor, en Python, y la del navegador, en TypeScript, escrita por separado para que el acuerdo sea una comprobacion y no una copia. El banco de trabajo muestra ese acuerdo en el punto de operacion del caso; aqui el navegador recalcula toda la rejilla que el horneado comprometio, incluida la integral eliptica cerca de su singularidad, y se muestra la peor desviacion relativa.'
+          : "The live lane carries two implementations of the same closed form: the engine's, in Python, and the browser's, in TypeScript, written separately so that agreement is a check rather than a copy. The workbench shows that agreement at the case's working point; here the browser recomputes the whole grid the bake committed, the elliptic integral near its singularity included, and the worst relative deviation is shown."}{' '}
+        <Cite id="vlasov2022" />
+      </p>
+      {parity ? (
+        <LiveParity fixture={parity} es={es} />
+      ) : (
+        <p className="muted">{es ? 'Cargando la paridad...' : 'Loading the parity fixture...'}</p>
+      )}
       <Refs ids={['kwiatkowski2021', 'vlasov2022', 'badarneh2023', 'scheie2022', 'ruiz2024', 'evans2014']} label="Refs" />
     </article>
   );
