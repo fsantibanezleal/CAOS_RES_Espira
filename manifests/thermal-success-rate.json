@@ -4,7 +4,7 @@
   "code": "C07",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.16.000",
+  "engine_version": "0.18.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "published",
@@ -22,13 +22,13 @@
   ],
   "artifact": {
     "path": "thermal-success-rate.json",
-    "bytes": 277032,
-    "sha256": "958033bb2c28d7b9b805df2b01e30914f2f288214842eeca80335a72b7b61f7d"
+    "bytes": 277001,
+    "sha256": "7f670aadd5c245a29727431ab3748b05390395560dc150fadd457c966adaa179"
   },
   "lane": {
     "lane": "precompute",
     "runtime_ms": 0.022,
-    "artifact_bytes": 277032,
+    "artifact_bytes": 277001,
     "methods": [
       "R11",
       "R12"
@@ -148,8 +148,8 @@
       "applicable": true,
       "reason": "",
       "metrics": {
-        "success_rate": 0.86,
-        "confidence95": 0.027764745031544347,
+        "success_rate": 0.985,
+        "confidence95": 0.009726222288226815,
         "added_cost": 9.811108860978277e-11,
         "added_cost_over_optimal": 10.1298225735477,
         "longitudinal_field_over_anisotropy": 2.0,
@@ -166,8 +166,8 @@
       "applicable": true,
       "reason": "",
       "metrics": {
-        "success_rate": 0.9633333333333334,
-        "confidence95": 0.015038497757915003,
+        "success_rate": 1.0,
+        "confidence95": 0.003266666666666667,
         "added_cost": 9.811108860978277e-11,
         "added_cost_over_optimal": 10.1298225735477,
         "longitudinal_field_over_anisotropy": 2.0,
@@ -184,8 +184,8 @@
       "applicable": true,
       "reason": "",
       "metrics": {
-        "success_rate": 0.9833333333333333,
-        "confidence95": 0.010243661093212373,
+        "success_rate": 1.0,
+        "confidence95": 0.003266666666666667,
         "added_cost": 9.811108860978277e-11,
         "added_cost_over_optimal": 10.1298225735477,
         "longitudinal_field_over_anisotropy": 2.0,
@@ -202,8 +202,8 @@
       "applicable": true,
       "reason": "",
       "metrics": {
-        "success_rate": 0.995,
-        "confidence95": 0.005643869830769195,
+        "success_rate": 1.0,
+        "confidence95": 0.003266666666666667,
         "added_cost": 9.811108860978277e-11,
         "added_cost_over_optimal": 10.1298225735477,
         "longitudinal_field_over_anisotropy": 2.0,

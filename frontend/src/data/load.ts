@@ -75,3 +75,9 @@ export async function loadHardAxisMap(): Promise<import('./contract').HardAxisMa
   if (!response.ok) throw new Error(`hard_axis_map.json ${response.status}`);
   return response.json();
 }
+
+export async function loadPenaltyTest(): Promise<import('./contract').PenaltyTestArtifact> {
+  const response = await fetch(bust(`${base}artifacts/penalty_test.json`));
+  if (!response.ok) throw new Error(`penalty_test.json ${response.status}`);
+  return response.json();
+}
