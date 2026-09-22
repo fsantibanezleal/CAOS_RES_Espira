@@ -14,6 +14,7 @@ from pathlib import Path
 import spinoct
 
 from ..bake import bake_all
+from ..bake.parity import bake_live_parity
 from ..cases import baked_cases
 from ..core.gate import classify_lane
 from ..core.manifest import build_manifest
@@ -73,6 +74,10 @@ def export_all(output: Path, manifests: Path) -> dict:
     }
     (output / "benchmark.json").write_text(
         json.dumps(benchmark, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
+    )
+    # The live lane's parity fixture: cheap to produce, and it belongs with the artifacts it guards.
+    (output / "live_parity.json").write_text(
+        json.dumps(bake_live_parity(), indent=2, allow_nan=False), encoding="utf-8", newline="\n"
     )
     (manifests / "index.json").write_text(
         json.dumps({"schema": "espira.manifest-index/1", "manifests": manifest_index}, indent=2, allow_nan=False),
