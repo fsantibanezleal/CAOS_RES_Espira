@@ -63,3 +63,9 @@ export async function loadLiveParity(): Promise<import('./contract').LiveParityF
   if (!response.ok) throw new Error(`live_parity.json ${response.status}`);
   return response.json();
 }
+
+export async function loadPareto(): Promise<import('./contract').ParetoArtifact> {
+  const response = await fetch(bust(`${base}artifacts/pareto.json`));
+  if (!response.ok) throw new Error(`pareto.json ${response.status}`);
+  return response.json();
+}

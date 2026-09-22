@@ -15,6 +15,7 @@ consumes its artifacts and never recomputes them.
 | `espiralab/cases/` | The case registry: each case has a category, a reason, an expectation, and a switching-time variant sweep of six values |
 | `espiralab/bake/__init__.py` | The per-case bake: analytic optimal pulse and cost curve, the universal floor with its damping band, the free-macrospin reference, a static baseline, and for CrSBr the numerical biaxial optimum |
 | `espiralab/bake/novel.py` | The reliability front (R12) and the two-mode lattice comparison |
+| `espiralab/bake/pareto.py` | The device trade-off front (R14) per material: switching time, cost, peak field and spectral width, with the fitted exchange rates |
 | `espiralab/bake/parity.py` | The live-lane parity fixture: K(m) from SciPy and the closed-form protocol from spinoct, which the browser recomputes and the parity gate checks |
 | `espiralab/bake/lattice_ocp.py` | The free chain optimal control crossover map: 61 chains, three starts each, the minimum-energy-path floor; parallel and checkpointed |
 | `espiralab/bake/patch_ocp.py` | The two-dimensional patch sweep (C20, C21): 12 square patches at two anisotropy regimes, three starts each, the minimum-energy-path floor; parallel and checkpointed |

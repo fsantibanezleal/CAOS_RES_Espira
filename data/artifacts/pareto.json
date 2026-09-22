@@ -1,0 +1,1785 @@
+{
+  "schema": "espira.pareto/1",
+  "description": "The analytic optimal-control family evaluated on four objectives at once (switching time, field cost, peak field, 99 per cent spectral bandwidth) for each material. A point is dominated when another protocol of the same family is at least as good on every objective and strictly better on one; the rest are the Pareto front.",
+  "objectives": [
+    {
+      "key": "switching_time_tau0",
+      "label": "Switching time",
+      "unit": "tau0"
+    },
+    {
+      "key": "cost",
+      "label": "Field cost",
+      "unit": "T^2 s"
+    },
+    {
+      "key": "peak_field_t",
+      "label": "Peak field",
+      "unit": "T"
+    },
+    {
+      "key": "bandwidth_hz",
+      "label": "Bandwidth (99 per cent)",
+      "unit": "Hz"
+    }
+  ],
+  "materials": [
+    {
+      "material": "crsbr",
+      "name": "CrSBr",
+      "damping": 0.01,
+      "damping_provenance": "assumed",
+      "tau0_s": 3.2872477207460065e-12,
+      "points": [
+        {
+          "switching_time_tau0": 0.5,
+          "switching_time_s": 1.6436238603730032e-12,
+          "cost": 1.9368295405369145e-10,
+          "peak_field_t": 10.86400382865809,
+          "bandwidth_hz": 608114631849.6321,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.6488,
+          "switching_time_s": 2.132766321220009e-12,
+          "cost": 1.4926248148706958e-10,
+          "peak_field_t": 8.374364627678668,
+          "bandwidth_hz": 468645678059.2109,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.8419,
+          "switching_time_s": 2.767533856096063e-12,
+          "cost": 1.1502735869744868e-10,
+          "peak_field_t": 6.455584596915965,
+          "bandwidth_hz": 361156094458.7434,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.0924,
+          "switching_time_s": 3.5909894101429374e-12,
+          "cost": 8.865030456345629e-11,
+          "peak_field_t": 4.97722633248108,
+          "bandwidth_hz": 278338809890.89716,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.4174,
+          "switching_time_s": 4.6593449193853894e-12,
+          "cost": 6.832347448126542e-11,
+          "peak_field_t": 3.837965327435443,
+          "bandwidth_hz": 214517649163.83243,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.8392,
+          "switching_time_s": 6.045906007996055e-12,
+          "cost": 5.26543394811068e-11,
+          "peak_field_t": 2.9597542940479076,
+          "bandwidth_hz": 165320419706.83777,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 2.3865,
+          "switching_time_s": 7.845016685560344e-12,
+          "cost": 4.0579151382743764e-11,
+          "peak_field_t": 2.282973132545294,
+          "bandwidth_hz": 127407213880.08215,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 3.0967,
+          "switching_time_s": 1.0179620016834157e-11,
+          "cost": 3.127284603042448e-11,
+          "peak_field_t": 1.7613792607666476,
+          "bandwidth_hz": 98187527343.56447,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 4.0182,
+          "switching_time_s": 1.3208818791501603e-11,
+          "cost": 2.4101196129052462e-11,
+          "peak_field_t": 1.3594259114652063,
+          "bandwidth_hz": 151340060686.28543,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 5.214,
+          "switching_time_s": 1.713970961596968e-11,
+          "cost": 1.8573989270719696e-11,
+          "peak_field_t": 1.0496378840961673,
+          "bandwidth_hz": 116631114662.3767,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 6.7655,
+          "switching_time_s": 2.223987445470711e-11,
+          "cost": 1.431484135584737e-11,
+          "peak_field_t": 0.8109196615631908,
+          "bandwidth_hz": 89884654770.47255,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 8.7788,
+          "switching_time_s": 2.8858090290885042e-11,
+          "cost": 1.1032361684894313e-11,
+          "peak_field_t": 0.6269392756181371,
+          "bandwidth_hz": 103906222692.6742,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 11.3911,
+          "switching_time_s": 3.744536751178983e-11,
+          "cost": 8.502897676467749e-12,
+          "peak_field_t": 0.485161176462814,
+          "bandwidth_hz": 106770133147.74379,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 14.7809,
+          "switching_time_s": 4.858847983557465e-11,
+          "cost": 6.553608798541256e-12,
+          "peak_field_t": 0.3758975408667779,
+          "bandwidth_hz": 102854804485.79453,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 19.1793,
+          "switching_time_s": 6.304711021050389e-11,
+          "cost": 5.051620830379989e-12,
+          "peak_field_t": 0.29170036170300445,
+          "bandwidth_hz": 95120462975.65063,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 24.8866,
+          "switching_time_s": 8.180841912711757e-11,
+          "cost": 3.894360291596914e-12,
+          "peak_field_t": 0.22681966485643543,
+          "bandwidth_hz": 85523985256.07002,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 32.2923,
+          "switching_time_s": 1.0615278957264626e-10,
+          "cost": 3.002861343963995e-12,
+          "peak_field_t": 0.17682831432245152,
+          "bandwidth_hz": 84742054400.68823,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 41.9017,
+          "switching_time_s": 1.3774126782038294e-10,
+          "cost": 2.3162947681909816e-12,
+          "peak_field_t": 0.1383152914291115,
+          "bandwidth_hz": 79820877796.67595,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 54.3707,
+          "switching_time_s": 1.7872995965036488e-10,
+          "cost": 1.787797144246394e-12,
+          "peak_field_t": 0.10865182516667772,
+          "bandwidth_hz": 72699912030.24072,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 70.5501,
+          "switching_time_s": 2.3191565542340283e-10,
+          "cost": 1.3813065739912661e-12,
+          "peak_field_t": 0.08581391812402818,
+          "bandwidth_hz": 68956912248.1337,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 91.5442,
+          "switching_time_s": 3.009284627975166e-10,
+          "cost": 1.069076313817272e-12,
+          "peak_field_t": 0.06824284968613142,
+          "bandwidth_hz": 66428526531.40582,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 118.7856,
+          "switching_time_s": 3.9047769285744686e-10,
+          "cost": 8.297962522964539e-13,
+          "peak_field_t": 0.05473975980744358,
+          "bandwidth_hz": 61433166833.316376,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 154.1335,
+          "switching_time_s": 5.066749965656046e-10,
+          "cost": 6.471256977595872e-13,
+          "peak_field_t": 0.04438335214538656,
+          "bandwidth_hz": 59180641961.31588,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 200.0,
+          "switching_time_s": 6.574495441492013e-10,
+          "cost": 5.085772927947741e-13,
+          "peak_field_t": 0.036467495333874445,
+          "bandwidth_hz": 57770890025.71506,
+          "dominated": false,
+          "dominated_without_time": false
+        }
+      ],
+      "front_size": 24,
+      "supply_front_size": 1,
+      "exponents": {
+        "cost": {
+          "slope": -0.9959085877096068,
+          "max_log_residual": 0.03175047343907167
+        },
+        "peak_field_t": {
+          "slope": -0.9640729291572971,
+          "max_log_residual": 0.13253090561793757
+        },
+        "bandwidth_hz": {
+          "slope": -0.32439688849640547,
+          "max_log_residual": 0.6465656894690852
+        }
+      },
+      "bandwidth_inversions": {
+        "count": 11,
+        "worst": {
+          "faster_tau0": 3.0967,
+          "slower_tau0": 4.0182,
+          "faster_hz": 98187527343.56447,
+          "slower_hz": 151340060686.28543,
+          "ratio": 1.5413369170275246
+        }
+      }
+    },
+    {
+      "material": "fe3gete2",
+      "name": "Fe3GeTe2",
+      "damping": 0.01,
+      "damping_provenance": "assumed",
+      "tau0_s": 7.312742097768829e-13,
+      "points": [
+        {
+          "switching_time_tau0": 0.5,
+          "switching_time_s": 3.6563710488844147e-13,
+          "cost": 8.706499432745036e-10,
+          "peak_field_t": 48.83622497069653,
+          "bandwidth_hz": 2733616762048.694,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.6488,
+          "switching_time_s": 4.744507073032417e-13,
+          "cost": 6.709695836408166e-10,
+          "peak_field_t": 37.64471749035406,
+          "bandwidth_hz": 2106671364094.2458,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.8419,
+          "switching_time_s": 6.156597572111577e-13,
+          "cost": 5.170747411111214e-10,
+          "peak_field_t": 29.019354803678564,
+          "bandwidth_hz": 1623480675881.1582,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.0924,
+          "switching_time_s": 7.98843946760267e-13,
+          "cost": 3.9850374554925693e-10,
+          "peak_field_t": 22.37379043092113,
+          "bandwidth_hz": 1251197712398.7063,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.4174,
+          "switching_time_s": 1.0365080649377539e-12,
+          "cost": 3.071299148243087e-10,
+          "peak_field_t": 17.252547137911098,
+          "bandwidth_hz": 964306745466.5917,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.8392,
+          "switching_time_s": 1.344959526621643e-12,
+          "cost": 2.366935072132041e-10,
+          "peak_field_t": 13.304784206796672,
+          "bandwidth_hz": 743153752188.0964,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 2.3865,
+          "switching_time_s": 1.745185901632531e-12,
+          "cost": 1.8241272714024883e-10,
+          "peak_field_t": 10.262495417107116,
+          "bandwidth_hz": 572725070615.6912,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 3.0967,
+          "switching_time_s": 2.2645368454160734e-12,
+          "cost": 1.405787192551467e-10,
+          "peak_field_t": 7.917809602626417,
+          "bandwidth_hz": 441375781000.5318,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 4.0182,
+          "switching_time_s": 2.938406029725471e-12,
+          "cost": 1.0834048429884158e-10,
+          "peak_field_t": 6.1109357738057195,
+          "bandwidth_hz": 680308785537.9756,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 5.214,
+          "switching_time_s": 3.812863729776668e-12,
+          "cost": 8.349440343857215e-11,
+          "peak_field_t": 4.7183665114574955,
+          "bandwidth_hz": 524283997324.2604,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 6.7655,
+          "switching_time_s": 4.947435666245502e-12,
+          "cost": 6.434854257229611e-11,
+          "peak_field_t": 3.645272557875445,
+          "bandwidth_hz": 404052436929.81946,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 8.7788,
+          "switching_time_s": 6.4197100327893e-12,
+          "cost": 4.959303270681385e-11,
+          "peak_field_t": 2.8182379157753576,
+          "bandwidth_hz": 467082647181.0544,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 11.3911,
+          "switching_time_s": 8.330017650989451e-12,
+          "cost": 3.822250345083715e-11,
+          "peak_field_t": 2.1809123721297854,
+          "bandwidth_hz": 479956591031.3655,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 14.7809,
+          "switching_time_s": 1.0808890967291129e-11,
+          "cost": 2.945999639757397e-11,
+          "peak_field_t": 1.6897469074225333,
+          "bandwidth_hz": 462356277704.45197,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 19.1793,
+          "switching_time_s": 1.4025327451573772e-11,
+          "cost": 2.2708211008571264e-11,
+          "peak_field_t": 1.3112609966671074,
+          "bandwidth_hz": 427588613043.5459,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 24.8866,
+          "switching_time_s": 1.8198928749033374e-11,
+          "cost": 1.7506055623405086e-11,
+          "peak_field_t": 1.0196071683523238,
+          "bandwidth_hz": 384450212852.3153,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 32.2923,
+          "switching_time_s": 2.3614526164378034e-11,
+          "cost": 1.3498560426018161e-11,
+          "peak_field_t": 0.7948844160621905,
+          "bandwidth_hz": 380935251723.13904,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 41.9017,
+          "switching_time_s": 3.0641632555808014e-11,
+          "cost": 1.0412283922380996e-11,
+          "peak_field_t": 0.6217594172142236,
+          "bandwidth_hz": 358813417862.9463,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 54.3707,
+          "switching_time_s": 3.975989067751597e-11,
+          "cost": 8.036564135597333e-12,
+          "peak_field_t": 0.48841523447548996,
+          "bandwidth_hz": 326803019886.01416,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 70.5501,
+          "switching_time_s": 5.159146862718007e-11,
+          "cost": 6.209294442900789e-12,
+          "peak_field_t": 0.38575352855335115,
+          "bandwidth_hz": 309977364970.27716,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 91.5442,
+          "switching_time_s": 6.694391251465693e-11,
+          "cost": 4.8057467758525425e-12,
+          "peak_field_t": 0.3067674876109646,
+          "bandwidth_hz": 298611682886.37555,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 118.7856,
+          "switching_time_s": 8.68648457728729e-11,
+          "cost": 3.730127225295354e-12,
+          "peak_field_t": 0.2460679568011905,
+          "bandwidth_hz": 276156378757.8993,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 154.1335,
+          "switching_time_s": 1.1271385341264519e-10,
+          "cost": 2.908980580137532e-12,
+          "peak_field_t": 0.1995134947033127,
+          "bandwidth_hz": 266030755356.43066,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 200.0,
+          "switching_time_s": 1.4625484195537658e-10,
+          "cost": 2.286173263341094e-12,
+          "peak_field_t": 0.16392987652903823,
+          "bandwidth_hz": 259693592394.62595,
+          "dominated": false,
+          "dominated_without_time": false
+        }
+      ],
+      "front_size": 24,
+      "supply_front_size": 1,
+      "exponents": {
+        "cost": {
+          "slope": -0.9959085877096044,
+          "max_log_residual": 0.031750473439068116
+        },
+        "peak_field_t": {
+          "slope": -0.964072929157297,
+          "max_log_residual": 0.13253090561793734
+        },
+        "bandwidth_hz": {
+          "slope": -0.32439688849640536,
+          "max_log_residual": 0.6465656894690817
+        }
+      },
+      "bandwidth_inversions": {
+        "count": 11,
+        "worst": {
+          "faster_tau0": 3.0967,
+          "slower_tau0": 4.0182,
+          "faster_hz": 441375781000.5318,
+          "slower_hz": 680308785537.9756,
+          "ratio": 1.5413369170275246
+        }
+      }
+    },
+    {
+      "material": "fe3gate2",
+      "name": "Fe3GaTe2",
+      "damping": 0.01,
+      "damping_provenance": "assumed",
+      "tau0_s": 9.649662664125374e-13,
+      "points": [
+        {
+          "switching_time_tau0": 0.5,
+          "switching_time_s": 4.824831332062687e-13,
+          "cost": 6.597990742488388e-10,
+          "peak_field_t": 37.00924381191217,
+          "bandwidth_hz": 2071599295311.9336,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.6488,
+          "switching_time_s": 6.260701136484543e-13,
+          "cost": 5.084765852856216e-10,
+          "peak_field_t": 28.528055325059196,
+          "bandwidth_hz": 1596485276905.0044,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.8419,
+          "switching_time_s": 8.124050996927152e-13,
+          "cost": 3.9185144171658356e-10,
+          "peak_field_t": 21.991551923559886,
+          "bandwidth_hz": 1230311970134.181,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.0924,
+          "switching_time_s": 1.054129149429056e-12,
+          "cost": 3.019955430183675e-10,
+          "peak_field_t": 16.95538640735313,
+          "bandwidth_hz": 948187154573.3859,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.4174,
+          "switching_time_s": 1.3677431860131305e-12,
+          "cost": 2.3275029768343162e-10,
+          "peak_field_t": 13.074387379175684,
+          "bandwidth_hz": 730774409239.4291,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.8392,
+          "switching_time_s": 1.7747659571859387e-12,
+          "cost": 1.7937192570486936e-10,
+          "peak_field_t": 10.082679463240128,
+          "bandwidth_hz": 563179451748.5682,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 2.3865,
+          "switching_time_s": 2.3028919947935205e-12,
+          "cost": 1.3823666954561067e-10,
+          "peak_field_t": 7.777161220758694,
+          "bandwidth_hz": 434024574756.3238,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 3.0967,
+          "switching_time_s": 2.9882110371997044e-12,
+          "cost": 1.0653387109265484e-10,
+          "peak_field_t": 6.00030297623803,
+          "bandwidth_hz": 334484983258.2965,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 4.0182,
+          "switching_time_s": 3.877427451698858e-12,
+          "cost": 8.210297582424465e-11,
+          "peak_field_t": 4.631011346749604,
+          "bandwidth_hz": 515554052887.34595,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 5.214,
+          "switching_time_s": 5.0313341130749706e-12,
+          "cost": 6.327402938377042e-11,
+          "peak_field_t": 3.5756894952726594,
+          "bandwidth_hz": 397314786212.492,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 6.7655,
+          "switching_time_s": 6.528479275414022e-12,
+          "cost": 4.876484417926028e-11,
+          "peak_field_t": 2.762473572358124,
+          "bandwidth_hz": 306200472295.0164,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 8.7788,
+          "switching_time_s": 8.471245859582383e-12,
+          "cost": 3.758277057491469e-11,
+          "peak_field_t": 2.1357272026551932,
+          "bandwidth_hz": 353966253128.8901,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 11.3911,
+          "switching_time_s": 1.0992027237331855e-11,
+          "cost": 2.8965915161593424e-11,
+          "peak_field_t": 1.6527468648733221,
+          "bandwidth_hz": 363722431602.2041,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 14.7809,
+          "switching_time_s": 1.4263069887217075e-11,
+          "cost": 2.232548052250318e-11,
+          "peak_field_t": 1.2805300842714415,
+          "bandwidth_hz": 350384498797.76154,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 19.1793,
+          "switching_time_s": 1.8507377513405978e-11,
+          "cost": 1.7208818213382384e-11,
+          "peak_field_t": 0.993704528878367,
+          "bandwidth_hz": 324036742004.96375,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 24.8866,
+          "switching_time_s": 2.4014729485702254e-11,
+          "cost": 1.3266502092253224e-11,
+          "peak_field_t": 0.7726823747856592,
+          "bandwidth_hz": 291345444278.91986,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 32.2923,
+          "switching_time_s": 3.116098016487358e-11,
+          "cost": 1.0229527655261964e-11,
+          "peak_field_t": 0.60238216966989,
+          "bandwidth_hz": 288681723782.56433,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 41.9017,
+          "switching_time_s": 4.043372700533822e-11,
+          "cost": 7.890674485046201e-12,
+          "peak_field_t": 0.47118395981345684,
+          "bandwidth_hz": 271917276010.65433,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 54.3707,
+          "switching_time_s": 5.2465891381236145e-11,
+          "cost": 6.090297963916289e-12,
+          "peak_field_t": 0.3701325912271439,
+          "bandwidth_hz": 247659040982.1387,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 70.5501,
+          "switching_time_s": 6.807846659203115e-11,
+          "cost": 4.705549867442775e-12,
+          "peak_field_t": 0.2923331276752609,
+          "bandwidth_hz": 234908162603.53238,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 91.5442,
+          "switching_time_s": 8.83370648857226e-11,
+          "cost": 3.641908321795104e-12,
+          "peak_field_t": 0.23247564178792027,
+          "bandwidth_hz": 226294980491.60223,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 118.7856,
+          "switching_time_s": 1.146240969355731e-10,
+          "cost": 2.8267784418890196e-12,
+          "peak_field_t": 0.18647610483854407,
+          "bandwidth_hz": 209277821080.5283,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 154.1335,
+          "switching_time_s": 1.4873362802409682e-10,
+          "cost": 2.2044941352249678e-12,
+          "peak_field_t": 0.15119603478098717,
+          "bandwidth_hz": 201604384703.3838,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 200.0,
+          "switching_time_s": 1.9299325328250747e-10,
+          "cost": 1.7325160523778025e-12,
+          "peak_field_t": 0.1242299291593525,
+          "bandwidth_hz": 196801933054.6337,
+          "dominated": false,
+          "dominated_without_time": false
+        }
+      ],
+      "front_size": 24,
+      "supply_front_size": 1,
+      "exponents": {
+        "cost": {
+          "slope": -0.9959085877096043,
+          "max_log_residual": 0.031750473439068116
+        },
+        "peak_field_t": {
+          "slope": -0.9640729291572971,
+          "max_log_residual": 0.13253090561793712
+        },
+        "bandwidth_hz": {
+          "slope": -0.32439688849640586,
+          "max_log_residual": 0.6465656894690852
+        }
+      },
+      "bandwidth_inversions": {
+        "count": 11,
+        "worst": {
+          "faster_tau0": 3.0967,
+          "slower_tau0": 4.0182,
+          "faster_hz": 334484983258.2965,
+          "slower_hz": 515554052887.34595,
+          "ratio": 1.5413369170275246
+        }
+      }
+    },
+    {
+      "material": "cri3",
+      "name": "CrI3",
+      "damping": 0.01,
+      "damping_provenance": "assumed",
+      "tau0_s": 9.961356729533354e-13,
+      "points": [
+        {
+          "switching_time_tau0": 0.5,
+          "switching_time_s": 4.980678364766677e-13,
+          "cost": 6.391537483771816e-10,
+          "peak_field_t": 35.85121263457169,
+          "bandwidth_hz": 2006778285103.786,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.6488,
+          "switching_time_s": 6.462928246121241e-13,
+          "cost": 4.925661889073296e-10,
+          "peak_field_t": 27.635403271339605,
+          "bandwidth_hz": 1546530737595.3958,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.8419,
+          "switching_time_s": 8.38646623059413e-13,
+          "cost": 3.795902837015808e-10,
+          "peak_field_t": 21.30342916982269,
+          "bandwidth_hz": 1191815111713.8533,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.0924,
+          "switching_time_s": 1.0881786091342236e-12,
+          "cost": 2.925460050594057e-10,
+          "peak_field_t": 16.424846897187564,
+          "bandwidth_hz": 918518072639.9604,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.4174,
+          "switching_time_s": 1.4119227028440576e-12,
+          "cost": 2.2546746578817584e-10,
+          "peak_field_t": 12.665285580536962,
+          "bandwidth_hz": 707908242240.6469,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.8392,
+          "switching_time_s": 1.8320927296957744e-12,
+          "cost": 1.7375932028765247e-10,
+          "peak_field_t": 9.767189170358096,
+          "bandwidth_hz": 545557385032.56464,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 2.3865,
+          "switching_time_s": 2.377277783503135e-12,
+          "cost": 1.3391119956305448e-10,
+          "peak_field_t": 7.53381133739947,
+          "bandwidth_hz": 420443805804.2711,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 3.0967,
+          "switching_time_s": 3.0847333384345936e-12,
+          "cost": 1.032003919004008e-10,
+          "peak_field_t": 5.812551560529937,
+          "bandwidth_hz": 324018840233.7627,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 4.0182,
+          "switching_time_s": 4.002672361061093e-12,
+          "cost": 7.953394722587311e-11,
+          "peak_field_t": 4.48610550783518,
+          "bandwidth_hz": 499422200264.7419,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 5.214,
+          "switching_time_s": 5.193851398778691e-12,
+          "cost": 6.129416459337502e-11,
+          "peak_field_t": 3.4638050175173527,
+          "bandwidth_hz": 384882678385.8431,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 6.7655,
+          "switching_time_s": 6.739355895365791e-12,
+          "cost": 4.723897647429633e-11,
+          "peak_field_t": 2.6760348831585308,
+          "bandwidth_hz": 296619360742.5594,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 8.7788,
+          "switching_time_s": 8.744875845722742e-12,
+          "cost": 3.640679356015123e-11,
+          "peak_field_t": 2.0688996095398524,
+          "bandwidth_hz": 342890534885.8247,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 11.3911,
+          "switching_time_s": 1.1347081064178738e-11,
+          "cost": 2.8059562332343567e-11,
+          "peak_field_t": 1.601031882327286,
+          "bandwidth_hz": 352341439387.5545,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 14.7809,
+          "switching_time_s": 1.4723781768355958e-11,
+          "cost": 2.1626909035186147e-11,
+          "peak_field_t": 1.240461884860367,
+          "bandwidth_hz": 339420854803.1218,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 19.1793,
+          "switching_time_s": 1.9105184912273908e-11,
+          "cost": 1.6670348740253963e-11,
+          "peak_field_t": 0.9626111936199148,
+          "bandwidth_hz": 313897527819.64703,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 24.8866,
+          "switching_time_s": 2.4790430038520478e-11,
+          "cost": 1.2851388962269819e-11,
+          "peak_field_t": 0.7485048940262371,
+          "bandwidth_hz": 282229151345.03107,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 32.2923,
+          "switching_time_s": 3.216751199171099e-11,
+          "cost": 9.909442435081185e-12,
+          "peak_field_t": 0.5835334372640901,
+          "bandwidth_hz": 279648779522.2711,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 41.9017,
+          "switching_time_s": 4.173977812738877e-11,
+          "cost": 7.643772735030242e-12,
+          "peak_field_t": 0.4564404617160681,
+          "bandwidth_hz": 263408896729.03064,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 54.3707,
+          "switching_time_s": 5.416059383344391e-11,
+          "cost": 5.8997305760131e-12,
+          "peak_field_t": 0.35855102305003644,
+          "bandwidth_hz": 239909709699.79434,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 70.5501,
+          "switching_time_s": 7.02774713404251e-11,
+          "cost": 4.558311694171179e-12,
+          "peak_field_t": 0.283185929809293,
+          "bandwidth_hz": 227557810418.8412,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 91.5442,
+          "switching_time_s": 9.119044327197472e-11,
+          "cost": 3.527951835596999e-12,
+          "peak_field_t": 0.22520140396423374,
+          "bandwidth_hz": 219214137553.6392,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 118.7856,
+          "switching_time_s": 1.183265735931657e-10,
+          "cost": 2.7383276325782983e-12,
+          "peak_field_t": 0.18064120736456382,
+          "bandwidth_hz": 202729450549.944,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 154.1335,
+          "switching_time_s": 1.5353787774715293e-10,
+          "cost": 2.135514802606636e-12,
+          "peak_field_t": 0.14646506207977553,
+          "bandwidth_hz": 195296118472.34235,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 200.0,
+          "switching_time_s": 1.992271345906671e-10,
+          "cost": 1.6783050662227543e-12,
+          "peak_field_t": 0.12034273460178566,
+          "bandwidth_hz": 190643937084.85965,
+          "dominated": false,
+          "dominated_without_time": false
+        }
+      ],
+      "front_size": 24,
+      "supply_front_size": 1,
+      "exponents": {
+        "cost": {
+          "slope": -0.9959085877096038,
+          "max_log_residual": 0.031750473439068116
+        },
+        "peak_field_t": {
+          "slope": -0.9640729291572969,
+          "max_log_residual": 0.13253090561793668
+        },
+        "bandwidth_hz": {
+          "slope": -0.324396888496406,
+          "max_log_residual": 0.6465656894690817
+        }
+      },
+      "bandwidth_inversions": {
+        "count": 11,
+        "worst": {
+          "faster_tau0": 3.0967,
+          "slower_tau0": 4.0182,
+          "faster_hz": 324018840233.7627,
+          "slower_hz": 499422200264.7419,
+          "ratio": 1.5413369170275246
+        }
+      }
+    },
+    {
+      "material": "cr2ge2te6",
+      "name": "Cr2Ge2Te6",
+      "damping": 0.0007,
+      "damping_provenance": "measured",
+      "tau0_s": 1.3492567618704369e-11,
+      "points": [
+        {
+          "switching_time_tau0": 0.5,
+          "switching_time_s": 6.746283809352184e-12,
+          "cost": 4.718303562612885e-11,
+          "peak_field_t": 2.644751224877861,
+          "bandwidth_hz": 148157377749.86652,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.6488,
+          "switching_time_s": 8.753977871015395e-12,
+          "cost": 3.6361772253531827e-11,
+          "peak_field_t": 2.03822061295938,
+          "bandwidth_hz": 114178003814.63202,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.8419,
+          "switching_time_s": 1.1359392678187209e-11,
+          "cost": 2.8021757786239822e-11,
+          "peak_field_t": 1.570763726682392,
+          "bandwidth_hz": 87989890574.81085,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.0924,
+          "switching_time_s": 1.473928086667265e-11,
+          "cost": 2.1596043529087957e-11,
+          "peak_field_t": 1.2106031545377154,
+          "bandwidth_hz": 67812787326.00994,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.4174,
+          "switching_time_s": 1.9124365342751574e-11,
+          "cost": 1.6644220453363664e-11,
+          "peak_field_t": 0.9330540192635859,
+          "bandwidth_hz": 52263785011.24118,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.8392,
+          "switching_time_s": 2.4815530364321073e-11,
+          "cost": 1.2827054301711209e-11,
+          "peak_field_t": 0.7191022782851072,
+          "bandwidth_hz": 40277669027.25819,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 2.3865,
+          "switching_time_s": 3.2200012622037975e-11,
+          "cost": 9.885404823090903e-12,
+          "peak_field_t": 0.5542231491679203,
+          "bandwidth_hz": 31040724439.527866,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 3.0967,
+          "switching_time_s": 4.178243414484181e-11,
+          "cost": 7.618277256576334e-12,
+          "peak_field_t": 0.4271508977110003,
+          "bandwidth_hz": 23921816409.382008,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 4.0182,
+          "switching_time_s": 5.4215835205477895e-11,
+          "cost": 5.8711662287441645e-12,
+          "peak_field_t": 0.3292255146792798,
+          "bandwidth_hz": 36871578754.135315,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 5.214,
+          "switching_time_s": 7.035024756392458e-11,
+          "cost": 4.5246493587750475e-12,
+          "peak_field_t": 0.2537533886204353,
+          "bandwidth_hz": 28415300680.833622,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 6.7655,
+          "switching_time_s": 9.12839662243444e-11,
+          "cost": 3.487033401493112e-12,
+          "peak_field_t": 0.19559512298264362,
+          "bandwidth_hz": 21898954659.650654,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 8.7788,
+          "switching_time_s": 1.184485526110819e-10,
+          "cost": 2.6873295962611677e-12,
+          "peak_field_t": 0.1507718051737616,
+          "bandwidth_hz": 25315084820.79553,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 11.3911,
+          "switching_time_s": 1.5369518700142334e-10,
+          "cost": 2.0710499226427272e-12,
+          "peak_field_t": 0.11622938713137174,
+          "bandwidth_hz": 26012830674.801647,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 14.7809,
+          "switching_time_s": 1.9943229271530742e-10,
+          "cost": 1.5960834430058088e-12,
+          "peak_field_t": 0.08960755474143668,
+          "bandwidth_hz": 25058923636.224197,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 19.1793,
+          "switching_time_s": 2.5877800212941673e-10,
+          "cost": 1.2300538409434087e-12,
+          "peak_field_t": 0.06909161811361121,
+          "bandwidth_hz": 23174575362.479313,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 24.8866,
+          "switching_time_s": 3.3578413329964817e-10,
+          "cost": 9.479643041854408e-13,
+          "peak_field_t": 0.05328050746167709,
+          "bandwidth_hz": 20836547464.27928,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 32.2923,
+          "switching_time_s": 4.3570604131348705e-10,
+          "cost": 7.305664337463746e-13,
+          "peak_field_t": 0.041095350560207765,
+          "bandwidth_hz": 20646042551.146847,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 41.9017,
+          "switching_time_s": 5.653615205886648e-10,
+          "cost": 5.630266750642909e-13,
+          "peak_field_t": 0.031704726248776724,
+          "bandwidth_hz": 19447076792.212868,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 54.3707,
+          "switching_time_s": 7.336003462262896e-10,
+          "cost": 4.3390926693708546e-13,
+          "peak_field_t": 0.02446765868996926,
+          "bandwidth_hz": 17712167681.750137,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 70.5501,
+          "switching_time_s": 9.51901994756355e-10,
+          "cost": 3.3440415375144093e-13,
+          "peak_field_t": 0.018890341753879145,
+          "bandwidth_hz": 16800245811.11766,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 91.5442,
+          "switching_time_s": 1.2351663086001965e-09,
+          "cost": 2.5771971035740867e-13,
+          "peak_field_t": 0.014592101074616802,
+          "bandwidth_hz": 16184245178.817064,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 118.7856,
+          "switching_time_s": 1.6027227401283698e-09,
+          "cost": 1.986232637558058e-13,
+          "peak_field_t": 0.011279640035713523,
+          "bandwidth_hz": 15590839477.793026,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 154.1335,
+          "switching_time_s": 2.07965667105757e-09,
+          "cost": 1.530815554246662e-13,
+          "peak_field_t": 0.008726887321722753,
+          "bandwidth_hz": 14418414337.233616,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 200.0,
+          "switching_time_s": 2.698513523740874e-09,
+          "cost": 1.179868693712147e-13,
+          "peak_field_t": 0.006759645911287718,
+          "bandwidth_hz": 14074950886.237318,
+          "dominated": false,
+          "dominated_without_time": false
+        }
+      ],
+      "front_size": 24,
+      "supply_front_size": 1,
+      "exponents": {
+        "cost": {
+          "slope": -0.9999795196230402,
+          "max_log_residual": 0.00016137570127128242
+        },
+        "peak_field_t": {
+          "slope": -0.9973604212203058,
+          "max_log_residual": 0.010223191765372341
+        },
+        "bandwidth_hz": {
+          "slope": -0.32310234656325765,
+          "max_log_residual": 0.6487428768544348
+        }
+      },
+      "bandwidth_inversions": {
+        "count": 11,
+        "worst": {
+          "faster_tau0": 3.0967,
+          "slower_tau0": 4.0182,
+          "faster_hz": 23921816409.382008,
+          "slower_hz": 36871578754.135315,
+          "ratio": 1.5413369170275246
+        }
+      }
+    },
+    {
+      "material": "feps3",
+      "name": "FePS3",
+      "damping": 0.01,
+      "damping_provenance": "assumed",
+      "tau0_s": 6.179037069071441e-14,
+      "points": [
+        {
+          "switching_time_tau0": 0.5,
+          "switching_time_s": 3.0895185345357204e-14,
+          "cost": 1.0303933155656382e-08,
+          "peak_field_t": 577.9650036846103,
+          "bandwidth_hz": 32351698414400.43,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.6488,
+          "switching_time_s": 4.008959250413551e-14,
+          "cost": 7.940764015112102e-09,
+          "peak_field_t": 445.5161981925052,
+          "bandwidth_hz": 24931950072750.023,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.8419,
+          "switching_time_s": 5.202131308451246e-14,
+          "cost": 6.11945548270427e-09,
+          "peak_field_t": 343.4371005559293,
+          "bandwidth_hz": 19213504225205.15,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.0924,
+          "switching_time_s": 6.749980094253643e-14,
+          "cost": 4.716196202775874e-09,
+          "peak_field_t": 264.78844088799343,
+          "bandwidth_hz": 14807624686195.729,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.4174,
+          "switching_time_s": 8.75816714170186e-14,
+          "cost": 3.6348088424033203e-09,
+          "peak_field_t": 204.17975541956557,
+          "bandwidth_hz": 11412338935515.885,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.8392,
+          "switching_time_s": 1.1364484977436193e-13,
+          "cost": 2.801210860394882e-09,
+          "peak_field_t": 157.45892844334864,
+          "bandwidth_hz": 8795046328403.7705,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 2.3865,
+          "switching_time_s": 1.4746271965338992e-13,
+          "cost": 2.1588108535619698e-09,
+          "peak_field_t": 121.45417065140968,
+          "bandwidth_hz": 6778063778420.371,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 3.0967,
+          "switching_time_s": 1.913462409179353e-13,
+          "cost": 1.6637154088185825e-09,
+          "peak_field_t": 93.70537667278566,
+          "bandwidth_hz": 5223576454677.629,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 4.0182,
+          "switching_time_s": 2.4828606750942865e-13,
+          "cost": 1.2821836340655907e-09,
+          "peak_field_t": 72.32145848994897,
+          "bandwidth_hz": 8051291228510.384,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 5.214,
+          "switching_time_s": 3.2217499278138497e-13,
+          "cost": 9.881362292022877e-10,
+          "peak_field_t": 55.84073543391611,
+          "bandwidth_hz": 6204775300038.439,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 6.7655,
+          "switching_time_s": 4.1804275290802834e-13,
+          "cost": 7.615495601310802e-10,
+          "peak_field_t": 43.14092599516177,
+          "bandwidth_hz": 4781863633789.14,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 8.7788,
+          "switching_time_s": 5.424453062196436e-13,
+          "cost": 5.869216416363774e-10,
+          "peak_field_t": 33.3531694628849,
+          "bandwidth_hz": 5527811047250.267,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 11.3911,
+          "switching_time_s": 7.038602915749969e-13,
+          "cost": 4.523541563880842e-10,
+          "peak_field_t": 25.8105745878217,
+          "bandwidth_hz": 5680171083459.969,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 14.7809,
+          "switching_time_s": 9.133172901423806e-13,
+          "cost": 3.486519880823949e-10,
+          "peak_field_t": 19.99774917411259,
+          "bandwidth_hz": 5471875598644.269,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 19.1793,
+          "switching_time_s": 1.1850960565884189e-12,
+          "cost": 2.687462281762154e-10,
+          "peak_field_t": 15.518459242599839,
+          "bandwidth_hz": 5060408630304.613,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 24.8866,
+          "switching_time_s": 1.5377522392315332e-12,
+          "cost": 2.0717996751295586e-10,
+          "peak_field_t": 12.066806170362367,
+          "bandwidth_hz": 4549876015622.926,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 32.2923,
+          "switching_time_s": 1.9953531874557565e-12,
+          "cost": 1.5975222349888458e-10,
+          "peak_field_t": 9.407266321954424,
+          "bandwidth_hz": 4508277294116.614,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 41.9017,
+          "switching_time_s": 2.589121575571108e-12,
+          "cost": 1.232268816677602e-10,
+          "peak_field_t": 7.358373504028732,
+          "bandwidth_hz": 4246470698783.16,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 54.3707,
+          "switching_time_s": 3.3595857077136258e-12,
+          "cost": 9.511080807390817e-11,
+          "peak_field_t": 5.780277098867254,
+          "bandwidth_hz": 3867635320008.8057,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 70.5501,
+          "switching_time_s": 4.3593168312669706e-12,
+          "cost": 7.348550973633538e-11,
+          "peak_field_t": 4.5653004441983,
+          "bandwidth_hz": 3668507731600.7124,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 91.5442,
+          "switching_time_s": 5.6565500525848984e-12,
+          "cost": 5.6874859895078887e-11,
+          "peak_field_t": 3.6305196033021914,
+          "bandwidth_hz": 3533997611470.789,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 118.7856,
+          "switching_time_s": 7.339806256718925e-12,
+          "cost": 4.414516062217136e-11,
+          "peak_field_t": 2.9121552217559983,
+          "bandwidth_hz": 3268244475532.431,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 154.1335,
+          "switching_time_s": 9.523966100857229e-12,
+          "cost": 3.442708712081004e-11,
+          "peak_field_t": 2.3611943341345647,
+          "bandwidth_hz": 3148410152342.0054,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 200.0,
+          "switching_time_s": 1.2358074138142881e-11,
+          "cost": 2.7056311976681994e-11,
+          "peak_field_t": 1.940070751762121,
+          "bandwidth_hz": 3073411349368.041,
+          "dominated": false,
+          "dominated_without_time": false
+        }
+      ],
+      "front_size": 24,
+      "supply_front_size": 1,
+      "exponents": {
+        "cost": {
+          "slope": -0.9959085877096047,
+          "max_log_residual": 0.031750473439068116
+        },
+        "peak_field_t": {
+          "slope": -0.9640729291572973,
+          "max_log_residual": 0.1325309056179378
+        },
+        "bandwidth_hz": {
+          "slope": -0.32439688849640724,
+          "max_log_residual": 0.6465656894690817
+        }
+      },
+      "bandwidth_inversions": {
+        "count": 11,
+        "worst": {
+          "faster_tau0": 3.0967,
+          "slower_tau0": 4.0182,
+          "faster_hz": 5223576454677.629,
+          "slower_hz": 8051291228510.384,
+          "ratio": 1.5413369170275246
+        }
+      }
+    },
+    {
+      "material": "crbr3",
+      "name": "CrBr3",
+      "damping": 0.01,
+      "damping_provenance": "assumed",
+      "tau0_s": 1.0957492402486686e-11,
+      "points": [
+        {
+          "switching_time_tau0": 0.5,
+          "switching_time_s": 5.478746201243343e-12,
+          "cost": 5.8104886216107425e-11,
+          "peak_field_t": 3.2592011485974264,
+          "bandwidth_hz": 182434389554.88968,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.6488,
+          "switching_time_s": 7.1092210707333625e-12,
+          "cost": 4.477874444612088e-11,
+          "peak_field_t": 2.5123093883036005,
+          "bandwidth_hz": 140593703417.7633,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 0.8419,
+          "switching_time_s": 9.22511285365354e-12,
+          "cost": 3.450820760923462e-11,
+          "peak_field_t": 1.93667537907479,
+          "bandwidth_hz": 108346828337.62305,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.0924,
+          "switching_time_s": 1.1969964700476457e-11,
+          "cost": 2.659509136903688e-11,
+          "peak_field_t": 1.493167899744324,
+          "bandwidth_hz": 83501642967.26915,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.4174,
+          "switching_time_s": 1.5531149731284628e-11,
+          "cost": 2.0497042344379625e-11,
+          "peak_field_t": 1.151389598230633,
+          "bandwidth_hz": 64355294749.14974,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 1.8392,
+          "switching_time_s": 2.0153020026653512e-11,
+          "cost": 1.579630184433204e-11,
+          "peak_field_t": 0.8879262882143723,
+          "bandwidth_hz": 49596125912.051346,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 2.3865,
+          "switching_time_s": 2.6150055618534476e-11,
+          "cost": 1.2173745414823135e-11,
+          "peak_field_t": 0.6848919397635883,
+          "bandwidth_hz": 38222164164.02465,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 3.0967,
+          "switching_time_s": 3.3932066722780515e-11,
+          "cost": 9.381853809127347e-12,
+          "peak_field_t": 0.5284137782299944,
+          "bandwidth_hz": 29456258203.06935,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 4.0182,
+          "switching_time_s": 4.4029395971672007e-11,
+          "cost": 7.230358838715737e-12,
+          "peak_field_t": 0.40782777343956184,
+          "bandwidth_hz": 45402018205.885635,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 5.214,
+          "switching_time_s": 5.713236538656559e-11,
+          "cost": 5.572196781215911e-12,
+          "peak_field_t": 0.3148913652288503,
+          "bandwidth_hz": 34989334398.71301,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 6.7655,
+          "switching_time_s": 7.413291484902368e-11,
+          "cost": 4.294452406754212e-12,
+          "peak_field_t": 0.2432758984689573,
+          "bandwidth_hz": 26965396431.141773,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 8.7788,
+          "switching_time_s": 9.619363430295013e-11,
+          "cost": 3.309708505468294e-12,
+          "peak_field_t": 0.18808178268544115,
+          "bandwidth_hz": 31171866807.80226,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 11.3911,
+          "switching_time_s": 1.2481789170596608e-10,
+          "cost": 2.5508693029403246e-12,
+          "peak_field_t": 0.1455483529388442,
+          "bandwidth_hz": 32031039944.323147,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 14.7809,
+          "switching_time_s": 1.6196159945191547e-10,
+          "cost": 1.966082639562377e-12,
+          "peak_field_t": 0.11276926226003336,
+          "bandwidth_hz": 30856441345.738358,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 19.1793,
+          "switching_time_s": 2.101570340350129e-10,
+          "cost": 1.5154862491139968e-12,
+          "peak_field_t": 0.08751010851090134,
+          "bandwidth_hz": 28536138892.695198,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 24.8866,
+          "switching_time_s": 2.726947304237252e-10,
+          "cost": 1.1683080874790741e-12,
+          "peak_field_t": 0.06804589945693063,
+          "bandwidth_hz": 25657195576.82101,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 32.2923,
+          "switching_time_s": 3.5384263190882077e-10,
+          "cost": 9.008584031891987e-13,
+          "peak_field_t": 0.05304849429673547,
+          "bandwidth_hz": 25422616320.20648,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 41.9017,
+          "switching_time_s": 4.5913755940127635e-10,
+          "cost": 6.948884304572945e-13,
+          "peak_field_t": 0.04149458742873346,
+          "bandwidth_hz": 23946263339.002792,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 54.3707,
+          "switching_time_s": 5.957665321678829e-10,
+          "cost": 5.363391432739182e-13,
+          "peak_field_t": 0.032595547550003316,
+          "bandwidth_hz": 21809973609.072216,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 70.5501,
+          "switching_time_s": 7.73052184744676e-10,
+          "cost": 4.1439197219737995e-13,
+          "peak_field_t": 0.025744175437208465,
+          "bandwidth_hz": 20687073674.440113,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 91.5442,
+          "switching_time_s": 1.0030948759917217e-09,
+          "cost": 3.207228941451817e-13,
+          "peak_field_t": 0.02047285490583943,
+          "bandwidth_hz": 19928557959.42175,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 118.7856,
+          "switching_time_s": 1.3015923095248226e-09,
+          "cost": 2.489388756889362e-13,
+          "peak_field_t": 0.016421927942233076,
+          "bandwidth_hz": 18429950049.99491,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 154.1335,
+          "switching_time_s": 1.6889166552186816e-09,
+          "cost": 1.9413770932787619e-13,
+          "peak_field_t": 0.013315005643615966,
+          "bandwidth_hz": 17754192588.394768,
+          "dominated": false,
+          "dominated_without_time": true
+        },
+        {
+          "switching_time_tau0": 200.0,
+          "switching_time_s": 2.1914984804973374e-09,
+          "cost": 1.5257318783843223e-13,
+          "peak_field_t": 0.010940248600162334,
+          "bandwidth_hz": 17331267007.714516,
+          "dominated": false,
+          "dominated_without_time": false
+        }
+      ],
+      "front_size": 24,
+      "supply_front_size": 1,
+      "exponents": {
+        "cost": {
+          "slope": -0.9959085877096047,
+          "max_log_residual": 0.031750473439068116
+        },
+        "peak_field_t": {
+          "slope": -0.9640729291572971,
+          "max_log_residual": 0.13253090561793712
+        },
+        "bandwidth_hz": {
+          "slope": -0.32439688849640436,
+          "max_log_residual": 0.6465656894690923
+        }
+      },
+      "bandwidth_inversions": {
+        "count": 11,
+        "worst": {
+          "faster_tau0": 3.0967,
+          "slower_tau0": 4.0182,
+          "faster_hz": 29456258203.06935,
+          "slower_hz": 45402018205.885635,
+          "ratio": 1.5413369170275242
+        }
+      }
+    }
+  ]
+}
