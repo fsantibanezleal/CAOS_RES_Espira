@@ -4,6 +4,24 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.14.000] - 2026-09-22
+
+### Added
+- **The barrier, computed twice by two codes** (backlog BL-013). The floor under every switching cost
+  this product reports is an energy barrier from the engine's own string method; if that method were
+  wrong, every floor would be wrong together and no internal test would notice. Spirit, an atomistic
+  spin-dynamics framework written by other people, computes the same barrier by a different method
+  (geodesic nudged elastic band) from the same Hamiltonian and the same initial path. Measured at
+  J/K = 10: 7.747500 against 7.747498 K at N = 8, 8.699064 against 8.699061 at N = 12, and 8.839571
+  against 8.839569 at N = 16. Worst relative difference 3.1e-07, against a declared tolerance of 1e-05.
+- The starting point is part of the result: started from the straight interpolation between the two ends,
+  which is the coherent rotation, Spirit converges to exactly N K (11.999995 K at N = 12). That checks
+  the conventions and is not a check of the wall barrier, so the cross-check hands it our own wall path.
+- Spirit is not a dependency: `scripts/crosscheck_spirit.py` is run by hand in a separate environment,
+  the result is committed with both engine versions, and CI never installs it. The suite recomputes our
+  own column on every run, so the agreement cannot go stale unnoticed, and the Implementation page shows
+  the comparison with the parity gate checking it.
+
 ## [0.13.001] - 2026-09-22
 
 ### Added

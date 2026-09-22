@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { useShellLang, Cite, Refs } from '@fasl-work/caos-app-shell';
-import type { LiveParityFixture } from '../data/contract';
-import { loadLiveParity } from '../data/load';
+import type { ExternalCrosscheck, LiveParityFixture } from '../data/contract';
+import { loadExternalCrosscheck, loadLiveParity } from '../data/load';
 import { LiveParity } from '../viz/LiveParity';
 
 export function Implementation(): React.JSX.Element {
   const lang = useShellLang();
   const es = lang === 'es';
   const [parity, setParity] = useState<LiveParityFixture | null>(null);
+  const [crosscheck, setCrosscheck] = useState<ExternalCrosscheck | null>(null);
   useEffect(() => {
     loadLiveParity().then(setParity).catch(() => setParity(null));
+    loadExternalCrosscheck().then(setCrosscheck).catch(() => setCrosscheck(null));
   }, []);
   return (
     <article className="prose">
@@ -53,6 +55,50 @@ export function Implementation(): React.JSX.Element {
         <LiveParity fixture={parity} es={es} />
       ) : (
         <p className="muted">{es ? 'Cargando la paridad...' : 'Loading the parity fixture...'}</p>
+      )}
+      <h2>{es ? 'Comprobacion externa' : 'External cross-check'}</h2>
+      <p>
+        {es
+          ? 'El piso bajo cada costo que publica este producto es una barrera de energia calculada por el metodo de cuerda del propio motor. Si ese metodo estuviera mal, todos los pisos estarian mal a la vez y ninguna prueba interna lo notaria. Spirit es un marco de dinamica de espines atomistica escrito por otras personas, y su banda elastica geodesica es otro metodo para el mismo objeto: se le da el mismo hamiltoniano y el mismo camino inicial, y se compara la barrera. Spirit no es una dependencia de este producto y CI nunca lo instala.'
+          : "The floor under every cost this product publishes is an energy barrier computed by the engine's own string method. If that method were wrong, every floor would be wrong together and no internal test would notice. Spirit is an atomistic spin-dynamics framework written by other people, and its geodesic nudged elastic band is a different method for the same object: it is given the same Hamiltonian and the same initial path, and the barriers are compared. Spirit is not a dependency of this product, and CI never installs it."}{' '}
+        <Cite id="bessarab2015" />
+      </p>
+      {crosscheck ? (
+        <div data-testid="external-crosscheck" data-agrees={String(crosscheck.agrees)}>
+          <p className="muted">
+            {es ? 'Peor diferencia relativa' : 'Worst relative deviation'}:{' '}
+            <strong data-testid="crosscheck-worst">{crosscheck.worst_relative_difference.toExponential(2)}</strong>{' '}
+            {es ? 'contra una tolerancia de' : 'against a tolerance of'} {crosscheck.tolerance.toExponential(0)}.{' '}
+            <span className={crosscheck.agrees ? 'prov-badge prov-measured' : 'prov-badge prov-assumed'}>
+              {crosscheck.agrees ? (es ? 'de acuerdo' : 'agree') : es ? 'en desacuerdo' : 'disagree'}
+            </span>{' '}
+            spinoct {crosscheck.engines.spinoct}, Spirit {crosscheck.engines.spirit}, {crosscheck.measured_on}.
+          </p>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>N</th>
+                  <th>{es ? 'spinoct (cuerda)' : 'spinoct (string)'}</th>
+                  <th>Spirit (GNEB)</th>
+                  <th>{es ? 'Diferencia' : 'Difference'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {crosscheck.rows.map((row) => (
+                  <tr key={row.n_sites}>
+                    <td>{row.n_sites}</td>
+                    <td>{row.spinoct_barrier_over_k.toFixed(6)} K</td>
+                    <td>{row.spirit_barrier_over_k.toFixed(6)} K</td>
+                    <td>{row.relative_difference.toExponential(1)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <p className="muted">{es ? 'Cargando la comprobacion...' : 'Loading the cross-check...'}</p>
       )}
       <Refs ids={['kwiatkowski2021', 'vlasov2022', 'badarneh2023', 'scheie2022', 'ruiz2024', 'evans2014']} label="Refs" />
     </article>
