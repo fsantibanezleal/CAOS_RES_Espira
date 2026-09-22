@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -103,6 +103,22 @@ def check(artifacts: Path) -> list[str]:
             if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
                 errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
 
+    parity_path = artifacts / "live_parity.json"
+    if parity_path.exists():
+        parity = json.loads(parity_path.read_text(encoding="utf-8"))
+        if parity.get("schema") != "espira.live-parity/1":
+            errors.append(f"live_parity: schema {parity.get('schema')}")
+        if len(parity.get("elliptic_k", [])) < 8 or len(parity.get("protocol", [])) < 6:
+            errors.append("live_parity: too few pinned values to exercise the browser implementation")
+        for row in parity.get("elliptic_k", []):
+            if not 0.0 <= row["m"] < 1.0 or row["k"] < 1.5:
+                errors.append(f"live_parity: K({row['m']}) = {row['k']} outside the real branch")
+        # A fixture is only a check while the live case is still in the live lane.
+        if parity.get("case") not in {row["slug"] for row in registry}:
+            errors.append(f"live_parity: names {parity.get('case')}, which is not a declared case")
+    else:
+        errors.append("missing live_parity.json")
+
     patch_path = artifacts / "patch_ocp.json"
     if patch_path.exists():
         patch = json.loads(patch_path.read_text(encoding="utf-8"))
@@ -141,7 +157,7 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json consistent")
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json consistent")
     return 0
 
 

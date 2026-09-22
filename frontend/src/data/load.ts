@@ -57,3 +57,9 @@ export async function loadPatchOCP(): Promise<import('./contract').PatchOCPArtif
   if (!response.ok) throw new Error(`patch_ocp.json ${response.status}`);
   return response.json();
 }
+
+export async function loadLiveParity(): Promise<import('./contract').LiveParityFixture> {
+  const response = await fetch(bust(`${base}artifacts/live_parity.json`));
+  if (!response.ok) throw new Error(`live_parity.json ${response.status}`);
+  return response.json();
+}

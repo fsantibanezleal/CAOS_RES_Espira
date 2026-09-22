@@ -1,0 +1,113 @@
+{
+  "schema": "espira.live-parity/1",
+  "case": "sot-analytic",
+  "code": "C03",
+  "description": "Values the browser implementation of the live lane must reproduce: the complete elliptic integral of the first kind K(m) in the parameter convention, from SciPy, and the closed-form spin-orbit-torque protocol over the case's switching times, from spinoct.",
+  "inputs": {
+    "alpha": 0.1,
+    "gamma": 176085962784.0,
+    "anisotropy_j": 2.4032649509999997e-23,
+    "mu": 2.78220301971e-23,
+    "tau0_s": 3.2872477207460065e-12,
+    "xi": 1.0,
+    "beta": -0.09966865249116204
+  },
+  "tolerances": {
+    "elliptic_k": 1e-13,
+    "protocol": 1e-09
+  },
+  "elliptic_k": [
+    {
+      "m": 0.0,
+      "k": 1.5707963267948966
+    },
+    {
+      "m": 0.05,
+      "k": 1.591003453790792
+    },
+    {
+      "m": 0.1,
+      "k": 1.6124413487202192
+    },
+    {
+      "m": 0.25,
+      "k": 1.685750354812596
+    },
+    {
+      "m": 0.4,
+      "k": 1.7775193714912534
+    },
+    {
+      "m": 0.5,
+      "k": 1.8540746773013719
+    },
+    {
+      "m": 0.6,
+      "k": 1.9495677498060258
+    },
+    {
+      "m": 0.75,
+      "k": 2.156515647499643
+    },
+    {
+      "m": 0.9,
+      "k": 2.5780921133481733
+    },
+    {
+      "m": 0.95,
+      "k": 2.9083372484445515
+    },
+    {
+      "m": 0.99,
+      "k": 3.6956373629898747
+    },
+    {
+      "m": 0.999,
+      "k": 4.841132560550296
+    }
+  ],
+  "protocol": [
+    {
+      "switching_time_tau0": 2.0,
+      "switching_time_s": 6.574495441492013e-12,
+      "mean_current_reduced": 829642443266.4883,
+      "cost_fast_reduced": 4.8900040412908384e-11,
+      "characteristic_time_s": 1.6384136458933598e-10
+    },
+    {
+      "switching_time_tau0": 5.0,
+      "switching_time_s": 1.6436238603730032e-11,
+      "mean_current_reduced": 331856977306.5953,
+      "cost_fast_reduced": 1.9560016165163354e-11,
+      "characteristic_time_s": 1.6384136458933598e-10
+    },
+    {
+      "switching_time_tau0": 10.0,
+      "switching_time_s": 3.2872477207460065e-11,
+      "mean_current_reduced": 165928488653.29764,
+      "cost_fast_reduced": 9.780008082581677e-12,
+      "characteristic_time_s": 1.6384136458933598e-10
+    },
+    {
+      "switching_time_tau0": 20.0,
+      "switching_time_s": 6.574495441492013e-11,
+      "mean_current_reduced": 82964244326.64882,
+      "cost_fast_reduced": 4.8900040412908386e-12,
+      "characteristic_time_s": 1.6384136458933598e-10
+    },
+    {
+      "switching_time_tau0": 50.0,
+      "switching_time_s": 1.6436238603730032e-10,
+      "mean_current_reduced": 33185697730.65953,
+      "cost_fast_reduced": 1.9560016165163353e-12,
+      "characteristic_time_s": 1.6384136458933598e-10
+    },
+    {
+      "switching_time_tau0": 100.0,
+      "switching_time_s": 3.2872477207460065e-10,
+      "mean_current_reduced": 16592848865.329765,
+      "cost_fast_reduced": 9.780008082581677e-13,
+      "characteristic_time_s": 1.6384136458933598e-10
+    }
+  ]
+}

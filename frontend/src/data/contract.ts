@@ -312,6 +312,34 @@ export interface PatchOCPArtifact {
   cases: PatchOCPCase[];
 }
 
+// ---- the live-lane parity fixture (data/artifacts/live_parity.json) ----
+
+export interface ParityEllipticRow {
+  /** The modulus in the PARAMETER convention, m = k^2. */
+  m: number;
+  k: number;
+}
+
+export interface ParityProtocolRow {
+  switching_time_tau0: number;
+  switching_time_s: number;
+  mean_current_reduced: number;
+  cost_fast_reduced: number;
+  characteristic_time_s: number;
+}
+
+export interface LiveParityFixture {
+  schema: string;
+  case: string;
+  code: string;
+  description: string;
+  inputs: { alpha: number; gamma: number; anisotropy_j: number; mu: number; tau0_s: number; xi: number; beta: number };
+  /** The relative agreement demanded of each group, from the offline lane. */
+  tolerances: { elliptic_k: number; protocol: number };
+  elliptic_k: ParityEllipticRow[];
+  protocol: ParityProtocolRow[];
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {
