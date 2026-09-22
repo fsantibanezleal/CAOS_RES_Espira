@@ -1,0 +1,69 @@
+// Browser gate: the live lane's two implementations agree across the committed grid, not only at the
+// case's working point. The Implementation page recomputes the fixture in the browser; this gate reads
+// the worst relative deviation it reports, compares it with the tolerance the bake committed, and fails
+// when the browser's own arithmetic drifts from the offline lane.
+// Usage: node e2e/parity.mjs <baseUrl> [outDir]
+import { createRequire } from 'node:module';
+import { mkdirSync } from 'node:fs';
+const require = createRequire(import.meta.url);
+const { chromium } = require('playwright');
+
+const base = process.argv[2] ?? 'http://localhost:4173';
+const out = process.argv[3] ?? 'e2e-shots';
+mkdirSync(out, { recursive: true });
+
+const failures = [];
+const check = (ok, msg) => {
+  console.log(`${ok ? 'PASS' : 'FAIL'} ${msg}`);
+  if (!ok) failures.push(msg);
+};
+
+const browser = await chromium.launch();
+for (const theme of ['light', 'dark']) {
+  for (const lang of ['en', 'es']) {
+    const ctx = await browser.newContext({ viewport: { width: 1360, height: 1000 } });
+    await ctx.addInitScript(([t, l]) => {
+      localStorage.setItem('caos.theme', t);
+      localStorage.setItem('caos.lang', l);
+    }, [theme, lang]);
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+    page.on('pageerror', (e) => errors.push(String(e)));
+    await page.goto(`${base}/implementation`, { waitUntil: 'networkidle' });
+    const panel = page.getByTestId('live-parity');
+    await panel.waitFor({ timeout: 15000 });
+    const tag = `${theme}-${lang}`;
+
+    const fixture = await page.evaluate(async () => {
+      const r = await fetch('/artifacts/live_parity.json');
+      const d = await r.json();
+      return { tolerances: d.tolerances, elliptic: d.elliptic_k.length, protocol: d.protocol.length, schema: d.schema };
+    });
+    check(fixture.schema === 'espira.live-parity/1', `${tag}: fixture schema ${fixture.schema}`);
+    check(fixture.elliptic >= 8 && fixture.protocol >= 6, `${tag}: fixture covers ${fixture.elliptic} moduli and ${fixture.protocol} switching times`);
+
+    for (const [key, attr] of [['elliptic_k', 'data-worst-elliptic'], ['protocol', 'data-worst-protocol']]) {
+      const worst = Number(await panel.getAttribute(attr));
+      const tolerance = fixture.tolerances[key];
+      check(Number.isFinite(worst), `${tag}: ${key} deviation is a number (${worst})`);
+      check(worst <= tolerance, `${tag}: ${key} worst deviation ${worst.toExponential(2)} within ${tolerance.toExponential(0)}`);
+      // A panel that silently rendered nothing would also report zero, so the rows must be there.
+      const rows = await page.locator(`[data-testid="live-parity"] .parity-group:nth-child(${key === 'elliptic_k' ? 1 : 2}) tbody tr`).count();
+      check(rows >= 6, `${tag}: ${key} table drew ${rows} rows`);
+      const shown = await page.getByTestId(`parity-worst-${key}`).innerText();
+      check(/^\d(\.\d+)?e[+-]\d+$/.test(shown.trim()) || shown.trim() === '0', `${tag}: ${key} readout "${shown}" is plain`);
+    }
+    // The page must not claim agreement it did not measure.
+    const badges = await page.locator('[data-testid="live-parity"] .prov-badge').allInnerTexts();
+    check(badges.length === 2 && badges.every((b) => /within|dentro/.test(b)), `${tag}: verdicts ${JSON.stringify(badges)}`);
+
+    await panel.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `${out}/parity-${tag}.png` });
+    check(errors.length === 0, `${tag}: console errors ${JSON.stringify(errors.slice(0, 3))}`);
+    await ctx.close();
+  }
+}
+await browser.close();
+console.log(failures.length ? `GATE FAILED: ${failures.length}` : 'GATE OK');
+process.exit(failures.length ? 1 : 0);

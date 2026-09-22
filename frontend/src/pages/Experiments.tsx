@@ -4,12 +4,30 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useShellLang, Tabs, Cite } from '@fasl-work/caos-app-shell';
-import type { ArtifactIndex, CaseArtifact, LatticeOCPArtifact, NovelResults, PatchOCPArtifact } from '../data/contract';
-import { loadCase, loadIndex, loadLatticeOCP, loadNovel, loadPatchOCP } from '../data/load';
+import type {
+  ArtifactIndex,
+  CaseArtifact,
+  LatticeOCPArtifact,
+  NovelResults,
+  HardAxisMapArtifact,
+  ParetoArtifact,
+  PatchOCPArtifact,
+} from '../data/contract';
+import {
+  loadCase,
+  loadHardAxisMap,
+  loadIndex,
+  loadLatticeOCP,
+  loadNovel,
+  loadPareto,
+  loadPatchOCP,
+} from '../data/load';
 import { useTheme } from '../theme';
 import { CrossoverChart } from '../viz/CrossoverChart';
 import { ChainMap } from '../viz/ChainMap';
 import { PatchChart } from '../viz/PatchChart';
+import { ParetoChart } from '../viz/ParetoChart';
+import { HardAxisMap } from '../viz/HardAxisMap';
 import { CoverageMatrix } from '../viz/CoverageMatrix';
 
 function Chips<T extends number>({
@@ -152,6 +170,161 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
                 <td>{c.starts.uniform.ratio.toFixed(4)}</td>
                 <td>{c.starts.wall.ratio.toFixed(4)}</td>
                 <td>{c.starts.mep.ratio.toFixed(4)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="muted">{data.description}</p>
+    </div>
+  );
+}
+
+function HardAxis({ data, es }: { data: HardAxisMapArtifact; es: boolean }) {
+  const { theme } = useTheme();
+  const dampings = data.axes.damping;
+  const [damping, setDamping] = useState(dampings[1] ?? dampings[0]);
+  const active = dampings.includes(damping) ? damping : dampings[0];
+  const scoped = useMemo(() => data.points.filter((p) => p.damping === active), [data, active]);
+  const helpedHere = scoped.filter((p) => p.helped);
+  const longest = Math.max(...helpedHere.map((p) => p.switching_tau0), 0);
+  const { summary } = data;
+
+  return (
+    <div className="prose">
+      <p>
+        {es
+          ? 'Un eje duro es el unico mecanismo de esta literatura que puede batir el costo del macrospin libre: el torque interno hace parte del trabajo. El caso C04 lo mide a lo largo de una linea y encuentra que el beneficio no es monotono. Aqui esta la region completa: razon de eje duro contra tiempo de conmutacion, a cuatro amortiguamientos.'
+          : 'A hard axis is the one mechanism in this literature that can beat the free-macrospin cost: the internal torque does part of the work. Case C04 measures it along one line and finds the benefit is not monotone. Here is the whole region: hard-axis ratio against switching time, at four dampings.'}{' '}
+        <Cite id="badarneh2023" />
+      </p>
+      <p data-testid="hard-axis-verdict">
+        {es
+          ? `Medido: el eje duro paga en ${summary.helped} de las ${summary.reliable} celdas fiables, y todas estan a tiempos de conmutacion cortos. A este amortiguamiento el beneficio llega hasta T = ${longest} tau0 y desaparece despues: a tiempos largos la barrera del propio eje duro cuesta mas de lo que ahorra. El mejor punto de todo el mapa es ${summary.best.reduction_vs_control.toFixed(2)} veces a razon ${summary.best.ratio}, alpha ${summary.best.damping} y T = ${summary.best.switching_tau0} tau0.`
+          : `Measured: the hard axis pays in ${summary.helped} of the ${summary.reliable} reliable cells, and all of them sit at short switching times. At this damping the benefit reaches T = ${longest} tau0 and is gone beyond it: at long times the hard axis's own barrier costs more than it saves. The best point of the whole map is ${summary.best.reduction_vs_control.toFixed(2)} times, at ratio ${summary.best.ratio}, alpha ${summary.best.damping} and T = ${summary.best.switching_tau0} tau0.`}
+      </p>
+      <p className="muted">
+        {es
+          ? `Cada celda se divide por su control: el mismo metodo numerico resolviendo el sistema uniaxial cuya forma cerrada ya se conoce. Donde el control se aparta mas de ${(100 * summary.control_tolerance).toFixed(0)} por ciento o el solver no converge, la celda se dibuja tachada y no cuenta: ${summary.points - summary.reliable} de ${summary.points} (${summary.unconverged} sin converger, ${summary.at_floor} ya en el piso de tiempo infinito, control peor ${(100 * summary.worst_control).toFixed(0)} por ciento).`
+          : `Each cell is divided by its control: the same numerical method solving the uniaxial system whose closed form is already known. Where the control drifts by more than ${(100 * summary.control_tolerance).toFixed(0)} per cent, or the solve does not converge, the cell is drawn crossed out and does not count: ${summary.points - summary.reliable} of ${summary.points} (${summary.unconverged} unconverged, ${summary.at_floor} already at the infinite-time floor, worst control ${(100 * summary.worst_control).toFixed(0)} per cent).`}
+      </p>
+      <Chips
+        label={es ? 'Amortiguamiento' : 'Damping'}
+        values={dampings}
+        active={active}
+        onPick={setDamping}
+        format={(v) => `alpha = ${v}`}
+      />
+      <HardAxisMap data={data} damping={active} theme={theme} es={es} />
+      <p className="muted">{data.description}</p>
+    </div>
+  );
+}
+
+function Tradeoffs({ data, es }: { data: ParetoArtifact; es: boolean }) {
+  const { theme } = useTheme();
+  const slugs = useMemo(() => data.materials.map((m) => m.material), [data]);
+  const [slug, setSlug] = useState(slugs[0]);
+  const item = data.materials.find((m) => m.material === slug) ?? data.materials[0];
+  const inversions = item.bandwidth_inversions;
+  const points = [...item.points].sort((a, b) => a.switching_time_tau0 - b.switching_time_tau0);
+  const exponent = (key: 'cost' | 'peak_field_t' | 'bandwidth_hz') => item.exponents[key];
+  const plain = (v: number) => (Math.abs(v) >= 1000 || (v !== 0 && Math.abs(v) < 0.01) ? v.toExponential(2) : String(Number(v.toPrecision(4))));
+
+  return (
+    <div className="prose">
+      <p>
+        {es
+          ? 'Cada caso del banco de trabajo informa un escalar: un costo a un tiempo de conmutacion. Un dispositivo no elige un solo objetivo: tiene que entregar un campo pico desde un generador real, sobre un ancho de banda real, dentro de un presupuesto de tiempo. Aqui la familia optima analitica se evalua en los cuatro objetivos a la vez y se marca que puntos estan dominados.'
+          : "Every workbench case reports one scalar: a cost at a switching time. A device does not get to pick one objective: it has to supply a peak field from a real generator, over a real bandwidth, within a time budget. Here the analytic optimal family is evaluated on all four objectives at once, and each point is marked dominated or not."}{' '}
+        <Cite id="kwiatkowski2021" />
+      </p>
+      <p data-testid="pareto-verdict">
+        {es
+          ? `Medido: el costo y el campo pico caen monotonamente con el presupuesto de tiempo, pero el ancho de banda no. En ${item.name} hay ${inversions.count} pares donde el protocolo MAS LENTO exige una banda mas ancha; el peor va de T = ${inversions.worst?.faster_tau0} a T = ${inversions.worst?.slower_tau0} tau0 y ensancha la banda ${inversions.worst?.ratio.toFixed(2)} veces, asi que "mas lento es mas facil de generar" es falso en ancho de banda.`
+          : `Measured: the cost and the peak field fall monotonically with the time budget, but the bandwidth does not. On ${item.name} there are ${inversions.count} pairs where the SLOWER protocol demands a wider band; the worst runs from T = ${inversions.worst?.faster_tau0} to T = ${inversions.worst?.slower_tau0} tau0 and widens the band by ${inversions.worst?.ratio.toFixed(2)} times, so "slower is easier to generate" is false in bandwidth.`}
+      </p>
+      <p className="muted">
+        {es
+          ? `Contar el tiempo de conmutacion como un objetivo mas vacia la pregunta: cada protocolo del barrido tiene un tiempo distinto, asi que ninguno puede ser al menos tan bueno en todo y el frente es todo el barrido (${item.front_size} de ${item.points.length}) por construccion. Con el plazo ya fijado, mirando solo lo que el hardware debe entregar, quedan ${item.supply_front_size} de ${item.points.length}.`
+          : `Counting the switching time as one more objective empties the question: every protocol in the sweep has a different time, so none can be at least as good everywhere and the front is the whole sweep (${item.front_size} of ${item.points.length}) by construction. With the deadline already fixed, and only what the hardware must supply in view, ${item.supply_front_size} of ${item.points.length} remain.`}
+      </p>
+      <Chips
+        label={es ? 'Material' : 'Material'}
+        values={slugs.map((_, i) => i)}
+        active={slugs.indexOf(item.material)}
+        onPick={(i) => setSlug(slugs[i])}
+        format={(i) => data.materials[i].name}
+      />
+      <div className="wb-variant-readout" data-testid="pareto-readout" data-key={item.material}>
+        <dl className="readout-grid">
+          <div>
+            <dt>{es ? 'Costo contra T' : 'Cost against T'}</dt>
+            <dd>
+              T^{exponent('cost').slope.toFixed(2)}
+            </dd>
+          </div>
+          <div>
+            <dt>{es ? 'Campo pico contra T' : 'Peak field against T'}</dt>
+            <dd>
+              T^{exponent('peak_field_t').slope.toFixed(2)}
+            </dd>
+          </div>
+          <div>
+            <dt>{es ? 'Ancho de banda contra T' : 'Bandwidth against T'}</dt>
+            <dd>
+              T^{exponent('bandwidth_hz').slope.toFixed(2)}{' '}
+              <span className="prov-badge prov-assumed">
+                {es ? 'no es ley de potencia' : 'not a power law'}
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt>{es ? 'Amortiguamiento' : 'Damping'}</dt>
+            <dd>
+              {item.damping}{' '}
+              {item.damping_provenance === 'assumed' && (
+                <span className="prov-badge prov-assumed">{es ? 'supuesto' : 'assumed'}</span>
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>{es ? 'Inversiones de ancho de banda' : 'Bandwidth inversions'}</dt>
+            <dd>{inversions.count}</dd>
+          </div>
+          <div>
+            <dt>tau0</dt>
+            <dd>{(item.tau0_s * 1e12).toFixed(3)} ps</dd>
+          </div>
+        </dl>
+      </div>
+      <h3>{es ? 'Lo que cuesta acortar el tiempo' : 'What shortening the time costs'}</h3>
+      <p className="muted">
+        {es
+          ? 'Cada objetivo dividido por su valor en T = 200 tau0, en ejes logaritmicos. El costo y el campo pico caen como 1/T; el ancho de banda no sigue una ley de potencia y cae mucho mas despacio, asi que a tiempos largos es el ancho de banda el que limita, no el costo.'
+          : 'Each objective divided by its own value at T = 200 tau0, on log axes. The cost and the peak field fall like 1/T; the bandwidth does not follow a power law and falls far more slowly, so at long switching times it is the bandwidth that binds, not the cost.'}
+      </p>
+      <ParetoChart item={item} theme={theme} es={es} />
+      <h3>{es ? 'Los cuatro objetivos' : 'The four objectives'}</h3>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>T / tau0</th>
+              <th>{es ? 'Costo' : 'Cost'} (T^2 s)</th>
+              <th>{es ? 'Campo pico' : 'Peak field'} (T)</th>
+              <th>{es ? 'Ancho de banda' : 'Bandwidth'} (Hz)</th>
+              <th>{es ? 'Dominado sin plazo' : 'Dominated without the deadline'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {points.map((p) => (
+              <tr key={p.switching_time_tau0}>
+                <td>{p.switching_time_tau0}</td>
+                <td>{plain(p.cost)}</td>
+                <td>{plain(p.peak_field_t)}</td>
+                <td>{plain(p.bandwidth_hz)}</td>
+                <td>{p.dominated_without_time ? (es ? 'si' : 'yes') : 'no'}</td>
               </tr>
             ))}
           </tbody>
@@ -447,6 +620,8 @@ export function Experiments(): React.JSX.Element {
   const [novel, setNovel] = useState<NovelResults | null>(null);
   const [chain, setChain] = useState<LatticeOCPArtifact | null>(null);
   const [patch, setPatch] = useState<PatchOCPArtifact | null>(null);
+  const [pareto, setPareto] = useState<ParetoArtifact | null>(null);
+  const [hardAxis, setHardAxis] = useState<HardAxisMapArtifact | null>(null);
 
   useEffect(() => {
     loadIndex().then(async (ix: ArtifactIndex) => {
@@ -456,9 +631,11 @@ export function Experiments(): React.JSX.Element {
     loadNovel().then(setNovel);
     loadLatticeOCP().then(setChain);
     loadPatchOCP().then(setPatch);
+    loadPareto().then(setPareto);
+    loadHardAxisMap().then(setHardAxis);
   }, []);
 
-  if (!artifacts.length || !novel || !chain || !patch || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
+  if (!artifacts.length || !novel || !chain || !patch || !pareto || !hardAxis || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
   return (
     <article className="prose">
@@ -499,6 +676,16 @@ export function Experiments(): React.JSX.Element {
             id: 'patch',
             label: es ? 'Parche bidimensional' : 'Two-dimensional patch',
             content: <Patch data={patch} es={es} />,
+          },
+          {
+            id: 'hard-axis',
+            label: es ? 'Donde paga el eje duro' : 'Where the hard axis pays',
+            content: <HardAxis data={hardAxis} es={es} />,
+          },
+          {
+            id: 'tradeoffs',
+            label: es ? 'Compromisos de dispositivo (R14)' : 'Device trade-offs (R14)',
+            content: <Tradeoffs data={pareto} es={es} />,
           },
           {
             id: 'lattice',
