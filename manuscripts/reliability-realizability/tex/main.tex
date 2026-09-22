@@ -10,10 +10,10 @@
 \newcommand{\doi}[1]{DOI: \href{https://doi.org/#1}{#1}}
 
 \newcommand{\doctype}{Preprint}
-\newcommand{\docversion}{v3}
-\newcommand{\docdate}{18 September 2026}
+\newcommand{\docversion}{v4}
+\newcommand{\docdate}{22 September 2026}
 \newcommand{\doclicense}{CC BY 4.0}
-\newcommand{\versiondoi}{10.5281/zenodo.22822132}
+\newcommand{\versiondoi}{10.5281/zenodo.22902338}
 \newcommand{\conceptdoi}{10.5281/zenodo.22736005}
 \newcommand{\docrepo}{github.com/fsantibanezleal/CAOS\_RES\_Espira}
 
@@ -49,15 +49,17 @@ instability and is invisible to the leading-order dynamics, so it is often descr
 free: it costs the square of its amplitude integrated over the pulse. We compute, for the first time,
 the cost-reliability front of that longitudinal field. Using an open-source engine that solves optimal
 control over the Landau-Lifshitz-Gilbert equation and a thermostat validated against the Boltzmann
-distribution, we reproduce the published stabilization physics for CrSBr, the half-hyperbolic bare
-path and the counterintuitive success dip near one anisotropy field, and we add the missing axis:
-the added switching cost, which grows quadratically with the field. The price is not small: a field of
-one anisotropy field already costs 2.5 times the bare optimal switching cost, and two anisotropy fields
-cost ten times it. Nor is the benefit universal. At a thermal-stability factor of twenty the bare
-optimal pulse already reverses every one of 400 copies, so the field buys nothing and costs a great
-deal; the reliability gain appears only below a stability factor of about ten, where it lifts the
-success rate from 0.81 to 0.96 at a factor of two. The front makes the reliability-versus-energy trade
-explicit and quantitative, and it is reproducible from committed artifacts and a live instance.
+distribution, we reproduce the published stabilization physics for CrSBr, the half-hyperbolic bare path
+that a field of order the anisotropy field removes, and we add the missing axis: the added switching
+cost, which grows quadratically with the field. The price is not small: a field of one anisotropy field
+already costs 2.5 times the bare optimal switching cost, and two anisotropy fields cost ten times it.
+Nor is the benefit universal. At a thermal-stability factor of twenty the bare optimal pulse already
+reverses every one of 400 copies, so the field buys nothing and costs a great deal; the reliability gain
+appears only below a stability factor of about ten, where at a factor of one it lifts the success rate
+from 0.735 to 0.985 and removes 94 per cent of the failures. The deterministic hyperbolicity integral,
+which needs no ensemble, predicts that gain in every row of the grid that can distinguish its ends. The
+front makes the reliability-versus-energy trade explicit and quantitative, and it is reproducible from
+committed artifacts and a live instance.
 \end{abstract}
 
 \section{Introduction}
@@ -164,9 +166,9 @@ added cost grows as $B_r^2$. Success rates are over $400$ stochastic copies.}
 $B_r/(K/\mu)$ & hyperbolic fraction & success rate & added cost (T$^2$~s) \\
 \midrule
 0.0 & 0.50 & $1.000 \pm 0.005$ & $0.00$ \\
-0.5 & 0.33 & $0.980 \pm 0.014$ & $6.1\times10^{-12}$ \\
-1.0 & 0.00 & $0.958 \pm 0.020$ & $2.5\times10^{-11}$ \\
-1.5 & 0.00 & $0.998 \pm 0.005$ & $5.5\times10^{-11}$ \\
+0.5 & 0.33 & $1.000 \pm 0.005$ & $6.1\times10^{-12}$ \\
+1.0 & 0.00 & $1.000 \pm 0.005$ & $2.5\times10^{-11}$ \\
+1.5 & 0.00 & $1.000 \pm 0.005$ & $5.5\times10^{-11}$ \\
 2.0 & 0.00 & $1.000 \pm 0.005$ & $9.8\times10^{-11}$ \\
 2.5 & 0.00 & $1.000 \pm 0.005$ & $1.5\times10^{-10}$ \\
 \bottomrule
@@ -175,10 +177,10 @@ $B_r/(K/\mu)$ & hyperbolic fraction & success rate & added cost (T$^2$~s) \\
 
 Three features are worth drawing out. First, the hyperbolic fraction falls from one half at $B_r = 0$
 to zero once $B_r \ge K/\mu$, exactly as the linearized stability analysis
-predicts~\citep{badarneh2023stability}. Second, the success rate shows a shallow, counterintuitive dip
-around $B_r \approx K/\mu$ before recovering to unity, the same non-monotonicity reported in the
-stabilization study, which arises because the eigenvalue ratio passes through $-1$ near the barrier top
-in that range. Third, and new here, the added cost grows quadratically with the field. Measured against
+predicts~\citep{badarneh2023stability}. Second, the success rate is unity at every field in the sweep,
+including at $B_r = 0$: at this stability factor the thermal kicks are too weak, over ten Larmor times,
+to exploit the instability the analysis reports, so the front here measures a price and no gain. Third,
+and new here, the added cost grows quadratically with the field. Measured against
 the bare optimal cost at this switching time, $9.7\times10^{-12}$~T$^2$~s, it is 0.63 times the bare cost
 at half an anisotropy field, 2.5 times at one, 10.1 times at two and 15.8 times at two and a half.
 
@@ -207,22 +209,29 @@ volume, not from one site.}
 \toprule
 $\Delta = K/(k_B T)$ & temperature (K) & bare pulse & with $B_r = 2\,K/\mu$ \\
 \midrule
-1 & 1.74 & $0.735 \pm 0.035$ & $0.860 \pm 0.028$ \\
-2 & 0.87 & $0.810 \pm 0.031$ & $0.963 \pm 0.015$ \\
-3 & 0.58 & $0.870 \pm 0.027$ & $0.983 \pm 0.010$ \\
-5 & 0.35 & $0.932 \pm 0.020$ & $0.995 \pm 0.006$ \\
+1 & 1.74 & $0.735 \pm 0.035$ & $0.985 \pm 0.010$ \\
+2 & 0.87 & $0.810 \pm 0.031$ & $1.000 \pm 0.003$ \\
+3 & 0.58 & $0.870 \pm 0.027$ & $1.000 \pm 0.003$ \\
+5 & 0.35 & $0.932 \pm 0.020$ & $1.000 \pm 0.003$ \\
 10 & 0.17 & $0.983 \pm 0.010$ & $1.000 \pm 0.003$ \\
 20 & 0.09 & $0.998 \pm 0.003$ & $1.000 \pm 0.003$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The longitudinal field raises the success rate at every stability factor, and the gain is large where
-the bare pulse is fragile: from 0.81 to 0.96 at $\Delta = 2$, a halving and more of the failure rate, and
-from 0.87 to 0.98 at $\Delta = 3$. Above $\Delta \approx 10$ the bare pulse already succeeds
-essentially always and the gain falls inside the confidence interval. At $\Delta = 20$ this independent
-run, with more copies and a finer step, gives $0.998 \pm 0.003$ for the bare pulse, consistent with the
-$1.000 \pm 0.005$ of Table~\ref{tab:front}.
+The longitudinal field raises the success rate wherever the bare pulse is fragile: from 0.735 to 0.985
+at $\Delta = 1$, which removes 94 per cent of the failures, and to unity within the interval from
+$\Delta = 2$ upward. Above $\Delta \approx 10$ the bare pulse already succeeds essentially always and
+the gain falls inside the confidence interval. At $\Delta = 20$ this independent run, with more copies
+and a finer step, gives $0.998 \pm 0.003$ for the bare pulse, consistent with the $1.000 \pm 0.005$ of
+Table~\ref{tab:front}.
+
+The two tables also test a claim that is cheaper than either of them. The hyperbolicity integral along
+the path, $\int \max(0, -w_1 w_2)\,dt$, is deterministic and comes from the same Hessian the
+optimal-control solver already has, so it predicts reliability without an ensemble at all. Over a grid
+of five fields and six stability factors, 1{,}000 copies per cell, five rows separate their ends by more
+than both confidence intervals, and in all five the measured failure rate falls with the penalty. The
+sixth, at $\Delta = 20$, has nothing to predict: neither end fails.
 
 The consequence for device design is that the longitudinal field is a stabilizer with a steep price,
 worth paying only where the bare pulse actually fails. Table~\ref{tab:front} lets a designer read off the

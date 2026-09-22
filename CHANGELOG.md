@@ -4,6 +4,31 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.12.000] - 2026-09-22
+
+### Fixed
+- **The stabilizing longitudinal field was applied with the wrong sign**, and it reached a published
+  manuscript. The engine's linearized analysis calls a positive `B_r` stabilizing, and at one anisotropy
+  field it duly reported the instability gone, while the ensemble it was meant to predict was run with
+  that field pointing the other way and got worse. Every reliability number the product has shipped came
+  from that path: the R12 rung, case C09, `novel.json`, and both measured tables of manuscript M1.
+  Corrected in spinoct 0.18.000 and rebaked here. What changes: at a stability factor of twenty the
+  success rate is now unity at every field (it dipped to 0.958 at one anisotropy field before), and the
+  field buys more where the bare pulse is fragile, lifting the success rate at a stability factor of one
+  from 0.735 to 0.985 rather than to 0.860. The added cost, which is analytic, does not move.
+- M1 is republished as version 4 (10.5281/zenodo.22902338), with both tables corrected and the
+  "counterintuitive success dip" removed: there is no dip, and version 3 had explained an artefact of
+  the sign as physics, attributing it to the source study.
+
+### Added
+- **Does the penalty predict the ensemble?** (backlog BL-020), the test that found the defect. The
+  engine offers a deterministic hyperbolicity integral and claims it predicts the Monte-Carlo success
+  rate without an ensemble; nothing had checked it. Over five fields by six stability factors at 1,000
+  copies per cell, five rows separate their ends by more than both confidence intervals, and on the
+  corrected engine the prediction holds in all five. On the old sign it held in none of six, which is
+  what exposed the sign.
+- The Experiments page gains the tab and `e2e/penalty.mjs`, taking the gates to eleven.
+
 ## [0.11.000] - 2026-09-22
 
 ### Added

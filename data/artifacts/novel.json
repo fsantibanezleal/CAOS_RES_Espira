@@ -14,21 +14,21 @@
       {
         "br_over_anisotropy": 0.5,
         "added_cost": 6.131943038111423e-12,
-        "success_rate": 0.98,
-        "confidence95": 0.013720000000000005,
+        "success_rate": 1.0,
+        "confidence95": 0.0049,
         "hyperbolic_fraction": 0.33444259567387685
       },
       {
         "br_over_anisotropy": 1.0,
         "added_cost": 2.4527772152445692e-11,
-        "success_rate": 0.9575,
-        "confidence95": 0.019769238098621803,
+        "success_rate": 1.0,
+        "confidence95": 0.0049,
         "hyperbolic_fraction": 0.0016638935108153079
       },
       {
         "br_over_anisotropy": 1.5,
         "added_cost": 5.518748734300281e-11,
-        "success_rate": 0.9975,
+        "success_rate": 1.0,
         "confidence95": 0.0049,
         "hyperbolic_fraction": 0.0
       },

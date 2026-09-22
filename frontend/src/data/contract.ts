@@ -428,6 +428,56 @@ export interface HardAxisMapArtifact {
   points: HardAxisPoint[];
 }
 
+// ---- does the instability penalty predict the ensemble? (data/artifacts/penalty_test.json), BL-020 ----
+
+export interface PenaltyCell {
+  br_over_anisotropy: number;
+  stability_factor: number;
+  /** The deterministic hyperbolicity integral, in units of the infinite-time cost floor. */
+  penalty_over_floor: number;
+  /** The fraction of the path the linearized analysis calls unstable at this field. */
+  hyperbolic_fraction: number;
+  added_cost_over_floor: number;
+  success_rate: number;
+  confidence95: number;
+  failure_rate: number;
+}
+
+export interface PenaltyRow {
+  stability_factor: number;
+  /** Rank correlation between the penalty and the measured failure rate along the field sweep. */
+  spearman_penalty_failure: number;
+  /** The same for the hyperbolic fraction, the other deterministic predictor in the module. */
+  spearman_fraction_failure: number;
+  /** Whether the measured failure rate falls at every step of the field sweep. */
+  failure_monotone_in_field: boolean;
+  failure_at_zero_field: number;
+  failure_at_full_field: number;
+  /** True when the two ends differ by more than both confidence intervals, so the row can decide. */
+  separated: boolean;
+  gap: number;
+}
+
+export interface PenaltyTestArtifact {
+  schema: string;
+  material: string;
+  switching_time_tau0: number;
+  copies: number;
+  description: string;
+  axes: { br_over_anisotropy: number[]; stability_factor: number[] };
+  cells: PenaltyCell[];
+  per_stability: PenaltyRow[];
+  verdict: {
+    testable_rows: number;
+    rows_agreeing: number;
+    rows: number;
+    /** How many rows each deterministic predictor ranks correctly end to end. */
+    rows_ranked_by_penalty: number;
+    rows_ranked_by_fraction: number;
+    rows_failing_monotonically: number;
+  };
+}
+
 // ---- the benchmark (data/artifacts/benchmark.json) and the Contract 2 manifests ----
 
 export interface MethodScore {
