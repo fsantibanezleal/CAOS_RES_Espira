@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "penalty_test.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -102,6 +102,31 @@ def check(artifacts: Path) -> list[str]:
             sz = case["sz_map"]["sz"]
             if len(sz) != len(case["sz_map"]["times_over_t"]) or any(len(row) != case["n_sites"] for row in sz):
                 errors.append(f"lattice_ocp {case['key']}: reversal map shape mismatch")
+
+    penalty_path = artifacts / "penalty_test.json"
+    if penalty_path.exists():
+        penalty = json.loads(penalty_path.read_text(encoding="utf-8"))
+        if penalty.get("schema") != "espira.penalty-test/1":
+            errors.append(f"penalty_test: schema {penalty.get('schema')}")
+        cells, rows = penalty["cells"], penalty["per_stability"]
+        axes = penalty["axes"]
+        if len(cells) != len(axes["br_over_anisotropy"]) * len(axes["stability_factor"]):
+            errors.append(f"penalty_test: {len(cells)} cells for the declared grid")
+        verdict = penalty["verdict"]
+        if verdict["testable_rows"] != sum(1 for r in rows if r["separated"]):
+            errors.append("penalty_test: the testable count disagrees with the rows")
+        if verdict["rows_agreeing"] != sum(1 for r in rows if r["separated"] and r["gap"] > 0.0):
+            errors.append("penalty_test: the agreement count disagrees with the rows")
+        for row in rows:
+            # A row only decides when its two ends separate by more than their intervals.
+            ends = [c for c in cells if c["stability_factor"] == row["stability_factor"]]
+            interval = sum(
+                c["confidence95"] for c in ends if c["br_over_anisotropy"] in (0.0, max(axes["br_over_anisotropy"]))
+            )
+            if row["separated"] != (abs(row["gap"]) > interval):
+                errors.append(f"penalty_test {row['stability_factor']}: separation disagrees with the intervals")
+    else:
+        errors.append("missing penalty_test.json")
 
     hard_axis_path = artifacts / "hard_axis_map.json"
     if hard_axis_path.exists():
@@ -202,7 +227,7 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json consistent")
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json, penalty_test.json consistent")
     return 0
 
 

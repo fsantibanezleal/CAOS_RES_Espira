@@ -1,0 +1,396 @@
+{
+  "schema": "espira.penalty-test/1",
+  "material": "CrSBr",
+  "switching_time_tau0": 10.0,
+  "copies": 1000,
+  "description": "The deterministic instability penalty against the measured Monte-Carlo success rate, over a longitudinal-field sweep (which removes the hyperbolicity the penalty integrates) and a thermal-stability sweep (which decides whether any copy fails at all). The claim under test, stated by the engine itself, is that the penalty predicts the success rate without an ensemble.",
+  "axes": {
+    "br_over_anisotropy": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "stability_factor": [
+      1.0,
+      2.0,
+      3.0,
+      5.0,
+      10.0,
+      20.0
+    ]
+  },
+  "cells": [
+    {
+      "br_over_anisotropy": 0.0,
+      "stability_factor": 1.0,
+      "penalty_over_floor": 4.269111289994519,
+      "hyperbolic_fraction": 0.49916805324459235,
+      "added_cost_over_floor": 0.0,
+      "success_rate": 0.755,
+      "confidence95": 0.026657080860439317,
+      "failure_rate": 0.245
+    },
+    {
+      "br_over_anisotropy": 0.25,
+      "stability_factor": 1.0,
+      "penalty_over_floor": 8.356699772919995,
+      "hyperbolic_fraction": 0.4176372712146423,
+      "added_cost_over_floor": 7.8125,
+      "success_rate": 0.834,
+      "confidence95": 0.02306179677301836,
+      "failure_rate": 0.16600000000000004
+    },
+    {
+      "br_over_anisotropy": 0.5,
+      "stability_factor": 1.0,
+      "penalty_over_floor": 7.51536432390232,
+      "hyperbolic_fraction": 0.33444259567387685,
+      "added_cost_over_floor": 31.25,
+      "success_rate": 0.901,
+      "confidence95": 0.018511263554927847,
+      "failure_rate": 0.09899999999999998
+    },
+    {
+      "br_over_anisotropy": 0.75,
+      "stability_factor": 1.0,
+      "penalty_over_floor": 3.6832416327772446,
+      "hyperbolic_fraction": 0.23128119800332778,
+      "added_cost_over_floor": 70.3125,
+      "success_rate": 0.949,
+      "confidence95": 0.01363560040482267,
+      "failure_rate": 0.051000000000000045
+    },
+    {
+      "br_over_anisotropy": 1.0,
+      "stability_factor": 1.0,
+      "penalty_over_floor": 0.0,
+      "hyperbolic_fraction": 0.0016638935108153079,
+      "added_cost_over_floor": 125.0,
+      "success_rate": 0.951,
+      "confidence95": 0.01337963820138647,
+      "failure_rate": 0.049000000000000044
+    },
+    {
+      "br_over_anisotropy": 0.0,
+      "stability_factor": 2.0,
+      "penalty_over_floor": 4.269111289994519,
+      "hyperbolic_fraction": 0.49916805324459235,
+      "added_cost_over_floor": 0.0,
+      "success_rate": 0.858,
+      "confidence95": 0.02163435179523528,
+      "failure_rate": 0.14200000000000002
+    },
+    {
+      "br_over_anisotropy": 0.25,
+      "stability_factor": 2.0,
+      "penalty_over_floor": 8.356699772919995,
+      "hyperbolic_fraction": 0.4176372712146423,
+      "added_cost_over_floor": 7.8125,
+      "success_rate": 0.903,
+      "confidence95": 0.01834365246072875,
+      "failure_rate": 0.09699999999999998
+    },
+    {
+      "br_over_anisotropy": 0.5,
+      "stability_factor": 2.0,
+      "penalty_over_floor": 7.51536432390232,
+      "hyperbolic_fraction": 0.33444259567387685,
+      "added_cost_over_floor": 31.25,
+      "success_rate": 0.971,
+      "confidence95": 0.010400750665216434,
+      "failure_rate": 0.029000000000000026
+    },
+    {
+      "br_over_anisotropy": 0.75,
+      "stability_factor": 2.0,
+      "penalty_over_floor": 3.6832416327772446,
+      "hyperbolic_fraction": 0.23128119800332778,
+      "added_cost_over_floor": 70.3125,
+      "success_rate": 0.99,
+      "confidence95": 0.006166996027240494,
+      "failure_rate": 0.010000000000000009
+    },
+    {
+      "br_over_anisotropy": 1.0,
+      "stability_factor": 2.0,
+      "penalty_over_floor": 0.0,
+      "hyperbolic_fraction": 0.0016638935108153079,
+      "added_cost_over_floor": 125.0,
+      "success_rate": 0.998,
+      "confidence95": 0.002769085336352061,
+      "failure_rate": 0.0020000000000000018
+    },
+    {
+      "br_over_anisotropy": 0.0,
+      "stability_factor": 3.0,
+      "penalty_over_floor": 4.269111289994519,
+      "hyperbolic_fraction": 0.49916805324459235,
+      "added_cost_over_floor": 0.0,
+      "success_rate": 0.877,
+      "confidence95": 0.02035674909213158,
+      "failure_rate": 0.123
+    },
+    {
+      "br_over_anisotropy": 0.25,
+      "stability_factor": 3.0,
+      "penalty_over_floor": 8.356699772919995,
+      "hyperbolic_fraction": 0.4176372712146423,
+      "added_cost_over_floor": 7.8125,
+      "success_rate": 0.97,
+      "confidence95": 0.010573105504060768,
+      "failure_rate": 0.030000000000000027
+    },
+    {
+      "br_over_anisotropy": 0.5,
+      "stability_factor": 3.0,
+      "penalty_over_floor": 7.51536432390232,
+      "hyperbolic_fraction": 0.33444259567387685,
+      "added_cost_over_floor": 31.25,
+      "success_rate": 0.994,
+      "confidence95": 0.00478657522661036,
+      "failure_rate": 0.006000000000000005
+    },
+    {
+      "br_over_anisotropy": 0.75,
+      "stability_factor": 3.0,
+      "penalty_over_floor": 3.6832416327772446,
+      "hyperbolic_fraction": 0.23128119800332778,
+      "added_cost_over_floor": 70.3125,
+      "success_rate": 0.998,
+      "confidence95": 0.002769085336352061,
+      "failure_rate": 0.0020000000000000018
+    },
+    {
+      "br_over_anisotropy": 1.0,
+      "stability_factor": 3.0,
+      "penalty_over_floor": 0.0,
+      "hyperbolic_fraction": 0.0016638935108153079,
+      "added_cost_over_floor": 125.0,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 0.0,
+      "stability_factor": 5.0,
+      "penalty_over_floor": 4.269111289994519,
+      "hyperbolic_fraction": 0.49916805324459235,
+      "added_cost_over_floor": 0.0,
+      "success_rate": 0.939,
+      "confidence95": 0.014833846648796131,
+      "failure_rate": 0.061000000000000054
+    },
+    {
+      "br_over_anisotropy": 0.25,
+      "stability_factor": 5.0,
+      "penalty_over_floor": 8.356699772919995,
+      "hyperbolic_fraction": 0.4176372712146423,
+      "added_cost_over_floor": 7.8125,
+      "success_rate": 0.993,
+      "confidence95": 0.005167490841791597,
+      "failure_rate": 0.007000000000000006
+    },
+    {
+      "br_over_anisotropy": 0.5,
+      "stability_factor": 5.0,
+      "penalty_over_floor": 7.51536432390232,
+      "hyperbolic_fraction": 0.33444259567387685,
+      "added_cost_over_floor": 31.25,
+      "success_rate": 0.999,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0010000000000000009
+    },
+    {
+      "br_over_anisotropy": 0.75,
+      "stability_factor": 5.0,
+      "penalty_over_floor": 3.6832416327772446,
+      "hyperbolic_fraction": 0.23128119800332778,
+      "added_cost_over_floor": 70.3125,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 1.0,
+      "stability_factor": 5.0,
+      "penalty_over_floor": 0.0,
+      "hyperbolic_fraction": 0.0016638935108153079,
+      "added_cost_over_floor": 125.0,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 0.0,
+      "stability_factor": 10.0,
+      "penalty_over_floor": 4.269111289994519,
+      "hyperbolic_fraction": 0.49916805324459235,
+      "added_cost_over_floor": 0.0,
+      "success_rate": 0.987,
+      "confidence95": 0.007020795510481704,
+      "failure_rate": 0.013000000000000012
+    },
+    {
+      "br_over_anisotropy": 0.25,
+      "stability_factor": 10.0,
+      "penalty_over_floor": 8.356699772919995,
+      "hyperbolic_fraction": 0.4176372712146423,
+      "added_cost_over_floor": 7.8125,
+      "success_rate": 0.998,
+      "confidence95": 0.002769085336352061,
+      "failure_rate": 0.0020000000000000018
+    },
+    {
+      "br_over_anisotropy": 0.5,
+      "stability_factor": 10.0,
+      "penalty_over_floor": 7.51536432390232,
+      "hyperbolic_fraction": 0.33444259567387685,
+      "added_cost_over_floor": 31.25,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 0.75,
+      "stability_factor": 10.0,
+      "penalty_over_floor": 3.6832416327772446,
+      "hyperbolic_fraction": 0.23128119800332778,
+      "added_cost_over_floor": 70.3125,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 1.0,
+      "stability_factor": 10.0,
+      "penalty_over_floor": 0.0,
+      "hyperbolic_fraction": 0.0016638935108153079,
+      "added_cost_over_floor": 125.0,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 0.0,
+      "stability_factor": 20.0,
+      "penalty_over_floor": 4.269111289994519,
+      "hyperbolic_fraction": 0.49916805324459235,
+      "added_cost_over_floor": 0.0,
+      "success_rate": 0.998,
+      "confidence95": 0.002769085336352061,
+      "failure_rate": 0.0020000000000000018
+    },
+    {
+      "br_over_anisotropy": 0.25,
+      "stability_factor": 20.0,
+      "penalty_over_floor": 8.356699772919995,
+      "hyperbolic_fraction": 0.4176372712146423,
+      "added_cost_over_floor": 7.8125,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 0.5,
+      "stability_factor": 20.0,
+      "penalty_over_floor": 7.51536432390232,
+      "hyperbolic_fraction": 0.33444259567387685,
+      "added_cost_over_floor": 31.25,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 0.75,
+      "stability_factor": 20.0,
+      "penalty_over_floor": 3.6832416327772446,
+      "hyperbolic_fraction": 0.23128119800332778,
+      "added_cost_over_floor": 70.3125,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    },
+    {
+      "br_over_anisotropy": 1.0,
+      "stability_factor": 20.0,
+      "penalty_over_floor": 0.0,
+      "hyperbolic_fraction": 0.0016638935108153079,
+      "added_cost_over_floor": 125.0,
+      "success_rate": 1.0,
+      "confidence95": 0.00196,
+      "failure_rate": 0.0
+    }
+  ],
+  "per_stability": [
+    {
+      "stability_factor": 1.0,
+      "spearman_penalty_failure": 0.7,
+      "spearman_fraction_failure": 0.9999999999999999,
+      "failure_monotone_in_field": true,
+      "failure_at_zero_field": 0.245,
+      "failure_at_full_field": 0.049000000000000044,
+      "separated": true,
+      "gap": 0.19599999999999995
+    },
+    {
+      "stability_factor": 2.0,
+      "spearman_penalty_failure": 0.7,
+      "spearman_fraction_failure": 0.9999999999999999,
+      "failure_monotone_in_field": true,
+      "failure_at_zero_field": 0.14200000000000002,
+      "failure_at_full_field": 0.0020000000000000018,
+      "separated": true,
+      "gap": 0.14
+    },
+    {
+      "stability_factor": 3.0,
+      "spearman_penalty_failure": 0.7,
+      "spearman_fraction_failure": 0.9999999999999999,
+      "failure_monotone_in_field": true,
+      "failure_at_zero_field": 0.123,
+      "failure_at_full_field": 0.0,
+      "separated": true,
+      "gap": 0.123
+    },
+    {
+      "stability_factor": 5.0,
+      "spearman_penalty_failure": 0.6668859288553501,
+      "spearman_fraction_failure": 0.9746794344808964,
+      "failure_monotone_in_field": true,
+      "failure_at_zero_field": 0.061000000000000054,
+      "failure_at_full_field": 0.0,
+      "separated": true,
+      "gap": 0.061000000000000054
+    },
+    {
+      "stability_factor": 10.0,
+      "spearman_penalty_failure": 0.44721359549995787,
+      "spearman_fraction_failure": 0.8944271909999157,
+      "failure_monotone_in_field": true,
+      "failure_at_zero_field": 0.013000000000000012,
+      "failure_at_full_field": 0.0,
+      "separated": true,
+      "gap": 0.013000000000000012
+    },
+    {
+      "stability_factor": 20.0,
+      "spearman_penalty_failure": 0.0,
+      "spearman_fraction_failure": 0.7071067811865475,
+      "failure_monotone_in_field": true,
+      "failure_at_zero_field": 0.0020000000000000018,
+      "failure_at_full_field": 0.0,
+      "separated": false,
+      "gap": 0.0020000000000000018
+    }
+  ],
+  "verdict": {
+    "testable_rows": 5,
+    "rows_agreeing": 5,
+    "rows": 6,
+    "rows_ranked_by_penalty": 0,
+    "rows_ranked_by_fraction": 3,
+    "rows_failing_monotonically": 6
+  }
+}
