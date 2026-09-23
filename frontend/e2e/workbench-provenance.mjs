@@ -37,20 +37,43 @@ for (const theme of ['light', 'dark']) {
     const tag = `${theme}-${lang}`;
     const index = await page.evaluate(async () => (await fetch('/artifacts/index.json')).json());
 
+    // Every case chip is badged S (synthetic) or R (real), and the badge is a provenance claim. It was
+    // hardcoded to R, so all eleven cases run on the synthetic reference macrospin told the reader they
+    // ran on a real material. Each badge is held here to the index, which names no material for a
+    // synthetic case. Read from the chip's own elements: an earlier check of this split the chip's text
+    // on whitespace, which the chip does not have, matched no case, and reported nothing wrong.
+    const chips = await page.locator('.cs-chip').evaluateAll((els) =>
+      els.map((e) => ({ id: e.querySelector('.cs-chip-id')?.textContent, kind: e.querySelector('.cs-kind')?.textContent })),
+    );
+    const expected = Object.fromEntries(index.cases.map((c) => [c.slug, c.material ? 'R' : 'S']));
+    const misbadged = chips.filter((c) => expected[c.id] !== c.kind);
+    check(
+      chips.length === index.cases.length && misbadged.length === 0,
+      `${tag}: ${chips.length} case chips, badges match the index (${misbadged.map((c) => `${c.id}=${c.kind}`).join(', ') || 'all'})`,
+    );
+
     for (const entry of index.cases) {
       await page.getByRole('button', { name: new RegExp(entry.slug) }).first().click();
       const panel = page.getByTestId('parameter-panel');
       await panel.waitFor();
       const artifact = await page.evaluate(async (slug) => (await fetch(`/artifacts/${slug}.json`)).json(), entry.slug);
+      // Wait for the readout to be about THIS case. Waiting for its heading to show the material name,
+      // as this gate did, returns at once whenever the previous case ran on the same material (six run
+      // on the synthetic macrospin, four on CrSBr), so it could read the previous case's panel.
       await page.waitForFunction(
-        (name) => document.querySelector('.wb-readout h3')?.textContent === name,
-        artifact.material.name,
+        (slug) => document.querySelector('.wb-readout')?.dataset.case === slug,
+        entry.slug,
       );
       const prov = artifact.material.provenance;
+      // The banner is owed to any case on an antiferromagnet, read from the material the artifact
+      // declares. This check used to compare the case's category with 'negative-control', the same
+      // value the page used, which no case has had since the registry's categories became A to F: the
+      // page never showed the banner, this check expected it never to, and both stayed green.
       const banner = await page.getByTestId('negative-control').count();
+      const antiferromagnet = /antiferromagnet/i.test(artifact.material?.family ?? '');
       check(
-        banner === (entry.category === 'negative-control' ? 1 : 0),
-        `${tag} ${entry.slug}: negative-control banner ${banner ? 'shown' : 'absent'}`,
+        banner === (antiferromagnet ? 1 : 0),
+        `${tag} ${entry.slug}: negative-control banner ${banner ? 'shown' : 'absent'} (material family: ${artifact.material?.family ?? 'none'})`,
       );
 
       const rows = await panel.locator('.param-row').evaluateAll((els) =>

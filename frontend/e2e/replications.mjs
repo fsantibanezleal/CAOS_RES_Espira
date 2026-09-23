@@ -8,6 +8,8 @@
 // value the source prints for one of its own points.
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
+import { openView } from './lib/tabs.mjs';
+import { capturePage } from './lib/capture.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 
@@ -38,7 +40,7 @@ for (const theme of ['light', 'dark']) {
     await page.goto(`${base}/experiments`, { waitUntil: 'networkidle' });
     const tag = `${theme}-${lang}`;
 
-    await page.getByRole('tab', { name: lang === 'es' ? 'Replicaciones publicadas' : 'Published replications' }).click();
+    await openView(page, lang === 'es' ? 'Replicaciones publicadas' : 'Published replications');
     const panel = page.getByTestId('replications');
     await panel.waitFor({ timeout: 15000 });
 
@@ -77,6 +79,19 @@ for (const theme of ['light', 'dark']) {
         box != null && box.width > 280 && box.height > 200,
         `${tag}: ${id} drew a canvas ${box ? `${Math.round(box.width)}x${Math.round(box.height)}` : 'missing'}`,
       );
+    }
+
+    // The log axes label decades only. uPlot paints its ticks on the canvas, where no DOM query can
+    // read them, so the chart records what it drew; this chart first shipped labelling every minor
+    // split and printed "500600708090000" under its x axis, invisible to every check above.
+    const kickoff = page.getByTestId('kickoff-chart');
+    for (const attr of ['data-x-ticks', 'data-y-ticks']) {
+      const ticks = ((await kickoff.getAttribute(attr)) ?? '').split('|').filter(Boolean);
+      const decades = ticks.every((t) => {
+        const value = Number(t);
+        return value > 0 && Math.abs(Math.log10(value) - Math.round(Math.log10(value))) < 1e-9;
+      });
+      check(ticks.length >= 3 && decades, `${tag}: kickoff ${attr} are decades ${JSON.stringify(ticks)}`);
     }
 
     const kickoffRows = await page
@@ -161,8 +176,7 @@ for (const theme of ['light', 'dark']) {
     }
 
     check(errors.length === 0, `${tag}: console errors ${JSON.stringify(errors.slice(0, 3))}`);
-    await panel.scrollIntoViewIfNeeded();
-    await page.screenshot({ path: `${out}/replications-${tag}.png`, fullPage: true });
+    await capturePage(page, `${out}/replications-${tag}.png`);
     await ctx.close();
   }
 }

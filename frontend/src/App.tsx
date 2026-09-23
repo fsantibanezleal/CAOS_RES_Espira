@@ -1,7 +1,8 @@
 // The six-page app, wired into the shared CAOS shell (header, footer, theme, i18n, architecture modal).
 
+import { useEffect } from 'react';
 import { Routes, Route, NavLink } from 'react-router';
-import { AppShell, CitationsProvider, type ShellConfig } from '@fasl-work/caos-app-shell';
+import { AppShell, CitationsProvider, useShellLang, type ShellConfig } from '@fasl-work/caos-app-shell';
 import { CITATIONS } from './content/citations';
 import { ARCHITECTURE } from './content/architecture';
 import { APP_VERSION } from './version';
@@ -41,12 +42,30 @@ const config: ShellConfig = {
   },
 };
 
+/**
+ * Keeps the document's language in step with the interface's.
+ *
+ * Shell 0.6.8 switches every string it owns between English and Spanish but never touches
+ * `<html lang>`, and index.html ships it as "en", so the Spanish page announced itself as English: a
+ * screen reader read it with English pronunciation and a search engine filed it as English. Recorded as
+ * a shell defect in CAOS_MANAGE conventions/shell-known-defects.md; remove this when the shell sets
+ * the language itself. It has to render inside AppShell, where the language is known.
+ */
+function DocumentLanguage(): null {
+  const lang = useShellLang();
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+  return null;
+}
+
 // A NavLink strip for the workbench-style routing is provided by AppShell's own header; here we just
 // render the routed content.
 export function App(): React.JSX.Element {
   return (
     <CitationsProvider items={CITATIONS}>
       <AppShell config={config}>
+        <DocumentLanguage />
         <Routes>
           <Route path="/" element={<Introduction />} />
           <Route path="/theory" element={<Theory />} />
