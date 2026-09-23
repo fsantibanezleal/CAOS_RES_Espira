@@ -4,6 +4,18 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.15.001] - 2026-09-23
+
+### Fixed
+- **Deep links answered 404 with a trailing slash.** On GitHub Pages an extensionless path resolves to
+  `<path>.html` and a trailing slash to `<path>/index.html`; the postbuild wrote only the first, so
+  `https://espira.fasl-work.com/theory/` served the fallback document. The app mounted, because its
+  asset paths are absolute, so a reader saw a working page while the document itself answered 404 and a
+  link checker saw a dead link. Both spellings now get a real entry, and the breadth gate fetches each
+  route in both spellings and fails on anything but 200. The unknown-path check that pairs with it runs
+  only against a real host, because `vite preview` answers 200 for everything and asserting it locally
+  would measure the preview server rather than the site.
+
 ## [0.15.000] - 2026-09-22
 
 ### Added
