@@ -137,6 +137,20 @@
   font-size: 0.9rem;
   min-width: 0;
 }
+/* While another case's artifact is in flight the readout still holds the previous case's numbers, so
+   it says so rather than presenting them as the selected case's. Opacity only: moving or hiding the
+   panel would change the layout the ADR-0071 floors are measured against. */
+.wb-readout[data-pending='true'] {
+  opacity: 0.45;
+}
+.wb-readout[data-pending='true']::before {
+  content: attr(data-loading-label);
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-fg);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
 .wb-readout h3 {
   margin: 0 0 8px;
 }

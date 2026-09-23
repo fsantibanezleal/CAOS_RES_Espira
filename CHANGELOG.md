@@ -4,6 +4,22 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.15.002] - 2026-09-23
+
+### Fixed
+- **The workbench showed one case's number under another case's name while the next artifact loaded.**
+  Selecting a case starts a fetch, and until it resolved the readout still held the previous case's
+  value with the previous case's unit. On a local preview that gap is invisible; on the live site it
+  is long enough to read a success rate of 0.587 as a field in tesla, which is exactly what the
+  observable gate saw on production right after the 0.15.001 deploy. The readout now carries the case
+  it belongs to, dims while another is loading and says which one it is waiting for. Measured with the
+  fetch throttled to 1.5 s: at 400 ms the panel declares the case it is still showing rather than
+  presenting it as the selection.
+- **The gate that caught it was sleeping instead of waiting.** `e2e/observable.mjs` waited a fixed
+  350 ms after clicking a case, which was long enough locally and not on the live site, so it read the
+  page mid-switch and reported a page defect. It now waits for the readout to carry the case it is
+  about to measure.
+
 ## [0.15.001] - 2026-09-23
 
 ### Fixed
