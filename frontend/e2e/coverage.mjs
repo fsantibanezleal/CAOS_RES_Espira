@@ -5,6 +5,7 @@
 // equal the index's own coverage counts.
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
+import { openView } from './lib/tabs.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 
@@ -32,7 +33,7 @@ for (const theme of ['light', 'dark']) {
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(`${base}/experiments`, { waitUntil: 'networkidle' });
     const tag = `${theme}-${lang}`;
-    await page.getByRole('tab', { name: lang === 'es' ? 'Cobertura' : 'Coverage' }).click();
+    await openView(page, lang === 'es' ? 'Cobertura' : 'Coverage');
     const matrix = page.getByTestId('coverage-matrix');
     await matrix.waitFor({ timeout: 15000 });
 

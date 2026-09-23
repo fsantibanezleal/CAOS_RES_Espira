@@ -44,7 +44,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
 
 const ORDER = ['moment', 'anisotropy', 'hard_axis_ratio', 'damping', 'ordering_temperature'] as const;
 
-function formatValue(name: string, m: MaterialInfo): string {
+function formatValue(name: string, m: MaterialInfo, lang: Lang): string {
   switch (name) {
     case 'moment':
       return `${m.moment_bohr.toPrecision(3)} muB`;
@@ -53,7 +53,7 @@ function formatValue(name: string, m: MaterialInfo): string {
     case 'hard_axis_ratio':
       return `${m.hard_axis_ratio}`;
     case 'damping':
-      return `${m.damping} (${m.damping_low} to ${m.damping_high})`;
+      return `${m.damping} (${m.damping_low} ${lang === 'es' ? 'a' : 'to'} ${m.damping_high})`;
     case 'ordering_temperature':
       return `${m.curie_kelvin} K`;
     default:
@@ -68,7 +68,7 @@ function Row({ name, m, p, lang }: { name: string; m: MaterialInfo; p: Parameter
     <li className="param-row" data-parameter={name} data-provenance={p.provenance}>
       <button type="button" className="param-head" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className="param-name">{L[name]}</span>
-        <span className="param-value">{formatValue(name, m)}</span>
+        <span className="param-value">{formatValue(name, m, lang)}</span>
         <span className={`prov-badge prov-${p.provenance}`}>{L[p.provenance]}</span>
       </button>
       {open && (

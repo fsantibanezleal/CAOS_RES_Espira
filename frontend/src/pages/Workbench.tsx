@@ -13,6 +13,8 @@ import { SphereTrajectory } from '../viz/SphereTrajectory';
 import { ParameterPanel } from '../viz/ParameterPanel';
 import { sotOptimalProtocol } from '../engine/sotAnalytic';
 import { peakAmplitude } from '../engine/uniaxialAnalytic';
+import { withUnit } from '../data/units';
+import { translateAxisLabel, translateCategory } from '../content/registry-es';
 import { useTheme } from '../theme';
 
 const T = {
@@ -119,8 +121,8 @@ function quantity(x: number): string {
 /** What the browser itself computed for a live-lane case, and how far it is from the baked value.
  *
  * The lane gate decides live against precompute by measurement. A verdict of "live" that nothing could
- * actually evaluate on the client would be a label, so the one case that passes the gate is recomputed
- * here from its own inputs and the agreement is shown. A disagreement is a defect in one of the two
+ * actually evaluate on the client would be a label, so every case that passes the gate (C03 and C10
+ * today) is recomputed here from its own inputs and the agreement is shown. A disagreement is a defect in one of the two
  * implementations, and the browser gate fails the build on it.
  */
 function liveRecompute(
@@ -202,16 +204,24 @@ export function Workbench(): React.JSX.Element {
     return index.cases.map((c) => ({
       id: c.slug,
       name: c.material_name,
-      category: c.category,
-      // Every case, the negative control included, runs on published parameters.
-      kind: 'real',
-      anchor: c.includes_biaxial ? 'biaxial hard-axis case' : undefined,
+      category: translateCategory(c.category, lang === 'es'),
+      // The index names no material for a case run on the synthetic reference macrospin. This said
+      // 'real' for every case, under a comment claiming every case ran on published parameters, and
+      // the selector badges each chip from it: every one of the eleven synthetic cases carried an R
+      // for "real" on the live site. The provenance gate now holds each badge to the index.
+      kind: c.material ? 'real' : 'synthetic',
+      anchor: c.includes_biaxial
+        ? lang === 'es'
+          ? 'caso biaxial de eje duro'
+          : 'biaxial hard-axis case'
+        : undefined,
     }));
-  }, [index]);
+  }, [index, lang]);
 
   if (!index || !artifact) return <p style={{ padding: 24 }}>{t.loading}</p>;
 
   const m = artifact.material;
+  const axisLabel = translateAxisLabel(artifact.axis.label, lang === 'es');
   const sb = artifact.static_baseline;
   const bx = artifact.biaxial_reduction;
   const pulse = artifact.pulses[variant] ?? artifact.reference_pulse;
@@ -227,8 +237,8 @@ export function Workbench(): React.JSX.Element {
     <div className="wb">
       <div className="wb-top">
         <CaseSelector cases={cases} selectedId={slug} onSelect={setSlug} lang={lang} />
-        <div className="wb-variants" role="tablist" aria-label={artifact.axis.label}>
-          <span className="wb-variants-label">{artifact.axis.label}</span>
+        <div className="wb-variants" role="tablist" aria-label={axisLabel}>
+          <span className="wb-variants-label">{axisLabel}</span>
           {artifact.axis.values.map((tt, i) => (
             <button
               key={tt}
@@ -237,7 +247,7 @@ export function Workbench(): React.JSX.Element {
               className={variant === i ? 'chip active' : 'chip'}
               onClick={() => setVariant(i)}
             >
-              {tt} {artifact.axis.unit}
+              {withUnit(tt, artifact.axis.unit)}
             </button>
           ))}
         </div>
@@ -255,10 +265,10 @@ export function Workbench(): React.JSX.Element {
                 content: (
                   <div className="wb-instrument">
                     <div className="wb-instrument-stack">
-                      <SphereTrajectory pulse={pulse} theme={theme} />
+                      <SphereTrajectory pulse={pulse} theme={theme} es={lang === 'es'} />
                       {artifact.pulse_note && (
                         <p className="wb-pulse-note" data-testid="pulse-note">
-                          <strong>{t.drawnPath}.</strong> {artifact.pulse_note}
+                          <strong>{t.drawnPath}.</strong> <span lang="en">{artifact.pulse_note}</span>
                         </p>
                       )}
                     </div>
@@ -272,7 +282,7 @@ export function Workbench(): React.JSX.Element {
                   <div className="wb-instrument">
                     <CostChart
                       rows={artifact.cost_curve}
-                      axis={artifact.axis}
+                      axis={{ ...artifact.axis, label: axisLabel }}
                       observable={observable}
                       methods={artifact.case.methods}
                       theme={theme}
@@ -293,7 +303,7 @@ export function Workbench(): React.JSX.Element {
                       </div>
                       {artifact.pulse_note && (
                         <p className="wb-pulse-note">
-                          <strong>{t.drawnPath}.</strong> {artifact.pulse_note}
+                          <strong>{t.drawnPath}.</strong> <span lang="en">{artifact.pulse_note}</span>
                         </p>
                       )}
                     </div>
@@ -305,16 +315,23 @@ export function Workbench(): React.JSX.Element {
                 label: t.context,
                 content: (
                   <div className="wb-ctx-panel">
+                    {lang === 'es' && (
+                      <p className="muted" data-testid="registry-language-note">
+                        El diseno de cada caso (por que existe, que se espera y que lo refutaria) viene
+                        del registro de casos, que se mantiene en ingles como todo artefacto tecnico de
+                        este producto.
+                      </p>
+                    )}
                     <div className="wb-ctx-grid">
                       <div>
                         <h4>{t.reason}</h4>
-                        <p>{artifact.case.reason}</p>
+                        <p lang="en">{artifact.case.reason}</p>
                         <h4>{t.expectation}</h4>
-                        <p>{artifact.case.expectation}</p>
+                        <p lang="en">{artifact.case.expectation}</p>
                         <h4>{t.killCriterion}</h4>
-                        <p>{artifact.case.kill_criterion}</p>
+                        <p lang="en">{artifact.case.kill_criterion}</p>
                         <h4>{m.name}</h4>
-                        <p>{m.notes}</p>
+                        <p lang="en">{m.notes}</p>
                       </div>
                       <div>
                         <h4>{t.design}</h4>
@@ -395,13 +412,19 @@ export function Workbench(): React.JSX.Element {
           data-loading-label={lang === 'es' ? 'Cargando el caso seleccionado...' : 'Loading the selected case...'}
         >
           <h3>{m.name}</h3>
-          {artifact.case.category === 'negative-control' && (
+          {/* The macrospin model is a single ferromagnetic moment. On an antiferromagnet its numbers are
+              what the machinery returns when its own assumption fails, not a prediction, and the
+              reader has to be told before reading them. This banner was keyed to a category value
+              ('negative-control') that the registry stopped using when its categories became A to F,
+              so for every release since it never appeared on FePS3. It is keyed to the physics now:
+              the material's magnetic order, which also covers any antiferromagnet added later. */}
+          {/antiferromagnet/i.test(artifact.material.family ?? '') && (
             <div className="negative-control" role="note" data-testid="negative-control">
               <strong>{t.negativeTitle}.</strong> {t.negativeBody}
             </div>
           )}
           <div className="wb-variant-readout">
-            <strong>{artifact.axis.label}</strong> ({artifact.axis.values[variant]} {artifact.axis.unit})
+            <strong>{axisLabel}</strong> ({withUnit(artifact.axis.values[variant], artifact.axis.unit)})
             <dl>
               <dt>{observable.is_field_cost ? t.optCost : observable.label}</dt>
               <dd data-testid="observable-value" data-case={artifact.case.slug}>
@@ -431,7 +454,7 @@ export function Workbench(): React.JSX.Element {
             </dl>
             {!observable.is_field_cost && (
               <p className="wb-observable-note" data-testid="observable-note">
-                <strong>{t.notAFieldCost}.</strong> {observable.note}
+                <strong>{t.notAFieldCost}.</strong> <span lang="en">{observable.note}</span>
               </p>
             )}
           </div>
