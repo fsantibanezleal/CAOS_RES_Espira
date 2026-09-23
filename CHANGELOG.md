@@ -62,6 +62,16 @@ not fully converged, the product stays in `0.x`.
   non-reversal as a non-reversal rather than as a cheap protocol. A test holds the page to the
   registry in both directions, so a rung a case runs but the ladder never names, or a section for a
   rung no case runs, fails the build.
+- **A second case in the live lane, and it is the replication one.** The clean bake put C10 in the
+  live lane by measurement, and the observable gate objected that a live verdict had nothing on the
+  client to evaluate. Rather than downgrade the lane, the browser now carries the uniaxial closed form
+  as well: it solves the shape parameter from the period relation and evaluates the peak of the optimal
+  pulse, and the workbench shows its agreement with the committed artifact. A reader can watch their
+  own browser reproduce the field this product compares against a published number.
+- Live inputs are emitted for every case the browser could evaluate and then dropped again from the
+  cases the lane gate put in the precompute lane, before the manifest is hashed, so the contract's
+  "present only on a live-lane case" stays exactly true and the workbench cannot offer a recompute the
+  lane does not claim.
 - **A fourth section in the Architecture modal**, Checked from outside, with its own theme-aware SVG:
   the two independent codes, what each one re-derives (the barrier and the trajectory), the numbers
   they agree to, and why neither is a dependency. The breadth gate now opens the modal, measures that
@@ -69,6 +79,23 @@ not fully converged, the product stays in `0.x`.
   failure mode of a bilingual hand-authored SVG.
 
 ### Fixed
+- **The reported peak of the optimal pulse was its minimum** (finding F-028). Every committed
+  per-case manifest carried a `peak_amplitude_t` for its R05 rows computed as the larger of the
+  amplitude at the start of the pulse and at its midpoint, and those are the two points where the
+  amplitude is smallest: the Jacobi sine vanishes at both, and for the negative elliptic parameter of a
+  damped reversal the amplitude is largest a quarter of the way through. The manifests were shipping a
+  peak of 2.7266 T beside a mean of 2.7272 T for the same pulse, which cannot happen, and nothing
+  objected. The error runs from 0.2 per cent at alpha = 0.01 and T = 1 tau0 to 37 per cent at
+  alpha = 0.1 and T = 20 tau0, always in the direction that under-specifies a driver. The engine gained
+  an exact `peak_amplitude()` (spinoct 0.19.000), the pipeline uses it, and a test now refuses any
+  manifest that reports a peak below its own mean. Nothing a reader sees was wrong: the case artifacts
+  never carried this metric, and the three surfaces that do report a peak (the device trade-off front,
+  the exploitability table and the C10 replication) each scan the pulse and always did.
+- **The browser's shape-parameter solve was high by one part in ten thousand**, and only the engine
+  caught it. Its bracket used the zero-damping solution as a lower bound without the `(1 + alpha^2)`
+  factor, which at short switching times puts that "bound" above the root; the expansion loop then
+  never runs and the bisection returns its own starting point. The two implementations now agree to ten
+  digits at every switching time of C10, which is what the live lane exists to establish.
 - **A rounded constant that looked like a disagreement.** VAMPIRE hard-codes the gyromagnetic ratio as
   1.76e11 rad/(s T) while the engine uses the CODATA electron value 1.760859e11. The 4.9e-4 difference
   enters as a rescaling of time and moved the compared trajectory by 1.0e-04, a hundred times the level

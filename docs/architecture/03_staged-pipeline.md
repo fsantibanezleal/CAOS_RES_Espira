@@ -74,10 +74,15 @@ measured runtime is under 250 ms, and its artifact is under 512 kB. The verdict,
 the artifact size and the failing reasons go into the manifest. Nothing in the product is labelled live
 without those numbers.
 
-One case passes: C03, the spin-orbit-torque oracle, whose methods are closed forms. A verdict of `live`
+Two cases pass: C03, the spin-orbit-torque oracle, and C10, the replication of the kickoff paper's
+peak fields; the methods of both are closed forms. A verdict of `live`
 would be a label rather than a fact if nothing on the client could evaluate it, so the web carries its
-own implementation of that closed form (`frontend/src/engine/sotAnalytic.ts`, the complete elliptic
-integral by the arithmetic-geometric mean, written independently of the engine's path through SciPy).
+own implementation of each (`frontend/src/engine/sotAnalytic.ts` and
+`frontend/src/engine/uniaxialAnalytic.ts`, the complete elliptic integral by the arithmetic-geometric
+mean, written independently of the engine's path through SciPy). Writing the second one caught two
+defects, one on each side: the engine reported a peak that was the pulse's minimum, and the browser's
+own shape-parameter bracket was high by one part in ten thousand at short switching times (findings
+F-028 and F-029).
 The case ships the constants it needs in `live_inputs`, the workbench recomputes it in the browser and
 shows the agreement with the committed artifact, and two gates hold the two sides together: a Python test
 refuses a manifest that puts a case in the live lane without a browser implementation of its methods, and

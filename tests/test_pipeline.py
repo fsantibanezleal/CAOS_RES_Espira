@@ -191,3 +191,32 @@ def test_the_model_registry_records_the_policy_and_its_gate() -> None:
     assert held_out == set(model["held_out_materials"])
     for score in model["acceptance"]["scores"]:
         assert score["switched"] and score["cost_ratio"] <= 1.10
+
+
+def test_no_manifest_reports_a_peak_below_its_own_mean() -> None:
+    """The invariant that would have caught F-028 the day it shipped.
+
+    Every method block that records both a mean and a peak amplitude of the same pulse is recording two
+    numbers about one function, and the peak cannot be the smaller of them. For three releases it was:
+    the closed-form peak was sampled at the start and the midpoint of the pulse, which are the two
+    points where the amplitude is at its lowest, so the shipped manifests carried a "peak" of 2.726 T
+    beside a mean of 2.727 T and nothing objected.
+    """
+    offenders, inspected = [], 0
+    for slug in baked_cases("workbench"):
+        manifest = json.loads((MANIFESTS / f"{slug}.json").read_text(encoding="utf-8"))
+        for result in manifest["results"]:
+            metrics = result.get("metrics") or {}
+            mean, peak = metrics.get("mean_amplitude_t"), metrics.get("peak_amplitude_t")
+            if not isinstance(mean, (int, float)) or not isinstance(peak, (int, float)):
+                continue
+            inspected += 1
+            if peak < mean:
+                offenders.append(
+                    f"{slug} {result['method']} at {result['variant']}: "
+                    f"peak {peak:.6g} below mean {mean:.6g}"
+                )
+    # A check that inspects nothing passes for the wrong reason, and this one shipped vacuous on its
+    # first run because it read a manifest shape that does not exist.
+    assert inspected >= 50, f"the invariant only reached {inspected} metric pairs"
+    assert not offenders, offenders

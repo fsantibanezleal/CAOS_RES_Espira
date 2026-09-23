@@ -1,0 +1,150 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "kickoff-replication",
+  "code": "C10",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.19.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "published",
+  "methods": [
+    "R05"
+  ],
+  "variants": [
+    1.0,
+    4.0,
+    10.0,
+    126.0,
+    140.0,
+    2000.0
+  ],
+  "artifact": {
+    "path": "kickoff-replication.json",
+    "bytes": 274714,
+    "sha256": "bb1f9f973dab5be7d7ec9befda22e056b232175a5c43c671b5fb767b6a43be24"
+  },
+  "lane": {
+    "lane": "live",
+    "runtime_ms": 0.035,
+    "artifact_bytes": 274714,
+    "methods": [
+      "R05"
+    ],
+    "reasons": []
+  },
+  "completeness": {
+    "expected": 6,
+    "produced": 6,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R05",
+      "variant": 1.0,
+      "cost": 3.183418611579065e-10,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "peak_field_t": 17.850774797152024,
+        "switching_time_ps": 1.0,
+        "switching_time_tau0": 0.3042058539394349,
+        "damping": 0.01
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 4.0,
+      "cost": 7.958560517842548e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "peak_field_t": 4.469175790136124,
+        "switching_time_ps": 4.0,
+        "switching_time_tau0": 1.2168234157577396,
+        "damping": 0.01,
+        "published_peak_field_t": 4.6,
+        "ratio_to_published": 0.9715599543774184,
+        "published_conventional_t": 160.0,
+        "published_reduction_factor": 34.78260869565218
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 10.0,
+      "cost": 3.1834555422161294e-11,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "peak_field_t": 1.7928616338148728,
+        "switching_time_ps": 10.0,
+        "switching_time_tau0": 3.042058539394349,
+        "damping": 0.01
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 126.0,
+      "cost": 2.531221588363285e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "peak_field_t": 0.15037356521529158,
+        "switching_time_ps": 126.0,
+        "switching_time_tau0": 38.3299375963688,
+        "damping": 0.01,
+        "published_peak_field_t": 0.15,
+        "ratio_to_published": 1.0024904347686105,
+        "published_alternative_t": 0.11,
+        "ratio_to_alternative": 1.3670324110481051,
+        "published_conventional_t": 1.0,
+        "published_reduction_factor": 6.666666666666667
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 140.0,
+      "cost": 2.27909119308963e-12,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "peak_field_t": 0.13622778639481373,
+        "switching_time_ps": 140.0,
+        "switching_time_tau0": 42.58881955152089,
+        "damping": 0.01,
+        "published_peak_field_t": 0.135,
+        "ratio_to_published": 1.0090947140356572
+      }
+    },
+    {
+      "method": "R05",
+      "variant": 2000.0,
+      "cost": 2.294508952299567e-13,
+      "switched": true,
+      "applicable": true,
+      "reason": "",
+      "metrics": {
+        "peak_field_t": 0.01974139078496733,
+        "switching_time_ps": 2000.0,
+        "switching_time_tau0": 608.4117078788698,
+        "damping": 0.01,
+        "published_peak_field_t": 0.0096,
+        "ratio_to_published": 2.0563948734340967,
+        "published_conventional_t": 0.329,
+        "published_reduction_factor": 34.270833333333336
+      }
+    }
+  ],
+  "parameter_flags": [
+    "anisotropy: assumed",
+    "hard_axis_ratio: assumed",
+    "damping: assumed",
+    "damping: wide damping band"
+  ]
+}

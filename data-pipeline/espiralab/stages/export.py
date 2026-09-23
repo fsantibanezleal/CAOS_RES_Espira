@@ -47,6 +47,19 @@ def export_all(output: Path, manifests: Path) -> dict:
         runtime_ms = (time.perf_counter() - started) * 1e3
         score = evaluate_case(case, run.results)
         lane = classify_lane(tuple(case.methods), runtime_ms, artifact_path.stat().st_size)
+        # The lane verdict needs the artifact's size and the measured runtime, so it cannot be known
+        # while the artifact is being written. The bake emits the live inputs for every case whose
+        # method the browser can evaluate; this drops them again from the cases the gate put in the
+        # precompute lane, so the contract's "present only on a live-lane case" stays exactly true and
+        # the workbench cannot offer a recompute the lane does not claim. Done before the manifest, so
+        # the committed hash is of the file as it ships.
+        if lane.lane != "live":
+            artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+            if artifact.get("live_inputs") is not None:
+                artifact["live_inputs"] = None
+                artifact_path.write_text(
+                    json.dumps(artifact, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
+                )
         manifest = build_manifest(
             case,
             artifact_path,

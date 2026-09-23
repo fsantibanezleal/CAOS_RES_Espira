@@ -94,6 +94,22 @@ def _system(case: Case, variant: float, uniaxial: bool = True):
     return bake_system(case, variant, uniaxial=uniaxial)
 
 
+#: The kickoff paper's own peak optimal fields for monolayer CrSBr, in tesla, keyed by the switching
+#: time in picoseconds, read from the full text (Badarneh, Cai, Santos, Advanced Materials 2026,
+#: 10.1002/adma.202523059, sections 2.1 and 2.2). The conventional static antiparallel field it reports
+#: at the same switching time is carried beside each one where the paper gives it.
+#:
+#: The source quotes two different values for the same point: section 2.1 says the optimal protocol
+#: reaches 126 ps "with a field of an order of magnitude smaller (0.11 T)", while section 2.2 says it
+#: "achieves switching with only 150 mT" at that same time. Both are recorded; the case reports which
+#: one an independent computation lands on rather than choosing for the reader.
+_C10_PUBLISHED = {
+    4.0: {"optimal_t": 4.6, "conventional_t": 160.0, "note": "conventional demands more than 160 T here"},
+    126.0: {"optimal_t": 0.150, "optimal_alternative_t": 0.11, "conventional_t": 1.0},
+    140.0: {"optimal_t": 0.135, "note": "quoted as reliable switching at a maximum field of 135 mT"},
+    2000.0: {"optimal_t": 0.0096, "conventional_t": 0.329},
+}
+
 #: The source's published switching probabilities for the chirped current (Vlasov et al., Phys. Rev. B
 #: 105, 134404, after Eq. 15), keyed by the amplitude in j0; "practically unity" is recorded as 1.0.
 _R04_PUBLISHED = {0.17: 0.89, 0.18: 0.97, 0.20: 1.0}
@@ -101,6 +117,151 @@ _R04_PUBLISHED = {0.17: 0.89, 0.18: 0.97, 0.20: 1.0}
 _R04_STABILITY = 60.0
 _R04_COPIES = 1000
 _R04_STEPS = 3000
+
+
+#: The biaxial paper's published Table I: the measured success rate, in per cent, of its optimal
+#: switching protocol under thermal fluctuations, keyed by (barrier over thermal energy, damping).
+#: Badarneh, Kwiatkowski, Bessarab, Phys. Rev. B 107, 214448 (2023), Table I and Appendix B, which give
+#: the settings: a switching time of 2 tau0, a hard-axis ratio of 5, and three stages (equilibration at
+#: zero field to establish the Boltzmann distribution, the pulse with noise on, then a final
+#: equilibration at zero field).
+_C05_PUBLISHED = {
+    (30.0, 0.01): 95.3, (50.0, 0.01): 98.4, (70.0, 0.01): 99.6, (80.0, 0.01): 99.9,
+    (30.0, 0.1): 96.8, (50.0, 0.1): 98.9, (70.0, 0.1): 99.6, (80.0, 0.1): 99.8,
+}
+_C05_HARD_AXIS_RATIO = 5.0
+_C05_SWITCHING_TAU0 = 2.0
+_C05_DAMPINGS = (0.01, 0.1)
+_C05_COPIES = 1000
+_C05_STEPS = 2000
+#: Equilibration before the pulse, in units of tau0 divided by the damping. The published protocol starts
+#: from a Boltzmann distribution, and reaching one takes a dissipation time, which is tau0/alpha. A fixed
+#: 2 tau0 is enough at alpha = 0.1 and ten times too short at 0.01: measured there, the ensemble spread
+#: reaches only 0.0013 of its Boltzmann value, every copy switches, and the run reports a spurious 100
+#: per cent against a published 95.3. With this scaling it reports 95.7.
+_C05_EQUILIBRATION_OVER_ALPHA = 10.0
+#: Relaxation after the pulse, same units: the published protocol's third stage.
+_C05_RELAXATION_OVER_ALPHA = 2.0
+#: Integration steps per tau0 while no field is applied. The pulse needs the fine step the rest of this
+#: stage uses; equilibration does not, and at this density the measured spread and success rate are the
+#: same as at a step five times finer (0.0101 against 0.0095, 96.8 per cent against 96.9) for a fifth of
+#: the time.
+_C05_EQUILIBRATION_STEPS_PER_TAU0 = 200
+
+
+def _biaxial_thermal_table(case: Case, stability: float) -> MethodResult:
+    """R11 on the biaxial paper's own thermal-robustness table, at both of its dampings.
+
+    The paper reports one table for two dampings, so this reports both columns for every stability
+    factor: the case's own observable is the value at the damping the paper calls unperturbed (0.1), and
+    the other column travels beside it with its published value.
+    """
+    import numpy as np
+    from spinoct.numeric import ImageOCPSolver
+    from spinoct.thermal.stochastic import stochastic_llg_step
+
+    metrics: dict[str, float | None] = {"stability_factor": stability}
+    for alpha in _C05_DAMPINGS:
+        system = MacrospinSystem(
+            mu=_system(case, stability, uniaxial=True).mu,
+            anisotropy_j=_system(case, stability, uniaxial=True).anisotropy_j,
+            alpha=alpha,
+            hard_axis_ratio=_C05_HARD_AXIS_RATIO,
+        )
+        switching_time = system.switching_time_from_tau0(_C05_SWITCHING_TAU0)
+        solver = ImageOCPSolver(
+            system,
+            n_images=ImageOCPSolver.recommended_images(system, switching_time),
+            switching_time=switching_time,
+        )
+        solved = solver.solve_best(n_seeds=_SEEDS, max_iterations=_MAX_ITERATIONS)
+        midpoints = 0.5 * (solved.times[:-1] + solved.times[1:])
+        field_table = np.asarray(solved.field_midpoints)
+        temperature = system.anisotropy_j / (BOLTZMANN_J_PER_K * stability)
+        rng = np.random.default_rng(case.seed + int(1000 * alpha))
+        moments = np.tile(np.array([0.0, 0.0, 1.0]), (_C05_COPIES, 1))
+        zero = np.zeros(3)
+
+        span = _C05_EQUILIBRATION_OVER_ALPHA / alpha
+        steps = int(_C05_EQUILIBRATION_STEPS_PER_TAU0 * span)
+        dt = system.switching_time_from_tau0(span) / steps
+        for _ in range(steps):
+            moments = stochastic_llg_step(moments, zero, system, temperature, dt, rng)
+        spread = float(np.mean(1.0 - np.abs(moments[:, 2])))
+
+        dt = switching_time / _C05_STEPS
+        for index in range(_C05_STEPS):
+            time_s = (index + 0.5) * dt
+            applied = np.array([np.interp(time_s, midpoints, field_table[:, k]) for k in range(3)])
+            moments = stochastic_llg_step(moments, applied, system, temperature, dt, rng)
+
+        span = _C05_RELAXATION_OVER_ALPHA / alpha
+        steps = int(_C05_EQUILIBRATION_STEPS_PER_TAU0 * span)
+        dt = system.switching_time_from_tau0(span) / steps
+        for _ in range(steps):
+            moments = stochastic_llg_step(moments, zero, system, temperature, dt, rng)
+
+        rate = float(np.mean(moments[:, 2] < 0.0))
+        key = f"alpha_{str(alpha).replace('.', 'p')}"
+        metrics[f"success_rate_{key}"] = rate
+        metrics[f"equilibrium_spread_{key}"] = spread
+        published = _C05_PUBLISHED.get((stability, alpha))
+        if published is not None:
+            metrics[f"published_rate_{key}"] = published / 100.0
+            metrics[f"gap_to_published_{key}"] = rate - published / 100.0
+
+    metrics["success_rate"] = metrics["success_rate_alpha_0p1"]
+    return MethodResult(
+        method="R11",
+        variant=stability,
+        cost=None,
+        switched=bool(metrics["success_rate"] >= 0.5),
+        reason="a switching success rate under thermal fluctuations, not a field cost",
+        metrics=metrics,
+    )
+
+
+def _kickoff_peak_field(case: Case, switching_ps: float) -> MethodResult:
+    """R05 at the kickoff paper's own switching times: the peak amplitude of the optimal pulse.
+
+    The paper reports peak fields for monolayer CrSBr at named switching times, and energies for a
+    50 x 50 nm^2 element. The peak field of a coherent rotation does not depend on how many spins rotate
+    together, so it is directly comparable with this product's macrospin; the energies are extensive and
+    would need the source's circuit model to convert from T^2 s, which this product does not assume, so
+    the case replicates the fields and says why it does not replicate the energies.
+    """
+    import numpy as np
+    from spinoct.analytic.uniaxial import UniaxialOptimalControl
+
+    system = _system(case, switching_ps, uniaxial=True)
+    switching_time = switching_ps * 1e-12
+    optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
+    grid = np.linspace(0.0, switching_time, 6001)
+    peak = float(np.max(np.abs(optimal.field_amplitude(grid))))
+    metrics = {
+        "peak_field_t": peak,
+        "switching_time_ps": switching_ps,
+        "switching_time_tau0": switching_time / system.tau0,
+        "damping": system.alpha,
+    }
+    published = _C10_PUBLISHED.get(round(switching_ps, 1))
+    if published is not None:
+        metrics["published_peak_field_t"] = published["optimal_t"]
+        metrics["ratio_to_published"] = peak / published["optimal_t"]
+        if "optimal_alternative_t" in published:
+            metrics["published_alternative_t"] = published["optimal_alternative_t"]
+            metrics["ratio_to_alternative"] = peak / published["optimal_alternative_t"]
+        if "conventional_t" in published:
+            metrics["published_conventional_t"] = published["conventional_t"]
+            metrics["published_reduction_factor"] = published["conventional_t"] / published["optimal_t"]
+    return MethodResult(
+        method="R05",
+        variant=switching_ps,
+        cost=optimal.cost(),
+        switched=True,
+        reason="",
+        metrics=metrics,
+    )
 
 
 def _chirped_current(case: Case, amplitude_over_j0: float) -> MethodResult:
@@ -221,6 +382,11 @@ def _compute_method(case: Case, method: str, variant: float, t_tau0: float) -> M
     system = _system(case, variant, uniaxial=True)
     switching_time = system.switching_time_from_tau0(t_tau0)
 
+    if method == "R05" and case.axis.name == "switching_time_ps":
+        # The kickoff replication sweeps the paper's own switching times in picoseconds, not in this
+        # product's Larmor units, so the comparison is against the numbers as published.
+        return _kickoff_peak_field(case, variant)
+
     if method == "R05":
         optimal = UniaxialOptimalControl.for_switching_time(system, switching_time)
         return MethodResult(
@@ -232,7 +398,7 @@ def _compute_method(case: Case, method: str, variant: float, t_tau0: float) -> M
                 "cost_over_free": optimal.cost() / cost_free_macrospin(switching_time, system.alpha, system.gamma),
                 "cost_over_floor": optimal.cost() / cost_infinite_time(system),
                 "mean_amplitude_t": optimal.mean_amplitude(),
-                "peak_amplitude_t": float(max(abs(optimal.field_amplitude(t)) for t in (0.0, switching_time / 2))),
+                "peak_amplitude_t": optimal.peak_amplitude(),
             },
         )
 
@@ -304,6 +470,10 @@ def _compute_method(case: Case, method: str, variant: float, t_tau0: float) -> M
 
     if method == "R16" and case.axis.name == "lattice_spacing":
         return _continuum_barrier(case, variant)
+
+    if method == "R11" and case.slug == "prb107-biaxial-figures":
+        # The biaxial paper's own thermal table, at its settings and both of its dampings.
+        return _biaxial_thermal_table(case, variant)
 
     if method in ("R11", "R12"):
         # The stability factor K/kT is the case's variant; the temperature follows from it, which keeps

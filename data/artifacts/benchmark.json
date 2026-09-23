@@ -2,7 +2,7 @@
   "schema": "espira.benchmark/1",
   "engine": {
     "name": "spinoct",
-    "version": "0.18.000"
+    "version": "0.19.000"
   },
   "cases": [
     {
@@ -90,6 +90,22 @@
       "complete": true
     },
     {
+      "case": "prb107-biaxial-figures",
+      "methods": [
+        {
+          "method": "R11",
+          "cells": 7,
+          "produced": 7,
+          "not_applicable": 0,
+          "switched": 7,
+          "best_cost": null,
+          "worst_ratio_to_oracle": null,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
       "case": "ocp-family",
       "methods": [
         {
@@ -142,6 +158,22 @@
           "switched": 3,
           "best_cost": null,
           "worst_ratio_to_oracle": null,
+          "notes": ""
+        }
+      ],
+      "complete": true
+    },
+    {
+      "case": "kickoff-replication",
+      "methods": [
+        {
+          "method": "R05",
+          "cells": 6,
+          "produced": 6,
+          "not_applicable": 0,
+          "switched": 6,
+          "best_cost": 2.294508952299567e-13,
+          "worst_ratio_to_oracle": 1.0,
           "notes": ""
         }
       ],
@@ -504,6 +536,19 @@
       }
     },
     {
+      "case": "prb107-biaxial-figures",
+      "code": "C05",
+      "manifest": "prb107-biaxial-figures.json",
+      "sha256": "56de9b14544a11cd55a01d8f8b8050873722dfdf93562fed1c3855acab6a5eae",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 7,
+        "produced": 7,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
       "case": "ocp-family",
       "code": "C06",
       "manifest": "ocp-family.json",
@@ -535,6 +580,19 @@
       "manifest": "sot-down-chirp.json",
       "sha256": "508a8724b30d1b387e91f9cb1168b98a6875ec6f8bdd075551f1f916b4818511",
       "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "kickoff-replication",
+      "code": "C10",
+      "manifest": "kickoff-replication.json",
+      "sha256": "bb1f9f973dab5be7d7ec9befda22e056b232175a5c43c671b5fb767b6a43be24",
+      "lane": "live",
       "completeness": {
         "expected": 6,
         "produced": 6,
