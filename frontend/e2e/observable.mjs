@@ -55,7 +55,16 @@ for (const theme of ['light', 'dark']) {
 
   for (const [slug, artifact] of Object.entries(artifacts)) {
     await page.getByRole('button', { name: new RegExp(`^${slug}\\b`) }).click();
-    await page.waitForTimeout(350);
+    // Wait for the READOUT to be about this case, not for a fixed number of milliseconds. Selecting a
+    // case starts a fetch; a 350 ms sleep was long enough on a local preview and not on the live site,
+    // where this gate duly read one case's success rate under the next case's name and reported it as
+    // a defect in the page. The readout now carries the case it belongs to, so the gate can wait for
+    // the thing it is about to measure.
+    await page.waitForFunction(
+      (expected) => document.querySelector('[data-testid="observable-value"]')?.dataset.case === expected,
+      slug,
+      { timeout: 15000 },
+    );
 
     const observable = artifact.observable;
     const row = artifact.cost_curve[Math.floor(artifact.cost_curve.length / 2)];
