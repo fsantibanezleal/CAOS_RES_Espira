@@ -4,6 +4,23 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.15.003] - 2026-09-23
+
+### Fixed
+- **The engine guide told readers to install the wrong engine.** `docs/frameworks/spinoct/README.md`
+  said `pip install spinoct==0.16.0`, pinned "in data-pipeline/requirements.txt", for three engine
+  releases after the pipeline had moved on to 0.19.0; anyone following it installed an engine the
+  committed artifacts were never baked with. A test now holds the documented pin to the pipeline's.
+- **Three more claims the product had outgrown**, found by sweeping the wiki for "not done", "still"
+  and "remaining": the architecture overview still said 10 cases baked, 14 planned and 2 blocked
+  (it is 25, 1 and 0, and a test now holds the prose to the index); the engine guide still listed the
+  Pareto front as not surfaced (it is the Device trade-offs tab) and did not say why the adjoint is
+  deliberately not a rung of its own; and the barrier cross-check page still called the dynamics
+  cross-check "not done" (it is results page 11).
+
+Both new tests were checked the way the peak invariant taught: each fails on the stale value and passes
+on the corrected one, so neither passes by inspecting nothing.
+
 ## [0.15.002] - 2026-09-23
 
 ### Fixed

@@ -81,3 +81,37 @@ def test_every_method_a_case_declares_is_documented() -> None:
     sections = set(re.findall(r"^## (R\d\d),", page, flags=re.MULTILINE))
     assert sections <= declared, f"the ladder documents rungs no case runs: {sorted(sections - declared)}"
     assert "methods/README.md" in (DOCS / "README.md").read_text(encoding="utf-8")
+
+
+def test_the_documented_engine_pin_matches_the_pipeline() -> None:
+    """The engine guide tells a reader which spinoct to install. It said 0.16.0 for three engine
+    releases while the pipeline pinned something newer, so anyone following it installed an engine the
+    committed artifacts were never baked with. The two now have to agree."""
+    requirements = (ROOT / "data-pipeline" / "requirements.txt").read_text(encoding="utf-8")
+    pinned = re.search(r"^spinoct==([0-9.]+)$", requirements, flags=re.MULTILINE)
+    assert pinned, "the pipeline does not pin spinoct"
+    guide = (DOCS / "frameworks" / "spinoct" / "README.md").read_text(encoding="utf-8")
+    documented = re.findall(r"pip install spinoct==([0-9.]+)", guide)
+    assert documented, "the engine guide documents no install pin"
+    assert set(documented) == {pinned.group(1)}, (
+        f"the guide says {sorted(set(documented))}, the pipeline pins {pinned.group(1)}"
+    )
+
+
+def test_the_overview_states_the_coverage_the_index_has() -> None:
+    """The architecture overview states the case counts in prose so it reads on its own. It said
+    "10 baked, 14 planned and 2 blocked" for five releases after the index had moved on, which is the
+    failure a stated number invites. It now has to match the committed index."""
+    import json
+
+    coverage = json.loads((ROOT / "data" / "artifacts" / "index.json").read_text(encoding="utf-8"))["coverage"]
+    overview = (DOCS / "architecture" / "01_overview.md").read_text(encoding="utf-8")
+    baked = re.search(r"(\d+) are\s+baked", overview)
+    assert baked, "the overview no longer states how many cases are baked"
+    assert int(baked.group(1)) == coverage["baked"], (
+        f"the overview says {baked.group(1)} baked, the index says {coverage['baked']}"
+    )
+    if coverage["blocked"] == 0:
+        assert "none is blocked" in overview
+    else:
+        assert f"{coverage['blocked']} are blocked" in overview
