@@ -4,6 +4,67 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.15.004] - 2026-09-23
+
+A visual audit. Every screenshot the gates took had been blank below the first screen, so the review
+started by making the evidence real and then read it. Each defect below was on the live site, and
+each now has a check that fails on the live 0.15.003 build and passes on this one.
+
+### Fixed
+- **FePS3's negative-control banner had never appeared.** The workbench showed "these numbers are not
+  predictions" only when a case's category equalled `negative-control`, a value no case has had since
+  the registry's categories became A to F, so the one antiferromagnet in the product was presented like
+  any ferromagnet. The banner is now keyed to the physics, the material being an antiferromagnet. The
+  provenance gate had checked this banner all along, with the same dead condition, so it expected no
+  banner on FePS3 and confirmed the defect as correct on every release.
+- **Every synthetic case was badged as a real material.** The case selector badges each chip S or R,
+  and every case was hardcoded to R under a comment claiming all cases run on published parameters;
+  eleven run on the synthetic reference macrospin. Badges now follow the index, and the provenance
+  gate holds each one to it.
+- **The document could not scroll, only the page inside it** (shell 0.6.8 known defect 1, recorded in
+  CAOS_MANAGE): `window.scrollTo` and in-page anchors did nothing and every full-page capture was one
+  screen followed by blank. The register's override is applied, and the breadth gate asserts that
+  `scrollTo` moves a document taller than the viewport, measuring height through `<body>`, because the
+  defect pins the document's own `scrollHeight` to the viewport and a first version of the check that
+  used it called every defective page "fits the viewport".
+- **The Spanish page declared itself English.** Shell 0.6.8 never updates `<html lang>`, so a screen
+  reader read the Spanish site with an English voice. The product sets it, and a gate checks it.
+- **Sixty English strings on the Spanish pages.** A detector now reads every visible text node on a
+  Spanish page. Text that is English by design (the registry's case titles, reasons and notes, artifact
+  descriptions) is marked `lang="en"`, which is also what tells a screen reader to switch voice; the
+  rest was translated: category headings, axis labels, the sphere's poles and caption, the parity rows,
+  a TeX `\text{when}`, "0.005 to 0.02", "(N missing)". The detector first inspected nothing, because
+  it counted the root `<html lang="en">` as deliberate English; and the reverse check it gained, Spanish
+  text wrongly marked English, caught a mislabel made during this very pass.
+- **The C10 chart's log axis printed "500600708090000".** Every minor tick was labelled and the upper
+  decades ran together; the comment above the formatter claimed the minors were suppressed. It now uses
+  the Pareto chart's proven decade formatter, shared from one module, records its drawn ticks for the
+  gate, and pads its range so the 9.6 mT point is not drawn on the frame.
+- **Experiments had eleven flat tabs** against ADR-0071's bound of about six. They are grouped by the
+  question a reader arrives with (Scope and evidence, Choosing a material, Beyond one spin, Thermal
+  reliability), a test holds every view to exactly one group, and the breadth gate counts every tab row.
+- **The Materials table could not tell its rows apart.** Rows were labelled by material only, so the
+  synthetic macrospin appeared six times and CrSBr four with different numbers; missing ratios printed as
+  a dash in one column and blank in the next; and each ratio was read at the middle of its own case's
+  axis without saying which. Rows now carry their case and the point they are read at, cases with no
+  field cost are listed below instead of filling rows with dashes, and the page says why materials that
+  share a damping read the same.
+- **Axis values printed with placeholder units**, "4 count", "Damping = 0.1 alpha": four registry units
+  name a dimensionless quantity. They are dropped after a value, and a test makes every registry unit be
+  classified before it can print.
+- Three pages cited works their reference list omitted, and two had no list; a test now holds each
+  page's citations to its list. The Introduction's Spanish text had dropped one citation. The landing
+  page now says what has been checked externally, with a test holding its counts to the artifacts.
+- The replication charts rebuilt themselves on every render; the C05 chart's floor was a constant that
+  would have clipped a future cell below it.
+
+### Gates
+- New checks in the breadth gate: tab rows at most six, scrolling reaches the last block, `scrollTo`
+  moves the document, the declared document language, English outside `lang="en"` and Spanish inside
+  it, empty table cells, duplicate row identities. Gates that open Experiments views go through one
+  helper that finds the group, and the full-page captures scroll to the top first so a sticky header is
+  drawn where it belongs. 3,700 checks across fourteen gates.
+
 ## [0.15.003] - 2026-09-23
 
 ### Fixed

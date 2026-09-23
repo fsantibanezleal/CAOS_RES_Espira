@@ -48,7 +48,7 @@ export function Benchmark(): React.JSX.Element {
               return (
                 <tr key={a.case.slug}>
                   <td>
-                    <code>{a.case.code}</code> {a.case.title}
+                    <code>{a.case.code}</code> <span lang="en">{a.case.title}</span>
                   </td>
                   <td>{a.material.name}</td>
                   <td>{sb.optimal_cost.toExponential(2)}</td>
@@ -93,7 +93,9 @@ export function Benchmark(): React.JSX.Element {
             {benchmark.cases.flatMap((c) =>
               c.methods.map((m) => (
                 <tr key={`${c.case}-${m.method}`} data-case={c.case} data-method={m.method}>
-                  <td>{c.case}</td>
+                  <td>
+                    <code>{c.case}</code>
+                  </td>
                   <td>
                     <code>{m.method}</code>
                   </td>
@@ -103,7 +105,7 @@ export function Benchmark(): React.JSX.Element {
                   </td>
                   <td>{m.best_cost === null ? '-' : m.best_cost.toExponential(2)}</td>
                   <td>{m.worst_ratio_to_oracle === null ? '-' : m.worst_ratio_to_oracle.toFixed(3)}</td>
-                  <td className="muted">{m.notes}</td>
+                  <td className="muted" lang="en">{m.notes || '-'}</td>
                 </tr>
               )),
             )}
@@ -131,12 +133,14 @@ export function Benchmark(): React.JSX.Element {
             {benchmark.manifests.map((m) => (
               <tr key={m.case} data-manifest={m.case}>
                 <td>
-                  <code>{m.code}</code> {m.case}
+                  <code>{m.code}</code> <code>{m.case}</code>
                 </td>
-                <td>{m.lane}</td>
+                <td>
+                  <code>{m.lane}</code>
+                </td>
                 <td>
                   {m.completeness.produced + m.completeness.not_applicable}/{m.completeness.expected}
-                  {m.completeness.missing > 0 && ` (${m.completeness.missing} missing)`}
+                  {m.completeness.missing > 0 && ` (${m.completeness.missing} ${es ? 'faltan' : 'missing'})`}
                 </td>
                 <td>
                   <code>{m.sha256.slice(0, 12)}</code>
