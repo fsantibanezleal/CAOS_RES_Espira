@@ -2,6 +2,20 @@
    this file styles the prose pages and the workbench, honoring ADR-0071 (the App route is the viewport;
    the instrument fills it; long content scrolls inside one container). */
 
+/* Shell 0.6.8 known defect 1 (CAOS_MANAGE conventions/shell-known-defects.md): the shell sets
+   html, body and #root to height 100% and hides their horizontal overflow, which computes overflow-y to
+   auto, so html and body become viewport-tall scroll containers. The document is then exactly one
+   viewport forever: window.scrollTo and in-page anchors do nothing and a full-page capture paints one
+   screen followed by blank. The wheel still scrolls, which is how it went unnoticed here.
+   Remove this when a shell release carries the fix. The App route is unaffected: .app-shell.fixed sizes
+   itself with 100dvh. */
+html,
+body,
+#root {
+  height: auto;
+  min-height: 100%;
+}
+
 .prose {
   max-width: var(--maxw, 76ch);
   margin: 0 auto;

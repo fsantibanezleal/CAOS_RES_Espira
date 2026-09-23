@@ -143,7 +143,7 @@ export function Implementation(): React.JSX.Element {
               <tbody>
                 {dynamics.rows.map((row) => (
                   <tr key={row.name} data-row={row.name.startsWith('reversal') ? 'reversal' : 'precession'}>
-                    <td>{row.name}</td>
+                    <td lang="en">{row.name}</td>
                     <td>{row.alpha}</td>
                     <td>{row.applied_field_t.map((b) => b.toFixed(2)).join(', ')}</td>
                     <td>{(row.duration_s * 1e12).toFixed(0)} ps</td>
@@ -160,10 +160,10 @@ export function Implementation(): React.JSX.Element {
               </tbody>
             </table>
           </div>
-          <p className="muted">{dynamics.gyromagnetic_note}</p>
+          <p className="muted" lang="en">{dynamics.gyromagnetic_note}</p>
         </div>
       ) : null}
-      <Refs ids={['kwiatkowski2021', 'vlasov2022', 'badarneh2023', 'scheie2022', 'ruiz2024', 'evans2014']} label="Refs" />
+      <Refs ids={['kwiatkowski2021', 'vlasov2022', 'badarneh2023', 'sunwang2006', 'scheie2022', 'ruiz2024', 'huang2017', 'bessarab2015', 'evans2014']} label="Refs" />
     </article>
   );
 }

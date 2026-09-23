@@ -1,6 +1,6 @@
 // Introduction: what Espira is, honestly, in both languages.
 
-import { useShellLang, Cite } from '@fasl-work/caos-app-shell';
+import { useShellLang, Cite, Refs } from '@fasl-work/caos-app-shell';
 
 export function Introduction(): React.JSX.Element {
   const lang = useShellLang();
@@ -23,8 +23,18 @@ export function Introduction(): React.JSX.Element {
         <p>
           Espira no es una reimplementacion de ese articulo. Reproduce sus resultados publicados como
           piso de verificacion y luego hace lo que la literatura aun no ha hecho: control optimo mas
-          alla del macrospin, el mecanismo de eje duro en CrSBr, el costo de la fiabilidad termica, el
-          precio de la realizabilidad de banda limitada, y la co-optimizacion de campo y corriente.
+          alla del macrospin, el mecanismo de eje duro en CrSBr <Cite id="rudenko2023" />, el costo de
+          la fiabilidad termica, el precio de la realizabilidad de banda limitada, y la co-optimizacion de
+          campo y corriente.
+        </p>
+        <h2>Lo que se comprobo contra otros</h2>
+        <p>
+          Un producto que solo se pone de acuerdo consigo mismo no es evidencia de nada. Los campos pico
+          publicados por el trabajo de referencia se reproducen en tres de sus cuatro puntos, y el cuarto
+          se muestra tal cual; la tabla de robustez termica del articulo biaxial se reproduce en sus ocho
+          celdas (Experimentos, Replicaciones publicadas). La barrera de energia la recalcula Spirit y la
+          ecuacion de movimiento la reintegra VAMPIRE, dos codigos escritos por otras personas con otros
+          metodos (Implementacion).
         </p>
         <h2>Honestidad</h2>
         <p>
@@ -35,6 +45,7 @@ export function Introduction(): React.JSX.Element {
           DOI. El piso de energia es lineal en el amortiguamiento, que es el parametro menos conocido,
           asi que cada energia se reporta como banda, no como numero unico.
         </p>
+        <Refs ids={['badarneh2026', 'rudenko2023']} label="Refs" />
       </article>
     );
   }
@@ -60,6 +71,14 @@ export function Introduction(): React.JSX.Element {
         reliability, the price of band-limited realizability, and the co-optimization of field and
         current.
       </p>
+      <h2>What has been checked against someone else</h2>
+      <p>
+        A product that only agrees with itself is not evidence of anything. The kickoff work's published
+        peak fields reproduce at three of its four quoted points, and the fourth is shown as it is; the
+        biaxial paper's thermal-robustness table reproduces in all eight of its cells (Experiments,
+        Published replications). The energy barrier is recomputed by Spirit and the equation of motion
+        re-integrated by VAMPIRE, two codes written by other people with other methods (Implementation).
+      </p>
       <h2>Honesty</h2>
       <p>
         The switching cost is an integral in tesla-squared-seconds, not an energy. It becomes joules
@@ -68,6 +87,7 @@ export function Introduction(): React.JSX.Element {
         a DOI. The energy floor is linear in the Gilbert damping, the least well pinned parameter, so
         every energy is reported as a band rather than a single number.
       </p>
+      <Refs ids={['badarneh2026', 'rudenko2023']} label="Refs" />
     </article>
   );
 }

@@ -115,3 +115,83 @@ def test_the_overview_states_the_coverage_the_index_has() -> None:
         assert "none is blocked" in overview
     else:
         assert f"{coverage['blocked']} are blocked" in overview
+
+
+def test_every_page_lists_what_it_cites() -> None:
+    """A page that cites a work in its text lists it in its reference block, and every cited id exists
+    in the citations table. Three pages cited works they never listed (Experiments and the
+    Introduction had no reference block at all), and an id missing from the table renders as a raw
+    "[id]" in the page rather than as a citation."""
+    source = ROOT / "frontend" / "src"
+    table = (source / "content" / "citations.ts").read_text(encoding="utf-8")
+    known = set(re.findall(r"id:\s*'([^']+)'", table))
+    problems = []
+    for page in sorted((source / "pages").glob("*.tsx")):
+        text = page.read_text(encoding="utf-8")
+        cited = set(re.findall(r'<Cite id="([^"]+)"', text))
+        listed = set()
+        for block in re.findall(r"<Refs ids=\{\[([^\]]*)\]\}", text):
+            listed |= set(re.findall(r"'([^']+)'", block))
+        if cited - listed:
+            problems.append(f"{page.name} cites {sorted(cited - listed)} without listing them")
+        if (cited | listed) - known:
+            problems.append(f"{page.name} uses ids missing from the table: {sorted((cited | listed) - known)}")
+    assert not problems, problems
+
+
+def test_every_experiments_view_sits_in_exactly_one_group() -> None:
+    """The Experiments page shows its views grouped by question (ADR-0071 section 5). A view defined but
+    left out of every group would still compile and simply never appear; a view in two groups would
+    appear twice. Both are held here, and no group may grow past the six-peer bound it exists for."""
+    page = (ROOT / "frontend" / "src" / "pages" / "Experiments.tsx").read_text(encoding="utf-8")
+    table = page[page.index("export const EXPERIMENT_GROUPS") : page.index("export function Experiments(")]
+    grouped = re.findall(r"views: \[([^\]]*)\]", table)
+    members = [m for g in grouped for m in re.findall(r"'([^']+)'", g)]
+    views_block = page[page.index("const views: Record") : page.index(".map((view) => [view.id, view])")]
+    defined = re.findall(r"^\s{6}  id: '([^']+)',", views_block, flags=re.MULTILINE)
+    assert defined, "no views found; the page structure changed and this test must follow it"
+    assert sorted(members) == sorted(set(members)), f"a view is in two groups: {members}"
+    assert set(members) == set(defined), (
+        f"grouped but undefined: {sorted(set(members) - set(defined))}; "
+        f"defined but in no group: {sorted(set(defined) - set(members))}"
+    )
+    assert len(grouped) <= 6 and all(len(re.findall(r"'", g)) // 2 <= 6 for g in grouped)
+
+
+#: The registry's axis units that are real units, printed after a value ("20 tau0", "126 ps"). Every
+#: unit the registry declares must be here or in the frontend's DIMENSIONLESS_AXIS_UNITS; a new one
+#: has to be classified before it can print.
+PHYSICAL_AXIS_UNITS = {"tau0", "ps", "sites", "K/kT", "K/mu", "B_r / (K/mu)", "C_j / C_b", "j0"}
+
+
+def test_every_axis_unit_is_either_printed_or_known_dimensionless() -> None:
+    """The workbench and the Materials table print a variant as "value unit". Four registry units name
+    a dimensionless quantity instead of a unit (alpha, xi, count, index) and printed as "4 count" and
+    "Damping = 0.1 alpha" until the frontend learned to drop them. A unit nobody has classified would
+    reintroduce that, so each one has to be in exactly one of the two sets."""
+    units_ts = (ROOT / "frontend" / "src" / "data" / "units.ts").read_text(encoding="utf-8")
+    block = re.search(r"DIMENSIONLESS_AXIS_UNITS = new Set\(\[([^\]]*)\]\)", units_ts)
+    assert block, "the frontend no longer declares its dimensionless axis units"
+    dimensionless = set(re.findall(r"'([^']+)'", block.group(1)))
+    declared = {case.axis.unit for case in CASES.values()}
+    unclassified = declared - dimensionless - PHYSICAL_AXIS_UNITS
+    assert not unclassified, f"axis units nobody classified: {sorted(unclassified)}"
+    assert not dimensionless & PHYSICAL_AXIS_UNITS, "a unit cannot be both"
+
+
+def test_every_registry_label_the_interface_shows_has_a_spanish_form() -> None:
+    """The six case categories head the coverage matrix and group the case selector, and the axis
+    labels name controls and chart axes. On the Spanish page they printed in English until the
+    interface got a table for them; a category or axis added to the registry later has to be added
+    there too, or it reaches the Spanish page untranslated."""
+    table = (ROOT / "frontend" / "src" / "content" / "registry-es.ts").read_text(encoding="utf-8")
+
+    def keys(name: str) -> set[str]:
+        block = table[table.index(f"export const {name}") :]
+        block = block[: block.index("};")]
+        return set(re.findall(r"^\s+'?([^':]+?)'?:\s*'", block, flags=re.MULTILINE))
+
+    categories = {case.category for case in CASES.values()}
+    labels = {case.axis.label for case in CASES.values()}
+    assert categories <= keys("CATEGORY_ES"), f"untranslated categories: {sorted(categories - keys('CATEGORY_ES'))}"
+    assert labels <= keys("AXIS_LABEL_ES"), f"untranslated axis labels: {sorted(labels - keys('AXIS_LABEL_ES'))}"

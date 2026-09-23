@@ -70,6 +70,17 @@ for (const theme of ['light', 'dark']) {
     const row = artifact.cost_curve[Math.floor(artifact.cost_curve.length / 2)];
     const shown = (await page.getByTestId('observable-value').innerText()).trim();
 
+    // A case run on an antiferromagnet shows numbers the ferromagnetic macrospin model cannot stand
+    // behind, and the page has to say so before the reader uses them. The banner that does was keyed to
+    // a category value the registry stopped using, and was absent from FePS3 for every release after;
+    // no gate looked. It is checked here against the material the artifact itself declares.
+    const antiferromagnet = /antiferromagnet/i.test(artifact.material?.family ?? '');
+    const bannerShown = (await page.getByTestId('negative-control').count()) === 1;
+    check(
+      bannerShown === antiferromagnet,
+      `${theme} ${slug}: negative-control banner ${bannerShown ? 'shown' : 'absent'} (material family: ${artifact.material?.family ?? 'none'})`,
+    );
+
     if (observable.is_field_cost) {
       check(shown.includes('T^2 s') || shown === 'no reversal', `${theme} ${slug}: cost shown in T^2 s ("${shown}")`);
     } else {
