@@ -14,11 +14,16 @@ positive controls before it is trusted.
 ## Install and pin
 
 ```bash
-pip install spinoct==0.16.0     # pinned in data-pipeline/requirements.txt
+pip install spinoct==0.19.0     # pinned in data-pipeline/requirements.txt
 ```
 
-Pure numpy and scipy. The unit-constant gate in the engine repository asserts the unit of every literal
-in the solvers.
+Pure numpy and scipy. The optional `spinoct[torch]` extra adds a batched solver lane that this product
+does not use: the canonical bake runs on the reference CPU lane, and CI installs neither. The
+unit-constant gate in the engine repository asserts the unit of every literal in the solvers.
+
+The version above is the one `data-pipeline/requirements.txt` pins, and a test holds the two together:
+this line said 0.16.0 for three engine releases while the pipeline pinned something newer, so a reader
+following it installed an engine the artifacts were never baked with.
 
 ## What Espira uses
 
@@ -36,8 +41,12 @@ in the solvers.
 
 | `spinoct.control.CRABSolver`, `GRAPESolver`, `HybridSolver` | C23, C24 and C25, the price of realizability | [13](https://github.com/fsantibanezleal/CAOS_SpinOCT/blob/main/docs/theory/13-constrained-control-and-the-price-of-realizability.md) |
 
-Still not surfaced: the discrete adjoint as a rung of its own (R10) and the Pareto front (R14), backlog
-BL-032. The adjoint itself is what drives the constrained solvers.
+Two engine rungs are not per-case rungs here, on purpose. The discrete adjoint (R10) is not a protocol
+but the exact gradient the constrained solvers optimize on, so it runs inside R08, R09 and R13 rather
+than producing a row of its own. The Pareto front (R14) is computed across a whole sweep rather than
+per case, so it is a cross-case bake (`pareto.json`) surfaced as the Device trade-offs tab. The method
+ladder, [../../methods/README.md](../../methods/README.md), explains every rung and why these two sit
+where they do.
 
 ## The engine defect this product found
 

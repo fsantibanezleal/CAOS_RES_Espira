@@ -52,7 +52,9 @@ All nine named stages of ADR-0057 and ADR-0069 are implemented
 ([03_staged-pipeline.md](03_staged-pipeline.md)), with Contract 1 on the way in
 ([02_data-contracts.md](02_data-contracts.md)), Contract 2 manifests with hashes and a measured lane
 verdict on the way out, a model registry for the one learned method, and a completeness count that
-refuses a release with a missing cell. The registry declares all 26 cases of the validated plan; 10 are
-baked, 14 are planned and 2 are blocked, and the coverage matrix in the app and the wiki shows all of
-them. What remains is baking the planned cases, the parameters for two more materials, and the
-two-dimensional lattice; the programme plan tracks them.
+refuses a release with a missing cell. The registry declares all 26 cases of the validated plan; 25 are
+baked, none is blocked, and the coverage matrix in the app and the wiki shows all of them. The one left
+planned is C16, Fe5GeTe2, because no source reports its perpendicular anisotropy, moment and damping in
+one regime, and the case says so rather than borrowing numbers from three. The counts are read from
+`data/artifacts/index.json` at build time; this paragraph states them only so the page reads on its
+own, and a test holds it to the index.
