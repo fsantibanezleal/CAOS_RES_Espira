@@ -181,12 +181,21 @@ export function Workbench(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (slug)
-      loadCase(slug).then((a) => {
-        setArtifact(a);
-        setVariant(Math.floor(a.axis.values.length / 2));
-      });
+    if (!slug) return;
+    // The artifact for another case is a fetch away, and until it lands the panel is still rendering
+    // the previous one. `pending` is that gap, made visible: the readout dims and says which case it
+    // is waiting for, instead of showing one case's number under another case's name.
+    let current = true;
+    loadCase(slug).then((a) => {
+      if (!current) return;
+      setArtifact(a);
+      setVariant(Math.floor(a.axis.values.length / 2));
+    });
+    return () => {
+      current = false;
+    };
   }, [slug]);
+  const pending = Boolean(artifact) && artifact?.case.slug !== slug;
 
   const cases: CaseDef[] = useMemo(() => {
     if (!index) return [];
@@ -374,7 +383,17 @@ export function Workbench(): React.JSX.Element {
           />
         </div>
 
-        <aside className="wb-readout">
+        {/* The readout carries the case it belongs to. Selecting another case starts a fetch, and until
+            it resolves every number here is still the previous case's: on a fast local server that gap
+            is invisible, on the live site it is long enough to read a success rate as a field in
+            tesla. Anything reading these values, a person or a gate, can now tell which case they are
+            for, and the panel says so while the next one loads. */}
+        <aside
+          className="wb-readout"
+          data-case={artifact.case.slug}
+          data-pending={String(pending)}
+          data-loading-label={lang === 'es' ? 'Cargando el caso seleccionado...' : 'Loading the selected case...'}
+        >
           <h3>{m.name}</h3>
           {artifact.case.category === 'negative-control' && (
             <div className="negative-control" role="note" data-testid="negative-control">
@@ -385,7 +404,7 @@ export function Workbench(): React.JSX.Element {
             <strong>{artifact.axis.label}</strong> ({artifact.axis.values[variant]} {artifact.axis.unit})
             <dl>
               <dt>{observable.is_field_cost ? t.optCost : observable.label}</dt>
-              <dd data-testid="observable-value">
+              <dd data-testid="observable-value" data-case={artifact.case.slug}>
                 {observed === null ? (
                   <span className="prov-badge prov-assumed" data-testid="no-switch">
                     {t.noSwitch}
