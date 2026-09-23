@@ -558,6 +558,10 @@ export interface DescriptorArtifact {
 // ---- the external cross-check (data/artifacts/external_crosscheck.json), backlog BL-013 ----
 
 export interface CrosscheckRow {
+  /** 'chain' (a line of sites) or 'patch' (the square element of cases C20 and C21). */
+  geometry: 'chain' | 'patch';
+  width: number;
+  height: number;
   n_sites: number;
   exchange_over_k: number;
   images: number;
@@ -565,7 +569,46 @@ export interface CrosscheckRow {
   spinoct_converged: boolean;
   spirit_barrier_over_k: number;
   spirit_saddle_image: number;
+  /** The barrier over the coherent-rotation saddle N K: below one, the reversal is a wall. */
+  barrier_over_nk: number;
   relative_difference: number;
+}
+
+// ---- the external DYNAMICS cross-check (data/artifacts/external_dynamics_crosscheck.json) ----
+// The statics cross-check above compares a barrier; this one compares a trajectory, against VAMPIRE,
+// which is GPL-2 and therefore run as a separate process and never linked.
+
+export interface DynamicsRow {
+  name: string;
+  alpha: number;
+  start: number[];
+  applied_field_t: number[];
+  samples: number;
+  duration_s: number;
+  worst_deviation: number;
+  worst_at_s: number;
+  final_ours: number[];
+  final_theirs: number[];
+  /** When the moment crossed the equator, s. Null on a row that is not a reversal. */
+  reversal_time_ours_s: number | null;
+  reversal_time_theirs_s: number | null;
+  reversal_time_difference: number | null;
+}
+
+export interface ExternalDynamicsCrosscheck {
+  schema: string;
+  description: string;
+  engines: Record<string, string>;
+  gyromagnetic_ratio_rad_per_s_t: number;
+  gyromagnetic_note: string;
+  moment_bohr: number;
+  anisotropy_j: number;
+  time_step_s: number;
+  tolerance: number;
+  measured_on: string;
+  worst_deviation: number;
+  agrees: boolean;
+  rows: DynamicsRow[];
 }
 
 export interface ExternalCrosscheck {

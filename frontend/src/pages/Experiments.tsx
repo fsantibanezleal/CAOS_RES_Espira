@@ -27,6 +27,7 @@ import {
   loadPatchOCP,
 } from '../data/load';
 import { useTheme } from '../theme';
+import { Replications } from '../viz/Replications';
 import { CrossoverChart } from '../viz/CrossoverChart';
 import { ChainMap } from '../viz/ChainMap';
 import { PatchChart } from '../viz/PatchChart';
@@ -844,6 +845,14 @@ function Lattice({ novel, es }: { novel: NovelResults; es: boolean }) {
   );
 }
 
+function ReplicationsPanel({ artifacts, es }: { artifacts: CaseArtifact[]; es: boolean }): React.JSX.Element | null {
+  const { theme } = useTheme();
+  const kickoff = artifacts.find((a) => a.case.slug === 'kickoff-replication');
+  const biaxial = artifacts.find((a) => a.case.slug === 'prb107-biaxial-figures');
+  if (!kickoff || !biaxial) return null;
+  return <Replications kickoff={kickoff} biaxial={biaxial} theme={theme} es={es} />;
+}
+
 export function Experiments(): React.JSX.Element {
   const lang = useShellLang();
   const es = lang === 'es';
@@ -932,6 +941,11 @@ export function Experiments(): React.JSX.Element {
             id: 'tradeoffs',
             label: es ? 'Compromisos de dispositivo (R14)' : 'Device trade-offs (R14)',
             content: <Tradeoffs data={pareto} es={es} />,
+          },
+          {
+            id: 'replications',
+            label: es ? 'Replicaciones publicadas' : 'Published replications',
+            content: <ReplicationsPanel artifacts={artifacts} es={es} />,
           },
           {
             id: 'lattice',

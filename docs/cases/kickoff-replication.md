@@ -1,22 +1,20 @@
-# The kickoff paper's own switching energies
+# The kickoff paper's own peak switching fields
 
-Case `kickoff-replication` (C10), category B. Published replication. Blocked: something outside this repository is missing.
-
-**What is missing.** The full text is behind a Cloudflare challenge and has not been read. The abstract's 1 to 10 ps rotation window and the press summaries' 126 to 140 ps switching times are in tension, and no number may be quoted until the paper itself is read (programme backlog BL-002).
+Case `kickoff-replication` (C10), category B. Published replication. Baked: committed artifacts, replayed by the web app.
 
 Generated from the registry by `scripts/gen_case_docs.py`.
 
 ## Why it is in the matrix
 
-The paper that started this product reports switching times and energies for three van der Waals magnets. Reproducing them is the most direct external check available.
+The paper that started this product reports, for monolayer CrSBr, the peak amplitude of the optimal pulse at named switching times, beside the static antiparallel field a conventional protocol needs at the same time. The peak field of a coherent rotation does not depend on how many spins rotate together, so those numbers are directly comparable with this product's macrospin and are the most direct external check available. The published energies are not replicated: they are extensive, quoted for a 50 x 50 nm^2 element, and their cost functional carries a prefactor c that the source says is proportional to the unit-cell volume and then sets to one, with a device resistance of 1 ohm, so the constant that turns a cost in T^2 s into the joules it prints cannot be reconstructed from the text. The fields carry no such factor.
 
 ## What a domain expert should see
 
-Our costs, converted through an explicit circuit model, land in the same range as the published energies for the same materials and switching times.
+Measured 2026-09-22 from the full text, at the damping the database assumes for CrSBr (0.01): 4.47 T against a published 4.6 T at 4 ps, 150.4 mT against 150 mT at 126 ps, and 136.2 mT against 135 mT at 140 ps, so three of the four quoted points reproduce within 3 per cent. The fourth, 9.6 mT at 2 ns, needs a damping near 0.001 to reproduce (we give 19.7 mT at 0.01 and 9.8 mT at 0.001); the paper states a damping range of 0.001 to 0.05 for this family, so the gap is a parameter difference rather than a disagreement about the physics. The source also quotes two different peak fields for the same 126 ps point, 0.11 T in one section and 150 mT in another; this computation lands on 150 mT.
 
 ## Kill criterion
 
-A disagreement larger than the damping uncertainty band would mean either their circuit assumption or our parameter set differs, and the product must say which.
+A peak field that misses the published value by more than the damping uncertainty band would mean our parameter set or the closed form is wrong. Quoting a joule figure against their energies without their circuit model would be the quieter failure, and the case refuses it.
 
 ## Material: CrSBr
 
@@ -38,13 +36,13 @@ unit and each value's note are in that table. Assumed values are not measurement
 
 ## Variants
 
-Switching time (tau0): 2, 5, 10, 20, 50, 100.
+Switching time (ps): 1, 4, 10, 126, 140, 2000.
 
 ## Design
 
 | Field | Value |
 |---|---|
-| Methods | R05, R07 |
+| Methods | R05 |
 | Ground truth | published |
 | Split | control |
 | Seed | 0 |
