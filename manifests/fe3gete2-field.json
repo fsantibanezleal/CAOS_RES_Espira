@@ -4,7 +4,7 @@
   "code": "C12",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.18.000",
+  "engine_version": "0.19.000",
   "seed": 0,
   "split": "train",
   "ground_truth": "provisional",
@@ -27,14 +27,14 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 9637.949,
-    "artifact_bytes": 268324,
+    "runtime_ms": 7731.492,
+    "artifact_bytes": 268786,
     "methods": [
       "R00",
       "R05"
     ],
     "reasons": [
-      "runtime 9638 ms over the 250 ms budget"
+      "runtime 7731 ms over the 250 ms budget"
     ]
   },
   "completeness": {
@@ -127,7 +127,7 @@
         "cost_over_free": 1.0000050650429155,
         "cost_over_floor": 246.76603391245786,
         "mean_amplitude_t": 12.199347353116199,
-        "peak_amplitude_t": 12.19931645800726
+        "peak_amplitude_t": 12.238206094154545
       }
     },
     {
@@ -141,7 +141,7 @@
         "cost_over_free": 1.0000316564129974,
         "cost_over_floor": 98.70903829046136,
         "mean_amplitude_t": 4.8797389412464796,
-        "peak_amplitude_t": 4.879661703730865
+        "peak_amplitude_t": 4.918644025263648
       }
     },
     {
@@ -155,7 +155,7 @@
         "cost_over_free": 1.000126624148784,
         "cost_over_floor": 49.35920608379308,
         "mean_amplitude_t": 2.4398694706232398,
-        "peak_amplitude_t": 2.4397149974259666
+        "peak_amplitude_t": 2.478851794600961
       }
     },
     {
@@ -169,7 +169,7 @@
         "cost_over_free": 1.0005064725438595,
         "cost_over_floor": 24.688976362614348,
         "mean_amplitude_t": 1.2199347353116199,
-        "peak_amplitude_t": 1.2196258035922058
+        "peak_amplitude_t": 1.2590715520426266
       }
     },
     {
@@ -183,7 +183,7 @@
         "cost_over_free": 1.0031644011564715,
         "cost_over_floor": 9.90182587224895,
         "mean_amplitude_t": 0.4879738941246479,
-        "peak_amplitude_t": 0.4872018220307756
+        "peak_amplitude_t": 0.5275744233786419
       }
     },
     {
@@ -197,7 +197,7 @@
         "cost_over_free": 1.0126425727279467,
         "cost_over_floor": 4.997690515342723,
         "mean_amplitude_t": 0.24398694706232396,
-        "peak_amplitude_t": 0.2424446511565094
+        "peak_amplitude_t": 0.28436197893674897
       }
     }
   ],

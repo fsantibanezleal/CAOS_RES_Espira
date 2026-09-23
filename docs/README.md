@@ -16,6 +16,7 @@ method is documented with its equations and sources in the engine's theory pages
 | [architecture/07_deploy.md](architecture/07_deploy.md) | How the static site is built and published, and how a release is verified |
 | [frameworks/spinoct/](frameworks/spinoct/README.md) | The engine: what it implements, how it is pinned, a runnable example |
 | [guides/01_run-the-bake.md](guides/01_run-the-bake.md) | Set up, bake, check, and serve locally |
+| [methods/](methods/README.md) | The method ladder: what every rung code (R00 to R16) computes, which cases run it, what it writes into an artifact, and what it does not claim |
 | [cases/](cases/README.md) | The case taxonomy, the coverage matrix against the validated 26-case plan, and each baked case |
 | [results/](results/README.md) | The results that span cases: the reliability front, the free chain and patch crossovers, the device trade-off, the hard-axis region, the penalty test, the exploitability table and the live-lane parity |
 
