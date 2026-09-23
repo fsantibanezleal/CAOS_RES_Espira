@@ -3,7 +3,7 @@
 // earlier two-mode lattice comparison, Gap 1). All read from committed artifacts.
 
 import { useEffect, useMemo, useState } from 'react';
-import { useShellLang, Tabs, Cite } from '@fasl-work/caos-app-shell';
+import { useShellLang, Tabs, SubTabs, Cite, Refs } from '@fasl-work/caos-app-shell';
 import type {
   ArtifactIndex,
   DescriptorArtifact,
@@ -28,6 +28,8 @@ import {
 } from '../data/load';
 import { useTheme } from '../theme';
 import { Replications } from '../viz/Replications';
+import { withUnit } from '../data/units';
+import { translateAxisLabel } from '../content/registry-es';
 import { CrossoverChart } from '../viz/CrossoverChart';
 import { ChainMap } from '../viz/ChainMap';
 import { PatchChart } from '../viz/PatchChart';
@@ -181,7 +183,7 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted">{data.description}</p>
+      <p className="muted" lang="en">{data.description}</p>
     </div>
   );
 }
@@ -304,7 +306,7 @@ function Exploitability({ data, es }: { data: DescriptorArtifact; es: boolean })
           </tbody>
         </table>
       </div>
-      <p className="muted">{data.description}</p>
+      <p className="muted" lang="en">{data.description}</p>
     </div>
   );
 }
@@ -408,7 +410,7 @@ function PenaltyTest({ data, es }: { data: PenaltyTestArtifact; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted">{data.description}</p>
+      <p className="muted" lang="en">{data.description}</p>
     </div>
   );
 }
@@ -449,7 +451,7 @@ function HardAxis({ data, es }: { data: HardAxisMapArtifact; es: boolean }) {
         format={(v) => `alpha = ${v}`}
       />
       <HardAxisMap data={data} damping={active} theme={theme} es={es} />
-      <p className="muted">{data.description}</p>
+      <p className="muted" lang="en">{data.description}</p>
     </div>
   );
 }
@@ -563,7 +565,7 @@ function Tradeoffs({ data, es }: { data: ParetoArtifact; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted">{data.description}</p>
+      <p className="muted" lang="en">{data.description}</p>
     </div>
   );
 }
@@ -717,47 +719,89 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted">{data.description}</p>
+      <p className="muted" lang="en">{data.description}</p>
     </div>
   );
 }
 
+/** A ratio, or a dash when the case does not have one. One spelling for "missing" across the table: an
+ * earlier version printed a dash in one column and nothing at all in the next. */
+function ratio(value: number | null | undefined, digits: number): string {
+  return value == null || !Number.isFinite(value) ? '-' : value.toFixed(digits);
+}
+
+/**
+ * The cost of each case against its two references, one row per case.
+ *
+ * Every row names its case and the point on the case's own axis where the ratios are read, because the
+ * cases do not share an axis: the middle of one case's sweep is a switching time, of another a hard-axis
+ * ratio, of another a harmonic count. The first version labelled rows by material only, so the synthetic
+ * macrospin appeared six times and CrSBr four with different numbers and nothing to tell them apart, and
+ * the columns read as comparable when they were taken at different kinds of point. Cases that do not
+ * report a field cost (a current, a success rate) have no ratio to show and are listed below the table
+ * instead of filling it with dashes.
+ */
 function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boolean }) {
+  const costed = artifacts.filter((a) => a.observable.is_field_cost);
+  const other = artifacts.filter((a) => !a.observable.is_field_cost);
   return (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>{es ? 'Material' : 'Material'}</th>
-            <th>{es ? 'Familia' : 'Family'}</th>
-            <th>alpha</th>
-            <th>Phi / Phi_free</th>
-            <th>Phi / Phi_floor</th>
-            <th>{es ? 'Eje duro' : 'Hard axis'}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {artifacts.map((a) => {
-            const mid = a.cost_curve[Math.floor(a.cost_curve.length / 2)];
-            return (
-              <tr key={a.case.slug}>
-                <td>{a.material.name}</td>
-                <td>{a.material.family}</td>
-                <td>
-                  {a.material.damping}{' '}
-                  {a.material.provenance.damping?.provenance === 'assumed' && (
-                    <span className="prov-badge prov-assumed">{es ? 'supuesto' : 'assumed'}</span>
-                  )}
-                </td>
-                <td>{mid.cost_over_free?.toFixed(3) ?? '-'}</td>
-                <td>{mid.cost_over_floor?.toFixed(2)}</td>
-                <td>{a.biaxial_reduction ? a.biaxial_reduction.biaxial_over_free.toFixed(3) : '-'}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <div className="table-wrap">
+        <table data-testid="material-table">
+          <thead>
+            <tr>
+              <th>{es ? 'Caso' : 'Case'}</th>
+              <th>{es ? 'Material' : 'Material'}</th>
+              <th>alpha</th>
+              <th>{es ? 'Leido en' : 'Read at'}</th>
+              <th>Phi / Phi_free</th>
+              <th>Phi / Phi_floor</th>
+              <th>{es ? 'Eje duro' : 'Hard axis'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {costed.map((a) => {
+              const index = Math.floor(a.cost_curve.length / 2);
+              const mid = a.cost_curve[index];
+              return (
+                <tr key={a.case.slug} data-case={a.case.slug}>
+                  <td>
+                    <strong>{a.case.code}</strong> <span lang="en">{a.case.title}</span>
+                  </td>
+                  <td>{a.material.name}</td>
+                  <td>
+                    {a.material.damping}{' '}
+                    {a.material.provenance.damping?.provenance === 'assumed' && (
+                      <span className="prov-badge prov-assumed">{es ? 'supuesto' : 'assumed'}</span>
+                    )}
+                  </td>
+                  <td data-testid="read-at">
+                    {translateAxisLabel(a.axis.label, es)} = {withUnit(a.axis.values[index], a.axis.unit)}
+                  </td>
+                  <td>{ratio(mid.cost_over_free, 3)}</td>
+                  <td>{ratio(mid.cost_over_floor, 2)}</td>
+                  <td>{ratio(a.biaxial_reduction?.biaxial_over_free, 3)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {other.length > 0 && (
+        <p className="muted" data-testid="material-table-excluded">
+          {es
+            ? `No aparecen ${other.length} casos que no reportan un costo de campo, asi que no tienen razon contra el piso: `
+            : `Not listed: ${other.length} cases that do not report a field cost, and so have no ratio to the floor: `}
+          {other.map((a, i) => (
+            <span key={a.case.slug}>
+              {i > 0 && ', '}
+              {a.case.code} (<span lang="en">{a.observable.label}</span>)
+            </span>
+          ))}
+          .
+        </p>
+      )}
+    </>
   );
 }
 
@@ -798,7 +842,7 @@ function Reliability({ novel, es }: { novel: NovelResults; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted">{novel.notes.reliability}</p>
+      <p className="muted" lang="en">{novel.notes.reliability}</p>
     </div>
   );
 }
@@ -840,7 +884,7 @@ function Lattice({ novel, es }: { novel: NovelResults; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted">{novel.notes.lattice}</p>
+      <p className="muted" lang="en">{novel.notes.lattice}</p>
     </div>
   );
 }
@@ -866,6 +910,21 @@ function ReplicationsPanel({ artifacts, es }: { artifacts: CaseArtifact[]; es: b
   }
   return <Replications kickoff={kickoff} biaxial={biaxial} theme={theme} es={es} />;
 }
+
+/** The Experiments views, grouped by the question a reader arrives with (ADR-0071 section 5). Every
+ * view belongs to exactly one group; a test holds that, so a view added later cannot fall out of the
+ * page. Group names are kept disjoint from view names so neither can be mistaken for the other. */
+export const EXPERIMENT_GROUPS: { id: string; en: string; es: string; views: string[] }[] = [
+  { id: 'scope', en: 'Scope and evidence', es: 'Alcance y evidencia', views: ['coverage', 'replications'] },
+  {
+    id: 'materials',
+    en: 'Choosing a material',
+    es: 'Elegir un material',
+    views: ['materials', 'exploitability', 'hard-axis', 'tradeoffs'],
+  },
+  { id: 'beyond', en: 'Beyond one spin', es: 'Mas alla de un espin', views: ['free-chain', 'patch', 'lattice'] },
+  { id: 'reliability', en: 'Thermal reliability', es: 'Fiabilidad termica', views: ['reliability', 'penalty'] },
+];
 
 export function Experiments(): React.JSX.Element {
   const lang = useShellLang();
@@ -896,78 +955,97 @@ export function Experiments(): React.JSX.Element {
 
   if (!artifacts.length || !novel || !chain || !patch || !pareto || !hardAxis || !penalty || !descriptors || !index) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
+  // Eleven views, one question each. Shown flat they were eleven sibling tabs in one scrolling strip,
+  // which ADR-0071 section 5 calls a list rather than an information architecture: past about six
+  // peers the reader has to read every label to find one view, and on a normal screen the strip had
+  // already scrolled the first tabs out of sight, cutting the leftmost visible one mid-word. They are
+  // grouped by the question a reader arrives with, and a group shows only its own views.
+  const views: Record<string, { id: string; label: string; content: React.ReactNode }> = Object.fromEntries(
+    [
+      {
+        id: 'coverage',
+        label: es ? 'Cobertura' : 'Coverage',
+        content: <CoverageMatrix index={index} es={es} />,
+      },
+      {
+        id: 'materials',
+        label: es ? 'Materiales' : 'Materials',
+        content: (
+          <div className="prose">
+            <p>
+              {es
+                ? 'Evidencia cruzada entre materiales: el costo optimo relativo al piso universal y al costo de macrospin libre. Phi/Phi_free por debajo de uno solo es posible con eje duro. Los materiales leidos a un mismo tiempo en unidades de tau0 comparten las dos razones cuando comparten el amortiguamiento, porque el momento y la anisotropia se cancelan en ambas: por eso todos los que tienen el amortiguamiento supuesto de 0.01 dan lo mismo, y Cr2Ge2Te6, a 0.0007, es el que se aparta.'
+                : 'Cross-material evidence: the optimal cost relative to the universal floor and to the free-macrospin cost. Phi/Phi_free below one is only possible with a hard axis. Materials read at the same switching time in units of tau0 share both ratios whenever they share a damping, because the moment and the anisotropy cancel out of both: that is why every material at the assumed damping of 0.01 reads the same, and why Cr2Ge2Te6, at 0.0007, is the one that differs.'}
+            </p>
+            <MaterialTable artifacts={artifacts} es={es} />
+          </div>
+        ),
+      },
+      {
+        id: 'reliability',
+        label: es ? 'Fiabilidad (R12)' : 'Reliability (R12)',
+        content: <Reliability novel={novel} es={es} />,
+      },
+      {
+        id: 'free-chain',
+        label: es ? 'Control optimo de cadena libre' : 'Free chain optimal control',
+        content: <FreeChain data={chain} es={es} />,
+      },
+      {
+        id: 'patch',
+        label: es ? 'Parche bidimensional' : 'Two-dimensional patch',
+        content: <Patch data={patch} es={es} />,
+      },
+      {
+        id: 'exploitability',
+        label: es ? 'Explotabilidad por material' : 'Exploitability by material',
+        content: <Exploitability data={descriptors} es={es} />,
+      },
+      {
+        id: 'penalty',
+        label: es ? 'Penalizacion contra ensemble' : 'Penalty against ensemble',
+        content: <PenaltyTest data={penalty} es={es} />,
+      },
+      {
+        id: 'hard-axis',
+        label: es ? 'Donde paga el eje duro' : 'Where the hard axis pays',
+        content: <HardAxis data={hardAxis} es={es} />,
+      },
+      {
+        id: 'tradeoffs',
+        label: es ? 'Compromisos de dispositivo (R14)' : 'Device trade-offs (R14)',
+        content: <Tradeoffs data={pareto} es={es} />,
+      },
+      {
+        id: 'replications',
+        label: es ? 'Replicaciones publicadas' : 'Published replications',
+        content: <ReplicationsPanel artifacts={artifacts} es={es} />,
+      },
+      {
+        id: 'lattice',
+        label: es ? 'Comparacion de dos modos' : 'Two-mode comparison',
+        content: <Lattice novel={novel} es={es} />,
+      },
+    ].map((view) => [view.id, view]),
+  );
+
   return (
     <article className="prose">
       <h1>{es ? 'Experimentos' : 'Experiments'}</h1>
       <Tabs
-        ariaLabel="experiments"
-        tabs={[
-          {
-            id: 'coverage',
-            label: es ? 'Cobertura' : 'Coverage',
-            content: <CoverageMatrix index={index} es={es} />,
-          },
-          {
-            id: 'materials',
-            label: es ? 'Materiales' : 'Materials',
-            content: (
-              <div className="prose">
-                <p>
-                  {es
-                    ? 'Evidencia cruzada entre materiales: el costo optimo relativo al piso universal y al costo de macrospin libre. Phi/Phi_free por debajo de uno solo es posible con eje duro.'
-                    : 'Cross-material evidence: the optimal cost relative to the universal floor and to the free-macrospin cost. Phi/Phi_free below one is only possible with a hard axis.'}
-                </p>
-                <MaterialTable artifacts={artifacts} es={es} />
-              </div>
-            ),
-          },
-          {
-            id: 'reliability',
-            label: es ? 'Fiabilidad (R12)' : 'Reliability (R12)',
-            content: <Reliability novel={novel} es={es} />,
-          },
-          {
-            id: 'free-chain',
-            label: es ? 'Control optimo de cadena libre' : 'Free chain optimal control',
-            content: <FreeChain data={chain} es={es} />,
-          },
-          {
-            id: 'patch',
-            label: es ? 'Parche bidimensional' : 'Two-dimensional patch',
-            content: <Patch data={patch} es={es} />,
-          },
-          {
-            id: 'exploitability',
-            label: es ? 'Explotabilidad por material' : 'Exploitability by material',
-            content: <Exploitability data={descriptors} es={es} />,
-          },
-          {
-            id: 'penalty',
-            label: es ? 'Penalizacion contra ensemble' : 'Penalty against ensemble',
-            content: <PenaltyTest data={penalty} es={es} />,
-          },
-          {
-            id: 'hard-axis',
-            label: es ? 'Donde paga el eje duro' : 'Where the hard axis pays',
-            content: <HardAxis data={hardAxis} es={es} />,
-          },
-          {
-            id: 'tradeoffs',
-            label: es ? 'Compromisos de dispositivo (R14)' : 'Device trade-offs (R14)',
-            content: <Tradeoffs data={pareto} es={es} />,
-          },
-          {
-            id: 'replications',
-            label: es ? 'Replicaciones publicadas' : 'Published replications',
-            content: <ReplicationsPanel artifacts={artifacts} es={es} />,
-          },
-          {
-            id: 'lattice',
-            label: es ? 'Comparacion de dos modos' : 'Two-mode comparison',
-            content: <Lattice novel={novel} es={es} />,
-          },
-        ]}
+        ariaLabel={es ? 'grupos de experimentos' : 'experiment groups'}
+        tabs={EXPERIMENT_GROUPS.map((group) => ({
+          id: group.id,
+          label: es ? group.es : group.en,
+          content: (
+            <SubTabs
+              ariaLabel={es ? group.es : group.en}
+              tabs={group.views.map((id) => views[id])}
+            />
+          ),
+        }))}
       />
+      <Refs ids={['kwiatkowski2021', 'badarneh2023', 'bessarab2015', 'e2007string']} label="Refs" />
     </article>
   );
 }

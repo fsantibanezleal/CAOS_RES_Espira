@@ -9,6 +9,9 @@ import type { ReferencePulse } from '../data/contract';
 interface Props {
   pulse: ReferencePulse;
   theme: 'light' | 'dark';
+  /** The page language. The pole labels and the note are interface text, and printed in English on
+   * the Spanish page until this was passed down. */
+  es?: boolean;
 }
 
 /** Below this the poles and their labels collide; above it the projection gains nothing. The floor
@@ -23,7 +26,7 @@ function cssVar(name: string, fallback: string): string {
   return value || fallback;
 }
 
-export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
+export function SphereTrajectory({ pulse, theme, es = false }: Props): React.JSX.Element {
   const ref = useRef<HTMLCanvasElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   // The drawing box is measured, not assumed: sizing the sphere from the width alone overflows the
@@ -133,8 +136,8 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
       ctx.font = '12px system-ui, sans-serif';
       ctx.fillText(label, sx + 6, sy);
     };
-    drawPole(1, '+z (start)');
-    drawPole(-1, '-z (end)');
+    drawPole(1, es ? '+z (inicio)' : '+z (start)');
+    drawPole(-1, es ? '-z (fin)' : '-z (end)');
 
     // The cursor marker.
     const i = Math.max(0, Math.min(cursor, pulse.sx.length - 1));
@@ -188,12 +191,13 @@ export function SphereTrajectory({ pulse, theme }: Props): React.JSX.Element {
           value={cursor}
           onChange={(e) => setCursor(Number(e.target.value))}
           style={{ width: '100%', marginTop: 4 }}
-          aria-label="scrub along the trajectory"
+          aria-label={es ? 'recorrer la trayectoria' : 'scrub along the trajectory'}
         />
       </div>
       <p className="sphere-note">
-        Drag to rotate. The moment spirals from the north pole to the south pole, precessing as the
-        internal torque assists the reversal.
+        {es
+          ? 'Arrastra para rotar. El momento desciende en espiral del polo norte al polo sur, precesando mientras el torque interno asiste la inversion.'
+          : 'Drag to rotate. The moment spirals from the north pole to the south pole, precessing as the internal torque assists the reversal.'}
       </p>
     </div>
   );
