@@ -16,6 +16,8 @@ the bake that wrote it.
 | [07_exploitability.md](07_exploitability.md) | Which material is worth switching at all? | `descriptors.json` | Experiments, Exploitability by material |
 | [08_live-lane-parity.md](08_live-lane-parity.md) | Does the browser compute the same thing as the engine? | `live_parity.json` | Implementation, Live-lane parity |
 | [09_external-crosscheck.md](09_external-crosscheck.md) | Does an independent code get the same barrier? | `external_crosscheck.json` | Implementation, External cross-check |
+| [10_published-replications.md](10_published-replications.md) | Do other people's published numbers come out the same here? | `kickoff-replication.json`, `prb107-biaxial-figures.json` | Experiments, Published replications |
+| [11_external-dynamics-crosscheck.md](11_external-dynamics-crosscheck.md) | Does an independent code integrate the same equation of motion? | `external_dynamics_crosscheck.json` | Implementation, The dynamics integrated twice |
 
 ## What a result page states
 

@@ -4,7 +4,7 @@
   "code": "C26",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.18.000",
+  "engine_version": "0.19.000",
   "seed": 0,
   "split": "test",
   "ground_truth": "analytic",
@@ -27,7 +27,7 @@
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.767,
+    "runtime_ms": 0.461,
     "artifact_bytes": 270754,
     "methods": [
       "R15",
@@ -139,7 +139,7 @@
         "cost_over_free": 1.0123963262715845,
         "cost_over_floor": 5.045935374895447,
         "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
+        "peak_amplitude_t": 0.6347905395920616
       }
     },
     {
@@ -153,7 +153,7 @@
         "cost_over_free": 1.0123963262715845,
         "cost_over_floor": 5.045935374895447,
         "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
+        "peak_amplitude_t": 0.6347905395920616
       }
     },
     {
@@ -167,7 +167,7 @@
         "cost_over_free": 1.0123963262715845,
         "cost_over_floor": 5.045935374895447,
         "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
+        "peak_amplitude_t": 0.6347905395920616
       }
     },
     {
@@ -181,7 +181,7 @@
         "cost_over_free": 1.0123963262715845,
         "cost_over_floor": 5.045935374895447,
         "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
+        "peak_amplitude_t": 0.6347905395920616
       }
     },
     {
@@ -195,7 +195,7 @@
         "cost_over_free": 1.0123963262715845,
         "cost_over_floor": 5.045935374895447,
         "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
+        "peak_amplitude_t": 0.6347905395920616
       }
     },
     {
@@ -209,7 +209,7 @@
         "cost_over_free": 1.0123963262715845,
         "cost_over_floor": 5.045935374895447,
         "mean_amplitude_t": 0.5454480461323823,
-        "peak_amplitude_t": 0.5420673027305187
+        "peak_amplitude_t": 0.6347905395920616
       }
     }
   ],

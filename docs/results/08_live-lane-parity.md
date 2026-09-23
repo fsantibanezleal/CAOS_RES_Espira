@@ -5,8 +5,8 @@ Artifact: `data/artifacts/live_parity.json`, written by the main bake. Shown in 
 
 ## The question
 
-The lane gate measures runtime and artifact size and puts case C03 in the live lane, which means the
-browser evaluates its closed form rather than replaying the bake. A lane verdict of "live" is a claim
+The lane gate measures runtime and artifact size and puts cases C03 and C10 in the live lane, which
+means the browser evaluates their closed forms rather than replaying the bake. A lane verdict of "live" is a claim
 until something on the client can actually evaluate the case, and an implementation can agree with the
 engine at one working point and disagree elsewhere.
 
@@ -37,4 +37,6 @@ Both are at the level of double-precision rounding, including at m = 0.999.
 
 Parity is not correctness: it shows that two implementations of the same equations agree, and the
 equations themselves are checked against their source and against the analytic oracles (cases C01 to
-C04). The fixture covers the one case in the live lane; a second live case would need its own.
+C04). The fixture covers C03's closed form; C10, the second live case, is checked the other way, by
+the workbench recomputing its peak field in the browser and the observable gate comparing that number
+with the committed artifact at every working point.

@@ -65,3 +65,19 @@ def test_every_results_page_names_its_artifact_and_is_indexed() -> None:
         named = {a for a in artifacts if a in text}
         assert named, f"{page.name} names no artifact"
     assert "results/README.md" in (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
+
+
+def test_every_method_a_case_declares_is_documented() -> None:
+    """The rung codes (R00, R05, R07) are in the coverage matrix, the provenance strip, the case pages
+    and the committed JSON, so a reader meets them everywhere. The method ladder is where they are
+    explained, and a rung a case runs but the ladder never names is a code with no meaning attached."""
+    page = (DOCS / "methods" / "README.md").read_text(encoding="utf-8")
+    declared = {method for case in CASES.values() for method in case.methods}
+    assert declared, "the registry declares no methods"
+    for method in sorted(declared):
+        assert re.search(rf"\b{method}\b", page), f"{method} runs in a case but the ladder does not name it"
+    # The reverse direction, so the ladder cannot keep describing a rung that was removed: every rung
+    # the page gives a section to is either declared by a case or listed as not being a per-case rung.
+    sections = set(re.findall(r"^## (R\d\d),", page, flags=re.MULTILINE))
+    assert sections <= declared, f"the ladder documents rungs no case runs: {sorted(sections - declared)}"
+    assert "methods/README.md" in (DOCS / "README.md").read_text(encoding="utf-8")

@@ -4,6 +4,111 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.15.000] - 2026-09-22
+
+### Added
+- **C10 and C05 baked: 25 of 26 cases, and nothing blocked.** Felipe retrieved the kickoff paper's CC-BY
+  full text, which had blocked both (backlog BL-002), and it was read directly.
+- **C10 replicates the kickoff paper's peak switching fields** for monolayer CrSBr, at the damping the
+  database assumes: 4.47 T against a published 4.6 T at 4 ps, 150.4 mT against 150 mT at 126 ps, 136.2 mT
+  against 135 mT at 140 ps. The fourth quoted point, 9.6 mT at 2 ns, needs a damping near 0.001, inside
+  the range the paper states for this family. The source prints two different fields for the same 126 ps
+  point, 0.11 T in one section and 150 mT in another; the case carries both and lands on 150 mT. The
+  published energies are not replicated, because the constant that turns a cost in T^2 s into the joules
+  they print cannot be reconstructed from the text, and the case says so instead of inventing one.
+- **C05 replicates the biaxial paper's thermal-robustness table**, all eight published cells within the
+  Monte-Carlo interval (96.0 against 95.3 and 96.9 against 96.8 at a barrier of thirty thermal energies,
+  and so on up to eighty). The case's subject moved from digitizing two figures, which it had been
+  blocked on, to the table of numbers the same paper prints with its protocol stated.
+- A results-wiki page for both replications, and six tests holding them to the published values.
+- **The replications are in the app, not only in the wiki**: a Published replications tab on the
+  Experiments page draws both comparisons on their own axes (peak field against switching time on log
+  axes, success rate against barrier at both dampings) with the tables under them, including the point
+  that does not reproduce and both of the two values the kickoff source prints for its 126 ps point. A
+  thirteenth browser gate reads the committed artifacts in the page and compares them cell by cell with
+  what is rendered, so a table that quietly dropped the unreproduced point would fail the build.
+- **The external cross-check now covers the two-dimensional patch** (backlog BL-013). Spirit's geodesic
+  nudged elastic band reproduces the engine's string-method barrier on the square element of cases C20
+  and C21 as well as on the chain: worst relative difference 1.4e-06 over six lattices, against a
+  declared tolerance of 1e-05. Every row sits below the coherent saddle N K, so the comparison is about
+  wall paths rather than the rotation both codes would find from a straight interpolation, and the
+  artifact validator now refuses a patch row that does not. The two agree best, to 8.1e-09, on the
+  deepest wall in the table, and worst on the row where wall and rotation are nearly degenerate.
+- **A fourteenth browser gate, for the pages the other thirteen never opened** (backlog BL-027). Each
+  of the existing gates goes deep on one surface, and between them not one of them loaded the Introduction
+  or the Theory page, so a prose page could have shipped blank and every gate would have stayed green.
+  `e2e/pages.mjs` walks the nav the app itself renders, so a page added later is covered without anyone
+  remembering, and on every page, in both themes, both languages and at a desktop and a phone viewport
+  it holds that the route mounts with a heading and enough text that an empty shell cannot pass, that
+  nothing scrolls sideways or runs under the footer, that no panel is still showing its loading
+  placeholder after the network settled, that no NaN or undefined reached the visible text, and that
+  the two languages are different documents rather than one falling back to the other.
+- **The equation of motion is now cross-checked against an independent code** (backlog BL-013, the
+  VAMPIRE half). The Spirit cross-check compares a barrier, which is static; this one compares a
+  trajectory. VAMPIRE is GPL-2, so the adapter runs it as a separate process over generated input
+  files, never links it, and keeps no VAMPIRE source in the repository. Over four configurations
+  (precession at two dampings, a transverse drive, and a real reversal at 3 T through 400 ps) the worst
+  deviation is 4.7e-06 against a tolerance of 1e-05, and the two codes put the moment through the
+  equator at 78.7319 ps and 78.7319 ps. Surfaced on the Implementation page, validated by the artifact
+  checker, and held by the parity gate and five tests.
+- A results-wiki page for it, including the two setups that had to be discarded on the way: a reversal
+  field of 1.2 T that was below the 1.73 T anisotropy field, and a 100 ps run that was shorter than the
+  45 ps growth constant, each of which had the two codes agreeing to seven digits that nothing had
+  happened. The script now refuses to write an artifact when the row called a reversal did not reverse.
+- **The method ladder is documented** (backlog BL-030): `docs/methods/README.md` explains every rung
+  code a reader meets in the coverage matrix, the provenance strip, the case pages and the committed
+  JSON, transcribed from the dispatch that implements them: what each computes, which cases run it,
+  what it writes into an artifact and what it does not claim, including why R08 and R09 report a
+  non-reversal as a non-reversal rather than as a cheap protocol. A test holds the page to the
+  registry in both directions, so a rung a case runs but the ladder never names, or a section for a
+  rung no case runs, fails the build.
+- **A second case in the live lane, and it is the replication one.** The clean bake put C10 in the
+  live lane by measurement, and the observable gate objected that a live verdict had nothing on the
+  client to evaluate. Rather than downgrade the lane, the browser now carries the uniaxial closed form
+  as well: it solves the shape parameter from the period relation and evaluates the peak of the optimal
+  pulse, and the workbench shows its agreement with the committed artifact. A reader can watch their
+  own browser reproduce the field this product compares against a published number.
+- Live inputs are emitted for every case the browser could evaluate and then dropped again from the
+  cases the lane gate put in the precompute lane, before the manifest is hashed, so the contract's
+  "present only on a live-lane case" stays exactly true and the workbench cannot offer a recompute the
+  lane does not claim.
+- **A fourth section in the Architecture modal**, Checked from outside, with its own theme-aware SVG:
+  the two independent codes, what each one re-derives (the barrier and the trajectory), the numbers
+  they agree to, and why neither is a dependency. The breadth gate now opens the modal, measures that
+  every diagram laid out, and refuses a diagram that renders both languages at once, which is the
+  failure mode of a bilingual hand-authored SVG.
+
+### Fixed
+- **The reported peak of the optimal pulse was its minimum** (finding F-028). Every committed
+  per-case manifest carried a `peak_amplitude_t` for its R05 rows computed as the larger of the
+  amplitude at the start of the pulse and at its midpoint, and those are the two points where the
+  amplitude is smallest: the Jacobi sine vanishes at both, and for the negative elliptic parameter of a
+  damped reversal the amplitude is largest a quarter of the way through. The manifests were shipping a
+  peak of 2.7266 T beside a mean of 2.7272 T for the same pulse, which cannot happen, and nothing
+  objected. The error runs from 0.2 per cent at alpha = 0.01 and T = 1 tau0 to 37 per cent at
+  alpha = 0.1 and T = 20 tau0, always in the direction that under-specifies a driver. The engine gained
+  an exact `peak_amplitude()` (spinoct 0.19.000), the pipeline uses it, and a test now refuses any
+  manifest that reports a peak below its own mean. Nothing a reader sees was wrong: the case artifacts
+  never carried this metric, and the three surfaces that do report a peak (the device trade-off front,
+  the exploitability table and the C10 replication) each scan the pulse and always did.
+- **The browser's shape-parameter solve was high by one part in ten thousand**, and only the engine
+  caught it. Its bracket used the zero-damping solution as a lower bound without the `(1 + alpha^2)`
+  factor, which at short switching times puts that "bound" above the root; the expansion loop then
+  never runs and the bisection returns its own starting point. The two implementations now agree to ten
+  digits at every switching time of C10, which is what the live lane exists to establish.
+- **A rounded constant that looked like a disagreement.** VAMPIRE hard-codes the gyromagnetic ratio as
+  1.76e11 rad/(s T) while the engine uses the CODATA electron value 1.760859e11. The 4.9e-4 difference
+  enters as a rescaling of time and moved the compared trajectory by 1.0e-04, a hundred times the level
+  the two codes agree at once they are given the same constant. The cross-check passes VAMPIRE's value
+  to the engine and records why in the artifact.
+- **An under-equilibrated ensemble nearly became someone else's non-replication.** At a damping of 0.01
+  the thermal case returned 100 per cent where the paper reports 95.3 to 99.9. The cause was ours:
+  reaching a Boltzmann distribution takes a dissipation time, tau0 over the damping, so the fixed
+  two-Larmor-time equilibration that suffices at 0.1 is ten times too short at 0.01, and the ensemble
+  started with a spread of 0.0013 against a Boltzmann 0.017. Equilibration now scales with the damping,
+  every cell records the spread it started from, and a test holds that spread to falling like one over
+  the barrier.
+
 ## [0.14.000] - 2026-09-22
 
 ### Added

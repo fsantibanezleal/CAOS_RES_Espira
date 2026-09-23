@@ -4,7 +4,7 @@
   "code": "C03",
   "status": "baked",
   "engine": "spinoct",
-  "engine_version": "0.18.000",
+  "engine_version": "0.19.000",
   "seed": 0,
   "split": "control",
   "ground_truth": "analytic",
@@ -26,7 +26,7 @@
   },
   "lane": {
     "lane": "live",
-    "runtime_ms": 0.026,
+    "runtime_ms": 0.018,
     "artifact_bytes": 274087,
     "methods": [
       "R06"
