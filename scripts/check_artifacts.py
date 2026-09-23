@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "data" / "artifacts"
-RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "penalty_test.json", "descriptors.json", "external_crosscheck.json", "benchmark.json"}
+RESERVED = {"index.json", "novel.json", "lattice_ocp.json", "patch_ocp.json", "live_parity.json", "pareto.json", "hard_axis_map.json", "penalty_test.json", "descriptors.json", "external_crosscheck.json", "external_dynamics_crosscheck.json", "benchmark.json"}
 #: Relative slack for the ratio bounds: the costs are floating-point sums of order 1e-12 T^2 s.
 TOLERANCE = 1e-9
 
@@ -120,10 +120,56 @@ def check(artifacts: Path) -> list[str]:
             if external["agrees"] != (worst <= external["tolerance"]):
                 errors.append("external_crosscheck: the verdict disagrees with its own tolerance")
             for row in external["rows"]:
+                tag = f"external_crosscheck {row.get('geometry')} {row.get('width')}x{row.get('height')}"
                 if not row["spinoct_converged"]:
-                    errors.append(f"external_crosscheck N={row['n_sites']}: our own path did not converge")
+                    errors.append(f"{tag}: our own path did not converge")
+                if row["width"] * row["height"] != row["n_sites"]:
+                    errors.append(f"{tag}: the site count disagrees with the geometry")
+                # A patch row whose barrier is the coherent saddle N K checks the conventions, not the
+                # wall: the two methods cannot differ on a path neither of them had to find. The patch
+                # half of this cross-check only means something below that.
+                if row["geometry"] == "patch" and row["barrier_over_nk"] > 0.99:
+                    errors.append(f"{tag}: barrier {row['barrier_over_nk']:.3f} N K is the coherent saddle")
+            geometries = {row["geometry"] for row in external["rows"]}
+            if geometries != {"chain", "patch"}:
+                errors.append(f"external_crosscheck: geometries {sorted(geometries)}, expected chain and patch")
     else:
         errors.append("missing external_crosscheck.json")
+
+    dynamics_path = artifacts / "external_dynamics_crosscheck.json"
+    if dynamics_path.exists():
+        dynamics = json.loads(dynamics_path.read_text(encoding="utf-8"))
+        if dynamics.get("schema") != "espira.external-dynamics-crosscheck/1":
+            errors.append(f"external_dynamics_crosscheck: schema {dynamics.get('schema')}")
+        if not dynamics.get("engines", {}).get("vampire"):
+            errors.append("external_dynamics_crosscheck: no external engine version recorded")
+        rows = dynamics.get("rows", [])
+        worst = max((r["worst_deviation"] for r in rows), default=None)
+        if worst is None:
+            errors.append("external_dynamics_crosscheck: no rows")
+        else:
+            if abs(worst - dynamics["worst_deviation"]) > 1e-12:
+                errors.append("external_dynamics_crosscheck: the worst deviation disagrees with the rows")
+            if dynamics["agrees"] != (worst <= dynamics["tolerance"]):
+                errors.append("external_dynamics_crosscheck: the verdict disagrees with its own tolerance")
+            # Both codes are given one gyromagnetic ratio, because they do not share one by default and
+            # a 4.9e-4 difference in it swamps everything this comparison is about.
+            if dynamics.get("gyromagnetic_ratio_rad_per_s_t") != 1.76e11:
+                errors.append("external_dynamics_crosscheck: the two codes were not given one constant")
+            # A reversal row that did not reverse compares two codes agreeing that nothing happened.
+            reversals = [r for r in rows if r["name"].startswith("reversal")]
+            if not reversals:
+                errors.append("external_dynamics_crosscheck: no reversal row, only small-angle motion")
+            for row in reversals:
+                if row["reversal_time_theirs_s"] is None or row["reversal_time_ours_s"] is None:
+                    errors.append(f"external_dynamics_crosscheck {row['name']}: never crossed the equator")
+                elif row["reversal_time_difference"] > 1e-3:
+                    errors.append(
+                        f"external_dynamics_crosscheck {row['name']}: the two codes disagree on when it "
+                        f"reversed by {row['reversal_time_difference']:.2e}"
+                    )
+    else:
+        errors.append("missing external_dynamics_crosscheck.json")
 
     descriptors_path = artifacts / "descriptors.json"
     if descriptors_path.exists():

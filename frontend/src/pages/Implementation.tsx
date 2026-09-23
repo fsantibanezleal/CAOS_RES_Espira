@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useShellLang, Cite, Refs } from '@fasl-work/caos-app-shell';
-import type { ExternalCrosscheck, LiveParityFixture } from '../data/contract';
-import { loadExternalCrosscheck, loadLiveParity } from '../data/load';
+import type { ExternalCrosscheck, ExternalDynamicsCrosscheck, LiveParityFixture } from '../data/contract';
+import { loadExternalCrosscheck, loadExternalDynamics, loadLiveParity } from '../data/load';
 import { LiveParity } from '../viz/LiveParity';
 
 export function Implementation(): React.JSX.Element {
@@ -11,9 +11,11 @@ export function Implementation(): React.JSX.Element {
   const es = lang === 'es';
   const [parity, setParity] = useState<LiveParityFixture | null>(null);
   const [crosscheck, setCrosscheck] = useState<ExternalCrosscheck | null>(null);
+  const [dynamics, setDynamics] = useState<ExternalDynamicsCrosscheck | null>(null);
   useEffect(() => {
     loadLiveParity().then(setParity).catch(() => setParity(null));
     loadExternalCrosscheck().then(setCrosscheck).catch(() => setCrosscheck(null));
+    loadExternalDynamics().then(setDynamics).catch(() => setDynamics(null));
   }, []);
   return (
     <article className="prose">
@@ -59,8 +61,8 @@ export function Implementation(): React.JSX.Element {
       <h2>{es ? 'Comprobacion externa' : 'External cross-check'}</h2>
       <p>
         {es
-          ? 'El piso bajo cada costo que publica este producto es una barrera de energia calculada por el metodo de cuerda del propio motor. Si ese metodo estuviera mal, todos los pisos estarian mal a la vez y ninguna prueba interna lo notaria. Spirit es un marco de dinamica de espines atomistica escrito por otras personas, y su banda elastica geodesica es otro metodo para el mismo objeto: se le da el mismo hamiltoniano y el mismo camino inicial, y se compara la barrera. Spirit no es una dependencia de este producto y CI nunca lo instala.'
-          : "The floor under every cost this product publishes is an energy barrier computed by the engine's own string method. If that method were wrong, every floor would be wrong together and no internal test would notice. Spirit is an atomistic spin-dynamics framework written by other people, and its geodesic nudged elastic band is a different method for the same object: it is given the same Hamiltonian and the same initial path, and the barriers are compared. Spirit is not a dependency of this product, and CI never installs it."}{' '}
+          ? 'El piso bajo cada costo que publica este producto es una barrera de energia calculada por el metodo de cuerda del propio motor. Si ese metodo estuviera mal, todos los pisos estarian mal a la vez y ninguna prueba interna lo notaria. Spirit es un marco de dinamica de espines atomistica escrito por otras personas, y su banda elastica geodesica es otro metodo para el mismo objeto: se le da el mismo hamiltoniano y el mismo camino inicial, y se compara la barrera. Se comparan las dos geometrias que el producto usa, la cadena y el parche cuadrado de los casos C20 y C21, y toda fila esta por debajo de la silla coherente N K, es decir son caminos de pared. Spirit no es una dependencia de este producto y CI nunca lo instala.'
+          : "The floor under every cost this product publishes is an energy barrier computed by the engine's own string method. If that method were wrong, every floor would be wrong together and no internal test would notice. Spirit is an atomistic spin-dynamics framework written by other people, and its geodesic nudged elastic band is a different method for the same object: it is given the same Hamiltonian and the same initial path, and the barriers are compared. Both geometries the product uses are compared, the chain and the square patch of cases C20 and C21, and every row sits below the coherent saddle N K, which is what makes them wall paths. Spirit is not a dependency of this product, and CI never installs it."}{' '}
         <Cite id="bessarab2015" />
       </p>
       {crosscheck ? (
@@ -78,18 +80,26 @@ export function Implementation(): React.JSX.Element {
             <table>
               <thead>
                 <tr>
-                  <th>N</th>
+                  <th>{es ? 'Geometria' : 'Geometry'}</th>
+                  <th>J/K</th>
                   <th>{es ? 'spinoct (cuerda)' : 'spinoct (string)'}</th>
                   <th>Spirit (GNEB)</th>
+                  <th>{es ? 'Barrera / NK' : 'Barrier / NK'}</th>
                   <th>{es ? 'Diferencia' : 'Difference'}</th>
                 </tr>
               </thead>
               <tbody>
                 {crosscheck.rows.map((row) => (
-                  <tr key={row.n_sites}>
-                    <td>{row.n_sites}</td>
+                  <tr key={`${row.geometry}-${row.width}x${row.height}-${row.exchange_over_k}`} data-geometry={row.geometry}>
+                    <td>
+                      {row.geometry === 'patch'
+                        ? `${es ? 'parche' : 'patch'} ${row.width} x ${row.height}`
+                        : `${es ? 'cadena' : 'chain'} ${row.n_sites}`}
+                    </td>
+                    <td>{row.exchange_over_k}</td>
                     <td>{row.spinoct_barrier_over_k.toFixed(6)} K</td>
                     <td>{row.spirit_barrier_over_k.toFixed(6)} K</td>
+                    <td>{row.barrier_over_nk.toFixed(3)}</td>
                     <td>{row.relative_difference.toExponential(1)}</td>
                   </tr>
                 ))}
@@ -100,6 +110,59 @@ export function Implementation(): React.JSX.Element {
       ) : (
         <p className="muted">{es ? 'Cargando la comprobacion...' : 'Loading the cross-check...'}</p>
       )}
+      {dynamics ? (
+        <div data-testid="external-dynamics" data-agrees={String(dynamics.agrees)}>
+          <h2>{es ? 'La dinamica, integrada dos veces' : 'The dynamics, integrated twice'}</h2>
+          <p>
+            {es
+              ? 'La comprobacion anterior compara una barrera, que es estatica. No dice nada sobre la ecuacion de movimiento sobre la que se construye todo lo demas: si el lado derecho de Landau-Lifshitz-Gilbert del motor estuviera mal, todos los protocolos y todos los veredictos de conmutacion estarian mal a la vez y la barrera seguiria siendo correcta. VAMPIRE es un codigo de dinamica de espines atomistica escrito por otras personas, con su propio integrador. Es GPL-2, asi que se ejecuta como proceso separado a partir de archivos de entrada generados: nada se enlaza y ningun codigo de VAMPIRE entra en este repositorio.'
+              : 'The cross-check above compares a barrier, which is static. It says nothing about the equation of motion everything else is built on: if the engine’s Landau-Lifshitz-Gilbert right-hand side were wrong, every protocol and every switching verdict would be wrong together and the barrier would still be right. VAMPIRE is an atomistic spin-dynamics code written by other people, with its own integrator. It is GPL-2, so it runs as a separate process from generated input files: nothing is linked and no VAMPIRE code enters this repository.'}{' '}
+            <Cite id="evans2014" />
+          </p>
+          <p className="muted">
+            {es ? 'Peor desviacion de trayectoria' : 'Worst trajectory deviation'}:{' '}
+            <strong data-testid="dynamics-worst">{dynamics.worst_deviation.toExponential(2)}</strong>{' '}
+            {es ? 'contra una tolerancia de' : 'against a tolerance of'} {dynamics.tolerance.toExponential(0)}.{' '}
+            <span className={dynamics.agrees ? 'prov-badge prov-measured' : 'prov-badge prov-assumed'}>
+              {dynamics.agrees ? (es ? 'de acuerdo' : 'agree') : es ? 'en desacuerdo' : 'disagree'}
+            </span>{' '}
+            spinoct {dynamics.engines.spinoct}, VAMPIRE {dynamics.engines.vampire}, {dynamics.measured_on}.
+          </p>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>{es ? 'Configuracion' : 'Configuration'}</th>
+                  <th>alpha</th>
+                  <th>{es ? 'Campo (T)' : 'Field (T)'}</th>
+                  <th>{es ? 'Duracion' : 'Duration'}</th>
+                  <th>{es ? 'Peor desviacion' : 'Worst deviation'}</th>
+                  <th>{es ? 'Inversion' : 'Reversal'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dynamics.rows.map((row) => (
+                  <tr key={row.name} data-row={row.name.startsWith('reversal') ? 'reversal' : 'precession'}>
+                    <td>{row.name}</td>
+                    <td>{row.alpha}</td>
+                    <td>{row.applied_field_t.map((b) => b.toFixed(2)).join(', ')}</td>
+                    <td>{(row.duration_s * 1e12).toFixed(0)} ps</td>
+                    <td>{row.worst_deviation.toExponential(1)}</td>
+                    <td>
+                      {row.reversal_time_ours_s != null && row.reversal_time_theirs_s != null
+                        ? `${(row.reversal_time_ours_s * 1e12).toFixed(3)} / ${(row.reversal_time_theirs_s * 1e12).toFixed(3)} ps`
+                        : es
+                          ? 'sin inversion'
+                          : 'no reversal'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="muted">{dynamics.gyromagnetic_note}</p>
+        </div>
+      ) : null}
       <Refs ids={['kwiatkowski2021', 'vlasov2022', 'badarneh2023', 'scheie2022', 'ruiz2024', 'evans2014']} label="Refs" />
     </article>
   );
