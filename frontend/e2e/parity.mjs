@@ -68,6 +68,7 @@ for (const theme of ['light', 'dark']) {
         tolerance: d.tolerance,
         agrees: d.agrees,
         rows: d.rows.length,
+        patches: d.rows.filter((r) => r.geometry === 'patch').length,
         spirit: d.engines.spirit,
       };
     });
@@ -78,9 +79,52 @@ for (const theme of ['light', 'dark']) {
     const shownWorst = (await page.getByTestId('crosscheck-worst').innerText()).trim();
     check(shownWorst === claim.worst.toExponential(2), `${tag}: the page shows the measured deviation (${shownWorst})`);
     const crossRows = await page.locator('[data-testid="external-crosscheck"] tbody tr').count();
-    check(crossRows === claim.rows, `${tag}: cross-check table lists ${crossRows} of ${claim.rows} chains`);
+    check(crossRows === claim.rows, `${tag}: cross-check table lists ${crossRows} of ${claim.rows} lattices`);
+    // Both geometries have to reach the page. The two-dimensional patch is the half that can catch a
+    // string method out, so a table showing only chains is a weaker claim than the artifact makes.
+    const patchRows = await page.locator('[data-testid="external-crosscheck"] tr[data-geometry="patch"]').count();
+    check(
+      patchRows === claim.patches && patchRows > 0,
+      `${tag}: the table shows ${patchRows} of ${claim.patches} patch rows`,
+    );
     const external_text = await external.innerText();
     check(external_text.includes(claim.spirit), `${tag}: the external engine version is named (${claim.spirit})`);
+
+    // The dynamics cross-check is the other half: a trajectory rather than a barrier, against a code
+    // that is run as a separate process because it is GPL.
+    const dynamics = page.getByTestId('external-dynamics');
+    await dynamics.waitFor({ timeout: 15000 });
+    const motion = await page.evaluate(async () => {
+      const d = await (await fetch('/artifacts/external_dynamics_crosscheck.json')).json();
+      const reversals = d.rows.filter((r) => r.name.startsWith('reversal'));
+      return {
+        worst: d.worst_deviation,
+        tolerance: d.tolerance,
+        agrees: d.agrees,
+        rows: d.rows.length,
+        vampire: d.engines.vampire,
+        reversals: reversals.length,
+        reversed: reversals.filter((r) => r.reversal_time_theirs_s != null).length,
+      };
+    });
+    check(
+      (await dynamics.getAttribute('data-agrees')) === String(motion.agrees) && motion.agrees,
+      `${tag}: the two codes agree on the trajectory (${motion.worst.toExponential(1)} against ${motion.tolerance.toExponential(0)})`,
+    );
+    const shownMotion = (await page.getByTestId('dynamics-worst').innerText()).trim();
+    check(shownMotion === motion.worst.toExponential(2), `${tag}: the page shows the measured deviation (${shownMotion})`);
+    const motionRows = await page.locator('[data-testid="external-dynamics"] tbody tr').count();
+    check(motionRows === motion.rows, `${tag}: the dynamics table lists ${motionRows} of ${motion.rows} configurations`);
+    // A reversal row that never crossed the equator would be two codes agreeing that nothing happened.
+    const reversalRows = await page.locator('[data-testid="external-dynamics"] tr[data-row="reversal"]').count();
+    check(
+      reversalRows > 0 && motion.reversed === motion.reversals,
+      `${tag}: ${reversalRows} reversal rows shown and ${motion.reversed}/${motion.reversals} actually reversed`,
+    );
+    check(
+      (await dynamics.innerText()).includes(motion.vampire.split('\n')[0]),
+      `${tag}: the external engine version is named (${motion.vampire.split('\n')[0]})`,
+    );
 
     await panel.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `${out}/parity-${tag}.png` });

@@ -12,6 +12,7 @@ import { PulseChart } from '../viz/PulseChart';
 import { SphereTrajectory } from '../viz/SphereTrajectory';
 import { ParameterPanel } from '../viz/ParameterPanel';
 import { sotOptimalProtocol } from '../engine/sotAnalytic';
+import { peakAmplitude } from '../engine/uniaxialAnalytic';
 import { useTheme } from '../theme';
 
 const T = {
@@ -127,19 +128,36 @@ function liveRecompute(
   row: CostRow,
 ): { value: number; baked: number; relativeError: number } | null {
   const inputs = artifact.live_inputs;
-  if (!inputs || inputs.method !== 'R06') return null;
+  if (!inputs) return null;
   const baked = row[artifact.observable.key];
   if (typeof baked !== 'number' || !Number.isFinite(baked)) return null;
-  const result = sotOptimalProtocol({
-    alpha: inputs.alpha,
-    gamma: inputs.gamma,
-    anisotropyJ: inputs.anisotropy_j,
-    mu: inputs.mu,
-    xi: inputs.xi,
-    beta: inputs.beta,
-    switchingTime: row.switching_time_s,
-  });
-  const value = result.meanCurrentReduced;
+
+  let value: number;
+  if (inputs.method === 'R06') {
+    value = sotOptimalProtocol({
+      alpha: inputs.alpha,
+      gamma: inputs.gamma,
+      anisotropyJ: inputs.anisotropy_j,
+      mu: inputs.mu,
+      xi: inputs.xi,
+      beta: inputs.beta,
+      switchingTime: row.switching_time_s,
+    }).meanCurrentReduced;
+  } else if (inputs.method === 'R05' && artifact.observable.key === 'peak_field_t') {
+    // The peak of the closed-form uniaxial pulse. The browser solves the shape parameter from the
+    // period relation and evaluates the peak in closed form; the engine scans the pulse. Two routes to
+    // one number, which is the point of the lane.
+    value = peakAmplitude({
+      alpha: inputs.alpha,
+      gamma: inputs.gamma,
+      anisotropyJ: inputs.anisotropy_j,
+      mu: inputs.mu,
+      tau0S: inputs.tau0_s,
+      switchingTime: row.switching_time_s,
+    });
+  } else {
+    return null;
+  }
   return { value, baked, relativeError: Math.abs(value - baked) / Math.abs(baked) };
 }
 

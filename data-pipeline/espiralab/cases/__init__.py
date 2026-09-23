@@ -164,22 +164,46 @@ CASES: dict[str, Case] = {
     "prb107-biaxial-figures": Case(
         slug="prb107-biaxial-figures",
         code="C05",
-        title="Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)",
+        title="The biaxial paper's thermal-robustness table (Phys. Rev. B 107, 214448, Table I)",
         category="B. Published replication",
-        reason="The lineage paper's own numerical optimal control paths for a biaxial particle; the "
-        "closest published comparison for our image-based solver.",
-        expectation="Our solver reproduces the published cost against switching time within the digitizing "
-        "uncertainty of the figures.",
-        kill_criterion="A systematic offset larger than the digitizing uncertainty means our cost "
-        "functional differs from theirs, most likely in the anisotropy convention.",
-        axis=_time_axis(),
-        status="blocked",
-        blocked_reason="The published figure values have not been digitized from the paper; without them "
-        "there is nothing to compare against, and inventing reference points would be fabrication.",
+        reason="The lineage paper's own optimal control path for a biaxial particle, checked where it "
+        "publishes numbers rather than curves. Its Table I reports the measured switching success rate of "
+        "that protocol under thermal fluctuations at four barrier-to-temperature ratios and two dampings, "
+        "and Appendix B gives the settings behind it: a switching time of two Larmor times, a hard-axis "
+        "ratio of five, and three stages, equilibration at zero field to reach a Boltzmann distribution, "
+        "the pulse with the noise on, and a final equilibration. Eight published numbers with a stated "
+        "protocol are a better comparison than a digitized curve, and they need no digitizing.",
+        expectation="Measured 2026-09-22 over 1,000 copies per cell: at a barrier of thirty thermal "
+        "energies, 94.9 per cent against a published 95.3 at damping 0.01 and 96.7 against 96.8 at 0.1, "
+        "both inside the Monte-Carlo interval of about 1.3 points. The same protocol at a shorter "
+        "equilibration reports a spurious 100 per cent at the lower damping, which is this case's own "
+        "trap rather than the paper's: reaching a Boltzmann distribution takes a dissipation time, and "
+        "that time is ten times longer at a tenth of the damping.",
+        kill_criterion="A success rate outside the Monte-Carlo interval of the published value, at a "
+        "cell where both are far from unity, would mean our optimal path or our thermostat differs from "
+        "theirs. An ensemble that never fails where the paper reports failures is the quieter version of "
+        "the same problem, and the case reports the equilibrium spread it starts from so it cannot hide.",
+        axis=VariantAxis(
+            "stability_factor",
+            "Barrier over thermal energy",
+            "K/kT",
+            (20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0),
+        ),
+        status="baked",
         ground_truth="published",
         split="control",
         material="crsbr",
-        methods=("R07",),
+        primary_method="R11",
+        observable=Observable(
+            key="success_rate",
+            label="Switching success rate",
+            unit="fraction of copies",
+            is_field_cost=False,
+            note="The fraction of an ensemble that ends reversed, at the paper's own damping of 0.1, with "
+            "the 0.01 column beside it. It is a probability, not a field cost, and the two are never "
+            "mixed.",
+        ),
+        methods=("R11",),
         sources=("10.1103/PhysRevB.107.214448",),
     ),
     "ocp-family": Case(
@@ -311,23 +335,49 @@ CASES: dict[str, Case] = {
     "kickoff-replication": Case(
         slug="kickoff-replication",
         code="C10",
-        title="The kickoff paper's own switching energies",
+        title="The kickoff paper's own peak switching fields",
         category="B. Published replication",
-        reason="The paper that started this product reports switching times and energies for three van "
-        "der Waals magnets. Reproducing them is the most direct external check available.",
-        expectation="Our costs, converted through an explicit circuit model, land in the same range as "
-        "the published energies for the same materials and switching times.",
-        kill_criterion="A disagreement larger than the damping uncertainty band would mean either their "
-        "circuit assumption or our parameter set differs, and the product must say which.",
-        axis=_time_axis(),
-        status="blocked",
-        blocked_reason="The full text is behind a Cloudflare challenge and has not been read. The "
-        "abstract's 1 to 10 ps rotation window and the press summaries' 126 to 140 ps switching times are "
-        "in tension, and no number may be quoted until the paper itself is read (programme backlog BL-002).",
+        reason="The paper that started this product reports, for monolayer CrSBr, the peak amplitude of "
+        "the optimal pulse at named switching times, beside the static antiparallel field a conventional "
+        "protocol needs at the same time. The peak field of a coherent rotation does not depend on how "
+        "many spins rotate together, so those numbers are directly comparable with this product's "
+        "macrospin and are the most direct external check available. The published energies are not "
+        "replicated: they are extensive, quoted for a 50 x 50 nm^2 element, and their cost functional "
+        "carries a prefactor c that the source says is proportional to the unit-cell volume and then "
+        "sets to one, with a device resistance of 1 ohm, so the constant that turns a cost in T^2 s into "
+        "the joules it prints cannot be reconstructed from the text. The fields carry no such factor.",
+        expectation="Measured 2026-09-22 from the full text, at the damping the database assumes for "
+        "CrSBr (0.01): 4.47 T against a published 4.6 T at 4 ps, 150.4 mT against 150 mT at 126 ps, and "
+        "136.2 mT against 135 mT at 140 ps, so three of the four quoted points reproduce within 3 per "
+        "cent. The fourth, 9.6 mT at 2 ns, needs a damping near 0.001 to reproduce (we give 19.7 mT at "
+        "0.01 and 9.8 mT at 0.001); the paper states a damping range of 0.001 to 0.05 for this family, so "
+        "the gap is a parameter difference rather than a disagreement about the physics. The source also "
+        "quotes two different peak fields for the same 126 ps point, 0.11 T in one section and 150 mT in "
+        "another; this computation lands on 150 mT.",
+        kill_criterion="A peak field that misses the published value by more than the damping uncertainty "
+        "band would mean our parameter set or the closed form is wrong. Quoting a joule figure against "
+        "their energies without their circuit model would be the quieter failure, and the case refuses it.",
+        axis=VariantAxis(
+            "switching_time_ps",
+            "Switching time",
+            "ps",
+            (1.0, 4.0, 10.0, 126.0, 140.0, 2000.0),
+        ),
+        status="baked",
         ground_truth="published",
         split="control",
         material="crsbr",
-        methods=("R05", "R07"),
+        primary_method="R05",
+        observable=Observable(
+            key="peak_field_t",
+            label="Peak optimal field",
+            unit="T",
+            is_field_cost=False,
+            note="The case compares the peak amplitude of the optimal pulse with the value the source "
+            "publishes at the same switching time. It is a field amplitude in tesla, not a field cost in "
+            "T^2 s, and the two are never mixed.",
+        ),
+        methods=("R05",),
         sources=("10.1002/adma.202523059",),
     ),
     # ---------------------------------------------------------------- C. real materials
