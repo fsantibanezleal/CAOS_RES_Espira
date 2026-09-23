@@ -64,5 +64,6 @@ committed comparison was made against, so the agreement cannot go stale unnotice
 
 One Hamiltonian family, two exchange ratios, six lattices. Both codes are static: they agree about the
 saddle, which is the floor under the cost, and neither of them says anything here about the dynamics
-that reach it. That is the other half of BL-013, an adapter for an atomistic dynamics code (VAMPIRE)
-under process isolation, and it is not done.
+that reach it. That is the other half of BL-013, checked by a different code with a different method:
+VAMPIRE, run under process isolation, re-integrates the equation of motion, in
+[11_external-dynamics-crosscheck.md](11_external-dynamics-crosscheck.md).
