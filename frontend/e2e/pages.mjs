@@ -263,6 +263,29 @@ for (const theme of ['light', 'dark']) {
   }
 }
 
+// Every route has to answer 200 in BOTH spellings, with and without the trailing slash. On GitHub
+// Pages an extensionless path resolves to "<path>.html" and a trailing slash to "<path>/index.html";
+// for one release only the first existed, so /theory/ served the fallback (the app mounted, because
+// the asset paths are absolute) while the document answered 404. A reader saw a working page and a
+// link checker saw a dead link, which is why this is measured on the document and not in the browser.
+for (const route of EXPECTED_ROUTES) {
+  if (route === '/') continue;
+  for (const spelling of [route, `${route}/`]) {
+    const response = await fetch(`${base}${spelling}`);
+    check(response.status === 200, `${spelling}: answers ${response.status}`);
+  }
+}
+// An unknown path must answer 404 rather than the app. This one is about the HOST, not the build:
+// `vite preview` serves its SPA fallback with 200 for anything, while Pages answers 404, so asserting
+// it against a local preview would only measure the preview server. It runs against a real host.
+const local = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])/.test(base);
+if (local) {
+  console.log('SKIP /no-such-page: a local preview always answers 200; checked against the live host');
+} else {
+  const missing = await fetch(`${base}/no-such-page`);
+  check(missing.status === 404, `/no-such-page: answers ${missing.status}`);
+}
+
 // The two languages have to be different documents. A missing translation that falls back to English
 // reads as a working page, and only a comparison catches it.
 const texts = {};
