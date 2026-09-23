@@ -54,6 +54,19 @@
       }
     },
     {
+      "case": "prb107-biaxial-figures",
+      "code": "C05",
+      "manifest": "prb107-biaxial-figures.json",
+      "sha256": "56de9b14544a11cd55a01d8f8b8050873722dfdf93562fed1c3855acab6a5eae",
+      "lane": "precompute",
+      "completeness": {
+        "expected": 7,
+        "produced": 7,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
       "case": "ocp-family",
       "code": "C06",
       "manifest": "ocp-family.json",
@@ -85,6 +98,19 @@
       "manifest": "sot-down-chirp.json",
       "sha256": "508a8724b30d1b387e91f9cb1168b98a6875ec6f8bdd075551f1f916b4818511",
       "lane": "precompute",
+      "completeness": {
+        "expected": 6,
+        "produced": 6,
+        "not_applicable": 0,
+        "missing": 0
+      }
+    },
+    {
+      "case": "kickoff-replication",
+      "code": "C10",
+      "manifest": "kickoff-replication.json",
+      "sha256": "bb1f9f973dab5be7d7ec9befda22e056b232175a5c43c671b5fb767b6a43be24",
+      "lane": "live",
       "completeness": {
         "expected": 6,
         "produced": 6,

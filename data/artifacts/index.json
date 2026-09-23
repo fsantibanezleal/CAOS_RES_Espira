@@ -42,6 +42,16 @@
       "axis": "Hard-axis ratio"
     },
     {
+      "slug": "prb107-biaxial-figures",
+      "code": "C05",
+      "title": "The biaxial paper's thermal-robustness table (Phys. Rev. B 107, 214448, Table I)",
+      "category": "B. Published replication",
+      "material": "crsbr",
+      "material_name": "CrSBr",
+      "includes_biaxial": false,
+      "axis": "Barrier over thermal energy"
+    },
+    {
       "slug": "ocp-family",
       "code": "C06",
       "title": "The optimal control path family (several coexisting optima)",
@@ -70,6 +80,16 @@
       "material_name": "Synthetic reference macrospin",
       "includes_biaxial": false,
       "axis": "Current amplitude"
+    },
+    {
+      "slug": "kickoff-replication",
+      "code": "C10",
+      "title": "The kickoff paper's own peak switching fields",
+      "category": "B. Published replication",
+      "material": "crsbr",
+      "material_name": "CrSBr",
+      "includes_biaxial": false,
+      "axis": "Switching time"
     },
     {
       "slug": "crsbr-field",
@@ -200,9 +220,11 @@
       "biaxial-hard-axis"
     ],
     "B. Published replication": [
+      "prb107-biaxial-figures",
       "ocp-family",
       "thermal-success-rate",
-      "sot-down-chirp"
+      "sot-down-chirp",
+      "kickoff-replication"
     ],
     "C. Real materials": [
       "crsbr-field",
@@ -226,9 +248,9 @@
     ]
   },
   "coverage": {
-    "baked": 23,
+    "baked": 25,
     "planned": 1,
-    "blocked": 2
+    "blocked": 0
   },
   "registry": [
     {
@@ -300,17 +322,17 @@
     {
       "slug": "prb107-biaxial-figures",
       "code": "C05",
-      "title": "Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)",
+      "title": "The biaxial paper's thermal-robustness table (Phys. Rev. B 107, 214448, Table I)",
       "category": "B. Published replication",
-      "status": "blocked",
+      "status": "baked",
       "surface": "workbench",
-      "blocked_reason": "The published figure values have not been digitized from the paper; without them there is nothing to compare against, and inventing reference points would be fabrication.",
+      "blocked_reason": "",
       "split": "control",
       "ground_truth": "published",
-      "variants": 6,
-      "axis": "Switching time",
+      "variants": 7,
+      "axis": "Barrier over thermal energy",
       "methods": [
-        "R07"
+        "R11"
       ]
     },
     {
@@ -382,18 +404,17 @@
     {
       "slug": "kickoff-replication",
       "code": "C10",
-      "title": "The kickoff paper's own switching energies",
+      "title": "The kickoff paper's own peak switching fields",
       "category": "B. Published replication",
-      "status": "blocked",
+      "status": "baked",
       "surface": "workbench",
-      "blocked_reason": "The full text is behind a Cloudflare challenge and has not been read. The abstract's 1 to 10 ps rotation window and the press summaries' 126 to 140 ps switching times are in tension, and no number may be quoted until the paper itself is read (programme backlog BL-002).",
+      "blocked_reason": "",
       "split": "control",
       "ground_truth": "published",
       "variants": 6,
       "axis": "Switching time",
       "methods": [
-        "R05",
-        "R07"
+        "R05"
       ]
     },
     {

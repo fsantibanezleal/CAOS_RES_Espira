@@ -1,0 +1,143 @@
+{
+  "schema": "espira.external-dynamics-crosscheck/1",
+  "description": "The Landau-Lifshitz-Gilbert trajectory of one macrospin, integrated twice: by spinoct's norm-preserving Runge-Kutta and by VAMPIRE's Heun integrator, from the same starting direction under the same static field, with the same moment, anisotropy and damping. VAMPIRE is GPL-2 and is run as a separate process from generated input files; nothing is linked and no VAMPIRE code enters this repository.",
+  "engines": {
+    "spinoct": "0.19.000",
+    "vampire": "7.0.0 (git 525bc27)"
+  },
+  "gyromagnetic_ratio_rad_per_s_t": 176000000000.0,
+  "gyromagnetic_note": "VAMPIRE hard-codes 1.76e11 rad/(s T) while the engine's default is the CODATA electron value 1.760859e11. The difference is 4.9e-4 and enters as a rescaling of time; left alone it moves the trajectory by 1.0e-04 over two picoseconds, a hundred times the level the two codes otherwise agree at. The engine is given VAMPIRE's constant here so the comparison is about the equation of motion.",
+  "moment_bohr": 3.0,
+  "anisotropy_j": 2.4031e-23,
+  "time_step_s": 1e-17,
+  "tolerance": 1e-05,
+  "measured_on": "2026-09-22",
+  "worst_deviation": 4.663864071196395e-06,
+  "agrees": true,
+  "rows": [
+    {
+      "name": "precession, alpha = 0.1",
+      "alpha": 0.1,
+      "start": [
+        0.3,
+        0.0,
+        0.9539392
+      ],
+      "applied_field_t": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "samples": 1001,
+      "duration_s": 2e-12,
+      "worst_deviation": 7.904378798958857e-07,
+      "worst_at_s": 1.26e-12,
+      "final_ours": [
+        0.2041927539670644,
+        0.19042243082769522,
+        0.9602315434649173
+      ],
+      "final_theirs": [
+        0.204193,
+        0.190422,
+        0.960232
+      ],
+      "reversal_time_ours_s": null,
+      "reversal_time_theirs_s": null,
+      "reversal_time_difference": null
+    },
+    {
+      "name": "precession, alpha = 0.01",
+      "alpha": 0.01,
+      "start": [
+        0.3,
+        0.0,
+        0.9539392
+      ],
+      "applied_field_t": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "samples": 1001,
+      "duration_s": 2e-12,
+      "worst_deviation": 8.289226735443992e-07,
+      "worst_at_s": 1.71e-12,
+      "final_ours": [
+        0.21666648509882608,
+        0.20436743054755846,
+        0.954614889663004
+      ],
+      "final_theirs": [
+        0.216666,
+        0.204367,
+        0.954615
+      ],
+      "reversal_time_ours_s": null,
+      "reversal_time_theirs_s": null,
+      "reversal_time_difference": null
+    },
+    {
+      "name": "transverse drive, alpha = 0.05",
+      "alpha": 0.05,
+      "start": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "applied_field_t": [
+        0.4,
+        0.0,
+        0.0
+      ],
+      "samples": 1001,
+      "duration_s": 2e-12,
+      "worst_deviation": 6.720197710086448e-07,
+      "worst_at_s": 1.954e-12,
+      "final_ours": [
+        0.04674605063567199,
+        -0.12770367437685673,
+        0.990710138385904
+      ],
+      "final_theirs": [
+        0.0467461,
+        -0.127704,
+        0.99071
+      ],
+      "reversal_time_ours_s": null,
+      "reversal_time_theirs_s": null,
+      "reversal_time_difference": null
+    },
+    {
+      "name": "reversal, alpha = 0.1",
+      "alpha": 0.1,
+      "start": [
+        0.1987,
+        0.0,
+        0.98007
+      ],
+      "applied_field_t": [
+        0.0,
+        0.0,
+        -3.0
+      ],
+      "samples": 20001,
+      "duration_s": 4e-10,
+      "worst_deviation": 4.663864071196395e-06,
+      "worst_at_s": 8.454e-11,
+      "final_ours": [
+        -8.941172281366064e-13,
+        -8.816526788524254e-12,
+        -1.0
+      ],
+      "final_theirs": [
+        -8.9415e-13,
+        -8.81652e-12,
+        -1.0
+      ],
+      "reversal_time_ours_s": 7.873194104798016e-11,
+      "reversal_time_theirs_s": 7.873194793219976e-11,
+      "reversal_time_difference": 8.743870545049906e-08
+    }
+  ]
+}

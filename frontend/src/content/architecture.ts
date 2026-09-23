@@ -75,6 +75,36 @@ const honestySvg = `
   <defs><marker id="b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L6 4 L0 8" fill="currentColor"/></marker></defs>
 </svg>`;
 
+const outsideSvg = `
+<svg viewBox="0 0 660 280" role="img" style="width:100%;height:auto;color:var(--color-fg)">
+  <rect x="250" y="20" width="160" height="54" ${BOX}/>
+  <text x="330" y="44" text-anchor="middle" font-size="13" fill="var(--color-accent,#3b82f6)">spinoct</text>
+  <text x="330" y="62" text-anchor="middle" class="l-en" font-size="11" fill="currentColor" opacity="0.75">this product's engine</text>
+  <text x="330" y="62" text-anchor="middle" class="l-es" font-size="11" fill="currentColor" opacity="0.75">el motor de este producto</text>
+
+  <rect x="20" y="150" width="230" height="110" ${BOX} stroke-dasharray="5 4"/>
+  <text x="135" y="176" text-anchor="middle" font-size="13" fill="currentColor">Spirit (GNEB)</text>
+  <text x="135" y="200" text-anchor="middle" class="l-en" font-size="11" fill="currentColor" opacity="0.75">the barrier: the STATICS</text>
+  <text x="135" y="200" text-anchor="middle" class="l-es" font-size="11" fill="currentColor" opacity="0.75">la barrera: la ESTATICA</text>
+  <text x="135" y="224" text-anchor="middle" font-size="12" fill="var(--color-accent,#3b82f6)">1.4e-06</text>
+  <text x="135" y="244" text-anchor="middle" class="l-en" font-size="11" fill="currentColor" opacity="0.75">6 lattices, chain and patch</text>
+  <text x="135" y="244" text-anchor="middle" class="l-es" font-size="11" fill="currentColor" opacity="0.75">6 redes, cadena y parche</text>
+
+  <rect x="410" y="150" width="230" height="110" ${BOX} stroke-dasharray="5 4"/>
+  <text x="525" y="176" text-anchor="middle" font-size="13" fill="currentColor">VAMPIRE (Heun)</text>
+  <text x="525" y="200" text-anchor="middle" class="l-en" font-size="11" fill="currentColor" opacity="0.75">the trajectory: the DYNAMICS</text>
+  <text x="525" y="200" text-anchor="middle" class="l-es" font-size="11" fill="currentColor" opacity="0.75">la trayectoria: la DINAMICA</text>
+  <text x="525" y="224" text-anchor="middle" font-size="12" fill="var(--color-accent,#3b82f6)">4.7e-06</text>
+  <text x="525" y="244" text-anchor="middle" class="l-en" font-size="11" fill="currentColor" opacity="0.75">separate process, GPL-2, never linked</text>
+  <text x="525" y="244" text-anchor="middle" class="l-es" font-size="11" fill="currentColor" opacity="0.75">proceso aparte, GPL-2, nunca enlazado</text>
+
+  <path d="M280 74 L 160 150" ${S} marker-end="url(#c)"/>
+  <path d="M380 74 L 500 150" ${S} marker-end="url(#c)"/>
+  <text x="330" y="120" text-anchor="middle" class="l-en" font-size="12" fill="currentColor">same Hamiltonian, same starting path</text>
+  <text x="330" y="120" text-anchor="middle" class="l-es" font-size="12" fill="currentColor">mismo hamiltoniano, mismo camino inicial</text>
+  <defs><marker id="c" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L6 4 L0 8" fill="currentColor"/></marker></defs>
+</svg>`;
+
 export const ARCHITECTURE: ArchitectureConfig = {
   title_en: 'How Espira works',
   title_es: 'Como funciona Espira',
@@ -108,6 +138,16 @@ export const ARCHITECTURE: ArchitectureConfig = {
       body_es:
         'El costo de conmutacion es una integral en tesla al cuadrado por segundo, no una energia. Se vuelve julios solo mediante un modelo de circuito explicito, y aun asi es la energia que disipa el circuito, no la energia de celda de un dispositivo de memoria. Espira reporta el costo sin modelo como primario y hace visible la suposicion del circuito.',
       svg: honestySvg,
+    },
+    {
+      id: 'outside',
+      en: 'Checked from outside',
+      es: 'Comprobado desde afuera',
+      body_en:
+        'A product that only agrees with itself proves nothing, so the two objects everything else rests on are computed twice, by codes written by other people. Spirit recomputes the energy barrier with a different method (geodesic nudged elastic band against the string method) on both geometries, chains and the square patch, and agrees to 1.4e-06. VAMPIRE reintegrates the equation of motion with a different integrator and agrees to 4.7e-06, putting the moment through the equator at the same 78.7319 ps. Neither is a dependency: Spirit runs in its own environment, VAMPIRE is GPL-2 and runs as a separate process, and CI installs neither.',
+      body_es:
+        'Un producto que solo se pone de acuerdo consigo mismo no prueba nada, asi que los dos objetos sobre los que descansa todo lo demas se calculan dos veces, con codigos escritos por otras personas. Spirit recalcula la barrera de energia con otro metodo (banda elastica geodesica frente al metodo de cuerda) en ambas geometrias, cadenas y el parche cuadrado, y coincide a 1.4e-06. VAMPIRE reintegra la ecuacion de movimiento con otro integrador y coincide a 4.7e-06, cruzando el ecuador en los mismos 78.7319 ps. Ninguno es dependencia: Spirit corre en su propio entorno, VAMPIRE es GPL-2 y corre como proceso separado, y CI no instala ninguno.',
+      svg: outsideSvg,
     },
   ],
 };

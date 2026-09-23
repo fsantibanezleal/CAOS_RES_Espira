@@ -126,8 +126,16 @@ def _system_block(case: Case) -> dict:
 
 
 def _time_for(case: Case, variant: float) -> float:
-    """The switching time, in tau0, at which a variant is computed."""
-    return variant if case.axis.name == "switching_time" else _FIXED_TIME_TAU0
+    """The switching time, in tau0, at which a variant is computed.
+
+    A case that sweeps its switching time in picoseconds, because that is how its source publishes it,
+    is converted here so the rest of the bake sees one unit.
+    """
+    if case.axis.name == "switching_time":
+        return variant
+    if case.axis.name == "switching_time_ps":
+        return variant * 1e-12 / _system(case, variant, uniaxial=True).tau0
+    return _FIXED_TIME_TAU0
 
 
 def _cost_row(case: Case, variant: float) -> dict:
@@ -449,6 +457,26 @@ def _live_inputs(case: Case) -> dict | None:
     carries its own implementation of the closed form, and this block gives it the same inputs the
     engine used, in SI, so the two can be compared rather than assumed equal.
     """
+    if case.primary_method == "R05":
+        # The uniaxial closed form. The browser needs only the system constants: the peak amplitude of
+        # the optimal pulse follows from them and the switching time in closed form, once the shape
+        # parameter is solved from the period relation.
+        system = _system(case, uniaxial=True)
+        return {
+            "method": "R05",
+            "alpha": system.alpha,
+            "gamma": system.gamma,
+            "anisotropy_j": system.anisotropy_j,
+            "mu": system.mu,
+            "tau0_s": system.tau0,
+            "xi": 0.0,
+            "beta": 0.0,
+            "note": (
+                "The browser solves the shape parameter from T = 4 tau0 (1 + a^2) p K(-a^2 p^2) and "
+                "evaluates the peak of the closed-form pulse, K / (mu p sqrt(1+a^2)) "
+                "[sqrt(1 + a^2 p^2) + a p], then compares its answer with the committed artifact."
+            ),
+        }
     if case.primary_method != "R06":
         return None
     from spinoct.analytic.sot import ideal_sot_ratio_beta

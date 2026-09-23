@@ -4,7 +4,7 @@ A case is a scientific question the product answers: a system, a variant family,
 pre-declared expectation with the kill criterion that would make it a failure. The 26 cases of the
 validated plan are all declared here, so a missing one cannot hide behind the ones that are baked.
 
-**23 baked, 1 planned, 2 blocked.** Baked cases
+**25 baked, 1 planned, 0 blocked.** Baked cases
 have committed artifacts; planned cases are declared and runnable but not yet computed; blocked
 cases name what is missing. This page and the per-case pages are generated from the registry
 (`python scripts/gen_case_docs.py`).
@@ -26,12 +26,12 @@ Figures and tables of the lineage papers, reproduced or refuted.
 
 | Case | Status | Variants | Methods | Ground truth |
 |---|---|---|---|---|
-| C05 [Biaxial numerical optimal control (Phys. Rev. B 107, 214448, figures 3 and 7)](prb107-biaxial-figures.md) | blocked (The published figure values have not been digitized from the...) | 6 x switching time | R07 | published |
+| C05 [The biaxial paper's thermal-robustness table (Phys. Rev. B 107, 214448, Table I)](prb107-biaxial-figures.md) | baked | 7 x barrier over thermal energy | R11 | published |
 | C06 [The optimal control path family (several coexisting optima)](ocp-family.md) | baked | 6 x search seed | R07 | published |
 | C07 [Thermal success rate against the stability factor](thermal-success-rate.md) | baked | 6 x thermal stability factor | R11, R12 | published |
 | C08 [Spin-orbit torque, the simplified down-chirp protocol](sot-down-chirp.md) | baked | 6 x current amplitude | R04 | published |
 | C09 [Longitudinal stabilization, the cost of reliability](longitudinal-stabilization.md) | baked | 6 x longitudinal field | R11, R12 | published |
-| C10 [The kickoff paper's own switching energies](kickoff-replication.md) | blocked (The full text is behind a Cloudflare challenge and has not b...) | 6 x switching time | R05, R07 | published |
+| C10 [The kickoff paper's own peak switching fields](kickoff-replication.md) | baked | 6 x switching time | R05 | published |
 
 ## C. Real materials
 

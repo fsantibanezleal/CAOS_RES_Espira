@@ -1,0 +1,181 @@
+{
+  "schema": "espira.manifest/2",
+  "case": "prb107-biaxial-figures",
+  "code": "C05",
+  "status": "baked",
+  "engine": "spinoct",
+  "engine_version": "0.19.000",
+  "seed": 0,
+  "split": "control",
+  "ground_truth": "published",
+  "methods": [
+    "R11"
+  ],
+  "variants": [
+    20.0,
+    30.0,
+    40.0,
+    50.0,
+    60.0,
+    70.0,
+    80.0
+  ],
+  "artifact": {
+    "path": "prb107-biaxial-figures.json",
+    "bytes": 314726,
+    "sha256": "56de9b14544a11cd55a01d8f8b8050873722dfdf93562fed1c3855acab6a5eae"
+  },
+  "lane": {
+    "lane": "precompute",
+    "runtime_ms": 0.02,
+    "artifact_bytes": 314726,
+    "methods": [
+      "R11"
+    ],
+    "reasons": [
+      "methods ['R11'] have no closed form for the browser"
+    ]
+  },
+  "completeness": {
+    "expected": 7,
+    "produced": 7,
+    "not_applicable": 0,
+    "missing": 0
+  },
+  "results": [
+    {
+      "method": "R11",
+      "variant": 20.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a switching success rate under thermal fluctuations, not a field cost",
+      "metrics": {
+        "stability_factor": 20.0,
+        "success_rate_alpha_0p01": 0.918,
+        "equilibrium_spread_alpha_0p01": 0.015087692175457494,
+        "success_rate_alpha_0p1": 0.924,
+        "equilibrium_spread_alpha_0p1": 0.01452004991774484,
+        "success_rate": 0.924
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 30.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a switching success rate under thermal fluctuations, not a field cost",
+      "metrics": {
+        "stability_factor": 30.0,
+        "success_rate_alpha_0p01": 0.96,
+        "equilibrium_spread_alpha_0p01": 0.01079110822531658,
+        "published_rate_alpha_0p01": 0.953,
+        "gap_to_published_alpha_0p01": 0.007000000000000006,
+        "success_rate_alpha_0p1": 0.969,
+        "equilibrium_spread_alpha_0p1": 0.009554426792933104,
+        "published_rate_alpha_0p1": 0.968,
+        "gap_to_published_alpha_0p1": 0.0010000000000000009,
+        "success_rate": 0.969
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 40.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a switching success rate under thermal fluctuations, not a field cost",
+      "metrics": {
+        "stability_factor": 40.0,
+        "success_rate_alpha_0p01": 0.978,
+        "equilibrium_spread_alpha_0p01": 0.008230109689366731,
+        "success_rate_alpha_0p1": 0.983,
+        "equilibrium_spread_alpha_0p1": 0.007122602681970246,
+        "success_rate": 0.983
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 50.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a switching success rate under thermal fluctuations, not a field cost",
+      "metrics": {
+        "stability_factor": 50.0,
+        "success_rate_alpha_0p01": 0.982,
+        "equilibrium_spread_alpha_0p01": 0.006727783552898976,
+        "published_rate_alpha_0p01": 0.9840000000000001,
+        "gap_to_published_alpha_0p01": -0.002000000000000113,
+        "success_rate_alpha_0p1": 0.99,
+        "equilibrium_spread_alpha_0p1": 0.005678148338568539,
+        "published_rate_alpha_0p1": 0.9890000000000001,
+        "gap_to_published_alpha_0p1": 0.0009999999999998899,
+        "success_rate": 0.99
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 60.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a switching success rate under thermal fluctuations, not a field cost",
+      "metrics": {
+        "stability_factor": 60.0,
+        "success_rate_alpha_0p01": 0.99,
+        "equilibrium_spread_alpha_0p01": 0.005638349357697538,
+        "success_rate_alpha_0p1": 0.995,
+        "equilibrium_spread_alpha_0p1": 0.004720993947285127,
+        "success_rate": 0.995
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 70.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a switching success rate under thermal fluctuations, not a field cost",
+      "metrics": {
+        "stability_factor": 70.0,
+        "success_rate_alpha_0p01": 0.996,
+        "equilibrium_spread_alpha_0p01": 0.004825608035064576,
+        "published_rate_alpha_0p01": 0.996,
+        "gap_to_published_alpha_0p01": 0.0,
+        "success_rate_alpha_0p1": 0.999,
+        "equilibrium_spread_alpha_0p1": 0.004040082619014092,
+        "published_rate_alpha_0p1": 0.996,
+        "gap_to_published_alpha_0p1": 0.0030000000000000027,
+        "success_rate": 0.999
+      }
+    },
+    {
+      "method": "R11",
+      "variant": 80.0,
+      "cost": null,
+      "switched": true,
+      "applicable": true,
+      "reason": "a switching success rate under thermal fluctuations, not a field cost",
+      "metrics": {
+        "stability_factor": 80.0,
+        "success_rate_alpha_0p01": 0.999,
+        "equilibrium_spread_alpha_0p01": 0.004212186031432124,
+        "published_rate_alpha_0p01": 0.9990000000000001,
+        "gap_to_published_alpha_0p01": -1.1102230246251565e-16,
+        "success_rate_alpha_0p1": 1.0,
+        "equilibrium_spread_alpha_0p1": 0.003530885429644286,
+        "published_rate_alpha_0p1": 0.998,
+        "gap_to_published_alpha_0p1": 0.0020000000000000018,
+        "success_rate": 1.0
+      }
+    }
+  ],
+  "parameter_flags": [
+    "anisotropy: assumed",
+    "hard_axis_ratio: assumed",
+    "damping: assumed",
+    "damping: wide damping band"
+  ]
+}

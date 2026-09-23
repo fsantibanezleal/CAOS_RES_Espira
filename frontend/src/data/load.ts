@@ -93,3 +93,9 @@ export async function loadExternalCrosscheck(): Promise<import('./contract').Ext
   if (!response.ok) throw new Error(`external_crosscheck.json ${response.status}`);
   return response.json();
 }
+
+export async function loadExternalDynamics(): Promise<import('./contract').ExternalDynamicsCrosscheck> {
+  const response = await fetch(bust(`${base}artifacts/external_dynamics_crosscheck.json`));
+  if (!response.ok) throw new Error(`external_dynamics_crosscheck.json ${response.status}`);
+  return response.json();
+}
