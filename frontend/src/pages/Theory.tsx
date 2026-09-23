@@ -68,7 +68,11 @@ function HardAxis(): React.JSX.Element {
           : 'A hard axis reduces the switching cost below the free-macrospin floor, which is impossible in a uniaxial system, because the material internal torque points in the switching direction in part of configuration space. The remarkable part: the energy barrier, and therefore the thermal stability, is unchanged. This dissolves the writability-versus-stability dilemma of magnetic memory.'}{' '}
         <Cite id="badarneh2023" />
       </p>
-      <Equation tex="\tilde E = -K s_y^2 + \xi K s_x^2, \qquad \Phi_m(T) < \Phi_f(T) \;\text{when}\; \xi > 0" />
+      {/* The word inside \text is prose, so it follows the page's language; String.raw keeps the TeX
+          backslashes literal (a plain template literal would turn \t in \tilde into a tab). */}
+      <Equation
+        tex={String.raw`\tilde E = -K s_y^2 + \xi K s_x^2, \qquad \Phi_m(T) < \Phi_f(T) \;\text{${lang === 'es' ? 'cuando' : 'when'}}\; \xi > 0`}
+      />
       <p>
         {lang === 'es'
           ? 'CrSBr es triaxial y su anisotropia es sintonizable por el sustrato, asi que es el anfitrion natural de este mecanismo.'

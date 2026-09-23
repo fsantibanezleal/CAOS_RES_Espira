@@ -48,7 +48,7 @@ export const CITATIONS: Citation[] = [
   },
   {
     id: 'sunwang2006',
-    label: 'Sun and Wang 2006',
+    label: 'Sun & Wang 2006',
     citation:
       'Z. Z. Sun, X. R. Wang, Theoretical Limit of the Minimal Magnetization Switching Field and the Optimal Field Pulse for Stoner Particles, Phys. Rev. Lett. 97, 077205 (2006).',
     doi: '10.1103/PhysRevLett.97.077205',

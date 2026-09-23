@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { ParetoMaterial } from '../data/contract';
+import { logDecadeTicks } from './logTicks';
 
 interface Props {
   item: ParetoMaterial;
@@ -27,13 +28,6 @@ function cssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   return value || fallback;
-}
-
-/** A decade label: plain digits while they stay short, so an axis reads 1, 10, 100, 1000. */
-function axisLabel(value: number): string {
-  return Math.abs(value) >= 1e5 || (value !== 0 && Math.abs(value) < 1e-4)
-    ? value.toExponential(0)
-    : String(Number(value.toPrecision(6)));
 }
 
 /** Plain, locale-free: a Spanish page must not print "0,8" beside a legend's "0.83". */
@@ -57,17 +51,9 @@ export function ParetoChart({ item, theme, es }: Props): React.JSX.Element {
 
     const stroke = cssVar('--color-fg', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
     const grid = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-    /** Label the decades only and leave the minor splits blank: a log axis hands the formatter every
-     * minor tick too, and labelling them all printed a row of placeholder dashes under the plot. */
-    const tick = (which: 'x' | 'y') => (_u: uPlot, splits: number[]) => {
-      const drawn = splits.map((v) => {
-        if (v == null || !Number.isFinite(v) || v <= 0) return null;
-        const decade = Math.log10(v);
-        return Math.abs(decade - Math.round(decade)) < 1e-9 ? axisLabel(v) : null;
-      });
-      host.dataset[which === 'x' ? 'xTicks' : 'yTicks'] = drawn.filter(Boolean).join('|');
-      return drawn;
-    };
+    // Label the decades only and leave the minor splits blank (see logTicks.ts for why); labelling
+    // them all printed a row of placeholder dashes under this plot once.
+    const tick = (which: 'x' | 'y') => logDecadeTicks(host, which);
 
     const data = [
       times,

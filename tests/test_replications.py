@@ -90,3 +90,32 @@ def test_c05_covers_the_regime_where_the_protocol_can_fail(biaxial: dict) -> Non
     rates = [row["r11"]["success_rate_alpha_0p01"] for row in biaxial["cost_curve"]]
     assert min(rates) < 0.95, "the sweep must include a cell the protocol does not always survive"
     assert max(rates) > 0.99
+
+
+def test_the_introduction_states_the_replication_counts_the_artifacts_have(
+    kickoff: dict, biaxial: dict
+) -> None:
+    """The landing page says the kickoff fields reproduce at three of four quoted points and the
+    biaxial table in all eight cells. Stated counts go stale the day a rebake moves a point, so the
+    page's words are held to the artifacts here, in both languages."""
+    quoted = [r["r05"] for r in kickoff["cost_curve"] if r["r05"].get("published_peak_field_t") is not None]
+    reproduced = [r for r in quoted if abs(r["ratio_to_published"] - 1.0) <= 0.03]
+    cells = [
+        (r["r11"][f"success_rate_{key}"], r["r11"][f"published_rate_{key}"])
+        for r in biaxial["cost_curve"]
+        for key in ("alpha_0p01", "alpha_0p1")
+        if r["r11"].get(f"published_rate_{key}") is not None
+    ]
+    within = [c for c in cells if abs(c[0] - c[1]) <= _ENSEMBLE_TOLERANCE]
+
+    assert len(within) == len(cells), (
+        f"{len(within)} of {len(cells)} thermal cells reproduce; the Introduction says all of them"
+    )
+    # The page states each measured count as a word, in both languages. A count with no word here means
+    # the numbers moved and the page has to be rewritten, which is the point of the test.
+    number_words = {3: ("three", "tres"), 4: ("four", "cuatro"), 8: ("eight", "ocho")}
+    page = (ROOT / "frontend" / "src" / "pages" / "Introduction.tsx").read_text(encoding="utf-8")
+    for measured in (len(reproduced), len(quoted), len(cells)):
+        assert measured in number_words, f"the Introduction has no wording for a count of {measured}"
+        en, es = number_words[measured]
+        assert en in page and es in page, f"the Introduction does not state the count {measured} ({en}/{es})"

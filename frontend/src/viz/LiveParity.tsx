@@ -45,9 +45,9 @@ export function LiveParity({ fixture, es }: Props): React.JSX.Element {
         switchingTime: row.switching_time_s,
       });
       const pairs: [string, number, number][] = [
-        ['mean current', result.meanCurrentReduced, row.mean_current_reduced],
-        ['fast-switching cost', result.costFastReduced, row.cost_fast_reduced],
-        ['characteristic time', result.characteristicTimeS, row.characteristic_time_s],
+        [es ? 'corriente media' : 'mean current', result.meanCurrentReduced, row.mean_current_reduced],
+        [es ? 'costo de conmutacion rapida' : 'fast-switching cost', result.costFastReduced, row.cost_fast_reduced],
+        [es ? 'tiempo caracteristico' : 'characteristic time', result.characteristicTimeS, row.characteristic_time_s],
       ];
       return pairs.map(([what, browser, committed]) => ({
         label: `${what}, T = ${row.switching_time_tau0} tau0`,
@@ -58,7 +58,7 @@ export function LiveParity({ fixture, es }: Props): React.JSX.Element {
     });
     const worst = (rows: Row[]) => rows.reduce((a, r) => Math.max(a, r.deviation), 0);
     return { elliptic, protocol, worstElliptic: worst(elliptic), worstProtocol: worst(protocol) };
-  }, [fixture]);
+  }, [fixture, es]);
 
   const groups: { key: 'elliptic_k' | 'protocol'; title: string; rows: Row[]; worst: number }[] = [
     {

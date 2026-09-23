@@ -9,10 +9,11 @@
 // Interactive (uPlot): hover for values, click a legend entry to solo or hide a series. Sized by a
 // ResizeObserver so a hidden tab does not fix the width.
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { CaseArtifact, CostRow, MethodBlock } from '../data/contract';
+import { decadeRange, logDecadeTicks } from './logTicks';
 
 interface Props {
   kickoff: CaseArtifact;
@@ -39,19 +40,22 @@ const num = (row: CostRow, method: string, key: string): number | null => {
   return typeof value === 'number' ? value : null;
 };
 
+/** One uPlot chart, rebuilt only when its data, its options or the theme actually change. The data and
+ * the options are memoized by the caller: passing fresh ones each render would tear the chart down and
+ * rebuild it on every render of the page, which it did in the first version of this component. */
 function useChart(
-  data: uPlot.AlignedData | null,
-  options: (stroke: string, grid: string) => uPlot.Options,
+  data: uPlot.AlignedData,
+  options: (stroke: string, grid: string, host: HTMLElement) => uPlot.Options,
   theme: 'light' | 'dark',
 ): React.RefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement>(null);
   const plot = useRef<uPlot | null>(null);
   useEffect(() => {
     const host = ref.current;
-    if (!host || !data) return;
+    if (!host) return;
     const stroke = cssVar('--color-fg', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
     const grid = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-    const opts = options(stroke, grid);
+    const opts = options(stroke, grid, host);
     opts.width = Math.max(host.clientWidth, 280);
     plot.current?.destroy();
     plot.current = new uPlot(opts, data, host);
@@ -75,43 +79,51 @@ export function Replications({ kickoff, biaxial, theme, es }: Props): React.JSX.
   // C10: the peak amplitude of the optimal pulse at the times the source quotes. Both axes are
   // logarithmic because the quoted points span four picoseconds to two nanoseconds and four tesla to
   // ten millitesla; a linear axis would draw three of the four points on top of each other.
-  const kickoffData = [
-    kickoffRows.map((r) => r.variant),
-    kickoffRows.map((r) => num(r, 'r05', 'peak_field_t')),
-    kickoffRows.map((r) => num(r, 'r05', 'published_peak_field_t')),
-    kickoffRows.map((r) => num(r, 'r05', 'published_alternative_t')),
-  ] as unknown as uPlot.AlignedData;
+  const kickoffData = useMemo(() => {
+    const rows = [...kickoff.cost_curve].sort((a, b) => a.variant - b.variant);
+    return [
+      rows.map((r) => r.variant),
+      rows.map((r) => num(r, 'r05', 'peak_field_t')),
+      rows.map((r) => num(r, 'r05', 'published_peak_field_t')),
+      rows.map((r) => num(r, 'r05', 'published_alternative_t')),
+    ] as unknown as uPlot.AlignedData;
+  }, [kickoff]);
+  // Whole decades around every plotted value, so the lowest published point (9.6 mT) is inside the
+  // frame rather than sitting on it.
+  const kickoffRangeX = useMemo(() => decadeRange(kickoffData[0] as number[]), [kickoffData]);
+  const kickoffRangeY = useMemo(
+    () => decadeRange((kickoffData.slice(1) as (number | null)[][]).flat()),
+    [kickoffData],
+  );
 
-  const logTicks = (_u: uPlot, splits: number[]) =>
-    splits.map((v) => (v > 0 ? String(Number(v.toPrecision(3))) : null));
-
-  const kickoffRef = useChart(
-    kickoffData,
-    (stroke, grid) => ({
+  const kickoffOptions = useCallback(
+    (stroke: string, grid: string, host: HTMLElement): uPlot.Options => ({
       width: 600,
       height: HEIGHT,
-      scales: { x: { time: false, distr: 3 }, y: { distr: 3 } },
+      scales: {
+        x: { time: false, distr: 3, range: kickoffRangeX },
+        y: { distr: 3, range: kickoffRangeY },
+      },
       axes: [
         {
           label: es ? 'tiempo de conmutacion (ps)' : 'switching time (ps)',
           stroke,
           grid: { stroke: grid },
           ticks: { stroke: grid },
-          values: logTicks,
-          // A log axis draws minor ticks between decades; returning null for them keeps the labels
-          // readable instead of printing nine numbers per decade.
-          filter: (_u, splits) => splits,
+          // Decades labelled, minors left as grid lines, and what was drawn recorded on the host for
+          // the gate. The first version labelled every minor and printed "500600708090000".
+          values: logDecadeTicks(host, 'x'),
         },
         {
           label: es ? 'campo pico (T)' : 'peak field (T)',
           stroke,
           grid: { stroke: grid },
           ticks: { stroke: grid },
-          values: logTicks,
+          values: logDecadeTicks(host, 'y'),
         },
       ],
       series: [
-        { label: es ? 'tiempo' : 'time', value: plain },
+        { label: es ? 'tiempo de conmutacion (ps)' : 'switching time (ps)', value: plain },
         {
           label: es ? 'este producto' : 'this product',
           stroke: OURS,
@@ -136,25 +148,38 @@ export function Replications({ kickoff, biaxial, theme, es }: Props): React.JSX.
       ],
       legend: { show: true },
     }),
-    theme,
+    [es, kickoffRangeX, kickoffRangeY],
   );
+  const kickoffRef = useChart(kickoffData, kickoffOptions, theme);
 
   // C05: the published thermal-robustness table, both dampings, ours drawn as lines and theirs as
   // points on the same axis.
-  const biaxialData = [
-    biaxialRows.map((r) => r.variant),
-    biaxialRows.map((r) => num(r, 'r11', 'success_rate_alpha_0p01')),
-    biaxialRows.map((r) => num(r, 'r11', 'published_rate_alpha_0p01')),
-    biaxialRows.map((r) => num(r, 'r11', 'success_rate_alpha_0p1')),
-    biaxialRows.map((r) => num(r, 'r11', 'published_rate_alpha_0p1')),
-  ] as unknown as uPlot.AlignedData;
+  const biaxialData = useMemo(() => {
+    const rows = [...biaxial.cost_curve].sort((a, b) => a.variant - b.variant);
+    return [
+      rows.map((r) => r.variant),
+      rows.map((r) => num(r, 'r11', 'success_rate_alpha_0p01')),
+      rows.map((r) => num(r, 'r11', 'published_rate_alpha_0p01')),
+      rows.map((r) => num(r, 'r11', 'success_rate_alpha_0p1')),
+      rows.map((r) => num(r, 'r11', 'published_rate_alpha_0p1')),
+    ] as unknown as uPlot.AlignedData;
+  }, [biaxial]);
 
-  const biaxialRef = useChart(
-    biaxialData,
-    (stroke, grid) => ({
+  // The floor follows the data rather than a constant: a fixed 0.9 would clip, without a word, any
+  // future cell that came out below it, and a replication chart is the last place to hide a point.
+  const biaxialFloor = useMemo(() => {
+    const rates = (biaxialData.slice(1) as (number | null)[][])
+      .flat()
+      .filter((v): v is number => v != null && Number.isFinite(v));
+    const lowest = rates.length ? Math.min(...rates) : 0.9;
+    return Math.min(0.9, Math.floor(lowest * 100) / 100 - 0.01);
+  }, [biaxialData]);
+
+  const biaxialOptions = useCallback(
+    (stroke: string, grid: string): uPlot.Options => ({
       width: 600,
       height: HEIGHT,
-      scales: { x: { time: false }, y: { range: [0.9, 1.005] } },
+      scales: { x: { time: false }, y: { range: [biaxialFloor, 1.005] } },
       axes: [
         {
           label: es ? 'barrera / energia termica  K/kT' : 'barrier over thermal energy  K/kT',
@@ -205,8 +230,9 @@ export function Replications({ kickoff, biaxial, theme, es }: Props): React.JSX.
       ],
       legend: { show: true },
     }),
-    theme,
+    [es, biaxialFloor],
   );
+  const biaxialRef = useChart(biaxialData, biaxialOptions, theme);
 
   const quoted = kickoffRows.filter((r) => num(r, 'r05', 'published_peak_field_t') != null);
   const worst = Math.max(...quoted.map((r) => Math.abs((num(r, 'r05', 'ratio_to_published') ?? 1) - 1)));
