@@ -87,7 +87,8 @@ CASES = (
 
 def _write_inputs(work: Path, case: dict) -> None:
     sx, sy, sz = case["start"]
-    bx, by, bz = case["field"]
+    # VAMPIRE takes a field as a strength and a unit vector, so the vector the engine is given is
+    # split here rather than carried twice in the case table.
     strength = float(np.linalg.norm(case["field"]))
     unit = tuple(component / strength for component in case["field"])
     (work / "vamp.mat").write_text(
@@ -121,7 +122,6 @@ def _write_inputs(work: Path, case: dict) -> None:
         encoding="utf-8",
         newline="\n",
     )
-    del bx, by, bz
 
 
 def _run_vampire(work: Path, binary: str, runner: list[str]) -> np.ndarray:

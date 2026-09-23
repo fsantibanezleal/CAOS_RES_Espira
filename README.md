@@ -20,6 +20,28 @@ The scientific engine is a separate, open-source (MIT) Python package,
 holds the domain layer: the curated material parameter database, the case matrix, the canonical bake,
 and the companion web app.
 
+## What has been checked against someone else
+
+A product that only agrees with itself is not evidence of anything, so three of the things this one
+rests on are checked from outside.
+
+- **The published numbers.** Case C10 reproduces the kickoff paper's peak switching fields for
+  monolayer CrSBr at three of its four quoted points (4.47 T against 4.6 T at 4 ps, 150.4 mT against
+  150 mT at 126 ps, 136.2 mT against 135 mT at 140 ps); the fourth needs a damping the paper also
+  states, and the case shows the gap rather than hiding it. Case C05 reproduces all eight cells of the
+  biaxial paper's thermal-robustness table within the Monte-Carlo interval.
+- **The energy barrier**, the floor under every cost reported here, is re-derived by Spirit's geodesic
+  nudged elastic band on chains and on the two-dimensional patch: worst relative difference 1.4e-06
+  over six lattices.
+- **The equation of motion** is re-integrated by VAMPIRE, a different code with a different
+  integrator: worst trajectory deviation 4.7e-06, and both codes put the moment through the equator at
+  78.7319 ps. VAMPIRE is GPL-2 and is run as a separate process from generated input files, never
+  linked, so this repository and its engine stay MIT.
+
+Neither external code is a dependency; both are run by hand and their results are committed with the
+versions that produced them. `docs/results/` has a page for each comparison, including the setups that
+had to be discarded because they compared nothing.
+
 ## Manuscript
 
 1. The Cost of Reliability in Optimal Magnetization Switching: A Longitudinal-Field Front for Van der

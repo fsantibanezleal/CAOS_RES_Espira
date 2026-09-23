@@ -2,7 +2,7 @@
   "schema": "espira.external-dynamics-crosscheck/1",
   "description": "The Landau-Lifshitz-Gilbert trajectory of one macrospin, integrated twice: by spinoct's norm-preserving Runge-Kutta and by VAMPIRE's Heun integrator, from the same starting direction under the same static field, with the same moment, anisotropy and damping. VAMPIRE is GPL-2 and is run as a separate process from generated input files; nothing is linked and no VAMPIRE code enters this repository.",
   "engines": {
-    "spinoct": "0.18.000",
+    "spinoct": "0.19.000",
     "vampire": "7.0.0 (git 525bc27)"
   },
   "gyromagnetic_ratio_rad_per_s_t": 176000000000.0,

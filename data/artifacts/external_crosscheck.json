@@ -1,6 +1,6 @@
 {
   "schema": "espira.external-crosscheck/1",
-  "description": "The minimum-energy-path barrier of an open spin chain, computed twice: by spinoct's climbing-image string method and by Spirit's geodesic nudged elastic band, from the same tanh-wall initial path and the same Hamiltonian. The two codes share no code and no method.",
+  "description": "The minimum-energy-path barrier of an open spin chain and of a square patch, computed twice: by spinoct's climbing-image string method and by Spirit's geodesic nudged elastic band, from the same tanh-wall initial path and the same Hamiltonian. The two codes share no code and no method.",
   "engines": {
     "spinoct": "0.18.000",
     "spirit": "2.2.0"
@@ -9,10 +9,13 @@
   "moment_bohr": 3.0,
   "tolerance": 1e-05,
   "measured_on": "2026-09-22",
-  "worst_relative_difference": 3.108231726356383e-07,
+  "worst_relative_difference": 1.3669620208887799e-06,
   "agrees": true,
   "rows": [
     {
+      "geometry": "chain",
+      "width": 8,
+      "height": 1,
       "n_sites": 8,
       "exchange_over_k": 10.0,
       "images": 33,
@@ -20,9 +23,13 @@
       "spinoct_converged": true,
       "spirit_barrier_over_k": 7.74749755859375,
       "spirit_saddle_image": 16,
+      "barrier_over_nk": 0.9684374604641809,
       "relative_difference": 2.742974874297071e-07
     },
     {
+      "geometry": "chain",
+      "width": 12,
+      "height": 1,
       "n_sites": 12,
       "exchange_over_k": 10.0,
       "images": 33,
@@ -30,9 +37,13 @@
       "spinoct_converged": true,
       "spirit_barrier_over_k": 8.699061075846355,
       "spirit_saddle_image": 16,
+      "barrier_over_nk": 0.7249219816430799,
       "relative_difference": 3.108231726356383e-07
     },
     {
+      "geometry": "chain",
+      "width": 16,
+      "height": 1,
       "n_sites": 16,
       "exchange_over_k": 10.0,
       "images": 33,
@@ -40,7 +51,50 @@
       "spinoct_converged": true,
       "spirit_barrier_over_k": 8.839569091796875,
       "spirit_saddle_image": 16,
+      "barrier_over_nk": 0.5524731725114145,
       "relative_difference": 1.8874058502639253e-07
+    },
+    {
+      "geometry": "patch",
+      "width": 8,
+      "height": 8,
+      "n_sites": 64,
+      "exchange_over_k": 10.0,
+      "images": 33,
+      "spinoct_barrier_over_k": 61.979997469707826,
+      "spinoct_converged": true,
+      "spirit_barrier_over_k": 61.98008219401042,
+      "spirit_saddle_image": 16,
+      "barrier_over_nk": 0.9684374604641848,
+      "relative_difference": 1.3669620208887799e-06
+    },
+    {
+      "geometry": "patch",
+      "width": 12,
+      "height": 12,
+      "n_sites": 144,
+      "exchange_over_k": 10.0,
+      "images": 33,
+      "spinoct_barrier_over_k": 104.38876535660476,
+      "spinoct_converged": true,
+      "spirit_barrier_over_k": 104.38883463541667,
+      "spirit_saddle_image": 16,
+      "barrier_over_nk": 0.7249219816430886,
+      "relative_difference": 6.636615699985062e-07
+    },
+    {
+      "geometry": "patch",
+      "width": 8,
+      "height": 8,
+      "n_sites": 64,
+      "exchange_over_k": 2.5,
+      "images": 33,
+      "spinoct_barrier_over_k": 34.3171180486947,
+      "spinoct_converged": true,
+      "spirit_barrier_over_k": 34.31711832682292,
+      "spirit_saddle_image": 14,
+      "barrier_over_nk": 0.5362049695108547,
+      "relative_difference": 8.104649659903127e-09
     }
   ]
 }

@@ -320,7 +320,10 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     index = json.loads((ARTIFACTS / "index.json").read_text(encoding="utf-8"))
-    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, novel.json, lattice_ocp.json, patch_ocp.json, live_parity.json, pareto.json, hard_axis_map.json, penalty_test.json, descriptors.json, external_crosscheck.json consistent")
+    # The summary names every artifact the checker validated, because a check that quietly stopped
+    # covering one of them would otherwise still print OK.
+    checked = ", ".join(sorted(RESERVED - {"index.json"}))
+    print(f"ARTIFACT CHECK OK: {len(index['cases'])} cases, and {checked} consistent")
     return 0
 
 
