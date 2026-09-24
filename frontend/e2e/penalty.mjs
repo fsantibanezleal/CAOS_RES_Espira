@@ -32,7 +32,7 @@ for (const theme of ['light', 'dark']) {
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(`${base}/experiments`, { waitUntil: 'networkidle' });
-    await openView(page, lang === 'es' ? 'Penalizacion contra ensemble' : 'Penalty against ensemble');
+    await openView(page, lang === 'es' ? 'Penalización frente a Monte Carlo' : 'Penalty against ensemble');
     const readout = page.getByTestId('penalty-readout');
     await readout.waitFor({ timeout: 15000 });
     const tag = `${theme}-${lang}`;

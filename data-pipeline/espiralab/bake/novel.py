@@ -13,7 +13,35 @@ from spinoct.units import BOLTZMANN_J_PER_K
 
 from ..materials import get_material
 
-__all__ = ["bake_novel_results"]
+__all__ = ["NOVEL_NOTES", "bake_novel_results"]
+
+#: The prose the artifact carries beside its numbers. A module constant so a test can hold the committed
+#: artifact to it without rerunning the ensemble: the reliability note kept describing a success dip,
+#: and citing a manuscript version two releases old, for four product releases after the sign fix in
+#: spinoct 0.18.000 removed the dip.
+NOVEL_NOTES = {
+    "reliability": (
+        "The longitudinal-field cost-reliability front (R12) at a thermal stability factor of 20: a field "
+        "parallel to the moment is invisible to the optimal pulse dynamics and removes the hyperbolic "
+        "instability, at an added cost that grows as the square of the field and is not small, 2.5 times "
+        "the bare optimal cost at one anisotropy field and 15.8 times at two and a half. At this stability "
+        "factor the bare pulse already reverses every copy and the success rate is one at every field, so "
+        "the field buys no reliability here. Where the field does pay is below a stability factor of about "
+        "ten, which case C07 measures. Manuscript M1 v4 carries the corrected numbers: up to version 3 "
+        "they were computed with the stabilizing field applied with the wrong sign, which produced a "
+        "success dip that version 3 explained as physics. There is no dip."
+    ),
+    "lattice": (
+        "The two-mode comparison (Gap 1), kept as the record of what version 1 of manuscript M2 "
+        "concluded: a uniform rotation against a constant-speed domain-wall sweep, where uniform "
+        "rotation is cheaper at every chain length tested. That comparison is correct for those "
+        "two fixed modes at that short switching time, and its conclusion is WITHDRAWN: the "
+        "constant-speed wall is not the optimal wall, and the free search finds optimal walls "
+        "cheaper than uniform rotation above a crossover length at long switching time, bounded "
+        "below by an energy-barrier floor that links the barrier and the field cost rather than "
+        "opposing them (M2 v2)."
+    ),
+}
 
 
 def _br_front(material_slug: str) -> dict:
@@ -93,27 +121,5 @@ def bake_novel_results() -> dict:
         "schema_version": "1.0.0",
         "reliability_front": _br_front("crsbr"),
         "lattice_crossover": _lattice_crossover("crsbr"),
-        "notes": {
-            "reliability": (
-                "The longitudinal-field cost-reliability front (R12) at a thermal stability factor of "
-                "20: a field parallel to the moment is invisible to the optimal pulse dynamics and "
-                "removes the hyperbolic instability, at an added cost that grows as the square of the "
-                "field and is not small, 2.5 times the bare optimal cost at one anisotropy field and "
-                "15.8 times at two and a half. At this stability factor the bare pulse already reverses "
-                "every copy, so the field buys no reliability here; the dip near one anisotropy field is "
-                "the published counterintuitive feature. Where the field does pay is below a stability "
-                "factor of about ten, which case C07 measures. Manuscript M1 v2 corrects v1 on both "
-                "points."
-            ),
-            "lattice": (
-                "The two-mode comparison (Gap 1), kept as the record of what version 1 of manuscript M2 "
-                "concluded: a uniform rotation against a constant-speed domain-wall sweep, where uniform "
-                "rotation is cheaper at every chain length tested. That comparison is correct for those "
-                "two fixed modes at that short switching time, and its conclusion is WITHDRAWN: the "
-                "constant-speed wall is not the optimal wall, and the free search finds optimal walls "
-                "cheaper than uniform rotation above a crossover length at long switching time, bounded "
-                "below by an energy-barrier floor that links the barrier and the field cost rather than "
-                "opposing them (M2 v2)."
-            ),
-        },
+        "notes": dict(NOVEL_NOTES),
     }

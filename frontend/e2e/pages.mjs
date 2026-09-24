@@ -136,19 +136,32 @@ async function measure(page, lang) {
       // English function words, plus English-only words from this product's own vocabulary: short
       // labels such as "mean current" or "reversal" carry no function word and got past the first
       // version of this check. None of these is a Spanish word.
+      // Word edges are Unicode letters, not \b: \b is ASCII-only, so it splits accented Spanish into
+      // fragments, and the Spanish word "costó" would read as the English "cost".
       const english =
-        /\b(the|and|with|this|that|which|from|when|where|than|only|are|is|of|for|not|current|cost|time|field|switching|reversal|precession|drive|barrier|damping|energy)\b/i;
+        /(?<!\p{L})(the|and|with|this|that|which|from|when|where|than|only|are|is|of|for|not|current|cost|time|field|switching|reversal|precession|drive|barrier|damping|energy|published|precompute|analytic|fraction|copies|reduced|units|synthetic|reference|sites|none|volume|definition|dimensionless|path)(?!\p{L})/iu;
       // Spanish function words, for the reverse mistake: Spanish text wrongly marked lang="en", which
       // makes a screen reader read it with an English voice. That happened once in the pass that
       // introduced the marking, on a heading the component had already translated.
-      const spanish = /\b(el|los|las|del|que|para|con|por|una|contra|entre)\b/i;
+      const spanish = /(?<!\p{L})(el|los|las|del|que|para|con|por|una|contra|entre)(?!\p{L})/iu;
+      // Spanish written without its accents. Every Spanish string shipped that way until 0.16.000
+      // ("Implementacion", "conmutacion", "Decide: si"); a word ending in an unaccented -cion or
+      // -sion is the symptom a pattern can see.
+      const unaccented = /(?<!\p{L})\p{L}+(?:cion|sion)(?!\p{L})/iu;
       const englishLeaks = [];
       const mislabelled = [];
+      const fallbacks = [];
+      const unaccentedWords = [];
       if (pageLang === 'es') {
-        const walker = document.createTreeWalker(panel, NodeFilter.SHOW_TEXT);
+        // All visible text in <main>, not only the active tab panel: the workbench's readout and
+        // parameter column sit beside the panels, and walking the panel alone let "fraction of copies"
+        // and "published" print in English on the Spanish page through 0.16.000's first build.
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
         for (let node = walker.nextNode(); node; node = walker.nextNode()) {
           const host = node.parentElement;
-          if (!host || host.closest('code, .u-legend, svg, canvas')) continue;
+          // A case chip's slug is an identifier, like code. Legends are read: their series names are
+          // interface text (0.16.000 found the cost chart's legend in English on the Spanish page).
+          if (!host || host.closest('code, .cs-chip-id, svg, canvas')) continue;
           if (!host.getClientRects().length) continue;
           const text = node.textContent.replace(/\s+/g, ' ').trim();
           if (text.length <= 3) continue;
@@ -157,10 +170,25 @@ async function measure(page, lang) {
           // Spanish page too, so every node looked deliberate and the check inspected nothing.
           const marked = host.closest('[lang="en"]');
           if (marked && marked !== document.documentElement) {
+            // Since 0.16.000 the data renders in Spanish (content/data-es.json). A lang="en" below the
+            // root on a Spanish page is a string whose translation is missing and fell back.
+            fallbacks.push(text.slice(0, 70));
             if (spanish.test(text)) mislabelled.push(text.slice(0, 70));
             continue;
           }
           if (english.test(text)) englishLeaks.push(text.slice(0, 70));
+          const bare = text.match(unaccented);
+          if (bare) unaccentedWords.push(bare[0]);
+        }
+        // Axis titles are drawn on canvas, where no text node exists; every chart records the titles
+        // it drew on its host (viz/axisLabels.ts), and they are read here like any other text.
+        for (const chart of main.querySelectorAll('[data-x-label], [data-y-label]')) {
+          for (const title of [chart.dataset.xLabel, chart.dataset.yLabel]) {
+            if (!title) continue;
+            if (english.test(title)) englishLeaks.push(`axis: ${title.slice(0, 60)}`);
+            const bare = title.match(unaccented);
+            if (bare) unaccentedWords.push(bare[0]);
+          }
         }
       }
       const heading = main.querySelector('h1');
@@ -168,6 +196,9 @@ async function measure(page, lang) {
         englishLeaks: englishLeaks.slice(0, 4),
         englishLeakCount: englishLeaks.length,
         mislabelled: mislabelled.slice(0, 4),
+        fallbacks: fallbacks.slice(0, 4),
+        fallbackCount: fallbacks.length,
+        unaccented: unaccentedWords.slice(0, 6),
         emptyCells,
         duplicateRows,
         heading: heading ? heading.innerText.trim() : '',
@@ -264,6 +295,14 @@ for (const theme of ['light', 'dark']) {
           check(
             m.mislabelled.length === 0,
             `${tag} ${panelName}: no Spanish text marked lang="en" ${JSON.stringify(m.mislabelled)}`,
+          );
+          check(
+            m.fallbackCount === 0,
+            `${tag} ${panelName}: no data text falls back to English (${m.fallbackCount}) ${JSON.stringify(m.fallbacks)}`,
+          );
+          check(
+            m.unaccented.length === 0,
+            `${tag} ${panelName}: Spanish carries its accents ${JSON.stringify(m.unaccented)}`,
           );
           check(
             m.englishLeakCount === 0,

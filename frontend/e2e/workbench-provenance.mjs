@@ -111,6 +111,42 @@ for (const theme of ['light', 'dark']) {
           `${tag} ${entry.slug}: a synthetic system declares every value assumed`,
         );
       }
+
+      // On the Spanish page this case reads in Spanish: the readout, every parameter row opened, the
+      // chart titles the canvas draws (recorded on each chart's host, hidden tabs included) and the
+      // legends. The first build of 0.16.000 printed the unit "fraction of copies", the reference
+      // truth "published" and the lane "precompute" here in English, beside panels the breadth gate
+      // had passed: it reads the tab panels of the default case, and this gate visits every case.
+      if (lang === 'es') {
+        const heads = panel.locator('.param-head');
+        const count = await heads.count();
+        for (let i = 0; i < count; i += 1) await heads.nth(i).click();
+        const leaks = await page.evaluate(() => {
+          const english =
+            /(?<!\p{L})(the|and|with|this|that|which|from|when|where|than|only|are|is|of|for|not|current|cost|time|field|switching|reversal|precession|drive|barrier|damping|energy|published|precompute|analytic|fraction|copies|reduced|units|synthetic|reference|sites|none|volume|definition|dimensionless|path)(?!\p{L})/iu;
+          const unaccented = /(?<!\p{L})\p{L}+(?:cion|sion)(?!\p{L})/iu;
+          const texts = [];
+          const readout = document.querySelector('.wb-readout');
+          if (readout) {
+            const walker = document.createTreeWalker(readout, NodeFilter.SHOW_TEXT);
+            for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+              if (node.parentElement?.closest('code, svg, canvas')) continue;
+              const text = node.textContent.replace(/\s+/g, ' ').trim();
+              if (text.length > 3) texts.push(text);
+            }
+          }
+          for (const chart of document.querySelectorAll('main [data-x-label], main [data-y-label]')) {
+            texts.push(chart.dataset.xLabel ?? '', chart.dataset.yLabel ?? '');
+          }
+          for (const label of document.querySelectorAll('main .u-legend .u-label')) texts.push(label.textContent ?? '');
+          return texts.filter((text) => english.test(text) || unaccented.test(text));
+        });
+        for (let i = 0; i < count; i += 1) await heads.nth(i).click();
+        check(
+          leaks.length === 0,
+          `${tag} ${entry.slug}: the readout, parameters and charts read in Spanish ${JSON.stringify(leaks.slice(0, 4))}`,
+        );
+      }
     }
 
     const contrast = await page.evaluate(() => {
