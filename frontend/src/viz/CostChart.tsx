@@ -9,6 +9,8 @@ import { useEffect, useRef } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { CostRow, MethodBlock, Observable } from '../data/contract';
+import { tr } from '../content/dataText';
+import { recordAxisLabels } from './axisLabels';
 
 //: The chart never shrinks below this, and leaves this much room for the legend and axis labels.
 const _MIN_HEIGHT = 320;
@@ -43,6 +45,7 @@ interface Props {
   /** The rungs the case declared, in order; used to draw one series per method. */
   methods: string[];
   theme: 'light' | 'dark';
+  es: boolean;
 }
 
 function cssVar(name: string, fallback: string): string {
@@ -58,7 +61,7 @@ function metricOf(row: CostRow, method: string, key: string): number | null {
   return typeof value === 'number' && Number.isFinite(value) ? value : null;
 }
 
-export function CostChart({ rows, axis, observable, methods, theme }: Props): React.JSX.Element {
+export function CostChart({ rows, axis, observable, methods, theme, es }: Props): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot | null>(null);
 
@@ -75,31 +78,36 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
     const logX = t.every((v) => v > 0) && Math.max(...t) / Math.min(...t) > 20;
     // The x series' formatter is what the legend shows at the cursor; the default is locale number
     // formatting, which renders 0.327 as "0,327" in some locales and a date when time is left on.
-    const series: uPlot.Series[] = [{ label: `${axis.label} (${axis.unit})`, value: (_u, v) => tick(v) }];
+    // Units and the observable's label are data (English in the artifact); the Spanish page shows them
+    // through the same translation table as every other data string.
+    const unit = tr(axis.unit, es);
+    const observed = tr(observable.label, es);
+    const xLabel = `${axis.label}  (${unit})`;
+    const series: uPlot.Series[] = [{ label: `${axis.label} (${unit})`, value: (_u, v) => tick(v) }];
     const data: (number | null)[][] = [t];
     let yLabel: string;
     let logY: boolean;
     let bounded = false;
 
     if (observable.is_field_cost) {
-      yLabel = 'switching cost  Phi  (T^2 s)';
+      yLabel = es ? 'costo de conmutación  Phi  (T^2 s)' : 'switching cost  Phi  (T^2 s)';
       logY = true;
       series.push(
         {
-          label: 'damping band high',
+          label: es ? 'banda de amortiguamiento, alta' : 'damping band high',
           stroke: 'transparent',
           fill: theme === 'dark' ? 'rgba(59,130,246,0.14)' : 'rgba(59,130,246,0.10)',
           points: { show: false },
         },
         {
-          label: 'damping band low',
+          label: es ? 'banda de amortiguamiento, baja' : 'damping band low',
           stroke: 'transparent',
           fill: cssVar('--color-bg', theme === 'dark' ? '#0f0f10' : '#ffffff'),
           points: { show: false },
         },
-        { label: 'optimal cost', stroke: accent, width: 2.5, points: { show: true, size: 6 }, value: (_u, v) => tick(v) },
-        { label: 'free macrospin', stroke: '#f59e0b', width: 1.5, dash: [6, 4], value: (_u, v) => tick(v) },
-        { label: 'universal floor', stroke: '#10b981', width: 1.5, dash: [2, 3], value: (_u, v) => tick(v) },
+        { label: es ? 'costo óptimo' : 'optimal cost', stroke: accent, width: 2.5, points: { show: true, size: 6 }, value: (_u, v) => tick(v) },
+        { label: es ? 'macrospin libre' : 'free macrospin', stroke: '#f59e0b', width: 1.5, dash: [6, 4], value: (_u, v) => tick(v) },
+        { label: es ? 'piso universal' : 'universal floor', stroke: '#10b981', width: 1.5, dash: [2, 3], value: (_u, v) => tick(v) },
       );
       data.push(
         rows.map((r) => r.cost_high_damping ?? null),
@@ -109,7 +117,7 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
         rows.map((r) => r.cost_floor ?? null),
       );
     } else {
-      yLabel = `${observable.label}  (${observable.unit})`;
+      yLabel = `${observed}  (${tr(observable.unit, es)})`;
       // A success rate lives in [0, 1] and a reduced current spans decades: pick the scale from the data.
       const values = rows
         .flatMap((r) => methods.map((method) => metricOf(r, method, observable.key)))
@@ -126,7 +134,7 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
         const column = rows.map((r) => metricOf(r, method, observable.key));
         if (column.every((v) => v === null)) return;
         series.push({
-          label: `${method}  ${observable.label.toLowerCase()}`,
+          label: `${method}  ${observed.toLowerCase()}`,
           stroke: _METHOD_STROKES[i % _METHOD_STROKES.length],
           width: 2.5,
           points: { show: true, size: 6 },
@@ -138,7 +146,7 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
         const published = rows.map((r) => metricOf(r, method, 'published_rate'));
         if (published.some((v) => v !== null)) {
           series.push({
-            label: `${method}  published`,
+            label: `${method}  ${es ? 'publicado' : 'published'}`,
             stroke: '#ef4444',
             width: 0,
             points: { show: true, size: 9, fill: '#ef4444' },
@@ -161,7 +169,7 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
       },
       axes: [
         {
-          label: `${axis.label}  (${axis.unit})`,
+          label: xLabel,
           stroke,
           grid: { stroke: grid },
           ticks: { stroke: grid },
@@ -182,6 +190,7 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
 
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data as uPlot.AlignedData, ref.current);
+    recordAxisLabels(ref.current, xLabel, yLabel);
 
     // A sub-tab panel is hidden until it is selected, so a chart built at mount measures a zero-width
     // container and stays that size: the case that caught this rendered 90 px wide inside a 1000 px
@@ -206,7 +215,9 @@ export function CostChart({ rows, axis, observable, methods, theme }: Props): Re
       plotRef.current?.destroy();
       plotRef.current = null;
     };
-  }, [rows, axis, observable, methods, theme]);
+    // The axis arrives as a fresh object on every workbench render; depending on it rebuilt the plot on
+    // every render, which resets the cursor read-out. Its label and unit are what the plot reads.
+  }, [rows, axis.label, axis.unit, observable, methods, theme, es]);
 
   return <div ref={ref} style={{ width: '100%' }} />;
 }

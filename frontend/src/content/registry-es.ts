@@ -7,33 +7,35 @@
 // they are translated here, and a test in `tests/test_docs.py` holds both tables complete against the
 // registry: a category or an axis added later cannot reach the page untranslated.
 //
-// Case titles, reasons, expectations and kill criteria are authored scientific text, not chrome. They
-// stay in the registry's English, and the Spanish pages that show them say so.
+// Case titles, reasons, expectations, kill criteria and every other data string the pages render are
+// translated separately, in data-es.json through dataText.tsx, keyed by their exact English text, with
+// tests/test_translations.py holding that file to the artifacts. Until 0.16.000 they stayed in English
+// on the Spanish page under a note that said so.
 
 export const CATEGORY_ES: Record<string, string> = {
-  'A. Exact oracles': 'A. Oraculos exactos',
-  'B. Published replication': 'B. Replicacion de lo publicado',
+  'A. Exact oracles': 'A. Oráculos exactos',
+  'B. Published replication': 'B. Replicación de lo publicado',
   'C. Real materials': 'C. Materiales reales',
-  'D. Beyond the macrospin': 'D. Mas alla del macrospin',
-  'E. Constrained and hybrid control': 'E. Control con restricciones e hibrido',
+  'D. Beyond the macrospin': 'D. Más allá del macrospin',
+  'E. Constrained and hybrid control': 'E. Control con restricciones e híbrido',
   'F. Screening and learned': 'F. Cribado y aprendizaje',
 };
 
 export const AXIS_LABEL_ES: Record<string, string> = {
-  'Switching time': 'Tiempo de conmutacion',
-  'Barrier over thermal energy': 'Barrera sobre energia termica',
-  'Thermal stability factor': 'Factor de estabilidad termica',
+  'Switching time': 'Tiempo de conmutación',
+  'Barrier over thermal energy': 'Barrera sobre energía térmica',
+  'Thermal stability factor': 'Factor de estabilidad térmica',
   'Longitudinal field': 'Campo longitudinal',
   'Current price': 'Precio de la corriente',
   'Amplitude cap': 'Tope de amplitud',
   Damping: 'Amortiguamiento',
-  Harmonics: 'Armonicos',
-  'Search seed': 'Semilla de busqueda',
+  Harmonics: 'Armónicos',
+  'Search seed': 'Semilla de búsqueda',
   'Current amplitude': 'Amplitud de la corriente',
   'Chain length': 'Largo de la cadena',
   'Patch side': 'Lado del parche',
   'Sites per wall width': 'Sitios por ancho de pared',
-  'Hard-axis ratio': 'Razon de eje duro',
+  'Hard-axis ratio': 'Razón de eje duro',
 };
 
 export function translateCategory(category: string, es: boolean): string {

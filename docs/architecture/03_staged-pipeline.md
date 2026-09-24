@@ -80,7 +80,8 @@ would be a label rather than a fact if nothing on the client could evaluate it, 
 own implementation of each (`frontend/src/engine/sotAnalytic.ts` and
 `frontend/src/engine/uniaxialAnalytic.ts`, the complete elliptic integral by the arithmetic-geometric
 mean, written independently of the engine's path through SciPy). Writing the second one caught two
-defects, one on each side: the engine reported a peak that was the pulse's minimum, and the browser's
+defects, one on each side: the engine reported as the peak the pulse's value at its start and midpoint,
+up to 27 per cent below the real peak, and the browser's
 own shape-parameter bracket was high by one part in ten thousand at short switching times (findings
 F-028 and F-029).
 The case ships the constants it needs in `live_inputs`, the workbench recomputes it in the browser and

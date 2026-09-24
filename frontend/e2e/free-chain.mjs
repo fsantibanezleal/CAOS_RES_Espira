@@ -33,7 +33,7 @@ for (const theme of ['light', 'dark']) {
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(`${base}/experiments`, { waitUntil: 'networkidle' });
-    const tabName = lang === 'es' ? 'Control optimo de cadena libre' : 'Free chain optimal control';
+    const tabName = lang === 'es' ? 'Control óptimo de cadena libre' : 'Free chain optimal control';
     await openView(page, tabName);
     const readout = page.getByTestId('chain-readout');
     await readout.waitFor({ timeout: 15000 });

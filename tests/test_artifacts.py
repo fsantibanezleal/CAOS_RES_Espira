@@ -407,3 +407,47 @@ def test_the_lattice_barrier_converges_onto_the_continuum_wall_energy() -> None:
     assert ratios == sorted(ratios), f"the barrier does not approach the continuum monotonically: {ratios}"
     scaled = [row["r16"]["deficit_times_width_squared"] for row in rows]
     assert max(scaled) / min(scaled) < 1.2, f"the deficit does not scale as 1 / w^2: {scaled}"
+
+
+def test_the_reliability_note_is_the_bakes_own_and_says_what_its_front_says() -> None:
+    """The note beside the reliability front is prose about the front, and it went stale once: after the
+    sign fix in spinoct 0.18.000 it kept describing a success dip the corrected front does not have, and
+    citing manuscript M1 v2, for four product releases, because nothing compared the two."""
+    from espiralab.bake.novel import NOVEL_NOTES
+
+    novel = json.loads((ARTIFACTS / "novel.json").read_text(encoding="utf-8"))
+    assert novel["notes"] == NOVEL_NOTES
+    front = novel["reliability_front"]
+    note = NOVEL_NOTES["reliability"]
+    rates = [p["success_rate"] for p in sorted(front["points"], key=lambda p: p["br_over_anisotropy"])]
+    assert f"stability factor of {front['thermal_stability_factor']:.0f}:" in note
+    assert all(r == 1.0 for r in rates) == ("the success rate is one at every field" in note)
+    assert (rates == sorted(rates)) == ("There is no dip" in note)
+    bare = json.loads((ARTIFACTS / "thermal-success-rate.json").read_text(encoding="utf-8"))["cost_curve"][0][
+        "field_cost_reference"
+    ]
+    multiples = {p["br_over_anisotropy"]: p["added_cost"] / bare for p in front["points"]}
+    assert f"{multiples[1.0]:.1f} times the bare optimal cost at one anisotropy field" in note
+    assert f"{multiples[2.5]:.1f} times at two and a half" in note
+
+
+def test_c07_quotes_the_success_rates_its_artifact_carries() -> None:
+    """The C07 expectation quotes measured success rates. They were measured before the sign fix and kept
+    quoting 0.952 with the field at a stability factor of two for five releases after the corrected bake
+    said 1.000. Every "X against Y at <factor>" in the text is held to the artifact."""
+    import re
+
+    factors = {"one": 1.0, "two": 2.0, "three": 3.0, "five": 5.0, "ten": 10.0, "twenty": 20.0}
+    curve = {
+        row["variant"]: row
+        for row in json.loads((ARTIFACTS / "thermal-success-rate.json").read_text(encoding="utf-8"))["cost_curve"]
+    }
+    text = CASES["thermal-success-rate"].expectation
+    quotes = re.findall(
+        r"(\d\.\d{3}) against (\d\.\d{3}) at (?:a stability factor of )?(one|two|three|five|ten|twenty)\b", text
+    )
+    assert len(quotes) >= 3, text
+    for bare, with_field, at in quotes:
+        row = curve[factors[at]]
+        assert float(bare) == pytest.approx(row["r11"]["success_rate"], abs=5e-4), at
+        assert float(with_field) == pytest.approx(row["r12"]["success_rate"], abs=5e-4), at

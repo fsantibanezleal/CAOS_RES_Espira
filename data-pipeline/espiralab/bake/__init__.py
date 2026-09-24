@@ -34,7 +34,7 @@ from spinoct.units import bohr_magnetons_to_j_per_t, mev_to_joules
 from ..cases import CASES, Case, baked_cases, coverage_counts, validate_registry
 from ..materials import get_material
 
-__all__ = ["ARTIFACT_SCHEMA_VERSION", "bake_all", "bake_case"]
+__all__ = ["ARTIFACT_SCHEMA_VERSION", "bake_all", "bake_case", "write_artifact", "write_index"]
 
 #: The artifact schema version. Bump when the JSON shape changes; the web contract mirrors it.
 ARTIFACT_SCHEMA_VERSION = "2.1.0"
@@ -730,11 +730,19 @@ def bake_case(case: Case) -> dict:
     return artifact
 
 
-def bake_all(output_dir: Path) -> dict:
-    """Bake every workbench case and write the artifacts plus the coverage index."""
-    validate_registry()
-    output_dir.mkdir(parents=True, exist_ok=True)
+def write_artifact(output_dir: Path, slug: str, artifact: dict) -> None:
+    """Write one case artifact in the committed format."""
+    (output_dir / f"{slug}.json").write_text(
+        json.dumps(artifact, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
+    )
 
+
+def write_index(output_dir: Path) -> dict:
+    """Write the coverage index from the registry and the case artifacts already on disk.
+
+    One builder for the full bake and for a partial re-export, so the two cannot drift: the index
+    carries registry text (titles, categories), and a registry change has to reach it either way.
+    """
     index = {
         "schema_version": ARTIFACT_SCHEMA_VERSION,
         "cases": [],
@@ -759,10 +767,7 @@ def bake_all(output_dir: Path) -> dict:
         ],
     }
     for slug, case in baked_cases("workbench").items():
-        artifact = bake_case(case)
-        (output_dir / f"{slug}.json").write_text(
-            json.dumps(artifact, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
-        )
+        artifact = json.loads((output_dir / f"{slug}.json").read_text(encoding="utf-8"))
         index["cases"].append(
             {
                 "slug": slug,
@@ -781,3 +786,12 @@ def bake_all(output_dir: Path) -> dict:
         json.dumps(index, indent=2, allow_nan=False), encoding="utf-8", newline="\n"
     )
     return index
+
+
+def bake_all(output_dir: Path) -> dict:
+    """Bake every workbench case and write the artifacts plus the coverage index."""
+    validate_registry()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for slug, case in baked_cases("workbench").items():
+        write_artifact(output_dir, slug, bake_case(case))
+    return write_index(output_dir)

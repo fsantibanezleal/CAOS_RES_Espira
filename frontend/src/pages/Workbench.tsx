@@ -15,6 +15,7 @@ import { sotOptimalProtocol } from '../engine/sotAnalytic';
 import { peakAmplitude } from '../engine/uniaxialAnalytic';
 import { withUnit } from '../data/units';
 import { translateAxisLabel, translateCategory } from '../content/registry-es';
+import { DataText, tr } from '../content/dataText';
 import { useTheme } from '../theme';
 
 const T = {
@@ -63,48 +64,48 @@ const T = {
       'The macrospin model assumes a single ferromagnetic moment. This material is an antiferromagnet, so these numbers show what the machinery returns when its own assumptions fail. They are not predictions of how it switches.',
   },
   es: {
-    variant: 'Tiempo de conmutacion',
+    variant: 'Tiempo de conmutación',
     trajectory: 'Trayectoria',
     cost: 'Curva de costo',
     pulse: 'Pulso',
     context: 'Contexto',
-    killCriterion: 'Criterio de refutacion',
-    design: 'Diseno',
-    methods: 'Metodos',
+    killCriterion: 'Criterio de refutación',
+    design: 'Diseño',
+    methods: 'Métodos',
     groundTruth: 'Verdad de referencia',
-    split: 'Particion',
-    code: 'Codigo del caso',
-    evidence: 'Evidencia del release',
+    split: 'Partición',
+    code: 'Código del caso',
+    evidence: 'Evidencia de la versión',
     lane: 'Carril',
     completeness: 'Celdas producidas',
     sources: 'Fuentes',
-    reason: 'Por que este caso',
+    reason: 'Por qué este caso',
     expectation: 'Comportamiento esperado',
-    easyAxis: 'Eje facil',
+    easyAxis: 'Eje fácil',
     floor: 'Piso universal',
-    reduction: 'Reduccion frente al campo estatico',
+    reduction: 'Reducción frente al campo estático',
     biaxial: 'Resultado biaxial de eje duro',
     overFree: 'biaxial / macrospin libre',
-    reductionVsUni: 'reduccion vs uniaxial',
+    reductionVsUni: 'reducción vs uniaxial',
     converged: 'convergido',
-    atThisVariant: 'A este tiempo de conmutacion',
-    optCost: 'Costo optimo',
+    atThisVariant: 'A este tiempo de conmutación',
+    optCost: 'Costo óptimo',
     peakField: 'Campo pico',
     meanField: 'Campo medio',
     overFloor: 'costo / piso',
     loading: 'Cargando artefacto...',
-    noSwitch: 'sin inversion',
-    observed: 'Medido aqui',
+    noSwitch: 'sin inversión',
+    observed: 'Medido aquí',
     notAFieldCost: 'Este caso no reporta un costo de campo',
-    fieldReference: 'Costo de campo de la misma reversion (solo escala)',
+    fieldReference: 'Costo de campo de la misma reversión (solo escala)',
     liveTitle: 'Recalculado en tu navegador',
-    liveAgreement: 'acuerdo con el artefacto precomputado',
+    liveAgreement: 'acuerdo con el artefacto precalculado',
     liveNote:
-      'Este caso corre en el carril vivo: la forma cerrada se evalua en el cliente y se compara con el artefacto comprometido.',
+      'Este caso corre en el carril en vivo: la forma cerrada se evalúa en el navegador y se compara con el artefacto guardado.',
     drawnPath: 'Sobre la trayectoria dibujada',
     negativeTitle: 'Control negativo',
     negativeBody:
-      'El modelo de macrospin supone un unico momento ferromagnetico. Este material es un antiferromagneto, por lo que estos numeros muestran lo que entrega la maquinaria cuando sus propios supuestos fallan. No son predicciones de como conmuta.',
+      'El modelo de macrospin supone un único momento ferromagnético. Este material es un antiferromagneto, por lo que estos números muestran lo que entrega el método cuando sus propios supuestos fallan. No son predicciones de cómo conmuta.',
   },
 };
 
@@ -203,7 +204,7 @@ export function Workbench(): React.JSX.Element {
     if (!index) return [];
     return index.cases.map((c) => ({
       id: c.slug,
-      name: c.material_name,
+      name: tr(c.material_name, lang === 'es'),
       category: translateCategory(c.category, lang === 'es'),
       // The index names no material for a case run on the synthetic reference macrospin. This said
       // 'real' for every case, under a comment claiming every case ran on published parameters, and
@@ -247,7 +248,7 @@ export function Workbench(): React.JSX.Element {
               className={variant === i ? 'chip active' : 'chip'}
               onClick={() => setVariant(i)}
             >
-              {withUnit(tt, artifact.axis.unit)}
+              {withUnit(tt, artifact.axis.unit, lang === 'es')}
             </button>
           ))}
         </div>
@@ -268,7 +269,7 @@ export function Workbench(): React.JSX.Element {
                       <SphereTrajectory pulse={pulse} theme={theme} es={lang === 'es'} />
                       {artifact.pulse_note && (
                         <p className="wb-pulse-note" data-testid="pulse-note">
-                          <strong>{t.drawnPath}.</strong> <span lang="en">{artifact.pulse_note}</span>
+                          <strong>{t.drawnPath}.</strong> <DataText text={artifact.pulse_note} />
                         </p>
                       )}
                     </div>
@@ -286,6 +287,7 @@ export function Workbench(): React.JSX.Element {
                       observable={observable}
                       methods={artifact.case.methods}
                       theme={theme}
+                      es={lang === 'es'}
                     />
                   </div>
                 ),
@@ -299,11 +301,11 @@ export function Workbench(): React.JSX.Element {
                       {/* The chart sizes itself from this box, which holds only the chart: sizing from
                           the stack, which also holds the note, drew the legend over the note. */}
                       <div className="wb-chart-box">
-                        <PulseChart pulse={pulse} theme={theme} />
+                        <PulseChart pulse={pulse} theme={theme} es={lang === 'es'} />
                       </div>
                       {artifact.pulse_note && (
                         <p className="wb-pulse-note">
-                          <strong>{t.drawnPath}.</strong> <span lang="en">{artifact.pulse_note}</span>
+                          <strong>{t.drawnPath}.</strong> <DataText text={artifact.pulse_note} />
                         </p>
                       )}
                     </div>
@@ -315,23 +317,16 @@ export function Workbench(): React.JSX.Element {
                 label: t.context,
                 content: (
                   <div className="wb-ctx-panel">
-                    {lang === 'es' && (
-                      <p className="muted" data-testid="registry-language-note">
-                        El diseno de cada caso (por que existe, que se espera y que lo refutaria) viene
-                        del registro de casos, que se mantiene en ingles como todo artefacto tecnico de
-                        este producto.
-                      </p>
-                    )}
                     <div className="wb-ctx-grid">
                       <div>
                         <h4>{t.reason}</h4>
-                        <p lang="en">{artifact.case.reason}</p>
+                        <DataText as="p" text={artifact.case.reason} />
                         <h4>{t.expectation}</h4>
-                        <p lang="en">{artifact.case.expectation}</p>
+                        <DataText as="p" text={artifact.case.expectation} />
                         <h4>{t.killCriterion}</h4>
-                        <p lang="en">{artifact.case.kill_criterion}</p>
-                        <h4>{m.name}</h4>
-                        <p lang="en">{m.notes}</p>
+                        <DataText as="p" text={artifact.case.kill_criterion} />
+                        <h4>{tr(m.name, lang === 'es')}</h4>
+                        <DataText as="p" text={m.notes} />
                       </div>
                       <div>
                         <h4>{t.design}</h4>
@@ -342,11 +337,11 @@ export function Workbench(): React.JSX.Element {
                           </div>
                           <div>
                             <dt>{t.groundTruth}</dt>
-                            <dd>{artifact.case.ground_truth}</dd>
+                            <dd>{tr(artifact.case.ground_truth, lang === 'es')}</dd>
                           </div>
                           <div>
                             <dt>{t.split}</dt>
-                            <dd>{artifact.case.split}</dd>
+                            <dd>{tr(artifact.case.split, lang === 'es')}</dd>
                           </div>
                           <div>
                             <dt>{t.code}</dt>
@@ -359,7 +354,7 @@ export function Workbench(): React.JSX.Element {
                             <dl className="wb-ctx-facts" data-testid="case-evidence">
                               <div>
                                 <dt>{t.lane}</dt>
-                                <dd>{evidence.lane}</dd>
+                                <dd>{tr(evidence.lane, lang === 'es')}</dd>
                               </div>
                               <div>
                                 <dt>{t.completeness}</dt>
@@ -411,7 +406,7 @@ export function Workbench(): React.JSX.Element {
           data-pending={String(pending)}
           data-loading-label={lang === 'es' ? 'Cargando el caso seleccionado...' : 'Loading the selected case...'}
         >
-          <h3>{m.name}</h3>
+          <h3>{tr(m.name, lang === 'es')}</h3>
           {/* The macrospin model is a single ferromagnetic moment. On an antiferromagnet its numbers are
               what the machinery returns when its own assumption fails, not a prediction, and the
               reader has to be told before reading them. This banner was keyed to a category value
@@ -424,16 +419,16 @@ export function Workbench(): React.JSX.Element {
             </div>
           )}
           <div className="wb-variant-readout">
-            <strong>{axisLabel}</strong> ({withUnit(artifact.axis.values[variant], artifact.axis.unit)})
+            <strong>{axisLabel}</strong> ({withUnit(artifact.axis.values[variant], artifact.axis.unit, lang === 'es')})
             <dl>
-              <dt>{observable.is_field_cost ? t.optCost : observable.label}</dt>
+              <dt>{observable.is_field_cost ? t.optCost : tr(observable.label, lang === 'es')}</dt>
               <dd data-testid="observable-value" data-case={artifact.case.slug}>
                 {observed === null ? (
                   <span className="prov-badge prov-assumed" data-testid="no-switch">
                     {t.noSwitch}
                   </span>
                 ) : (
-                  `${quantity(observed)} ${observable.unit}`
+                  `${quantity(observed)} ${tr(observable.unit, lang === 'es')}`
                 )}
               </dd>
               {observable.is_field_cost ? (
@@ -454,7 +449,7 @@ export function Workbench(): React.JSX.Element {
             </dl>
             {!observable.is_field_cost && (
               <p className="wb-observable-note" data-testid="observable-note">
-                <strong>{t.notAFieldCost}.</strong> <span lang="en">{observable.note}</span>
+                <strong>{t.notAFieldCost}.</strong> <DataText text={observable.note} />
               </p>
             )}
           </div>
@@ -462,9 +457,9 @@ export function Workbench(): React.JSX.Element {
             <div className="wb-live" data-testid="live-recompute">
               <h4>{t.liveTitle}</h4>
               <dl>
-                <dt>{observable.label}</dt>
+                <dt>{tr(observable.label, lang === 'es')}</dt>
                 <dd data-testid="live-value">
-                  {quantity(live.value)} {observable.unit}
+                  {quantity(live.value)} {tr(observable.unit, lang === 'es')}
                 </dd>
                 <dt>{t.liveAgreement}</dt>
                 <dd data-testid="live-agreement">{live.relativeError.toExponential(1)}</dd>
@@ -475,7 +470,7 @@ export function Workbench(): React.JSX.Element {
           <ParameterPanel material={m} lang={lang} />
           <dl>
             <dt>{t.easyAxis}</dt>
-            <dd>{m.easy_axis}</dd>
+            <dd>{tr(m.easy_axis, lang === 'es')}</dd>
             {/* The floor and the static-field reduction describe a single-moment reversal; a case that
                 is not one (a chain barrier) carries neither, and shows neither. */}
             {costRow.cost_floor !== undefined && (
