@@ -27,7 +27,7 @@ export const CITATIONS: Citation[] = [
   },
   {
     id: 'e2007string',
-    label: 'E 2007',
+    label: 'E, Ren & Vanden-Eijnden 2007',
     citation:
       'W. E, W. Ren, E. Vanden-Eijnden, Simplified and improved string method for computing the minimum energy paths in barrier-crossing events, J. Chem. Phys. 126, 164103 (2007).',
     doi: '10.1063/1.2720838',

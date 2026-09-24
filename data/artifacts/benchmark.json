@@ -565,7 +565,7 @@
       "case": "thermal-success-rate",
       "code": "C07",
       "manifest": "thermal-success-rate.json",
-      "sha256": "7f670aadd5c245a29727431ab3748b05390395560dc150fadd457c966adaa179",
+      "sha256": "c6972852d48a895720f6f312ac1f8337e5e1b1efa4059c666d2df4a4d1ae41d0",
       "lane": "precompute",
       "completeness": {
         "expected": 12,

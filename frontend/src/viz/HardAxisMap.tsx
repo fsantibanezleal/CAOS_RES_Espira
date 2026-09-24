@@ -108,7 +108,7 @@ export function HardAxisMap({ data, damping, theme, es }: Props): React.JSX.Elem
       ctx.fillText(String(r), PAD.left + (column + 0.5) * cellW, PAD.top + plotH + 6);
     });
     ctx.fillText(
-      es ? 'razon de eje duro  K_duro / K_facil' : 'hard-axis ratio  K_hard / K_easy',
+      es ? 'razón de eje duro  K_duro / K_fácil' : 'hard-axis ratio  K_hard / K_easy',
       PAD.left + plotW / 2,
       HEIGHT - 20,
     );
@@ -121,7 +121,7 @@ export function HardAxisMap({ data, damping, theme, es }: Props): React.JSX.Elem
     ctx.translate(14, PAD.top + plotH / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = 'center';
-    ctx.fillText(es ? 'tiempo de conmutacion (tau0)' : 'switching time (tau0)', 0, 0);
+    ctx.fillText(es ? 'tiempo de conmutación (tau0)' : 'switching time (tau0)', 0, 0);
     ctx.restore();
   }, [data, damping, width, theme, es, ratios, times]);
 
@@ -152,15 +152,15 @@ export function HardAxisMap({ data, damping, theme, es }: Props): React.JSX.Elem
       />
       <p className="muted" data-testid="hard-axis-hover">
         {hover
-          ? `${es ? 'razon' : 'ratio'} ${hover.ratio}, T = ${hover.switching_tau0} tau0: ${
+          ? `${es ? 'razón' : 'ratio'} ${hover.ratio}, T = ${hover.switching_tau0} tau0: ${
               hover.reliable && hover.reduction_vs_control != null
                 ? `${hover.reduction_vs_control.toFixed(3)} ${es ? 'contra el control' : 'against the control'}`
                 : hover.at_floor
                   ? es
-                    ? 'el optimo uniaxial ya esta en su piso de tiempo infinito'
+                    ? 'el óptimo uniaxial ya está en su piso de tiempo infinito'
                     : 'the uniaxial optimum is already at its infinite-time floor'
                   : es
-                    ? `sin evidencia aqui (control ${hover.control?.toFixed(3)}, ${hover.converged ? 'convergido' : 'sin converger'})`
+                    ? `sin evidencia aquí (control ${hover.control?.toFixed(3)}, ${hover.converged ? 'convergido' : 'sin converger'})`
                     : `no evidence here (control ${hover.control?.toFixed(3)}, ${hover.converged ? 'converged' : 'not converged'})`
             }`
           : es

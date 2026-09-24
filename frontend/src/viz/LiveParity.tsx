@@ -46,8 +46,8 @@ export function LiveParity({ fixture, es }: Props): React.JSX.Element {
       });
       const pairs: [string, number, number][] = [
         [es ? 'corriente media' : 'mean current', result.meanCurrentReduced, row.mean_current_reduced],
-        [es ? 'costo de conmutacion rapida' : 'fast-switching cost', result.costFastReduced, row.cost_fast_reduced],
-        [es ? 'tiempo caracteristico' : 'characteristic time', result.characteristicTimeS, row.characteristic_time_s],
+        [es ? 'costo de conmutación rápida' : 'fast-switching cost', result.costFastReduced, row.cost_fast_reduced],
+        [es ? 'tiempo característico' : 'characteristic time', result.characteristicTimeS, row.characteristic_time_s],
       ];
       return pairs.map(([what, browser, committed]) => ({
         label: `${what}, T = ${row.switching_time_tau0} tau0`,
@@ -63,7 +63,7 @@ export function LiveParity({ fixture, es }: Props): React.JSX.Element {
   const groups: { key: 'elliptic_k' | 'protocol'; title: string; rows: Row[]; worst: number }[] = [
     {
       key: 'elliptic_k',
-      title: es ? 'Integral eliptica completa K(m), contra SciPy' : 'Complete elliptic integral K(m), against SciPy',
+      title: es ? 'Integral elíptica completa K(m), contra SciPy' : 'Complete elliptic integral K(m), against SciPy',
       rows: elliptic,
       worst: worstElliptic,
     },
@@ -84,7 +84,7 @@ export function LiveParity({ fixture, es }: Props): React.JSX.Element {
           <div key={group.key} className="parity-group">
             <h3>{group.title}</h3>
             <p className="muted">
-              {es ? 'Peor desviacion relativa' : 'Worst relative deviation'}:{' '}
+              {es ? 'Peor desviación relativa' : 'Worst relative deviation'}:{' '}
               <strong data-testid={`parity-worst-${group.key}`}>{group.worst.toExponential(2)}</strong>{' '}
               {es ? 'contra una tolerancia de' : 'against a tolerance of'} {tolerance.toExponential(0)}.{' '}
               <span className={within ? 'prov-badge prov-measured' : 'prov-badge prov-assumed'}>
@@ -97,8 +97,8 @@ export function LiveParity({ fixture, es }: Props): React.JSX.Element {
                   <tr>
                     <th>{es ? 'Cantidad' : 'Quantity'}</th>
                     <th>{es ? 'Navegador' : 'Browser'}</th>
-                    <th>{es ? 'Comprometido' : 'Committed'}</th>
-                    <th>{es ? 'Desviacion' : 'Deviation'}</th>
+                    <th>{es ? 'Artefacto' : 'Committed'}</th>
+                    <th>{es ? 'Desviación' : 'Deviation'}</th>
                   </tr>
                 </thead>
                 <tbody>

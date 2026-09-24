@@ -30,6 +30,7 @@ import { useTheme } from '../theme';
 import { Replications } from '../viz/Replications';
 import { withUnit } from '../data/units';
 import { translateAxisLabel } from '../content/registry-es';
+import { DataText, tr } from '../content/dataText';
 import { CrossoverChart } from '../viz/CrossoverChart';
 import { ChainMap } from '../viz/ChainMap';
 import { PatchChart } from '../viz/PatchChart';
@@ -70,9 +71,9 @@ function Chips<T extends number>({
 }
 
 const START_NAMES: Record<string, { en: string; es: string }> = {
-  uniform: { en: 'uniform rotation', es: 'rotacion uniforme' },
+  uniform: { en: 'uniform rotation', es: 'rotación uniforme' },
   wall: { en: 'tanh wall', es: 'pared tanh' },
-  mep: { en: 'minimum energy path', es: 'camino de minima energia' },
+  mep: { en: 'minimum energy path', es: 'camino de mínima energía' },
 };
 
 function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
@@ -94,13 +95,13 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'La trayectoria de control optimo libre de una cadena de espines: el costo de conmutacion se minimiza sobre la trayectoria de cada sitio, sin suponer un modo. Resultado nuevo: sobre una longitud de cruce y a tiempos de conmutacion largos, la inversion optima es una pared de dominio, estrictamente mas barata que la rotacion uniforme. Esto reemplaza la conclusion de la comparacion de dos modos.'
+          ? 'La trayectoria de control óptimo libre de una cadena de espines: el costo de conmutación se minimiza sobre la trayectoria de cada sitio, sin suponer un modo. Resultado nuevo: sobre una longitud de cruce y a tiempos de conmutación largos, la inversión óptima es una pared de dominio, estrictamente más barata que la rotación uniforme. Esto reemplaza la conclusión de la comparación de dos modos.'
           : "The free optimal control path of a spin chain: the switching cost is minimized over every site's trajectory, with no assumed mode. Novel result: above a crossover length and at long switching time, the optimal reversal is a domain wall, strictly cheaper than uniform rotation. This supersedes the conclusion of the two-mode comparison."}{' '}
         <Cite id="badarneh2023" /> <Cite id="kwiatkowski2021" />
       </p>
       <p>
         {es
-          ? 'Cada razon es el costo de una trayectoria factible explicita dividido por el costo uniforme en la misma malla, por lo que es una cota superior del optimo verdadero. El piso es 4 alpha dE / (gamma mu), con dE la barrera del camino de minima energia: una cota inferior rigurosa a todo tiempo de conmutacion.'
+          ? 'Cada razón es el costo de una trayectoria factible explícita dividido por el costo uniforme en la misma malla, por lo que es una cota superior del óptimo verdadero. El piso es 4 alfa dE / (gamma mu), con dE la barrera del camino de mínima energía: una cota inferior rigurosa a todo tiempo de conmutación.'
           : 'Each ratio is the cost of an explicit feasible trajectory over the uniform cost on the same grid, so it is an upper bound on the true optimum. The floor is 4 alpha dE / (gamma mu), with dE the minimum energy path barrier: a rigorous lower bound at every switching time.'}{' '}
         <Cite id="e2007string" /> <Cite id="bessarab2015" />
       </p>
@@ -114,7 +115,7 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
             <dd>{item.best_ratio.toFixed(4)}</dd>
           </div>
           <div>
-            <dt>{es ? 'Ahorro minimo' : 'Saving (at least)'}</dt>
+            <dt>{es ? 'Ahorro mínimo' : 'Saving (at least)'}</dt>
             <dd>{(100 * Math.max(0, item.saving)).toFixed(1)} %</dd>
           </div>
           <div>
@@ -134,7 +135,7 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
             <dd>{item.best_nonuniformity.toFixed(3)}</dd>
           </div>
           <div>
-            <dt>{es ? 'Imagenes en el tiempo' : 'Time images'}</dt>
+            <dt>{es ? 'Imágenes en el tiempo' : 'Time images'}</dt>
             <dd>{item.n_images}</dd>
           </div>
         </dl>
@@ -142,13 +143,13 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
       <h3>{es ? 'Cruce: costo contra longitud' : 'Crossover: cost against length'}</h3>
       <p className="muted">
         {es ? 'Cadena con J/K' : 'Chain with J/K'} = {exchange}, alpha = {alpha}.{' '}
-        {es ? 'Bajo la linea uniforme, la pared gana.' : 'Below the uniform line, the wall wins.'}
+        {es ? 'Bajo la línea uniforme, la pared gana.' : 'Below the uniform line, the wall wins.'}
       </p>
       <CrossoverChart cases={scoped} selectedT={t} theme={theme} es={es} />
-      <h3>{es ? 'La inversion, sitio por sitio' : 'The reversal, site by site'}</h3>
+      <h3>{es ? 'La inversión, sitio por sitio' : 'The reversal, site by site'}</h3>
       <p className="muted">
         {es
-          ? 'Una rotacion uniforme es un bloque de filas iguales; una pared de dominio es un frente diagonal que entra por un extremo.'
+          ? 'Una rotación uniforme es un bloque de filas iguales; una pared de dominio es un frente diagonal que entra por un extremo.'
           : 'A uniform rotation is a block of identical rows; a domain wall is a diagonal front entering at one end.'}
       </p>
       <ChainMap item={item} theme={theme} es={es} />
@@ -183,7 +184,7 @@ function FreeChain({ data, es }: { data: LatticeOCPArtifact; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted" lang="en">{data.description}</p>
+      <DataText as="p" className="muted" text={data.description} />
     </div>
   );
 }
@@ -227,33 +228,33 @@ function Exploitability({ data, es }: { data: DescriptorArtifact; es: boolean })
     <div className="prose">
       <p>
         {es
-          ? 'El banco de trabajo responde un caso a la vez. Un disenador que elige entre estos materiales pregunta otra cosa: con lo que esta medido de cada uno, cual se puede conmutar barato, de forma fiable y con un generador que exista. Esta tabla reduce cada material de la base a esos numeros, todos derivados de sus parametros del Contrato 1 y de los resultados del propio producto.'
+          ? 'El banco de trabajo responde un caso a la vez. Un diseñador que elige entre estos materiales pregunta otra cosa: con lo que está medido de cada uno, cuál se puede conmutar barato, de forma fiable y con un generador que exista. Esta tabla reduce cada material de la base a esos números, todos derivados de sus parámetros del Contrato 1 y de los resultados del propio producto.'
           : 'The workbench answers one case at a time. A designer choosing between these materials asks something else: given what is actually measured about each, which can be switched cheaply, reliably, and with a generator that exists. This table reduces every material in the database to those numbers, all derived from its Contract 1 parameters and the product’s own results.'}
       </p>
       <p data-testid="exploitability-verdict">
         {es
-          ? `Medido a T = ${activeTime} tau0: el costo mas bajo y el campo pico mas bajo son ambos de ${cheapest.material.name} (${shortNumber(cheapest.at.cost)} T^2 s, ${shortNumber(gentlest.at.peak_field_t)} T), y eso mismo le cuesta ${Math.round(cheapest.sites ?? 0).toLocaleString('en-US')} sitios para retener a K/kT = ${activeRetention}. En el otro extremo, ${fewestSites.material.name} retiene con ${Math.round(fewestSites.sites ?? 0).toLocaleString('en-US')} sitios y exige ${shortNumber(fewestSites.at.peak_field_t)} T. La anisotropia fija los dos: la que abarata el pulso es la que obliga a un elemento mas grande. De los ${data.materials.length} materiales, ${warm.length} ordena por encima de temperatura ambiente (${warm.map((m) => m.name).join(', ') || 'ninguno'}).`
+          ? `Medido a T = ${activeTime} tau0: el costo más bajo y el campo pico más bajo son ambos de ${cheapest.material.name} (${shortNumber(cheapest.at.cost)} T^2 s, ${shortNumber(gentlest.at.peak_field_t)} T), y eso mismo le cuesta ${Math.round(cheapest.sites ?? 0).toLocaleString('en-US')} sitios para retener a K/kT = ${activeRetention}. En el otro extremo, ${fewestSites.material.name} retiene con ${Math.round(fewestSites.sites ?? 0).toLocaleString('en-US')} sitios y exige ${shortNumber(fewestSites.at.peak_field_t)} T. La anisotropía fija los dos: la que abarata el pulso es la que obliga a un elemento más grande. De los ${data.materials.length} materiales, ${warm.length} ordena por encima de temperatura ambiente (${warm.map((m) => m.name).join(', ') || 'ninguno'}).`
           : `Measured at T = ${activeTime} tau0: the lowest cost and the lowest peak field are both ${cheapest.material.name} (${shortNumber(cheapest.at.cost)} T^2 s, ${shortNumber(gentlest.at.peak_field_t)} T), and that same softness costs it ${Math.round(cheapest.sites ?? 0).toLocaleString('en-US')} sites to retain at K/kT = ${activeRetention}. At the other end, ${fewestSites.material.name} retains with ${Math.round(fewestSites.sites ?? 0).toLocaleString('en-US')} sites and demands ${shortNumber(fewestSites.at.peak_field_t)} T. One anisotropy sets both: what makes the pulse cheap is what forces a larger element. Of the ${data.materials.length} materials, ${warm.length} orders above room temperature (${warm.map((m) => m.name).join(', ') || 'none'}).`}
       </p>
       <p className="muted" data-testid="exploitability-caveat">
         {es
-          ? 'Los sitios que se listan suponen una inversion coherente, asi que la barrera es el numero de sitios por la anisotropia de un sitio. Los resultados de control optimo libre de este mismo producto (C19 a C22) miden la salida mas barata: sobre un tamano de cruce la inversion nuclea una pared de dominio cuya barrera se satura en la energia de pared en vez de crecer con el volumen. Estos numeros son el extremo optimista.'
+          ? 'Los sitios que se listan suponen una inversión coherente, así que la barrera es el número de sitios por la anisotropía de un sitio. Los resultados de control óptimo libre de este mismo producto (C19 a C22) miden la salida más barata: sobre un tamaño de cruce la inversión nuclea una pared de dominio cuya barrera se satura en la energía de pared en vez de crecer con el volumen. Estos números son el extremo optimista.'
           : data.retention_note}
       </p>
       <p className="muted" data-testid="exploitability-reliability-note">
         {es
-          ? 'La fiabilidad se mide por material pero solo depende del amortiguamiento: a tiempo de conmutacion reducido fijo, factor de estabilidad fijo y campo en unidades del campo de anisotropia del propio material, ningun otro parametro entra en la dinamica reducida. Los materiales que comparten alpha comparten esas dos columnas exactamente, lo que comprueba la reduccion en vez de ser una coincidencia. La medicion es a K/kT = 3, donde el pulso desnudo si pierde copias.'
+          ? 'La fiabilidad se mide por material pero solo depende del amortiguamiento: a tiempo de conmutación reducido fijo, factor de estabilidad fijo y campo en unidades del campo de anisotropía del propio material, ningún otro parámetro entra en la dinámica reducida. Los materiales que comparten alfa comparten esas dos columnas exactamente, lo que comprueba la reducción en vez de ser una coincidencia. La medición es a K/kT = 3, donde el pulso sin campo sí pierde copias.'
           : data.reliability_note}
       </p>
       <Chips
-        label={es ? 'Tiempo de conmutacion' : 'Switching time'}
+        label={es ? 'Tiempo de conmutación' : 'Switching time'}
         values={times}
         active={activeTime}
         onPick={setTime}
         format={(v) => `T = ${v} tau0`}
       />
       <Chips
-        label={es ? 'Retencion' : 'Retention'}
+        label={es ? 'Retención' : 'Retention'}
         values={retentions}
         active={activeRetention}
         onPick={setRetention}
@@ -270,7 +271,7 @@ function Exploitability({ data, es }: { data: DescriptorArtifact; es: boolean })
               <th>{es ? 'Campo pico' : 'Peak field'} (T)</th>
               <th>{es ? 'Ancho de banda' : 'Bandwidth'} (Hz)</th>
               <th>{es ? 'Sitios para retener' : 'Sites to retain'}</th>
-              <th>{es ? 'Fiabilidad, desnuda / con campo' : 'Reliability, bare / with field'}</th>
+              <th>{es ? 'Fiabilidad, sin campo / con campo' : 'Reliability, bare / with field'}</th>
               <th>T_C (K)</th>
             </tr>
           </thead>
@@ -278,9 +279,9 @@ function Exploitability({ data, es }: { data: DescriptorArtifact; es: boolean })
             {rows.map(({ material, at, sites }) => (
               <tr key={material.material} data-material={material.material}>
                 <td>
-                  {material.name}{' '}
+                  {tr(material.name, es)}{' '}
                   {material.provenance.damping === 'assumed' && (
-                    <span className="prov-badge prov-assumed">{es ? 'alpha supuesto' : 'assumed alpha'}</span>
+                    <span className="prov-badge prov-assumed">{es ? 'alfa supuesto' : 'assumed alpha'}</span>
                   )}
                 </td>
                 <td>{shortNumber(material.tau0_s * 1e12)}</td>
@@ -306,7 +307,7 @@ function Exploitability({ data, es }: { data: DescriptorArtifact; es: boolean })
           </tbody>
         </table>
       </div>
-      <p className="muted" lang="en">{data.description}</p>
+      <DataText as="p" className="muted" text={data.description} />
     </div>
   );
 }
@@ -321,23 +322,23 @@ function PenaltyTest({ data, es }: { data: PenaltyTestArtifact; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'El motor ofrece una penalizacion determinista de inestabilidad: la integral de hiperbolicidad a lo largo del camino, que sale del mismo Hessiano que ya usa el solver y no necesita ningun ensemble. La afirmacion, escrita por el propio motor, es que predice la tasa de exito Monte-Carlo sin correr el ensemble. Nada en el producto la habia puesto a prueba.'
+          ? 'El motor ofrece una penalización determinista de inestabilidad: la integral de hiperbolicidad a lo largo del camino, que sale del mismo hessiano que ya usa el solucionador y no necesita simular ninguna copia. La afirmación, escrita por el propio motor, es que predice la tasa de éxito de Monte Carlo sin correr esa simulación. Nada en el producto la había puesto a prueba.'
           : "The engine offers a deterministic instability penalty: the hyperbolicity integral along the path, which comes from the same Hessian the solver already has and needs no ensemble. The claim, written by the engine itself, is that it predicts the Monte-Carlo success rate without running the ensemble. Nothing in the product had tested it."}{' '}
         <Cite id="badarneh2023" />
       </p>
       <p data-testid="penalty-verdict">
         {es
-          ? `Medido sobre ${data.cells.length} celdas (${data.copies} copias cada una): en ${verdict.testable_rows} de las ${verdict.rows} filas los dos extremos del barrido se separan mas que sus intervalos, asi que la fila puede decidir, y la prediccion acierta en ${verdict.rows_agreeing} de ellas. ${holds ? 'Donde el analisis dice que la inestabilidad desaparecio, el ensemble falla menos.' : 'La penalizacion NO predice el ensemble.'}`
+          ? `Medido sobre ${data.cells.length} celdas (${data.copies} copias cada una): en ${verdict.testable_rows} de las ${verdict.rows} filas los dos extremos del barrido se separan más que sus intervalos, así que la fila puede decidir, y la predicción acierta en ${verdict.rows_agreeing} de ellas. ${holds ? 'Donde el análisis dice que la inestabilidad desapareció, las copias fallan menos.' : 'La penalización NO predice lo que mide Monte Carlo.'}`
           : `Measured over ${data.cells.length} cells (${data.copies} copies each): in ${verdict.testable_rows} of the ${verdict.rows} rows the two ends of the sweep separate by more than their intervals, so the row can decide, and the prediction holds in ${verdict.rows_agreeing} of them. ${holds ? 'Where the analysis says the instability is gone, the ensemble fails less.' : 'The penalty does NOT predict the ensemble.'}`}
       </p>
       <p data-testid="penalty-ranking">
         {es
-          ? `En la forma fuerte, ordenar el barrido entero, la afirmacion se parte en dos. La tasa de fallo cae monotonamente con el campo en ${verdict.rows_failing_monotonically} de ${verdict.rows} filas, pero la INTEGRAL de hiperbolicidad no la ordena en ninguna (${verdict.rows_ranked_by_penalty} de ${verdict.rows}): crece hasta un cuarto de campo de anisotropia, donde el fallo medido ya bajo. La FRACCION hiperbolica del camino si la ordena donde no hay empates (${verdict.rows_ranked_by_fraction} de ${verdict.rows}; las demas filas tienen varias celdas con cero fallos). El predictor barato que sirve es cuanto del camino es inestable, no cuanto lo es.`
+          ? `En la forma fuerte, ordenar el barrido entero, la afirmación se parte en dos. La tasa de fallo cae monótonamente con el campo en ${verdict.rows_failing_monotonically} de ${verdict.rows} filas, pero la INTEGRAL de hiperbolicidad no la ordena en ninguna (${verdict.rows_ranked_by_penalty} de ${verdict.rows}): crece hasta un cuarto de campo de anisotropía, donde el fallo medido ya bajó. La FRACCIÓN hiperbólica del camino sí la ordena donde no hay empates (${verdict.rows_ranked_by_fraction} de ${verdict.rows}; las demás filas tienen varias celdas con cero fallos). El predictor barato que sirve es cuánto del camino es inestable, no cuánto lo es.`
           : `In the strong form, ranking the whole sweep, the claim splits in two. The failure rate falls monotonically with the field in ${verdict.rows_failing_monotonically} of ${verdict.rows} rows, but the hyperbolicity INTEGRAL ranks none of them (${verdict.rows_ranked_by_penalty} of ${verdict.rows}): it rises to a peak at a quarter of an anisotropy field, where the measured failure rate has already fallen. The hyperbolic FRACTION of the path does rank it wherever ties do not prevent it (${verdict.rows_ranked_by_fraction} of ${verdict.rows}; the other rows have several cells at zero failures). The cheap predictor that works is how much of the path is unstable, not how unstable it is.`}
       </p>
       <p className="muted">
         {es
-          ? 'Esta prueba encontro un error de signo en el motor: hasta spinoct 0.18.000 el campo longitudinal estabilizador se aplicaba con el signo opuesto al que usa el analisis del mismo modulo, asi que la hiperbolicidad calculada decia que el camino era estable mientras el ensemble empeoraba. Los numeros de arriba son los del motor corregido.'
+          ? 'Esta prueba encontró un error de signo en el motor: hasta spinoct 0.18.000 el campo longitudinal estabilizador se aplicaba con el signo opuesto al que usa el análisis del mismo módulo, así que la hiperbolicidad calculada decía que el camino era estable mientras las copias fallaban más. Los números de arriba son los del motor corregido.'
           : 'This test found a sign error in the engine: until spinoct 0.18.000 the stabilizing longitudinal field was applied with the opposite sign to the one its own analysis uses, so the computed hyperbolicity reported a stable path while the ensemble got worse. The numbers above are from the corrected engine.'}
       </p>
       <div className="wb-variant-readout" data-testid="penalty-readout" data-holds={String(holds)}>
@@ -376,7 +377,7 @@ function PenaltyTest({ data, es }: { data: PenaltyTestArtifact; es: boolean }) {
       <h3>{es ? 'Fallos medidos contra el campo' : 'Measured failures against the field'}</h3>
       <p className="muted">
         {es
-          ? 'La penalizacion (linea discontinua, escalada a su maximo) cae a cero cuando el campo longitudinal alcanza el campo de anisotropia. Si la afirmacion vale, las tasas de fallo medidas caen con ella.'
+          ? 'La penalización (línea discontinua, escalada a su máximo) cae a cero cuando el campo longitudinal alcanza el campo de anisotropía. Si la afirmación vale, las tasas de fallo medidas caen con ella.'
           : 'The penalty (dashed, scaled to its maximum) falls to zero once the longitudinal field reaches the anisotropy field. If the claim holds, the measured failure rates fall with it.'}
       </p>
       <PenaltyChart data={data} theme={theme} es={es} />
@@ -389,7 +390,7 @@ function PenaltyTest({ data, es }: { data: PenaltyTestArtifact; es: boolean }) {
               <th>{es ? 'Fallo sin campo' : 'Failure, no field'}</th>
               <th>{es ? 'Fallo con campo' : 'Failure, full field'}</th>
               <th>{es ? 'Brecha' : 'Gap'}</th>
-              <th>{es ? 'Correlacion de rangos' : 'Rank correlation'}</th>
+              <th>{es ? 'Correlación de rangos' : 'Rank correlation'}</th>
               <th>{es ? 'Decide' : 'Decides'}</th>
             </tr>
           </thead>
@@ -404,13 +405,13 @@ function PenaltyTest({ data, es }: { data: PenaltyTestArtifact; es: boolean }) {
                   {row.gap.toFixed(3)}
                 </td>
                 <td>{row.spearman_penalty_failure.toFixed(2)}</td>
-                <td>{row.separated ? (es ? 'si' : 'yes') : 'no'}</td>
+                <td>{row.separated ? (es ? 'sí' : 'yes') : 'no'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="muted" lang="en">{data.description}</p>
+      <DataText as="p" className="muted" text={data.description} />
     </div>
   );
 }
@@ -429,18 +430,18 @@ function HardAxis({ data, es }: { data: HardAxisMapArtifact; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'Un eje duro es el unico mecanismo de esta literatura que puede batir el costo del macrospin libre: el torque interno hace parte del trabajo. El caso C04 lo mide a lo largo de una linea y encuentra que el beneficio no es monotono. Aqui esta la region completa: razon de eje duro contra tiempo de conmutacion, a cuatro amortiguamientos.'
+          ? 'Un eje duro es el único mecanismo de esta literatura que puede batir el costo del macrospin libre: el torque interno hace parte del trabajo. El caso C04 lo mide a lo largo de una línea y encuentra que el beneficio no es monótono. Aquí está la región completa: razón de eje duro contra tiempo de conmutación, a cuatro amortiguamientos.'
           : 'A hard axis is the one mechanism in this literature that can beat the free-macrospin cost: the internal torque does part of the work. Case C04 measures it along one line and finds the benefit is not monotone. Here is the whole region: hard-axis ratio against switching time, at four dampings.'}{' '}
         <Cite id="badarneh2023" />
       </p>
       <p data-testid="hard-axis-verdict">
         {es
-          ? `Medido: el eje duro paga en ${summary.helped} de las ${summary.reliable} celdas fiables, y todas estan a tiempos de conmutacion cortos. A este amortiguamiento el beneficio llega hasta T = ${longest} tau0 y desaparece despues: a tiempos largos la barrera del propio eje duro cuesta mas de lo que ahorra. El mejor punto de todo el mapa es ${summary.best.reduction_vs_control.toFixed(2)} veces a razon ${summary.best.ratio}, alpha ${summary.best.damping} y T = ${summary.best.switching_tau0} tau0.`
+          ? `Medido: el eje duro conviene en ${summary.helped} de las ${summary.reliable} celdas fiables, y todas están a tiempos de conmutación cortos. A este amortiguamiento el beneficio llega hasta T = ${longest} tau0 y desaparece después: a tiempos largos la barrera del propio eje duro cuesta más de lo que ahorra. El mejor punto de todo el mapa reduce el costo ${summary.best.reduction_vs_control.toFixed(2)} veces, con razón ${summary.best.ratio}, alfa ${summary.best.damping} y T = ${summary.best.switching_tau0} tau0.`
           : `Measured: the hard axis pays in ${summary.helped} of the ${summary.reliable} reliable cells, and all of them sit at short switching times. At this damping the benefit reaches T = ${longest} tau0 and is gone beyond it: at long times the hard axis's own barrier costs more than it saves. The best point of the whole map is ${summary.best.reduction_vs_control.toFixed(2)} times, at ratio ${summary.best.ratio}, alpha ${summary.best.damping} and T = ${summary.best.switching_tau0} tau0.`}
       </p>
       <p className="muted">
         {es
-          ? `Cada celda se divide por su control: el mismo metodo numerico resolviendo el sistema uniaxial cuya forma cerrada ya se conoce. Donde el control se aparta mas de ${(100 * summary.control_tolerance).toFixed(0)} por ciento o el solver no converge, la celda se dibuja tachada y no cuenta: ${summary.points - summary.reliable} de ${summary.points} (${summary.unconverged} sin converger, ${summary.at_floor} ya en el piso de tiempo infinito, control peor ${(100 * summary.worst_control).toFixed(0)} por ciento).`
+          ? `Cada celda se divide por su control: el mismo método numérico resolviendo el sistema uniaxial cuya forma cerrada ya se conoce. Donde el control se aparta más de ${(100 * summary.control_tolerance).toFixed(0)} por ciento o el solucionador no converge, la celda se dibuja tachada y no cuenta: ${summary.points - summary.reliable} de ${summary.points} (${summary.unconverged} sin converger, ${summary.at_floor} ya en el piso de tiempo infinito, control peor ${(100 * summary.worst_control).toFixed(0)} por ciento).`
           : `Each cell is divided by its control: the same numerical method solving the uniaxial system whose closed form is already known. Where the control drifts by more than ${(100 * summary.control_tolerance).toFixed(0)} per cent, or the solve does not converge, the cell is drawn crossed out and does not count: ${summary.points - summary.reliable} of ${summary.points} (${summary.unconverged} unconverged, ${summary.at_floor} already at the infinite-time floor, worst control ${(100 * summary.worst_control).toFixed(0)} per cent).`}
       </p>
       <Chips
@@ -451,7 +452,7 @@ function HardAxis({ data, es }: { data: HardAxisMapArtifact; es: boolean }) {
         format={(v) => `alpha = ${v}`}
       />
       <HardAxisMap data={data} damping={active} theme={theme} es={es} />
-      <p className="muted" lang="en">{data.description}</p>
+      <DataText as="p" className="muted" text={data.description} />
     </div>
   );
 }
@@ -470,18 +471,18 @@ function Tradeoffs({ data, es }: { data: ParetoArtifact; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'Cada caso del banco de trabajo informa un escalar: un costo a un tiempo de conmutacion. Un dispositivo no elige un solo objetivo: tiene que entregar un campo pico desde un generador real, sobre un ancho de banda real, dentro de un presupuesto de tiempo. Aqui la familia optima analitica se evalua en los cuatro objetivos a la vez y se marca que puntos estan dominados.'
+          ? 'Cada caso del banco de trabajo informa un escalar: un costo a un tiempo de conmutación. Un dispositivo no elige un solo objetivo: tiene que entregar un campo pico desde un generador real, sobre un ancho de banda real, dentro de un presupuesto de tiempo. Aquí la familia óptima analítica se evalúa en los cuatro objetivos a la vez y se marca qué puntos están dominados.'
           : "Every workbench case reports one scalar: a cost at a switching time. A device does not get to pick one objective: it has to supply a peak field from a real generator, over a real bandwidth, within a time budget. Here the analytic optimal family is evaluated on all four objectives at once, and each point is marked dominated or not."}{' '}
         <Cite id="kwiatkowski2021" />
       </p>
       <p data-testid="pareto-verdict">
         {es
-          ? `Medido: el costo y el campo pico caen monotonamente con el presupuesto de tiempo, pero el ancho de banda no. En ${item.name} hay ${inversions.count} pares donde el protocolo MAS LENTO exige una banda mas ancha; el peor va de T = ${inversions.worst?.faster_tau0} a T = ${inversions.worst?.slower_tau0} tau0 y ensancha la banda ${inversions.worst?.ratio.toFixed(2)} veces, asi que "mas lento es mas facil de generar" es falso en ancho de banda.`
+          ? `Medido: el costo y el campo pico caen monótonamente con el presupuesto de tiempo, pero el ancho de banda no. En ${item.name} hay ${inversions.count} pares donde el protocolo MÁS LENTO exige una banda más ancha; el peor va de T = ${inversions.worst?.faster_tau0} a T = ${inversions.worst?.slower_tau0} tau0 y ensancha la banda ${inversions.worst?.ratio.toFixed(2)} veces, así que "más lento es más fácil de generar" es falso en ancho de banda.`
           : `Measured: the cost and the peak field fall monotonically with the time budget, but the bandwidth does not. On ${item.name} there are ${inversions.count} pairs where the SLOWER protocol demands a wider band; the worst runs from T = ${inversions.worst?.faster_tau0} to T = ${inversions.worst?.slower_tau0} tau0 and widens the band by ${inversions.worst?.ratio.toFixed(2)} times, so "slower is easier to generate" is false in bandwidth.`}
       </p>
       <p className="muted">
         {es
-          ? `Contar el tiempo de conmutacion como un objetivo mas vacia la pregunta: cada protocolo del barrido tiene un tiempo distinto, asi que ninguno puede ser al menos tan bueno en todo y el frente es todo el barrido (${item.front_size} de ${item.points.length}) por construccion. Con el plazo ya fijado, mirando solo lo que el hardware debe entregar, quedan ${item.supply_front_size} de ${item.points.length}.`
+          ? `Contar el tiempo de conmutación como un objetivo más vacía la pregunta: cada protocolo del barrido tiene un tiempo distinto, así que ninguno puede ser al menos tan bueno en todo y el frente es todo el barrido (${item.front_size} de ${item.points.length}) por construcción. Con el plazo ya fijado, mirando solo lo que el hardware debe entregar, quedan ${item.supply_front_size} de ${item.points.length}.`
           : `Counting the switching time as one more objective empties the question: every protocol in the sweep has a different time, so none can be at least as good everywhere and the front is the whole sweep (${item.front_size} of ${item.points.length}) by construction. With the deadline already fixed, and only what the hardware must supply in view, ${item.supply_front_size} of ${item.points.length} remain.`}
       </p>
       <Chips
@@ -536,7 +537,7 @@ function Tradeoffs({ data, es }: { data: ParetoArtifact; es: boolean }) {
       <h3>{es ? 'Lo que cuesta acortar el tiempo' : 'What shortening the time costs'}</h3>
       <p className="muted">
         {es
-          ? 'Cada objetivo dividido por su valor en T = 200 tau0, en ejes logaritmicos. El costo y el campo pico caen como 1/T; el ancho de banda no sigue una ley de potencia y cae mucho mas despacio, asi que a tiempos largos es el ancho de banda el que limita, no el costo.'
+          ? 'Cada objetivo dividido por su valor en T = 200 tau0, en ejes logarítmicos. El costo y el campo pico caen como 1/T; el ancho de banda no sigue una ley de potencia y cae mucho más despacio, así que a tiempos largos es el ancho de banda el que limita, no el costo.'
           : 'Each objective divided by its own value at T = 200 tau0, on log axes. The cost and the peak field fall like 1/T; the bandwidth does not follow a power law and falls far more slowly, so at long switching times it is the bandwidth that binds, not the cost.'}
       </p>
       <ParetoChart item={item} theme={theme} es={es} />
@@ -559,13 +560,13 @@ function Tradeoffs({ data, es }: { data: ParetoArtifact; es: boolean }) {
                 <td>{plain(p.cost)}</td>
                 <td>{plain(p.peak_field_t)}</td>
                 <td>{plain(p.bandwidth_hz)}</td>
-                <td>{p.dominated_without_time ? (es ? 'si' : 'yes') : 'no'}</td>
+                <td>{p.dominated_without_time ? (es ? 'sí' : 'yes') : 'no'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="muted" lang="en">{data.description}</p>
+      <DataText as="p" className="muted" text={data.description} />
     </div>
   );
 }
@@ -610,7 +611,7 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'La misma pregunta que la cadena libre, en un parche cuadrado de W x W espines con intercambio a primeros vecinos: el costo de conmutacion se minimiza sobre la trayectoria de cada sitio desde tres inicios (rotacion uniforme perturbada, una pared tanh recta y el camino de minima energia) y se conserva el mas barato. Dos regimenes de anisotropia al mismo amortiguamiento y tiempo de conmutacion: J/K = 10 (el valor del mapa de la cadena) y J/K = 2.5, con una pared de la mitad de ancho.'
+          ? 'La misma pregunta que la cadena libre, en un parche cuadrado de W x W espines con intercambio a primeros vecinos: el costo de conmutación se minimiza sobre la trayectoria de cada sitio desde tres inicios (rotación uniforme perturbada, una pared tanh recta y el camino de mínima energía) y se conserva el más barato. Dos regímenes de anisotropía al mismo amortiguamiento y tiempo de conmutación: J/K = 10 (el valor del mapa de la cadena) y J/K = 2.5, con una pared de la mitad de ancho.'
           : "The free chain's question on a square W x W patch of spins with nearest-neighbour exchange: the switching cost is minimized over every site's trajectory from three starts (a perturbed uniform rotation, a straight tanh wall and the minimum energy path) and the cheapest is kept. Two anisotropy regimes at the same damping and switching time: J/K = 10 (the chain map's value) and J/K = 2.5, with a wall half as wide."}{' '}
         <Cite id="e2007string" /> <Cite id="bessarab2015" />
       </p>
@@ -621,23 +622,23 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
             {es ? 'Con' : 'At'} J/K = {c.jk} ({es ? 'pared de' : 'a wall'} {c.wall.toFixed(2)} {es ? 'sitios' : 'sites wide'}),{' '}
             {c.side == null
               ? es
-                ? 'ningun parche medido encuentra una inversion mas barata que la uniforme.'
+                ? 'ningún parche medido encuentra una inversión más barata que la uniforme.'
                 : 'no measured patch finds a reversal cheaper than uniform rotation.'
               : es
-                ? `una inversion no uniforme es mas barata desde W = ${c.side}.`
+                ? `una inversión no uniforme es más barata desde W = ${c.side}.`
                 : `a non-uniform reversal is cheaper from W = ${c.side}.`}
           </span>
         ))}{' '}
         {es
-          ? 'Una anisotropia mas fuerte, con su pared mas estrecha, adelanta el cruce a parches mas pequenos.'
+          ? 'Una anisotropía más fuerte, con su pared más estrecha, adelanta el cruce a parches más pequeños.'
           : 'A stronger anisotropy, with its narrower wall, moves the crossover to smaller patches.'}
       </p>
       <p className="muted">
         {es
-          ? 'Cada razon es el costo de una trayectoria factible explicita sobre el costo uniforme en la misma malla, una cota superior del optimo verdadero; el piso 4 alpha dE / (gamma mu) es una cota inferior rigurosa. A tiempo de conmutacion fijo la cota superior no siempre decrece con el tamano: en los parches mayores las busquedas se detienen en su tope de iteraciones, asi que ese aumento es un limite de la busqueda, no de la fisica, y el optimo verdadero solo queda acotado entre ambas.'
+          ? 'Cada razón es el costo de una trayectoria factible explícita sobre el costo uniforme en la misma malla, una cota superior del óptimo verdadero; el piso 4 alfa dE / (gamma mu) es una cota inferior rigurosa. A tiempo de conmutación fijo la cota superior no siempre decrece con el tamaño: en los parches mayores las búsquedas se detienen en su tope de iteraciones, así que ese aumento es un límite de la búsqueda, no de la física, y el óptimo verdadero solo queda acotado entre ambas.'
           : 'Each ratio is the cost of an explicit feasible trajectory over the uniform cost on the same grid, an upper bound on the true optimum; the floor 4 alpha dE / (gamma mu) is a rigorous lower bound. At fixed switching time the upper bound does not always fall with size: on the largest patches the searches stop at their iteration cap, so that rise is a limit of the search, not of the physics, and the true optimum is only bracketed between the two.'}
       </p>
-      <Chips label={es ? 'Regimen' : 'Regime'} values={regimes} active={jk} onPick={setJK} format={(v) => `J/K = ${v}`} />
+      <Chips label={es ? 'Régimen' : 'Regime'} values={regimes} active={jk} onPick={setJK} format={(v) => `J/K = ${v}`} />
       <Chips label={es ? 'Lado' : 'Side'} values={widths} active={w} onPick={setSide} format={(v) => `W = ${v}`} />
       <div className="wb-variant-readout" data-testid="patch-readout" data-key={item.key}>
         <dl className="readout-grid">
@@ -646,7 +647,7 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
             <dd>{item.best_ratio.toFixed(4)}</dd>
           </div>
           <div>
-            <dt>{es ? 'Ahorro minimo' : 'Saving (at least)'}</dt>
+            <dt>{es ? 'Ahorro mínimo' : 'Saving (at least)'}</dt>
             <dd>{(100 * Math.max(0, item.saving)).toFixed(1)} %</dd>
           </div>
           <div>
@@ -678,13 +679,13 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
       <h3>{es ? 'Cruce: costo contra lado' : 'Crossover: cost against side'}</h3>
       <p className="muted">
         alpha = {first.alpha}, T = {first.switching_tau0} tau0.{' '}
-        {es ? 'Bajo la linea uniforme, la inversion no uniforme gana.' : 'Below the uniform line, the non-uniform reversal wins.'}
+        {es ? 'Bajo la línea uniforme, la inversión no uniforme gana.' : 'Below the uniform line, the non-uniform reversal wins.'}
       </p>
       <PatchChart cases={data.cases} selectedJK={jk} theme={theme} es={es} />
-      <h3>{es ? 'La inversion, columna por columna' : 'The reversal, column by column'}</h3>
+      <h3>{es ? 'La inversión, columna por columna' : 'The reversal, column by column'}</h3>
       <p className="muted">
         {es
-          ? 's_z promediado a lo largo de y, una columna por x. Una rotacion uniforme es un bloque de filas iguales; un frente que cruza el parche es una diagonal.'
+          ? 's_z promediado a lo largo de y, una columna por x. Una rotación uniforme es un bloque de filas iguales; un frente que cruza el parche es una diagonal.'
           : 's_z averaged along y, one column per x. A uniform rotation is a block of identical rows; a front crossing the patch is a diagonal.'}
       </p>
       <ChainMap item={map} theme={theme} es={es} axisLabel={COLUMN_LABEL} testId="patch-map" />
@@ -719,7 +720,7 @@ function Patch({ data, es }: { data: PatchOCPArtifact; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted" lang="en">{data.description}</p>
+      <DataText as="p" className="muted" text={data.description} />
     </div>
   );
 }
@@ -753,7 +754,7 @@ function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boole
               <th>{es ? 'Caso' : 'Case'}</th>
               <th>{es ? 'Material' : 'Material'}</th>
               <th>alpha</th>
-              <th>{es ? 'Leido en' : 'Read at'}</th>
+              <th>{es ? 'Leído en' : 'Read at'}</th>
               <th>Phi / Phi_free</th>
               <th>Phi / Phi_floor</th>
               <th>{es ? 'Eje duro' : 'Hard axis'}</th>
@@ -766,9 +767,9 @@ function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boole
               return (
                 <tr key={a.case.slug} data-case={a.case.slug}>
                   <td>
-                    <strong>{a.case.code}</strong> <span lang="en">{a.case.title}</span>
+                    <strong>{a.case.code}</strong> <DataText text={a.case.title} />
                   </td>
-                  <td>{a.material.name}</td>
+                  <td>{tr(a.material.name, es)}</td>
                   <td>
                     {a.material.damping}{' '}
                     {a.material.provenance.damping?.provenance === 'assumed' && (
@@ -776,7 +777,7 @@ function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boole
                     )}
                   </td>
                   <td data-testid="read-at">
-                    {translateAxisLabel(a.axis.label, es)} = {withUnit(a.axis.values[index], a.axis.unit)}
+                    {translateAxisLabel(a.axis.label, es)} = {withUnit(a.axis.values[index], a.axis.unit, es)}
                   </td>
                   <td>{ratio(mid.cost_over_free, 3)}</td>
                   <td>{ratio(mid.cost_over_floor, 2)}</td>
@@ -790,12 +791,12 @@ function MaterialTable({ artifacts, es }: { artifacts: CaseArtifact[]; es: boole
       {other.length > 0 && (
         <p className="muted" data-testid="material-table-excluded">
           {es
-            ? `No aparecen ${other.length} casos que no reportan un costo de campo, asi que no tienen razon contra el piso: `
+            ? `No aparecen ${other.length} casos que no reportan un costo de campo, así que no tienen razón contra el piso: `
             : `Not listed: ${other.length} cases that do not report a field cost, and so have no ratio to the floor: `}
           {other.map((a, i) => (
             <span key={a.case.slug}>
               {i > 0 && ', '}
-              {a.case.code} (<span lang="en">{a.observable.label}</span>)
+              {a.case.code} (<DataText text={a.observable.label} />)
             </span>
           ))}
           .
@@ -811,21 +812,21 @@ function Reliability({ novel, es }: { novel: NovelResults; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'Frente costo-fiabilidad del campo longitudinal (R12). Un campo paralelo al momento es invisible para la dinamica del pulso optimo pero elimina la inestabilidad hiperbolica que las fluctuaciones termicas excitan, a un costo que crece con el cuadrado del campo: 2,5 veces el costo optimo sin campo a un campo de anisotropia. A este factor de estabilidad (20) el pulso sin campo ya invierte todas las copias, asi que el campo no compra fiabilidad aqui; donde si la compra es bajo un factor de estabilidad de unos diez, lo que mide el caso C07. Resultado nuevo: el costo de esa fiabilidad, que el articulo fuente no reporta.'
+          ? 'Frente costo-fiabilidad del campo longitudinal (R12). Un campo paralelo al momento es invisible para la dinámica del pulso óptimo pero elimina la inestabilidad hiperbólica que las fluctuaciones térmicas excitan, a un costo que crece con el cuadrado del campo: 2.5 veces el costo óptimo sin campo a un campo de anisotropía. A este factor de estabilidad (20) el pulso sin campo ya invierte todas las copias, así que el campo no compra fiabilidad aquí; donde sí la compra es bajo un factor de estabilidad de unos diez, lo que mide el caso C07. Resultado nuevo: el costo de esa fiabilidad, que el artículo fuente no reporta.'
           : 'The longitudinal-field cost-reliability front (R12). A field parallel to the moment is invisible to the optimal pulse dynamics but removes the hyperbolic instability that thermal fluctuations excite, at a cost that grows with the square of the field: 2.5 times the bare optimal cost at one anisotropy field. At this stability factor (20) the bare pulse already reverses every copy, so the field buys no reliability here; where it does is below a stability factor of about ten, which case C07 measures. Novel result: the cost of that reliability, which the source paper does not report.'}{' '}
         <Cite id="badarneh2023" />
       </p>
       <p className="muted">
-        {es ? 'Material' : 'Material'}: {rf.material}, {es ? 'factor de estabilidad termica' : 'thermal stability factor'} = {rf.thermal_stability_factor}
+        {es ? 'Material' : 'Material'}: {rf.material}, {es ? 'factor de estabilidad térmica' : 'thermal stability factor'} = {rf.thermal_stability_factor}
       </p>
       <div className="table-wrap">
         <table>
           <thead>
             <tr>
               <th>B_r / (K/mu)</th>
-              <th>{es ? 'Fraccion hiperbolica' : 'Hyperbolic fraction'}</th>
-              <th>{es ? 'Tasa de exito' : 'Success rate'}</th>
-              <th>{es ? 'Costo anadido' : 'Added cost'} (T^2 s)</th>
+              <th>{es ? 'Fracción hiperbólica' : 'Hyperbolic fraction'}</th>
+              <th>{es ? 'Tasa de éxito' : 'Success rate'}</th>
+              <th>{es ? 'Costo añadido' : 'Added cost'} (T^2 s)</th>
             </tr>
           </thead>
           <tbody>
@@ -836,13 +837,13 @@ function Reliability({ novel, es }: { novel: NovelResults; es: boolean }) {
                 <td>
                   {p.success_rate.toFixed(3)} +/- {p.confidence95.toFixed(3)}
                 </td>
-                <td>{p.added_cost.toExponential(2)}</td>
+                <td>{p.added_cost === 0 ? '0' : p.added_cost.toExponential(2)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="muted" lang="en">{novel.notes.reliability}</p>
+      <DataText as="p" className="muted" text={novel.notes.reliability} />
     </div>
   );
 }
@@ -853,7 +854,7 @@ function Lattice({ novel, es }: { novel: NovelResults; es: boolean }) {
     <div className="prose">
       <p>
         {es
-          ? 'Mas alla del macrospin (Gap 1), el problema que los autores del metodo declaran como trabajo futuro. Para una cadena de espines con intercambio, el costo de conmutacion de una rotacion uniforme frente a un barrido de pared de dominio a velocidad constante. Reemplazado: esta comparacion fija solo dos modos; la busqueda libre (pestana anterior) encuentra paredes optimas mas baratas que la rotacion uniforme a tiempos largos.'
+          ? 'Más allá del macrospin (Gap 1), el problema que los autores del método declaran como trabajo futuro. Para una cadena de espines con intercambio, el costo de conmutación de una rotación uniforme frente a un barrido de pared de dominio a velocidad constante. Reemplazado: esta comparación fija solo dos modos; la búsqueda libre (pestaña anterior) encuentra paredes óptimas más baratas que la rotación uniforme a tiempos largos.'
           : 'Beyond the macrospin (Gap 1), the problem the method authors state as future work. For a spin chain with exchange, the switching cost of a uniform rotation versus a constant-speed domain-wall sweep. Superseded: this comparison fixes two modes; the free search (previous tab) finds optimal walls cheaper than uniform rotation at long switching times.'}{' '}
         <Cite id="badarneh2023" />
       </p>
@@ -867,8 +868,8 @@ function Lattice({ novel, es }: { novel: NovelResults; es: boolean }) {
               <th>N {es ? 'sitios' : 'sites'}</th>
               <th>{es ? 'Costo uniforme' : 'Uniform cost'}</th>
               <th>{es ? 'Costo pared' : 'Wall cost'}</th>
-              <th>{es ? 'Razon pared/uniforme' : 'Ratio wall/uniform'}</th>
-              <th>{es ? 'Mas barato' : 'Cheaper'}</th>
+              <th>{es ? 'Razón pared/uniforme' : 'Ratio wall/uniform'}</th>
+              <th>{es ? 'Más barato' : 'Cheaper'}</th>
             </tr>
           </thead>
           <tbody>
@@ -884,7 +885,7 @@ function Lattice({ novel, es }: { novel: NovelResults; es: boolean }) {
           </tbody>
         </table>
       </div>
-      <p className="muted" lang="en">{novel.notes.lattice}</p>
+      <DataText as="p" className="muted" text={novel.notes.lattice} />
     </div>
   );
 }
@@ -904,7 +905,7 @@ function ReplicationsPanel({ artifacts, es }: { artifacts: CaseArtifact[]; es: b
       <p className="muted" data-testid="replications-missing">
         {es ? 'Falta el artefacto de ' : 'Missing the artifact for '}
         {missing.join(', ')}
-        {es ? '. Esta pestana necesita ambos casos horneados.' : '. This tab needs both cases baked.'}
+        {es ? '. Esta pestaña necesita ambos casos calculados.' : '. This tab needs both cases baked.'}
       </p>
     );
   }
@@ -922,8 +923,8 @@ export const EXPERIMENT_GROUPS: { id: string; en: string; es: string; views: str
     es: 'Elegir un material',
     views: ['materials', 'exploitability', 'hard-axis', 'tradeoffs'],
   },
-  { id: 'beyond', en: 'Beyond one spin', es: 'Mas alla de un espin', views: ['free-chain', 'patch', 'lattice'] },
-  { id: 'reliability', en: 'Thermal reliability', es: 'Fiabilidad termica', views: ['reliability', 'penalty'] },
+  { id: 'beyond', en: 'Beyond one spin', es: 'Más allá de un espín', views: ['free-chain', 'patch', 'lattice'] },
+  { id: 'reliability', en: 'Thermal reliability', es: 'Fiabilidad térmica', views: ['reliability', 'penalty'] },
 ];
 
 export function Experiments(): React.JSX.Element {
@@ -974,7 +975,7 @@ export function Experiments(): React.JSX.Element {
           <div className="prose">
             <p>
               {es
-                ? 'Evidencia cruzada entre materiales: el costo optimo relativo al piso universal y al costo de macrospin libre. Phi/Phi_free por debajo de uno solo es posible con eje duro. Los materiales leidos a un mismo tiempo en unidades de tau0 comparten las dos razones cuando comparten el amortiguamiento, porque el momento y la anisotropia se cancelan en ambas: por eso todos los que tienen el amortiguamiento supuesto de 0.01 dan lo mismo, y Cr2Ge2Te6, a 0.0007, es el que se aparta.'
+                ? 'Evidencia cruzada entre materiales: el costo óptimo relativo al piso universal y al costo de macrospin libre. Phi/Phi_free por debajo de uno solo es posible con eje duro. Los materiales leídos a un mismo tiempo en unidades de tau0 comparten las dos razones cuando comparten el amortiguamiento, porque el momento y la anisotropía se cancelan en ambas: por eso todos los que tienen el amortiguamiento supuesto de 0.01 dan lo mismo, y Cr2Ge2Te6, a 0.0007, es el que se aparta.'
                 : 'Cross-material evidence: the optimal cost relative to the universal floor and to the free-macrospin cost. Phi/Phi_free below one is only possible with a hard axis. Materials read at the same switching time in units of tau0 share both ratios whenever they share a damping, because the moment and the anisotropy cancel out of both: that is why every material at the assumed damping of 0.01 reads the same, and why Cr2Ge2Te6, at 0.0007, is the one that differs.'}
             </p>
             <MaterialTable artifacts={artifacts} es={es} />
@@ -988,7 +989,7 @@ export function Experiments(): React.JSX.Element {
       },
       {
         id: 'free-chain',
-        label: es ? 'Control optimo de cadena libre' : 'Free chain optimal control',
+        label: es ? 'Control óptimo de cadena libre' : 'Free chain optimal control',
         content: <FreeChain data={chain} es={es} />,
       },
       {
@@ -1003,12 +1004,12 @@ export function Experiments(): React.JSX.Element {
       },
       {
         id: 'penalty',
-        label: es ? 'Penalizacion contra ensemble' : 'Penalty against ensemble',
+        label: es ? 'Penalización frente a Monte Carlo' : 'Penalty against ensemble',
         content: <PenaltyTest data={penalty} es={es} />,
       },
       {
         id: 'hard-axis',
-        label: es ? 'Donde paga el eje duro' : 'Where the hard axis pays',
+        label: es ? 'Dónde conviene el eje duro' : 'Where the hard axis pays',
         content: <HardAxis data={hardAxis} es={es} />,
       },
       {
@@ -1023,7 +1024,7 @@ export function Experiments(): React.JSX.Element {
       },
       {
         id: 'lattice',
-        label: es ? 'Comparacion de dos modos' : 'Two-mode comparison',
+        label: es ? 'Comparación de dos modos' : 'Two-mode comparison',
         content: <Lattice novel={novel} es={es} />,
       },
     ].map((view) => [view.id, view]),

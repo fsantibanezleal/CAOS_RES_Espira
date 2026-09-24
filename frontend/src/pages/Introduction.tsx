@@ -9,41 +9,41 @@ export function Introduction(): React.JSX.Element {
       <article className="prose">
         <h1>Espira</h1>
         <p className="lead">
-          Control optimo de la conmutacion de la magnetizacion en imanes de van der Waals
-          bidimensionales: dado un bit magnetico y un tiempo de conmutacion, calcular el pulso de campo
-          o corriente que lo invierte con la menor energia disipada.
+          Control óptimo de la conmutación de la magnetización en imanes de van der Waals
+          bidimensionales: dado un bit magnético y un tiempo de conmutación, calcular el pulso de campo
+          o corriente que lo invierte con la menor energía disipada.
         </p>
         <p>
-          El almacenamiento de datos consume una fraccion creciente de la energia mundial, y el costo de
-          conmutar un bit magnetico importa cada vez mas. El trabajo de referencia{' '}
-          <Cite id="badarneh2026" /> mostro que la teoria de control optimo produce pulsos de campo
-          conformados que invierten la magnetizacion en picosegundos con energias hasta dos ordenes de
+          El almacenamiento de datos consume una fracción creciente de la energía mundial, y el costo de
+          conmutar un bit magnético importa cada vez más. El trabajo de referencia{' '}
+          <Cite id="badarneh2026" /> mostró que la teoría de control óptimo produce pulsos de campo
+          conformados que invierten la magnetización en picosegundos con energías hasta dos órdenes de
           magnitud por debajo de los protocolos de campo convencionales.
         </p>
         <p>
-          Espira no es una reimplementacion de ese articulo. Reproduce sus resultados publicados como
-          piso de verificacion y luego hace lo que la literatura aun no ha hecho: control optimo mas
-          alla del macrospin, el mecanismo de eje duro en CrSBr <Cite id="rudenko2023" />, el costo de
-          la fiabilidad termica, el precio de la realizabilidad de banda limitada, y la co-optimizacion de
+          Espira no es una reimplementación de ese artículo. Reproduce sus resultados publicados como
+          piso de verificación y luego hace lo que la literatura aún no ha hecho: control óptimo más
+          allá del macrospin, el mecanismo de eje duro en CrSBr <Cite id="rudenko2023" />, el costo de
+          la fiabilidad térmica, el precio de la realizabilidad de banda limitada, y la optimización conjunta de
           campo y corriente.
         </p>
-        <h2>Lo que se comprobo contra otros</h2>
+        <h2>Lo que se comprobó contra otros</h2>
         <p>
           Un producto que solo se pone de acuerdo consigo mismo no es evidencia de nada. Los campos pico
           publicados por el trabajo de referencia se reproducen en tres de sus cuatro puntos, y el cuarto
-          se muestra tal cual; la tabla de robustez termica del articulo biaxial se reproduce en sus ocho
-          celdas (Experimentos, Replicaciones publicadas). La barrera de energia la recalcula Spirit y la
-          ecuacion de movimiento la reintegra VAMPIRE, dos codigos escritos por otras personas con otros
-          metodos (Implementacion).
+          se muestra tal cual; la tabla de robustez térmica del artículo biaxial se reproduce en sus ocho
+          celdas (Experimentos, Replicaciones publicadas). La barrera de energía la recalcula Spirit y la
+          ecuación de movimiento la reintegra VAMPIRE, dos códigos escritos por otras personas con otros
+          métodos (Implementación).
         </p>
         <h2>Honestidad</h2>
         <p>
-          El costo de conmutacion es una integral en unidades de tesla al cuadrado por segundo, no una
-          energia. Se convierte en julios solo a traves de un modelo de circuito explicito. No existe un
-          conjunto de datos experimental publico de conmutacion por pulsos conformados en estos
-          materiales; los datos reales son los parametros del hamiltoniano de espin, cada uno con su
-          DOI. El piso de energia es lineal en el amortiguamiento, que es el parametro menos conocido,
-          asi que cada energia se reporta como banda, no como numero unico.
+          El costo de conmutación es una integral en unidades de tesla al cuadrado por segundo, no una
+          energía. Se convierte en julios solo a través de un modelo de circuito explícito. No existe un
+          conjunto de datos experimental público de conmutación por pulsos conformados en estos
+          materiales; los datos reales son los parámetros del hamiltoniano de espín, cada uno con su
+          DOI. El piso de energía es lineal en el amortiguamiento, que es el parámetro menos conocido,
+          así que cada energía se reporta como banda, no como número único.
         </p>
         <Refs ids={['badarneh2026', 'rudenko2023']} label="Refs" />
       </article>

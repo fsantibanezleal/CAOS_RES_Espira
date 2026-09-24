@@ -10,11 +10,14 @@
 //
 //     b(u) = K / (mu p sqrt(1+a^2)) [dn(u|m) + a p sn(u|m)],   m = -a^2 p^2 < 0,
 //
-// runs over u from 0 to 2K(m), and at both ends sn = 0 and dn = 1, so the start and the midpoint of
-// the pulse give the same value and, for a negative parameter, that value is the pulse's MINIMUM. The
-// peak is a quarter of the way through, at u = K(m), where sn = 1 and dn = sqrt(1 + a^2 p^2). So no
-// Jacobi functions are needed here at all: the peak is closed form once p is known, and p follows from
-// the switching time through the complete elliptic integral this module already has.
+// runs over u from 0 to 4K(m) across the pulse (the polar angle is half the Jacobi amplitude, and the
+// amplitude reaches 2 pi at u = 4K). At the start, the midpoint and the end sn = 0 and dn = 1, so all
+// three give one value, and it is neither extremum: for a negative parameter the amplitude is largest
+// a quarter of the way through, at u = K(m), where sn = 1 and dn = sqrt(1 + a^2 p^2), and smallest at
+// three quarters, u = 3K(m), where sn = -1. The engine once reported the start-and-midpoint value as
+// the peak (F-028). So no Jacobi functions are needed here at all: the peak is closed form once p is
+// known, and p follows from the switching time through the complete elliptic integral this module
+// already has.
 
 import { completeK } from './sotAnalytic';
 
