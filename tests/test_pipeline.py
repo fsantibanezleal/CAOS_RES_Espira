@@ -198,9 +198,9 @@ def test_no_manifest_reports_a_peak_below_its_own_mean() -> None:
 
     Every method block that records both a mean and a peak amplitude of the same pulse is recording two
     numbers about one function, and the peak cannot be the smaller of them. For three releases it was:
-    the closed-form peak was sampled at the start and the midpoint of the pulse, which are the two
-    points where the amplitude is at its lowest, so the shipped manifests carried a "peak" of 2.726 T
-    beside a mean of 2.727 T and nothing objected.
+    the closed-form peak was sampled at the start and the midpoint of the pulse, where the amplitude
+    takes one middle value (it peaks a quarter of the way through and dips at three quarters), so the
+    shipped manifests carried a "peak" of 2.726 T beside a mean of 2.727 T and nothing objected.
     """
     offenders, inspected = [], 0
     for slug in baked_cases("workbench"):

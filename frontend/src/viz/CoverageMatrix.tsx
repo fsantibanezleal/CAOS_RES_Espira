@@ -3,6 +3,7 @@
 
 import type { ArtifactIndex, RegistryRow } from '../data/contract';
 import { translateAxisLabel, translateCategory } from '../content/registry-es';
+import { DataText, tr } from '../content/dataText';
 
 const STATUS_LABEL: Record<string, { en: string; es: string }> = {
   baked: { en: 'baked', es: 'calculado' },
@@ -20,15 +21,9 @@ export function CoverageMatrix({ index, es }: { index: ArtifactIndex; es: boolea
     <div className="prose" data-testid="coverage-matrix" data-declared={index.registry.length}>
       <p>
         {es
-          ? 'La matriz de cobertura completa del plan validado: cada caso declarado con su estado. Un caso planificado o bloqueado aparece aqui con la misma visibilidad que uno calculado, de modo que lo que falta no se esconde detras de lo que existe.'
+          ? 'La matriz de cobertura completa del plan validado: cada caso declarado con su estado. Un caso planificado o bloqueado aparece aquí con la misma visibilidad que uno calculado, de modo que lo que falta no se esconde detrás de lo que existe.'
           : 'The full coverage matrix of the validated plan: every declared case with its status. A planned or blocked case appears here as visibly as a baked one, so what is missing does not hide behind what exists.'}
       </p>
-      {es && (
-        <p className="muted" data-testid="registry-language-note">
-          Los titulos de los casos vienen del registro de casos, que se mantiene en ingles como todo
-          artefacto tecnico de este producto.
-        </p>
-      )}
       <p className="muted" data-testid="coverage-counts">
         {baked} {es ? 'calculados' : 'baked'} &middot; {planned} {es ? 'planificados' : 'planned'} &middot;{' '}
         {blocked} {es ? 'bloqueados' : 'blocked'}
@@ -43,7 +38,7 @@ export function CoverageMatrix({ index, es }: { index: ArtifactIndex; es: boolea
                   <th>{es ? 'Caso' : 'Case'}</th>
                   <th>{es ? 'Estado' : 'Status'}</th>
                   <th>{es ? 'Variantes' : 'Variants'}</th>
-                  <th>{es ? 'Metodos' : 'Methods'}</th>
+                  <th>{es ? 'Métodos' : 'Methods'}</th>
                   <th>{es ? 'Verdad de referencia' : 'Ground truth'}</th>
                 </tr>
               </thead>
@@ -51,8 +46,8 @@ export function CoverageMatrix({ index, es }: { index: ArtifactIndex; es: boolea
                 {rows.map((row) => (
                   <tr key={row.slug} data-case={row.slug} data-status={row.status}>
                     <td>
-                      <code>{row.code}</code> <span lang="en">{row.title}</span>
-                      {row.blocked_reason && <div className="muted" lang="en">{row.blocked_reason}</div>}
+                      <code>{row.code}</code> <DataText text={row.title} />
+                      {row.blocked_reason && <DataText as="div" className="muted" text={row.blocked_reason} />}
                     </td>
                     <td>
                       <span className={`prov-badge status-${row.status}`}>
@@ -63,7 +58,7 @@ export function CoverageMatrix({ index, es }: { index: ArtifactIndex; es: boolea
                       {row.variants} x {translateAxisLabel(row.axis, es).toLowerCase()}
                     </td>
                     <td>{row.methods.join(', ')}</td>
-                    <td>{row.ground_truth}</td>
+                    <td>{tr(row.ground_truth, es)}</td>
                   </tr>
                 ))}
               </tbody>

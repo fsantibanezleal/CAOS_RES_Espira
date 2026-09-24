@@ -8,6 +8,7 @@ import { useEffect, useRef } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { PatchOCPCase } from '../data/contract';
+import { recordPlotAxes } from './axisLabels';
 
 interface Props {
   cases: PatchOCPCase[];
@@ -59,7 +60,7 @@ export function PatchChart({ cases, selectedJK, theme, es }: Props): React.JSX.E
         dash: [2, 3],
         value: fixed,
       },
-      { label: es ? 'rotacion uniforme' : 'uniform rotation', stroke, width: 1, dash: [6, 4], value: fixed },
+      { label: es ? 'rotación uniforme' : 'uniform rotation', stroke, width: 1, dash: [6, 4], value: fixed },
     ];
     const data = [
       widths,
@@ -96,6 +97,7 @@ export function PatchChart({ cases, selectedJK, theme, es }: Props): React.JSX.E
     };
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data, host);
+    recordPlotAxes(host, opts);
 
     const observer = new ResizeObserver(() => {
       if (host.clientWidth > 0) plotRef.current?.setSize({ width: host.clientWidth, height: HEIGHT });

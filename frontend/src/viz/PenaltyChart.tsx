@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { PenaltyTestArtifact } from '../data/contract';
+import { recordPlotAxes } from './axisLabels';
 
 interface Props {
   data: PenaltyTestArtifact;
@@ -57,14 +58,14 @@ export function PenaltyChart({ data, theme, es }: Props): React.JSX.Element {
       scales: { x: { time: false }, y: { range: [0, 1.05] } },
       axes: [
         {
-          label: es ? 'campo longitudinal  B_r / campo de anisotropia' : 'longitudinal field  B_r / anisotropy field',
+          label: es ? 'campo longitudinal  B_r / campo de anisotropía' : 'longitudinal field  B_r / anisotropy field',
           stroke,
           grid: { stroke: grid },
           ticks: { stroke: grid },
           values: (_u, splits) => splits.map((v) => String(Number(v.toPrecision(4)))),
         },
         {
-          label: es ? 'fraccion que no invierte' : 'fraction that fails to reverse',
+          label: es ? 'fracción que no invierte' : 'fraction that fails to reverse',
           stroke,
           grid: { stroke: grid },
           ticks: { stroke: grid },
@@ -81,7 +82,7 @@ export function PenaltyChart({ data, theme, es }: Props): React.JSX.Element {
           value: plain,
         })),
         {
-          label: es ? 'penalizacion (escalada)' : 'penalty (scaled)',
+          label: es ? 'penalización (escalada)' : 'penalty (scaled)',
           stroke,
           width: 2,
           dash: [6, 4],
@@ -93,6 +94,7 @@ export function PenaltyChart({ data, theme, es }: Props): React.JSX.Element {
     };
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data2d, host);
+    recordPlotAxes(host, opts);
     const observer = new ResizeObserver(() => {
       if (host.clientWidth > 0) plotRef.current?.setSize({ width: host.clientWidth, height: HEIGHT });
     });

@@ -33,7 +33,7 @@ for (const theme of ['light', 'dark']) {
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(`${base}/experiments`, { waitUntil: 'networkidle' });
-    await openView(page, lang === 'es' ? 'Donde paga el eje duro' : 'Where the hard axis pays');
+    await openView(page, lang === 'es' ? 'Dónde conviene el eje duro' : 'Where the hard axis pays');
     const map = page.getByTestId('hard-axis-map');
     await map.waitFor({ timeout: 15000 });
     const tag = `${theme}-${lang}`;

@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { LatticeOCPCase } from '../data/contract';
+import { recordPlotAxes } from './axisLabels';
 
 interface Props {
   cases: LatticeOCPCase[];
@@ -58,7 +59,7 @@ export function CrossoverChart({ cases, selectedT, theme, es }: Props): React.JS
         dash: [2, 3],
         value: (_u: uPlot, v: number | null) => (v == null ? '-' : v.toFixed(4)),
       },
-      { label: es ? 'rotacion uniforme' : 'uniform rotation', stroke, width: 1, dash: [6, 4] },
+      { label: es ? 'rotación uniforme' : 'uniform rotation', stroke, width: 1, dash: [6, 4] },
     ];
 
     const width = ref.current.clientWidth || 640;
@@ -82,6 +83,7 @@ export function CrossoverChart({ cases, selectedT, theme, es }: Props): React.JS
     const data = [sizes, ...ratioSeries, floor, unity] as unknown as uPlot.AlignedData;
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data, ref.current);
+    recordPlotAxes(ref.current, opts);
 
     const onResize = () => plotRef.current?.setSize({ width: ref.current!.clientWidth, height: 360 });
     window.addEventListener('resize', onResize);

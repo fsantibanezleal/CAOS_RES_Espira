@@ -195,3 +195,21 @@ def test_every_registry_label_the_interface_shows_has_a_spanish_form() -> None:
     labels = {case.axis.label for case in CASES.values()}
     assert categories <= keys("CATEGORY_ES"), f"untranslated categories: {sorted(categories - keys('CATEGORY_ES'))}"
     assert labels <= keys("AXIS_LABEL_ES"), f"untranslated axis labels: {sorted(labels - keys('AXIS_LABEL_ES'))}"
+
+
+#: Words an untagged diagram label may carry because they read the same in both languages: names of
+#: codes and formats, and the symbols of the cost integral.
+_LANGUAGE_NEUTRAL = {"phi", "integral", "dt", "spinoct", "json", "spirit", "gneb", "vampire", "heun", "doi"}
+
+
+def test_every_architecture_diagram_label_is_tagged_or_language_neutral() -> None:
+    """The modal draws each label twice, l-en and l-es, and the shell shows one. A label with neither
+    class shows in both languages: "DOI + units", "OCP engine", "this page" and "Energy (J)" did, on the
+    Spanish modal, through 0.15.004, and the modal gate compared the tagged lines only."""
+    source = (ROOT / "frontend" / "src" / "content" / "architecture.ts").read_text(encoding="utf-8")
+    labels = re.findall(r"<text([^>]*)>([^<]*)</text>", source)
+    assert len(labels) > 40
+    untagged = [text for attrs, text in labels if 'class="l-en"' not in attrs and 'class="l-es"' not in attrs]
+    for text in untagged:
+        words = {w.lower() for w in re.findall(r"[A-Za-z]{2,}", text)}
+        assert words <= _LANGUAGE_NEUTRAL, f"untagged diagram label in one language: {text!r}"

@@ -6,6 +6,8 @@
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
 const require = createRequire(import.meta.url);
+// The Spanish page shows the lane in Spanish, through the same table the app uses.
+const DATA_ES = require('../src/content/data-es.json');
 const { chromium } = require('playwright');
 
 const base = process.argv[2] ?? 'http://localhost:4173';
@@ -60,7 +62,8 @@ for (const theme of ['light', 'dark']) {
     check(
       benchmark.manifests.every((m) => {
         const row = evidence.find((e) => e.case === m.case);
-        return row && row.text.includes(m.sha256.slice(0, 12)) && row.text.includes(m.lane);
+        const lane = lang === 'es' ? DATA_ES[m.lane] : m.lane;
+        return row && row.text.includes(m.sha256.slice(0, 12)) && row.text.includes(lane);
       }),
       `${tag}: every manifest row shows its lane and hash prefix`,
     );

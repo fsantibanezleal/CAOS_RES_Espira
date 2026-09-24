@@ -4,6 +4,65 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.16.000] - 2026-09-23
+
+The Spanish site, read the way a Spanish reader reads it, and three claims the data had outgrown.
+
+### Fixed
+- **The Spanish interface had no accents.** Every Spanish string was written without them, beside a
+  shell whose own footer is accented: "Implementacion", "conmutacion", "energia", "Decide: si",
+  "estan", "midio". More than 500 words in 20 files are restored, verb forms read in context (está/esta,
+  bajó/bajo, sí/si), and the breadth gate now fails a Spanish page with an unaccented -ción word. It
+  fails the live 0.15.004 site 100 times.
+- **Wrong words as well as missing accents.** "commit" had been rendered as "comprometer", which means
+  to compromise: the parity table's "Comprometido" column read "compromised artifact". The anglicisms
+  "horneado", "gate de carril", "release", "ensemble", "solver", "Web replay" and "offline" are replaced.
+  "1,000 copias" read as 1.0 in Spanish, "2,5" used a decimal comma the rest of the app does not, and
+  "Pase el cursor" sat beside "Pasa el cursor".
+- **About 31,000 characters of English on the Spanish page.** Case titles, reasons, expectations and
+  kill criteria, material and pulse notes, artifact descriptions, method notes, the parameter panel's
+  units, bases, methods and notes, observable units, easy axes, reference truth, split and lane all
+  rendered in English, under a note that apologized for it. 232 strings are now translated in
+  `frontend/src/content/data-es.json`, keyed by their exact English text; `tests/test_translations.py`
+  holds the file to every string the artifacts carry, in both directions, with the numbers and symbols
+  of each translation equal to those of its source, so a registry text corrected in English fails until
+  its Spanish is corrected too.
+- **The Architecture modal.** Four diagram labels carried no language tag ("DOI + units", "OCP engine",
+  "this page", "Energy (J)") and showed in English on the Spanish modal; a test now holds every label to
+  a tag. Its engine section said, in both languages, that one case runs in the browser; two do.
+- **C07 quoted a success rate from before the sign fix**: "0.810 against 0.952 at a stability factor of
+  two", where the corrected artifact says 1.000. Corrected, and a test holds every "X against Y at
+  <factor>" in the text to the artifact.
+- **The reliability note described a success dip that does not exist** and cited manuscript M1 v2; M1 is
+  at v4 and the corrected front has a success rate of one at every field. The note is rewritten from the
+  front's own numbers and is now a constant of the bake, and a test holds the committed artifact to it
+  and each of its claims to the data.
+- **F-028's explanation was wrong, though its fix was right.** The 0.15.000 entry said the start and the
+  midpoint of the optimal pulse are its minimum and that the old peak was 37 per cent low. Measured with
+  the engine: the pulse runs over u from 0 to 4K, its start, midpoint and end share one middle value, the
+  maximum is at a quarter and the minimum at three quarters, and the old value was up to 27 per cent low
+  (the true peak up to 37 per cent higher). The entry, the browser module's comment, a test docstring and
+  the pipeline page are corrected; no number the product publishes depended on the explanation.
+- The cost chart's legend and axis titles were English on the Spanish page, and the chart rebuilt on
+  every workbench render because it depended on an axis object created inline; it now depends on the
+  label and unit. The citation label "E 2007" reads "E, Ren & Vanden-Eijnden 2007", and a zero added cost
+  prints as 0 rather than "0.00e+0".
+
+### Added
+- `python data-pipeline/run.py export --only <slug>[,<slug>...]` re-exports named cases into an existing
+  release and leaves the rest of it byte for byte: the lane gate is a runtime threshold, and rebaking the
+  whole release re-times every case. C07 was re-exported this way; its artifact changed only in the
+  corrected text, its manifest only in hash, size and measured runtime, and the coverage index came out
+  byte-identical, which also checks that the full bake and the partial export share one index builder.
+
+### Gates
+- The breadth gate reads every visible word of `<main>`, not only the active tab panel, plus the legends
+  and the axis titles each chart now records on its host (`viz/axisLabels.ts`), with word edges by
+  Unicode letter (`\b` split "costó" into "cost"). On a Spanish page it fails on any data string that
+  fell back to English and on Spanish without its accents. The provenance gate checks the readout,
+  every parameter row, the chart titles and the legends of every case in Spanish, and the benchmark gate
+  reads the lane in Spanish. 4,174 checks across fourteen gates on the built site.
+
 ## [0.15.004] - 2026-09-23
 
 A visual audit. Every screenshot the gates took had been blank below the first screen, so the review
@@ -185,14 +244,16 @@ on the corrected one, so neither passes by inspecting nothing.
   failure mode of a bilingual hand-authored SVG.
 
 ### Fixed
-- **The reported peak of the optimal pulse was its minimum** (finding F-028). Every committed
+- **The reported peak of the optimal pulse was not its peak** (finding F-028). Every committed
   per-case manifest carried a `peak_amplitude_t` for its R05 rows computed as the larger of the
-  amplitude at the start of the pulse and at its midpoint, and those are the two points where the
-  amplitude is smallest: the Jacobi sine vanishes at both, and for the negative elliptic parameter of a
-  damped reversal the amplitude is largest a quarter of the way through. The manifests were shipping a
-  peak of 2.7266 T beside a mean of 2.7272 T for the same pulse, which cannot happen, and nothing
-  objected. The error runs from 0.2 per cent at alpha = 0.01 and T = 1 tau0 to 37 per cent at
-  alpha = 0.1 and T = 20 tau0, always in the direction that under-specifies a driver. The engine gained
+  amplitude at the start of the pulse and at its midpoint, and the amplitude takes one and the same
+  middle value at both: the Jacobi sine vanishes there, and for the negative elliptic parameter of a
+  damped reversal the amplitude is largest a quarter of the way through and smallest at three quarters.
+  The manifests were shipping a peak of 2.7266 T beside a mean of 2.7272 T for the same pulse, which
+  cannot happen, and nothing objected. The reported value was low by 0.2 per cent at alpha = 0.01 and
+  T = 1 tau0 up to 27 per cent at alpha = 0.1 and T = 20 tau0 (there the true peak is 37 per cent
+  higher), always in the direction that under-specifies a driver. (Corrected in 0.16.000: this entry
+  first said the start and the midpoint were the pulse's minimum and gave 37 per cent as the shortfall.) The engine gained
   an exact `peak_amplitude()` (spinoct 0.19.000), the pipeline uses it, and a test now refuses any
   manifest that reports a peak below its own mean. Nothing a reader sees was wrong: the case artifacts
   never carried this metric, and the three surfaces that do report a peak (the device trade-off front,

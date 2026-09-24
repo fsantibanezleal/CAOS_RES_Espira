@@ -164,7 +164,7 @@ export function SphereTrajectory({ pulse, theme, es = false }: Props): React.JSX
   const i = Math.max(0, Math.min(cursor, pulse.sx.length - 1));
   // Time in ps, or the case's own x axis (a path coordinate for a barrier).
   const xValue = (pulse.time_s[i] * (pulse.x_scale ?? 1e12)).toFixed(2);
-  const xName = pulse.x_label === 'path coordinate' ? 'path' : 't';
+  const xName = pulse.x_label === 'path coordinate' ? (es ? 'camino' : 'path') : 't';
   const xUnit = pulse.x_unit === 'fraction' ? '' : ` ${pulse.x_unit ?? 'ps'}`;
 
   return (
@@ -196,7 +196,7 @@ export function SphereTrajectory({ pulse, theme, es = false }: Props): React.JSX
       </div>
       <p className="sphere-note">
         {es
-          ? 'Arrastra para rotar. El momento desciende en espiral del polo norte al polo sur, precesando mientras el torque interno asiste la inversion.'
+          ? 'Arrastra para rotar. El momento desciende en espiral del polo norte al polo sur, precesando mientras el torque interno asiste la inversión.'
           : 'Drag to rotate. The moment spirals from the north pole to the south pole, precessing as the internal torque assists the reversal.'}
       </p>
     </div>

@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import type { MaterialInfo, ParameterProvenance } from '../data/contract';
+import { tr } from '../content/dataText';
 
 type Lang = 'en' | 'es';
 
@@ -25,10 +26,10 @@ const LABELS: Record<Lang, Record<string, string>> = {
     none: 'no source value',
   },
   es: {
-    title: 'Parametros y procedencia',
+    title: 'Parámetros y procedencia',
     moment: 'Momento',
-    anisotropy: 'Anisotropia K',
-    hard_axis_ratio: 'Razon de eje duro',
+    anisotropy: 'Anisotropía K',
+    hard_axis_ratio: 'Razón de eje duro',
     damping: 'Amortiguamiento de Gilbert',
     ordering_temperature: 'Temperatura de orden',
     measured: 'medido',
@@ -37,7 +38,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     assumed: 'supuesto',
     assumedCount: 'valores supuestos',
     input: 'Publicado como',
-    method: 'Metodo',
+    method: 'Método',
     none: 'sin valor de fuente',
   },
 };
@@ -74,14 +75,14 @@ function Row({ name, m, p, lang }: { name: string; m: MaterialInfo; p: Parameter
       {open && (
         <div className="param-detail">
           <p>
-            <strong>{L.input}:</strong> {p.input.value} {p.input.unit} ({p.input.basis})
+            <strong>{L.input}:</strong> {p.input.value} {tr(p.input.unit, lang === 'es')} ({tr(p.input.basis, lang === 'es')})
           </p>
           {p.method && (
             <p>
-              <strong>{L.method}:</strong> {p.method}
+              <strong>{L.method}:</strong> {tr(p.method, lang === 'es')}
             </p>
           )}
-          {p.note && <p>{p.note}</p>}
+          {p.note && <p>{tr(p.note, lang === 'es')}</p>}
           <p className="param-sources">
             {p.sources.length
               ? p.sources.map((doi) => (

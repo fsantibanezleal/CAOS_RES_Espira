@@ -10,6 +10,7 @@ import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { ParetoMaterial } from '../data/contract';
 import { logDecadeTicks } from './logTicks';
+import { recordPlotAxes } from './axisLabels';
 
 interface Props {
   item: ParetoMaterial;
@@ -66,7 +67,7 @@ export function ParetoChart({ item, theme, es }: Props): React.JSX.Element {
       scales: { x: { time: false, distr: 3 }, y: { distr: 3 } },
       axes: [
         {
-          label: es ? 'tiempo de conmutacion  T (tau0)' : 'switching time  T (tau0)',
+          label: es ? 'tiempo de conmutación  T (tau0)' : 'switching time  T (tau0)',
           stroke,
           grid: { stroke: grid },
           ticks: { stroke: grid },
@@ -94,6 +95,7 @@ export function ParetoChart({ item, theme, es }: Props): React.JSX.Element {
     };
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data, host);
+    recordPlotAxes(host, opts);
 
     const observer = new ResizeObserver(() => {
       if (host.clientWidth > 0) plotRef.current?.setSize({ width: host.clientWidth, height: HEIGHT });
