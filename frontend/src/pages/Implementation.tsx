@@ -5,6 +5,7 @@ import { useShellLang, Cite, Refs } from '@fasl-work/caos-app-shell';
 import type { ExternalCrosscheck, ExternalDynamicsCrosscheck, LiveParityFixture } from '../data/contract';
 import { loadExternalCrosscheck, loadExternalDynamics, loadLiveParity } from '../data/load';
 import { LiveParity } from '../viz/LiveParity';
+import { DataText } from '../content/dataText';
 
 export function Implementation(): React.JSX.Element {
   const lang = useShellLang();
@@ -19,37 +20,37 @@ export function Implementation(): React.JSX.Element {
   }, []);
   return (
     <article className="prose">
-      <h1>{es ? 'Implementacion' : 'Implementation'}</h1>
+      <h1>{es ? 'Implementación' : 'Implementation'}</h1>
       <h2>{es ? 'El motor' : 'The engine'}</h2>
       <p>
         {es
-          ? 'El calculo lo realiza spinoct, un paquete de Python de codigo abierto (MIT) que resuelve el control optimo sobre la dinamica de Landau-Lifshitz-Gilbert. Es un repositorio y un paquete separado, no codigo enterrado en este producto, porque el solucionador es agnostico del dominio: funciona sobre cualquier hamiltoniano de espin. Se verifico que ningun paquete en PyPI resolvia este problema.'
+          ? 'El cálculo lo realiza spinoct, un paquete de Python de código abierto (MIT) que resuelve el control óptimo sobre la dinámica de Landau-Lifshitz-Gilbert. Es un repositorio y un paquete separado, no código enterrado en este producto, porque el solucionador es agnóstico del dominio: funciona sobre cualquier hamiltoniano de espín. Se verificó que ningún paquete de PyPI resolvía este problema.'
           : 'The computation is done by spinoct, an open-source (MIT) Python package that solves optimal control over Landau-Lifshitz-Gilbert dynamics. It is a separate repository and package, not code buried in this product, because the solver is domain-agnostic: it works on any spin Hamiltonian. No package on PyPI was found that solves this problem.'}
       </p>
       <ul>
-        <li>{es ? 'Trayectorias de control optimo analiticas (uniaxial y SOT), formas cerradas exactas.' : 'Analytic optimal control paths (uniaxial and SOT), exact closed forms.'} <Cite id="kwiatkowski2021" /> <Cite id="vlasov2022" /></li>
-        <li>{es ? 'Trayectoria numerica basada en imagenes para el caso biaxial, validada contra la forma cerrada.' : 'Numerical image-based optimal control path for the biaxial case, validated against the closed form.'} <Cite id="badarneh2023" /></li>
-        <li>{es ? 'Protocolos convencionales (campo estatico, Sun-Wang, precesional) como lineas base.' : 'Conventional protocols (static field, Sun-Wang, precessional) as baselines.'} <Cite id="sunwang2006" /></li>
-        <li>{es ? 'Solucionadores con restriccion (GRAPE, CRAB) para el precio de la realizabilidad.' : 'Constrained solvers (GRAPE, CRAB) for the price of realizability.'}</li>
+        <li>{es ? 'Trayectorias de control óptimo analíticas (uniaxial y SOT), formas cerradas exactas.' : 'Analytic optimal control paths (uniaxial and SOT), exact closed forms.'} <Cite id="kwiatkowski2021" /> <Cite id="vlasov2022" /></li>
+        <li>{es ? 'Trayectoria numérica basada en imágenes para el caso biaxial, validada contra la forma cerrada.' : 'Numerical image-based optimal control path for the biaxial case, validated against the closed form.'} <Cite id="badarneh2023" /></li>
+        <li>{es ? 'Protocolos convencionales (campo estático, Sun-Wang, precesional) como líneas base.' : 'Conventional protocols (static field, Sun-Wang, precessional) as baselines.'} <Cite id="sunwang2006" /></li>
+        <li>{es ? 'Solucionadores con restricción (GRAPE, CRAB) para el precio de la realizabilidad.' : 'Constrained solvers (GRAPE, CRAB) for the price of realizability.'}</li>
       </ul>
       <h2>{es ? 'Los datos' : 'The data'}</h2>
       <p>
         {es
-          ? 'No hay conjunto de datos experimental publico de conmutacion por pulsos. Los datos reales son los parametros del hamiltoniano de espin de la familia van der Waals, curados en una base con un DOI, un metodo, una incertidumbre y una convencion de signo por fila, y canonizados a una forma interna. Donde una fuente discrepa de otra, se registran ambas.'
+          ? 'No hay conjunto de datos experimental público de conmutación por pulsos. Los datos reales son los parámetros del hamiltoniano de espín de la familia van der Waals, curados en una base con un DOI, un método, una incertidumbre y una convención de signo por fila, y normalizados a una forma interna. Donde una fuente discrepa de otra, se registran ambas.'
           : 'There is no public experimental dataset of shaped-pulse switching. The real data is the set of spin-Hamiltonian parameters of the van der Waals family, curated into a database with a DOI, a method, an uncertainty, and a sign convention per row, canonicalized to one internal form. Where sources disagree, both are recorded.'}{' '}
         <Cite id="scheie2022" /> <Cite id="ruiz2024" /> <Cite id="huang2017" />
       </p>
-      <h2>{es ? 'Las lineas de ejecucion' : 'The lanes'}</h2>
+      <h2>{es ? 'Los carriles de ejecución' : 'The lanes'}</h2>
       <p>
         {es
-          ? 'La verdad canonica se hornea sin conexion con spinoct y se compromete como artefactos JSON con suma de verificacion. Esta pagina web reproduce esos artefactos, salvo dos casos: el gate de carril mide tiempo de ejecucion y tamano, y lo pasan tanto el oraculo de torque de espin-orbita (C03) como la replicacion del articulo de origen (C10), asi que el navegador evalua esas formas cerradas y muestra el acuerdo con el artefacto. El motor de atomistica pesado (VAMPIRE) se llama como proceso separado para verificacion, nunca enlazado, manteniendo spinoct bajo licencia MIT.'
+          ? 'La referencia canónica se calcula sin conexión con spinoct y se guarda en el repositorio como artefactos JSON con suma de verificación. Esta página web reproduce esos artefactos, salvo dos casos: la prueba de carril mide tiempo de ejecución y tamaño, y la pasan tanto el oráculo de torque de espín-órbita (C03) como la replicación del artículo de origen (C10), así que el navegador evalúa esas formas cerradas y muestra el acuerdo con el artefacto. El motor atomístico pesado (VAMPIRE) se llama como proceso separado para verificación, nunca enlazado, manteniendo spinoct bajo licencia MIT.'
           : 'The canonical truth is baked offline with spinoct and committed as checksummed JSON artifacts. This web page replays those artifacts, with two exceptions: the lane gate measures runtime and artifact size, and both the spin-orbit-torque oracle (C03) and the kickoff replication (C10) pass it, so the browser evaluates those closed forms itself and shows the agreement with the committed artifact. The heavy atomistic engine (VAMPIRE) is called as a separate process for verification, never linked, keeping spinoct MIT-licensed.'}{' '}
         <Cite id="evans2014" />
       </p>
       <h2>{es ? 'Paridad del carril en vivo' : 'Live-lane parity'}</h2>
       <p>
         {es
-          ? 'El carril en vivo tiene dos implementaciones de la misma forma cerrada: la del motor, en Python, y la del navegador, en TypeScript, escrita por separado para que el acuerdo sea una comprobacion y no una copia. El banco de trabajo muestra ese acuerdo en el punto de operacion del caso; aqui el navegador recalcula toda la rejilla que el horneado comprometio, incluida la integral eliptica cerca de su singularidad, y se muestra la peor desviacion relativa.'
+          ? 'El carril en vivo tiene dos implementaciones de la misma forma cerrada: la del motor, en Python, y la del navegador, en TypeScript, escrita por separado para que el acuerdo sea una comprobación y no una copia. El banco de trabajo muestra ese acuerdo en el punto de operación del caso; aquí el navegador recalcula toda la rejilla que guardó el cálculo previo, incluida la integral elíptica cerca de su singularidad, y se muestra la peor desviación relativa.'
           : "The live lane carries two implementations of the same closed form: the engine's, in Python, and the browser's, in TypeScript, written separately so that agreement is a check rather than a copy. The workbench shows that agreement at the case's working point; here the browser recomputes the whole grid the bake committed, the elliptic integral near its singularity included, and the worst relative deviation is shown."}{' '}
         <Cite id="vlasov2022" />
       </p>
@@ -58,10 +59,10 @@ export function Implementation(): React.JSX.Element {
       ) : (
         <p className="muted">{es ? 'Cargando la paridad...' : 'Loading the parity fixture...'}</p>
       )}
-      <h2>{es ? 'Comprobacion externa' : 'External cross-check'}</h2>
+      <h2>{es ? 'Comprobación externa' : 'External cross-check'}</h2>
       <p>
         {es
-          ? 'El piso bajo cada costo que publica este producto es una barrera de energia calculada por el metodo de cuerda del propio motor. Si ese metodo estuviera mal, todos los pisos estarian mal a la vez y ninguna prueba interna lo notaria. Spirit es un marco de dinamica de espines atomistica escrito por otras personas, y su banda elastica geodesica es otro metodo para el mismo objeto: se le da el mismo hamiltoniano y el mismo camino inicial, y se compara la barrera. Se comparan las dos geometrias que el producto usa, la cadena y el parche cuadrado de los casos C20 y C21, y toda fila esta por debajo de la silla coherente N K, es decir son caminos de pared. Spirit no es una dependencia de este producto y CI nunca lo instala.'
+          ? 'El piso bajo cada costo que publica este producto es una barrera de energía calculada por el método de cuerda del propio motor. Si ese método estuviera mal, todos los pisos estarían mal a la vez y ninguna prueba interna lo notaría. Spirit es un marco de dinámica de espines atomística escrito por otras personas, y su banda elástica geodésica es otro método para el mismo objeto: se le da el mismo hamiltoniano y el mismo camino inicial, y se compara la barrera. Se comparan las dos geometrías que el producto usa, la cadena y el parche cuadrado de los casos C20 y C21, y toda fila está por debajo de la silla coherente N K, es decir, son caminos de pared. Spirit no es una dependencia de este producto y la integración continua nunca lo instala.'
           : "The floor under every cost this product publishes is an energy barrier computed by the engine's own string method. If that method were wrong, every floor would be wrong together and no internal test would notice. Spirit is an atomistic spin-dynamics framework written by other people, and its geodesic nudged elastic band is a different method for the same object: it is given the same Hamiltonian and the same initial path, and the barriers are compared. Both geometries the product uses are compared, the chain and the square patch of cases C20 and C21, and every row sits below the coherent saddle N K, which is what makes them wall paths. Spirit is not a dependency of this product, and CI never installs it."}{' '}
         <Cite id="bessarab2015" />
       </p>
@@ -80,7 +81,7 @@ export function Implementation(): React.JSX.Element {
             <table>
               <thead>
                 <tr>
-                  <th>{es ? 'Geometria' : 'Geometry'}</th>
+                  <th>{es ? 'Geometría' : 'Geometry'}</th>
                   <th>J/K</th>
                   <th>{es ? 'spinoct (cuerda)' : 'spinoct (string)'}</th>
                   <th>Spirit (GNEB)</th>
@@ -108,19 +109,19 @@ export function Implementation(): React.JSX.Element {
           </div>
         </div>
       ) : (
-        <p className="muted">{es ? 'Cargando la comprobacion...' : 'Loading the cross-check...'}</p>
+        <p className="muted">{es ? 'Cargando la comprobación...' : 'Loading the cross-check...'}</p>
       )}
       {dynamics ? (
         <div data-testid="external-dynamics" data-agrees={String(dynamics.agrees)}>
-          <h2>{es ? 'La dinamica, integrada dos veces' : 'The dynamics, integrated twice'}</h2>
+          <h2>{es ? 'La dinámica, integrada dos veces' : 'The dynamics, integrated twice'}</h2>
           <p>
             {es
-              ? 'La comprobacion anterior compara una barrera, que es estatica. No dice nada sobre la ecuacion de movimiento sobre la que se construye todo lo demas: si el lado derecho de Landau-Lifshitz-Gilbert del motor estuviera mal, todos los protocolos y todos los veredictos de conmutacion estarian mal a la vez y la barrera seguiria siendo correcta. VAMPIRE es un codigo de dinamica de espines atomistica escrito por otras personas, con su propio integrador. Es GPL-2, asi que se ejecuta como proceso separado a partir de archivos de entrada generados: nada se enlaza y ningun codigo de VAMPIRE entra en este repositorio.'
+              ? 'La comprobación anterior compara una barrera, que es estática. No dice nada sobre la ecuación de movimiento sobre la que se construye todo lo demás: si el lado derecho de Landau-Lifshitz-Gilbert del motor estuviera mal, todos los protocolos y todos los veredictos de conmutación estarían mal a la vez y la barrera seguiría siendo correcta. VAMPIRE es un código de dinámica de espines atomística escrito por otras personas, con su propio integrador. Es GPL-2, así que se ejecuta como proceso separado a partir de archivos de entrada generados: nada se enlaza y ningún código de VAMPIRE entra en este repositorio.'
               : 'The cross-check above compares a barrier, which is static. It says nothing about the equation of motion everything else is built on: if the engine’s Landau-Lifshitz-Gilbert right-hand side were wrong, every protocol and every switching verdict would be wrong together and the barrier would still be right. VAMPIRE is an atomistic spin-dynamics code written by other people, with its own integrator. It is GPL-2, so it runs as a separate process from generated input files: nothing is linked and no VAMPIRE code enters this repository.'}{' '}
             <Cite id="evans2014" />
           </p>
           <p className="muted">
-            {es ? 'Peor desviacion de trayectoria' : 'Worst trajectory deviation'}:{' '}
+            {es ? 'Peor desviación de trayectoria' : 'Worst trajectory deviation'}:{' '}
             <strong data-testid="dynamics-worst">{dynamics.worst_deviation.toExponential(2)}</strong>{' '}
             {es ? 'contra una tolerancia de' : 'against a tolerance of'} {dynamics.tolerance.toExponential(0)}.{' '}
             <span className={dynamics.agrees ? 'prov-badge prov-measured' : 'prov-badge prov-assumed'}>
@@ -132,18 +133,18 @@ export function Implementation(): React.JSX.Element {
             <table>
               <thead>
                 <tr>
-                  <th>{es ? 'Configuracion' : 'Configuration'}</th>
+                  <th>{es ? 'Configuración' : 'Configuration'}</th>
                   <th>alpha</th>
                   <th>{es ? 'Campo (T)' : 'Field (T)'}</th>
-                  <th>{es ? 'Duracion' : 'Duration'}</th>
-                  <th>{es ? 'Peor desviacion' : 'Worst deviation'}</th>
-                  <th>{es ? 'Inversion' : 'Reversal'}</th>
+                  <th>{es ? 'Duración' : 'Duration'}</th>
+                  <th>{es ? 'Peor desviación' : 'Worst deviation'}</th>
+                  <th>{es ? 'Inversión' : 'Reversal'}</th>
                 </tr>
               </thead>
               <tbody>
                 {dynamics.rows.map((row) => (
                   <tr key={row.name} data-row={row.name.startsWith('reversal') ? 'reversal' : 'precession'}>
-                    <td lang="en">{row.name}</td>
+                    <DataText as="td" text={row.name} />
                     <td>{row.alpha}</td>
                     <td>{row.applied_field_t.map((b) => b.toFixed(2)).join(', ')}</td>
                     <td>{(row.duration_s * 1e12).toFixed(0)} ps</td>
@@ -152,7 +153,7 @@ export function Implementation(): React.JSX.Element {
                       {row.reversal_time_ours_s != null && row.reversal_time_theirs_s != null
                         ? `${(row.reversal_time_ours_s * 1e12).toFixed(3)} / ${(row.reversal_time_theirs_s * 1e12).toFixed(3)} ps`
                         : es
-                          ? 'sin inversion'
+                          ? 'sin inversión'
                           : 'no reversal'}
                     </td>
                   </tr>
@@ -160,7 +161,7 @@ export function Implementation(): React.JSX.Element {
               </tbody>
             </table>
           </div>
-          <p className="muted" lang="en">{dynamics.gyromagnetic_note}</p>
+          <DataText as="p" className="muted" text={dynamics.gyromagnetic_note} />
         </div>
       ) : null}
       <Refs ids={['kwiatkowski2021', 'vlasov2022', 'badarneh2023', 'sunwang2006', 'scheie2022', 'ruiz2024', 'huang2017', 'bessarab2015', 'evans2014']} label="Refs" />

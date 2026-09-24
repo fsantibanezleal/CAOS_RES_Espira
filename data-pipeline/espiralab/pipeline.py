@@ -1,6 +1,7 @@
 """The pipeline orchestrator: the named stages, in order, with a command line.
 
     python data-pipeline/run.py [all|ingest|preprocess|dataset|features|train|infer|evaluate|export|validate]
+    python data-pipeline/run.py export --only <slug>[,<slug>...]
 
 Every stage is a pure function of its inputs and the declared seeds. `all` runs the release sequence:
 ingest and preprocess the parameters through Contract 1, fix the split and the matrix, train the learned
@@ -16,7 +17,7 @@ from pathlib import Path
 
 from .cases import coverage_counts
 from .stages.dataset import plan_matrix, splits
-from .stages.export import export_all
+from .stages.export import export_all, export_cases
 from .stages.ingest import ingest
 from .stages.preprocess import preprocess
 from .stages.train import train_policy
@@ -83,6 +84,14 @@ def run_pipeline(output: Path, manifests: Path, strict: bool = True) -> Pipeline
 
 def main(argv: list[str]) -> int:
     root = Path(__file__).resolve().parents[2]
+    only: list[str] = []
+    if "--only" in argv:
+        at = argv.index("--only")
+        only = [s for s in argv[at + 1].split(",") if s] if at + 1 < len(argv) else []
+        argv = argv[:at] + argv[at + 2 :]
+        if not only:
+            print("--only needs a comma-separated list of case slugs")
+            return 2
     stage = argv[1] if len(argv) > 1 else "all"
     output = Path(argv[2]) if len(argv) > 2 else root / "data" / "artifacts"
     manifests = Path(argv[3]) if len(argv) > 3 else root / "manifests"
@@ -110,6 +119,11 @@ def main(argv: list[str]) -> int:
         policy = train_policy(write=True)
         print(f"policy gate {'passed' if policy.passed else 'FAILED'} on {list(policy.test_materials)}")
         return 0 if policy.passed else 1
+    if stage == "export" and only:
+        done = export_cases(output, manifests, only)
+        problems = validate_release(output, manifests)
+        print(f"re-exported {', '.join(done)}; " + ("release valid" if not problems else "\n".join(problems)))
+        return 0 if not problems else 1
     if stage in ("features", "infer", "evaluate", "export"):
         export_all(output, manifests)
         print(f"artifacts in {output}, manifests in {manifests}")

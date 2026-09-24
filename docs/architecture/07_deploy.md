@@ -41,3 +41,13 @@ that an empty shell cannot pass, that nothing scrolls sideways or runs under the
 is still showing its loading placeholder after the network settled, that no `NaN` or `undefined` reached
 the visible text, and that the two languages are actually different documents rather than one falling
 back to the other.
+
+On a Spanish page it reads every visible word of `<main>`, the chart legends, and the axis titles each
+chart records on its host element (uPlot draws them on canvas, where no DOM query can read them), and it
+fails on English prose, on any data string that fell back to English because its translation is missing
+(the data layer renders through `frontend/src/content/data-es.json`, which `tests/test_translations.py`
+holds to every string the artifacts carry), and on Spanish written without its accents. The breadth gate
+visits the default case only, so `workbench-provenance.mjs` repeats the language check for the readout
+column of every case, with every parameter row open. Until 0.16.000 the language check read the active
+tab panel alone and passed the Spanish site while it had no accents and about 31,000 characters of
+English.

@@ -119,7 +119,7 @@ export function ChainMap({ item, theme, es, axisLabel, testId = 'chain-map' }: P
         {hover
           ? `${axisLabel ? axisLabel.noun[es ? 'es' : 'en'] : es ? 'sitio' : 'site'} ${hover.site}, t/T = ${hover.time.toFixed(3)}, s_z = ${hover.sz.toFixed(3)}`
           : es
-            ? 'Azul: arriba (s_z = +1). Rojo: abajo (s_z = -1). Pase el cursor para leer valores.'
+            ? 'Azul: arriba (s_z = +1). Rojo: abajo (s_z = -1). Pasa el cursor para leer los valores.'
             : 'Blue: up (s_z = +1). Red: down (s_z = -1). Hover to read values.'}
       </p>
     </div>
