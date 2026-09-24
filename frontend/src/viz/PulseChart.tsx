@@ -6,10 +6,13 @@ import { useEffect, useRef } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { ReferencePulse } from '../data/contract';
+import { tr } from '../content/dataText';
+import { recordAxisLabels } from './axisLabels';
 
 interface Props {
   pulse: ReferencePulse;
   theme: 'light' | 'dark';
+  es: boolean;
 }
 
 function cssVar(name: string, fallback: string): string {
@@ -37,7 +40,7 @@ function plain(value: number | null | undefined): string {
     : value.toExponential(1).replace('e+', 'e');
 }
 
-export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
+export function PulseChart({ pulse, theme, es }: Props): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot | null>(null);
 
@@ -46,14 +49,16 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
     // Time in picoseconds for a readable axis, unless the case declares another x axis (a barrier is
     // drawn against its path coordinate, not time).
     const xScale = pulse.x_scale ?? 1e12;
-    const xLabel = pulse.x_label ?? 'time';
-    const xUnit = pulse.x_unit ?? 'ps';
+    // The labels a case declares are data (English in the artifact) and go through the translation
+    // table; the defaults are the interface's own.
+    const xLabel = pulse.x_label ? tr(pulse.x_label, es) : es ? 'tiempo' : 'time';
+    const xUnit = tr(pulse.x_unit ?? 'ps', es);
     const t = pulse.time_s.map((s) => s * xScale);
     // A field is stored in tesla and shown in mT; a case whose signal is a current declares its own
     // label, unit and scale, and is never labelled a field.
     const scale = pulse.signal_scale ?? 1e3;
-    const signalLabel = pulse.signal_label ?? 'field';
-    const signalUnit = pulse.signal_unit ?? 'mT';
+    const signalLabel = pulse.signal_label ? tr(pulse.signal_label, es) : es ? 'campo' : 'field';
+    const signalUnit = tr(pulse.signal_unit ?? 'mT', es);
     const symbol = pulse.signal_label === 'current' ? 'j' : 'b';
     const amp = pulse.field_amplitude_t.map((b) => b * scale);
     const bx = pulse.field_x_t.map((b) => b * scale);
@@ -89,8 +94,8 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
       ],
       series: [
         { label: `${xLabel} (${xUnit})`, value: (_u, v) => plain(v) },
-        { label: pulse.signal_series?.[0] ?? `|${symbol}|`, stroke: accent, width: 2.5, value: (_u, v) => plain(v) },
-        { label: pulse.signal_series?.[1] ?? `${symbol}_x`, stroke: '#f59e0b', width: 1.3, value: (_u, v) => plain(v) },
+        { label: pulse.signal_series?.[0] ? tr(pulse.signal_series[0], es) : `|${symbol}|`, stroke: accent, width: 2.5, value: (_u, v) => plain(v) },
+        { label: pulse.signal_series?.[1] ? tr(pulse.signal_series[1], es) : `${symbol}_x`, stroke: '#f59e0b', width: 1.3, value: (_u, v) => plain(v) },
         ...(pulse.signal_series && pulse.signal_series.length < 3
           ? []
           : [{ label: `${symbol}_y`, stroke: '#10b981', width: 1.3, value: (_u: uPlot, v: number | null) => plain(v) }]),
@@ -101,6 +106,7 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
       pulse.signal_series && pulse.signal_series.length < 3 ? [t, amp, bx] : [t, amp, bx, by];
     plotRef.current?.destroy();
     plotRef.current = new uPlot(opts, data, ref.current);
+    recordAxisLabels(ref.current, `${xLabel}  (${xUnit})`, `${signalLabel}  (${signalUnit})`);
 
     // A hidden sub-tab panel has no width, so a chart built at mount would stay that size once the
     // panel is shown. Observe the container rather than only the window.
@@ -120,7 +126,7 @@ export function PulseChart({ pulse, theme }: Props): React.JSX.Element {
       plotRef.current?.destroy();
       plotRef.current = null;
     };
-  }, [pulse, theme]);
+  }, [pulse, theme, es]);
 
   return <div ref={ref} style={{ width: '100%' }} />;
 }

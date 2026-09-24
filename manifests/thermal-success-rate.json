@@ -22,13 +22,13 @@
   ],
   "artifact": {
     "path": "thermal-success-rate.json",
-    "bytes": 277001,
-    "sha256": "7f670aadd5c245a29727431ab3748b05390395560dc150fadd457c966adaa179"
+    "bytes": 277191,
+    "sha256": "c6972852d48a895720f6f312ac1f8337e5e1b1efa4059c666d2df4a4d1ae41d0"
   },
   "lane": {
     "lane": "precompute",
-    "runtime_ms": 0.022,
-    "artifact_bytes": 277001,
+    "runtime_ms": 0.096,
+    "artifact_bytes": 277191,
     "methods": [
       "R11",
       "R12"

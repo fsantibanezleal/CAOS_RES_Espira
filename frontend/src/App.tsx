@@ -16,9 +16,9 @@ import { Benchmark } from './pages/Benchmark';
 const config: ShellConfig = {
   product: { name: 'Espira' },
   routes: [
-    { path: '/', en: 'Introduction', es: 'Introduccion' },
-    { path: '/theory', en: 'Theory', es: 'Teoria' },
-    { path: '/implementation', en: 'Implementation', es: 'Implementacion' },
+    { path: '/', en: 'Introduction', es: 'Introducción' },
+    { path: '/theory', en: 'Theory', es: 'Teoría' },
+    { path: '/implementation', en: 'Implementation', es: 'Implementación' },
     { path: '/app', en: 'App', es: 'App' },
     { path: '/experiments', en: 'Experiments', es: 'Experimentos' },
     { path: '/benchmark', en: 'Benchmark', es: 'Comparativa' },
@@ -32,11 +32,11 @@ const config: ShellConfig = {
   footer: {
     provenance: {
       en: 'Engine: spinoct (MIT, github.com/fsantibanezleal/CAOS_SpinOCT). Method: Kwiatkowski 2021, Badarneh 2023.',
-      es: 'Motor: spinoct (MIT). Metodo: Kwiatkowski 2021, Badarneh 2023.',
+      es: 'Motor: spinoct (MIT). Método: Kwiatkowski 2021, Badarneh 2023.',
     },
     disclaimer: {
       en: 'The web replays offline-baked artifacts, except two cases the lane gate measured as cheap enough to recompute in the browser. The switching cost is in T^2 s, not joules.',
-      es: 'La web reproduce artefactos horneados sin conexion, salvo dos casos que el gate de carril midio como suficientemente baratos para recalcular en el navegador. El costo esta en T^2 s, no en julios.',
+      es: 'La web reproduce resultados calculados de antemano, salvo dos casos que la prueba de carril midió como suficientemente baratos para recalcularlos en el navegador. El costo está en T^2 s, no en julios.',
     },
     license: { en: 'MIT', es: 'MIT' },
   },
