@@ -7,19 +7,23 @@ import { CITATIONS } from './content/citations';
 import { ARCHITECTURE } from './content/architecture';
 import { APP_VERSION } from './version';
 import { Introduction } from './pages/Introduction';
-import { Theory } from './pages/Theory';
+import { Methodology } from './pages/Methodology';
 import { Implementation } from './pages/Implementation';
 import { Workbench } from './pages/Workbench';
 import { Experiments } from './pages/Experiments';
 import { Benchmark } from './pages/Benchmark';
 
+// The six pages of the standard, in the standard's order (product-quality-bar section 0, ADR-0017,
+// ADR-0056): the App is the root and the leftmost link, then Introduction, Methodology, Implementation,
+// Experiments, Benchmark. Until 0.16.000 the root was the Introduction, the App sat fourth at /app and
+// the Methodology was called Theory, which Felipe's review of 2026-09-26 rejected.
 const config: ShellConfig = {
   product: { name: 'Espira' },
   routes: [
-    { path: '/', en: 'Introduction', es: 'Introducción' },
-    { path: '/theory', en: 'Theory', es: 'Teoría' },
+    { path: '/', en: 'App', es: 'App' },
+    { path: '/introduction', en: 'Introduction', es: 'Introducción' },
+    { path: '/methodology', en: 'Methodology', es: 'Metodología' },
     { path: '/implementation', en: 'Implementation', es: 'Implementación' },
-    { path: '/app', en: 'App', es: 'App' },
     { path: '/experiments', en: 'Experiments', es: 'Experimentos' },
     { path: '/benchmark', en: 'Benchmark', es: 'Comparativa' },
   ],
@@ -28,7 +32,7 @@ const config: ShellConfig = {
   },
   version: APP_VERSION,
   architecture: ARCHITECTURE,
-  fixedRoutes: ['/app'],
+  fixedRoutes: ['/'],
   footer: {
     provenance: {
       en: 'Engine: spinoct (MIT, github.com/fsantibanezleal/CAOS_SpinOCT). Method: Kwiatkowski 2021, Badarneh 2023.',
@@ -67,13 +71,13 @@ export function App(): React.JSX.Element {
       <AppShell config={config}>
         <DocumentLanguage />
         <Routes>
-          <Route path="/" element={<Introduction />} />
-          <Route path="/theory" element={<Theory />} />
+          <Route path="/" element={<Workbench />} />
+          <Route path="/introduction" element={<Introduction />} />
+          <Route path="/methodology" element={<Methodology />} />
           <Route path="/implementation" element={<Implementation />} />
-          <Route path="/app" element={<Workbench />} />
           <Route path="/experiments" element={<Experiments />} />
           <Route path="/benchmark" element={<Benchmark />} />
-          <Route path="*" element={<Introduction />} />
+          <Route path="*" element={<Workbench />} />
         </Routes>
       </AppShell>
     </CitationsProvider>
@@ -81,5 +85,5 @@ export function App(): React.JSX.Element {
 }
 
 // Exported so a future orphan-route check can assert every route is reachable from the nav.
-export const ROUTE_PATHS = ['/', '/theory', '/implementation', '/app', '/experiments', '/benchmark'];
+export const ROUTE_PATHS = ['/', '/introduction', '/methodology', '/implementation', '/experiments', '/benchmark'];
 export { NavLink };
