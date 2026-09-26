@@ -33,7 +33,7 @@ gate compares every rendered cell with the committed artifact and refuses a tabl
 point that does not reproduce).
 
 `pages.mjs` is the breadth gate, and it exists because the other thirteen leave whole pages untouched: not
-one of them opened the Introduction or the Theory page, so a prose page could have shipped blank and
+one of them opened the Introduction or the Methodology page (then called Theory), so a prose page could have shipped blank and
 every gate would have stayed green. It walks the nav the app itself renders, so a page added later is
 covered without anyone remembering to add it here, and on every page, in both themes, both languages
 and at a desktop and a phone viewport, it holds that the route mounts with a heading and enough text

@@ -31,6 +31,19 @@ for (const theme of ['light', 'dark']) {
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(`${base}/implementation`, { waitUntil: 'networkidle' });
+    // Since 0.17.000 the Implementation page is tabbed (ADR-0017): the three checks sit under the
+    // "Checks" group, one sub-tab each, and a hidden panel is neither visible nor measured. The gate
+    // opens what it reads, in the page's language.
+    const labels =
+      lang === 'es'
+        ? { group: 'Comprobaciones', parity: 'Paridad del carril en vivo', barrier: 'Barrera (Spirit)', dynamics: 'Dinámica (VAMPIRE)' }
+        : { group: 'Checks', parity: 'Live-lane parity', barrier: 'Barrier (Spirit)', dynamics: 'Dynamics (VAMPIRE)' };
+    const open = async (name) => {
+      await page.getByRole('tab', { name, exact: true }).click();
+      await page.waitForTimeout(300);
+    };
+    await open(labels.group);
+    await open(labels.parity);
     const panel = page.getByTestId('live-parity');
     await panel.waitFor({ timeout: 15000 });
     const tag = `${theme}-${lang}`;
@@ -59,6 +72,7 @@ for (const theme of ['light', 'dark']) {
     check(badges.length === 2 && badges.every((b) => /within|dentro/.test(b)), `${tag}: verdicts ${JSON.stringify(badges)}`);
 
     // The external cross-check lives on the same page: an independent code, the same barrier.
+    await open(labels.barrier);
     const external = page.getByTestId('external-crosscheck');
     await external.waitFor({ timeout: 15000 });
     const claim = await page.evaluate(async () => {
@@ -92,6 +106,7 @@ for (const theme of ['light', 'dark']) {
 
     // The dynamics cross-check is the other half: a trajectory rather than a barrier, against a code
     // that is run as a separate process because it is GPL.
+    await open(labels.dynamics);
     const dynamics = page.getByTestId('external-dynamics');
     await dynamics.waitFor({ timeout: 15000 });
     const motion = await page.evaluate(async () => {
@@ -126,6 +141,7 @@ for (const theme of ['light', 'dark']) {
       `${tag}: the external engine version is named (${motion.vampire.split('\n')[0]})`,
     );
 
+    await open(labels.parity);
     await panel.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `${out}/parity-${tag}.png` });
     check(errors.length === 0, `${tag}: console errors ${JSON.stringify(errors.slice(0, 3))}`);
