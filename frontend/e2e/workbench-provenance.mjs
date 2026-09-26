@@ -42,18 +42,23 @@ for (const theme of ['light', 'dark']) {
     // ran on a real material. Each badge is held here to the index, which names no material for a
     // synthetic case. Read from the chip's own elements: an earlier check of this split the chip's text
     // on whitespace, which the chip does not have, matched no case, and reported nothing wrong.
-    const chips = await page.locator('.cs-chip').evaluateAll((els) =>
-      els.map((e) => ({ id: e.querySelector('.cs-chip-id')?.textContent, kind: e.querySelector('.cs-kind')?.textContent })),
+    // 0.18.000: the picker is a select with one optgroup per category (ADR-0071 rule 7). The chip's S/R
+    // badge is gone with the chips; what the option carries is the case id and the material it ran on,
+    // and the readout's parameter badges carry the provenance per value (checked per case below). Held
+    // here: every case of the index is an option, in the index's order, under a labelled category.
+    const options = await page.locator('select.cs-select option').evaluateAll((els) =>
+      els.map((e) => ({ id: e.value, text: e.textContent ?? '', group: e.closest('optgroup')?.label ?? '' })),
     );
-    const expected = Object.fromEntries(index.cases.map((c) => [c.slug, c.material ? 'R' : 'S']));
-    const misbadged = chips.filter((c) => expected[c.id] !== c.kind);
+    const ids = options.map((o) => o.id);
+    const expectedIds = index.cases.map((c) => c.slug);
+    const unlabeled = options.filter((o) => !o.group.trim() || !o.text.startsWith(o.id));
     check(
-      chips.length === index.cases.length && misbadged.length === 0,
-      `${tag}: ${chips.length} case chips, badges match the index (${misbadged.map((c) => `${c.id}=${c.kind}`).join(', ') || 'all'})`,
+      JSON.stringify(ids) === JSON.stringify(expectedIds) && unlabeled.length === 0,
+      `${tag}: ${options.length} case options match the index in order, each under a category and named by its id (${unlabeled.map((o) => o.id).join(', ') || 'all'})`,
     );
 
     for (const entry of index.cases) {
-      await page.getByRole('button', { name: new RegExp(entry.slug) }).first().click();
+      await page.locator('select.cs-select').selectOption(entry.slug);
       const panel = page.getByTestId('parameter-panel');
       await panel.waitFor();
       const artifact = await page.evaluate(async (slug) => (await fetch(`/artifacts/${slug}.json`)).json(), entry.slug);
