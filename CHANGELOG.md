@@ -4,6 +4,21 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.18.001] - 2026-09-26
+
+### Fixed
+- **The workbench stopped at 1,022 px on every screen.** The shell's page container is a flex row,
+  so the workbench was only as wide as its content; the wrapped row of case chips had been stretching
+  it by accident, and once 0.18.000 made the picker a select, half of a 1920 px screen stood empty.
+  The workbench now takes the page's width. The ADR-0071 layout gate missed it because every check it
+  made was relative to the stage or the instrument; it now holds the stage's right edge to the page
+  and runs at 2560x1440, the viewport ADR-0071 names and the gate had never used.
+- **"Static-field reduction 0x".** The default case, the free macrospin, divided the optimal cost by
+  a static field that never reversed the moment and printed the ratio, 0.036, through `toFixed(0)`.
+  A reduction is now shown only against a static field that reversed the moment (two more cases had
+  the same problem and printed a factor of about 4), and factors keep three significant digits in the
+  readout, the Benchmark table, its summary and the chart (3.35x rather than 3x).
+
 ## [0.18.000] - 2026-09-26
 
 The App's chrome measured against ADR-0071, after the dark capture of 0.17.000.

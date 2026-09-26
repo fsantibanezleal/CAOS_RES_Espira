@@ -14,11 +14,17 @@ mkdirSync(out, { recursive: true });
 const VIEWPORTS = [
   { width: 1360, height: 900 },
   { width: 1600, height: 1000 },
+  // ADR-0071 binds the floors at 2560x1440 too; the gate never ran it, and a workbench that stops
+  // short of the page's width shows most plainly there.
+  { width: 2560, height: 1440 },
 ];
 const INSTRUMENT_FLOOR = 0.5;
 //: And it must fill the box across, not only down.
 const WIDTH_FLOOR = 0.8;
 const READOUT_MIN_WIDTH = 280;
+//: The workbench's side padding is 16 px; anything past a few more pixels is a stage that did not
+//: take the page's width.
+const STAGE_RIGHT_SLACK_PX = 24;
 
 const failures = [];
 const check = (ok, msg) => {
@@ -96,7 +102,8 @@ for (const viewport of VIEWPORTS) {
           .slice(0, 3);
         return {
           footerTop: footer?.top ?? null,
-          stage: stage && { top: stage.top, height: stage.height, width: stage.width },
+          stage: stage && { top: stage.top, height: stage.height, width: stage.width, right: stage.right },
+          viewportWidth: document.documentElement.clientWidth,
           instrument: instrument && { height: instrument.height, width: instrument.width },
           content: { top: contentTop, bottom: contentBottom, height: contentBottom - contentTop, width: contentWidth },
           readout: readout && { width: readout.width },
@@ -119,6 +126,14 @@ for (const viewport of VIEWPORTS) {
       check(
         widthShare >= WIDTH_FLOOR,
         `${tag} ${tab}: painted content fills ${(widthShare * 100).toFixed(0)}% of the instrument width`,
+      );
+      // The stage spans the page. Every check above is relative to the stage or the instrument, so a
+      // workbench that shrank to its content passed them all: 0.18.000 shipped at 1,022 px on every
+      // viewport, half of a 1920 px screen empty, because the picker stopped stretching it. The right
+      // edge of the stage must reach the page's own right padding.
+      check(
+        m.stage.right >= m.viewportWidth - STAGE_RIGHT_SLACK_PX,
+        `${tag} ${tab}: the stage spans the page (right edge ${Math.round(m.stage.right)} of ${m.viewportWidth})`,
       );
       check(m.overlapping.length === 0, `${tag} ${tab}: nothing overlaps the footer ${JSON.stringify(m.overlapping)}`);
       check(!m.horizontalScroll, `${tag} ${tab}: no horizontal scroll`);

@@ -63,6 +63,8 @@ export function Benchmark(): React.JSX.Element {
   const fieldCases = artifacts.filter((a) => a.observable.is_field_cost);
   const switched = fieldCases.filter((a) => a.static_baseline.static_switched);
   const factors = switched.map((a) => a.static_baseline.reduction_factor ?? 0).filter((f) => f > 0);
+  // toFixed(0) printed the smallest factor, 3.35, as "3x"; three significant digits keep it readable.
+  const fmtFactor = (f: number) => Number(f.toPrecision(3)).toString();
   const minFactor = factors.length ? Math.min(...factors) : null;
   const maxFactor = factors.length ? Math.max(...factors) : null;
 
@@ -75,7 +77,7 @@ export function Benchmark(): React.JSX.Element {
       </p>
       <p className="muted" data-testid="reduction-summary">
         {switched.length} {es ? 'de' : 'of'} {fieldCases.length} {es ? 'casos con costo de campo invierten bajo el campo estático' : 'field-cost cases reverse under the static field'}
-        {minFactor !== null && maxFactor !== null ? ` · ${es ? 'factores de reducción de' : 'reduction factors from'} ${minFactor.toFixed(0)}x ${es ? 'a' : 'to'} ${maxFactor.toFixed(0)}x` : ''}
+        {minFactor !== null && maxFactor !== null ? ` · ${es ? 'factores de reducción de' : 'reduction factors from'} ${fmtFactor(minFactor)}x ${es ? 'a' : 'to'} ${fmtFactor(maxFactor)}x` : ''}
       </p>
       <div className="bench-chart-box">
         <ReductionChart artifacts={artifacts} theme={theme} es={es} />
@@ -102,7 +104,8 @@ export function Benchmark(): React.JSX.Element {
                   <td>{tr(a.material.name, es)}</td>
                   <td>{a.observable.is_field_cost ? sb.optimal_cost.toExponential(2) : tr(a.observable.label, es)}</td>
                   <td>{sb.static_switched ? sb.static_cost.toExponential(2) : es ? 'sin inversión' : 'no reversal'}</td>
-                  <td>{sb.reduction_factor ? `${sb.reduction_factor.toFixed(0)}x` : '-'}</td>
+                  {/* Only a static field that reversed the moment is a baseline to be reduced against. */}
+                  <td>{sb.static_switched && sb.reduction_factor ? `${Number(sb.reduction_factor.toPrecision(3))}x` : '-'}</td>
                 </tr>
               );
             })}
