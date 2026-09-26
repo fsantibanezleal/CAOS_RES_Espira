@@ -51,6 +51,7 @@ const T = {
     overFloor: 'cost / floor',
     loading: 'Loading baked artifact...',
     noSwitch: 'no reversal',
+    staticNoReverse: 'the static field does not reverse',
     observed: 'Measured here',
     notAFieldCost: 'This case does not report a field cost',
     fieldReference: 'Field cost of the same reversal (scale only)',
@@ -95,6 +96,7 @@ const T = {
     overFloor: 'costo / piso',
     loading: 'Cargando artefacto...',
     noSwitch: 'sin inversión',
+    staticNoReverse: 'el campo estático no invierte',
     observed: 'Medido aquí',
     notAFieldCost: 'Este caso no reporta un costo de campo',
     fieldReference: 'Costo de campo de la misma reversión (solo escala)',
@@ -481,7 +483,12 @@ export function Workbench(): React.JSX.Element {
                 <dt>{t.floor}</dt>
                 <dd>{sci(costRow.cost_floor)} T^2 s</dd>
                 <dt>{t.reduction}</dt>
-                <dd>{sb.reduction_factor ? `${sb.reduction_factor.toFixed(0)}x` : 'n/a'}</dd>
+                {/* A ratio against a static field that never reversed the moment is not a reduction: the
+                    free macrospin read "0x" here (a factor of 0.036 against a failed protocol). A factor
+                    below 10 also lost its digits to toFixed(0). */}
+                <dd data-testid="static-reduction">
+                  {sb.static_switched && sb.reduction_factor ? `${quantity(sb.reduction_factor)}x` : t.staticNoReverse}
+                </dd>
               </>
             )}
           </dl>

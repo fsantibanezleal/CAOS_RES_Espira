@@ -44,7 +44,7 @@ export function ReductionChart({ artifacts, theme, es }: Props): React.JSX.Eleme
     const x = rows.map((_r, i) => i + 1);
     const optimal = rows.map((r) => r.static_baseline.optimal_cost);
     const staticCost = rows.map((r) => (r.static_baseline.static_switched ? r.static_baseline.static_cost : null));
-    const factor = rows.map((r) => (r.static_baseline.reduction_factor ? r.static_baseline.reduction_factor : null));
+    const factor = rows.map((r) => (r.static_baseline.static_switched && r.static_baseline.reduction_factor ? r.static_baseline.reduction_factor : null));
     const codes = rows.map((r) => r.case.code);
 
     const stroke = cssVar('--color-fg', theme === 'dark' ? '#e8e8e8' : '#1a1a1a');
@@ -79,7 +79,7 @@ export function ReductionChart({ artifacts, theme, es }: Props): React.JSX.Eleme
         { label: xLabel, value: (_u, v) => (v === null || v === undefined ? '' : codes[Math.round(v) - 1] ?? '') },
         { label: es ? 'costo óptimo' : 'optimal cost', stroke: accent, width: 0, points: { show: true, size: 9, fill: accent }, value: (_u, v) => tick(v) },
         { label: es ? 'campo estático' : 'static field', stroke: '#f59e0b', width: 0, points: { show: true, size: 9, fill: '#f59e0b' }, value: (_u, v) => (v === null || v === undefined ? (es ? 'sin inversión' : 'no reversal') : tick(v)) },
-        { label: es ? 'factor de reducción' : 'reduction factor', stroke: 'transparent', show: false, value: (_u, v) => (v === null || v === undefined ? '-' : `${Number(v).toFixed(0)}x`) },
+        { label: es ? 'factor de reducción' : 'reduction factor', stroke: 'transparent', show: false, value: (_u, v) => (v === null || v === undefined ? '-' : `${Number(Number(v).toPrecision(3))}x`) },
       ],
       legend: { show: true },
     };
