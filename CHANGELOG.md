@@ -4,6 +4,19 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.18.000] - 2026-09-26
+
+The App's chrome measured against ADR-0071, after the dark capture of 0.17.000.
+
+### Changed
+- **The case picker is a select with one optgroup per category.** As chips, the nineteen cases in
+  three categories took the top third of a 1360x900 viewport before the instrument, which ADR-0071
+  rule 7 names as the failure a categorised one-of-N choice produces; the shell's `layout="select"`
+  keeps the category structure in one row. The two gates that picked a case by clicking its chip
+  (`observable.mjs`, `workbench-provenance.mjs`) select the option instead.
+- **The sphere takes the stage it is given.** The trajectory's size cap rose from 460 to 760 px; it is
+  still inscribed in the measured box, so a short viewport keeps it off the footer.
+
 ## [0.17.000] - 2026-09-26
 
 The six pages in the standard's order and depth, after Felipe's review of the live site.
