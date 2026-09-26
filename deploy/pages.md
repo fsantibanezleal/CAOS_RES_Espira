@@ -11,7 +11,7 @@ request time.
    - `prebuild`: `copy-data.mjs` copies the committed `data/artifacts/` into `frontend/public/artifacts/`;
    - `build`: type-checks and bundles with Vite (absolute base `/`);
    - `postbuild`: `write-routes.mjs` writes one HTML entry per route declared in `src/App.tsx`
-     (`theory.html`, `experiments.html`, ...) and `404.html`, so every deep link answers 200;
+     (`methodology.html`, `experiments.html`, ...) and `404.html`, so every deep link answers 200;
 2. writes `CNAME` and uploads `frontend/dist`;
 3. deploys to Pages.
 

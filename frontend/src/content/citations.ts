@@ -88,4 +88,51 @@ export const CITATIONS: Citation[] = [
       'B. Huang, G. Clark, E. Navarro-Moratalla, et al., Layer-dependent ferromagnetism in a van der Waals crystal down to the monolayer limit, Nature 546, 270 (2017).',
     doi: '10.1038/nature22391',
   },
+  {
+    id: 'barros2011',
+    label: 'Barros 2011',
+    citation:
+      'N. Barros, M. Rassam, H. Jirari, H. Kachkachi, Optimal switching of a nanomagnet assisted by microwaves, Phys. Rev. B 83, 144418 (2011).',
+    doi: '10.1103/PhysRevB.83.144418',
+  },
+  {
+    id: 'ivanov2021',
+    label: 'Ivanov 2021',
+    citation:
+      'A. V. Ivanov, V. M. Uzdin, H. Jonsson, Fast and robust algorithm for energy minimization of spin systems applied in an analysis of high temperature spin configurations in terms of skyrmion density, Comput. Phys. Commun. 260, 107749 (2021).',
+    doi: '10.1016/j.cpc.2020.107749',
+  },
+  {
+    id: 'khaneja2005',
+    label: 'Khaneja 2005',
+    citation:
+      'N. Khaneja, T. Reiss, C. Kehlet, T. Schulte-Herbrueggen, S. J. Glaser, Optimal control of coupled spin dynamics: design of NMR pulse sequences by gradient ascent algorithms, J. Magn. Reson. 172, 296 (2005).',
+    doi: '10.1016/j.jmr.2004.11.004',
+  },
+  {
+    id: 'caneva2011',
+    label: 'Caneva 2011',
+    citation: 'T. Caneva, T. Calarco, S. Montangero, Chopped random-basis quantum optimization, Phys. Rev. A 84, 022326 (2011).',
+    doi: '10.1103/PhysRevA.84.022326',
+  },
+  {
+    id: 'engel2023',
+    label: 'Engel 2023',
+    citation:
+      'M. C. Engel, J. A. Smith, M. P. Brenner, Optimal Control of Nonequilibrium Systems through Automatic Differentiation, Phys. Rev. X 13, 041032 (2023).',
+    doi: '10.1103/PhysRevX.13.041032',
+  },
+  {
+    id: 'badarneh2023thermal',
+    label: 'Badarneh 2023 (thermal)',
+    citation:
+      'M. H. A. Badarneh, G. J. Kwiatkowski, P. F. Bessarab, Enhancing thermal stability of optimal magnetization reversal in nanoparticles, arXiv:2312.11293 (2023).',
+    doi: '10.48550/arXiv.2312.11293',
+  },
+  {
+    id: 'amortized2025',
+    label: 'Amortized neural operators 2025',
+    citation: 'Self-Supervised Amortized Neural Operators for Optimal Control, arXiv:2512.24897 (2025).',
+    doi: '10.48550/arXiv.2512.24897',
+  },
 ];

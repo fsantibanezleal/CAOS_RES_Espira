@@ -35,6 +35,14 @@ for (const theme of ['light', 'dark']) {
     await page.goto(`${base}/benchmark`, { waitUntil: 'networkidle' });
     const tag = `${theme}-${lang}`;
     const benchmark = await page.evaluate(async () => (await fetch('/artifacts/benchmark.json')).json());
+    // Since 0.17.000 the Benchmark is tabbed (ADR-0017): the matrix and the release evidence sit on
+    // their own tabs, and the gate opens what it reads, in the page's language.
+    const labels = lang === 'es' ? { matrix: 'Matriz de métodos', evidence: 'Evidencia de la versión' } : { matrix: 'The method matrix', evidence: 'Release evidence' };
+    const open = async (name) => {
+      await page.getByRole('tab', { name, exact: true }).click();
+      await page.waitForTimeout(300);
+    };
+    await open(labels.matrix);
 
     const rows = await page.locator('[data-testid="method-matrix"] tbody tr').evaluateAll((trs) =>
       trs.map((tr) => ({ case: tr.dataset.case, method: tr.dataset.method, cells: tr.children[2].textContent })),
@@ -55,6 +63,7 @@ for (const theme of ['light', 'dark']) {
       `${tag}: summary names the engine version and the matrix state ("${summary.replace(/\s+/g, ' ')}")`,
     );
 
+    await open(labels.evidence);
     const evidence = await page.locator('[data-testid="release-evidence"] tbody tr').evaluateAll((trs) =>
       trs.map((tr) => ({ case: tr.dataset.manifest, text: tr.textContent })),
     );

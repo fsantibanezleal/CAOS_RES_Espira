@@ -2,7 +2,7 @@
 // Usage: node e2e/pages.mjs <baseUrl> [outDir]
 //
 // The other gates each go deep on one surface: the workbench layout, the coverage matrix, a chart's
-// marks. None of them opens the Introduction or the Theory page at all, and none had ever opened the
+// marks. None of them opens the Introduction or the Methodology page at all, and none had ever opened the
 // Architecture modal, so a prose page could ship blank, or half-translated, or scrolling sideways on a
 // phone, and every gate would stay green. This one is the breadth gate: it walks the nav the app
 // itself renders, steps through every in-page tab, and holds each panel to the things that are true of
@@ -37,12 +37,12 @@ const check = (ok, msg) => {
 //: The six pages the product declares. Checked against the nav the app renders, so the two cannot
 //: drift apart silently: a page in the router but not the nav is unreachable, a nav entry with no page
 //: is a dead link.
-const EXPECTED_ROUTES = ['/', '/theory', '/implementation', '/app', '/experiments', '/benchmark'];
+const EXPECTED_ROUTES = ['/', '/introduction', '/methodology', '/implementation', '/experiments', '/benchmark'];
 //: Pages that are instruments rather than prose: they carry no h1 by design, the workbench header
 //: names them, and their panels are charts whose text can legitimately be a handful of tick labels.
-const INSTRUMENT_ROUTES = new Set(['/app']);
+const INSTRUMENT_ROUTES = new Set(['/']);
 //: A panel that rendered has either text or a drawing. Measured across this site's panels: the
-//: thinnest prose panel (Theory, one tab, in English) renders 936 characters, and the thinnest
+//: thinnest prose panel (the former Theory page, one tab, in English) renders 936 characters, and the thinnest
 //: instrument panel renders about 120 characters of axis labels beside a chart. So a panel passes on
 //: 300 characters, or on a canvas or SVG at least 240 px wide and 120 px tall.
 const MIN_PANEL_CHARS = 300;
@@ -253,7 +253,7 @@ for (const theme of ['light', 'dark']) {
         // Panels fetch their artifacts after mount; networkidle covers the fetch, this covers the
         // render that follows it.
         await page.waitForTimeout(700);
-        const name = route === '/' ? 'introduction' : route.slice(1);
+        const name = route === '/' ? 'app' : route.slice(1);
         const first = await measure(page, lang);
 
         check(
