@@ -161,7 +161,8 @@ async function measure(page, lang) {
           const host = node.parentElement;
           // A case chip's slug is an identifier, like code. Legends are read: their series names are
           // interface text (0.16.000 found the cost chart's legend in English on the Spanish page).
-          if (!host || host.closest('code, .cs-chip-id, svg, canvas')) continue;
+          // The case select's options start with the case slug, an identifier like the chip id was.
+          if (!host || host.closest('code, .cs-chip-id, svg, canvas, select')) continue;
           if (!host.getClientRects().length) continue;
           const text = node.textContent.replace(/\s+/g, ' ').trim();
           if (text.length <= 3) continue;
