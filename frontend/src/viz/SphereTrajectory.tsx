@@ -18,7 +18,10 @@ interface Props {
  * is deliberately small: the sphere must fit the box it was given rather than push past it, and the
  * bounded case list keeps the box comfortably above this in practice. */
 const MIN_SPHERE_PX = 140;
-const MAX_SPHERE_PX = 460;
+// The cap only matters on a tall stage: the sphere is inscribed in the measured box, and at 460 px it
+// sat in the middle of a 600 px stage once the case picker became a select (0.18.000). ADR-0071 rule 8
+// wants the instrument to take the surface it is given.
+const MAX_SPHERE_PX = 760;
 
 function cssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;

@@ -237,7 +237,10 @@ export function Workbench(): React.JSX.Element {
   return (
     <div className="wb">
       <div className="wb-top">
-        <CaseSelector cases={cases} selectedId={slug} onSelect={setSlug} lang={lang} />
+        {/* ADR-0071 rule 7: a categorised one-of-N choice is a select with one optgroup per category,
+            not N chips under N headings. As chips, the nineteen cases in three categories took the top
+            third of a 1360x900 viewport before the instrument (0.17.000, measured on the dark capture). */}
+        <CaseSelector cases={cases} selectedId={slug} onSelect={setSlug} lang={lang} layout="select" />
         <div className="wb-variants" role="tablist" aria-label={axisLabel}>
           <span className="wb-variants-label">{axisLabel}</span>
           {artifact.axis.values.map((tt, i) => (

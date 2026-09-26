@@ -54,7 +54,8 @@ for (const theme of ['light', 'dark']) {
   await page.waitForSelector('.wb-stage');
 
   for (const [slug, artifact] of Object.entries(artifacts)) {
-    await page.getByRole('button', { name: new RegExp(`^${slug}\\b`) }).click();
+    // 0.18.000: the case picker is a select (ADR-0071 rule 7), so the case is chosen by its option.
+    await page.locator('select.cs-select').selectOption(slug);
     // Wait for the READOUT to be about this case, not for a fixed number of milliseconds. Selecting a
     // case starts a fetch; a 350 ms sleep was long enough on a local preview and not on the live site,
     // where this gate duly read one case's success rate under the next case's name and reported it as
