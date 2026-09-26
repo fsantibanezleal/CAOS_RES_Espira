@@ -50,7 +50,7 @@ for (const theme of ['light', 'dark']) {
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   // An uncaught throw inside a render callback never reaches console.error.
   page.on('pageerror', (e) => errors.push(`uncaught: ${e.message}`));
-  await page.goto(`${base}/app`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.wb-stage');
 
   for (const [slug, artifact] of Object.entries(artifacts)) {

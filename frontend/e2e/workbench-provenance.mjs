@@ -33,7 +33,7 @@ for (const theme of ['light', 'dark']) {
     const errors = [];
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     page.on('pageerror', (e) => errors.push(String(e)));
-    await page.goto(`${base}/app`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}/`, { waitUntil: 'networkidle' });
     const tag = `${theme}-${lang}`;
     const index = await page.evaluate(async () => (await fetch('/artifacts/index.json')).json());
 
