@@ -38,7 +38,7 @@ for (const viewport of VIEWPORTS) {
     const pageErrors = [];
     page.on('pageerror', (e) => pageErrors.push(e.message));
     page.on('console', (m) => m.type() === 'error' && pageErrors.push(m.text()));
-    await page.goto(`${base}/app`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}/`, { waitUntil: 'networkidle' });
     const tag = `${viewport.width}x${viewport.height}-${theme}`;
     await page.waitForSelector('.wb-stage');
 

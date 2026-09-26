@@ -4,6 +4,39 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.17.000] - 2026-09-26
+
+The six pages in the standard's order and depth, after Felipe's review of the live site.
+
+### Changed
+- **The App is the root and the leftmost link.** The nav reads App, Introduction, Methodology,
+  Implementation, Experiments, Benchmark, the same order as every other product (product-quality-bar
+  section 0, ADR-0017, ADR-0056); the App moved from `/app` to `/`, the Introduction to `/introduction`,
+  and the Theory page became Methodology at `/methodology`. Every browser gate that opened `/app` opens
+  `/`; the route entries Pages serves follow the router, so `/methodology` and `/methodology/` answer
+  200 and `/theory` no longer exists.
+- **Methodology at the ADR-0017 floor.** Six method families in a vertical rail instead of three flat
+  tabs: the problem and its units, the exact solutions (R05, R06), the numerical paths and the hard axis
+  (R07), realizable pulses (R08, R09, R10, R13), reliability at temperature (R11, R12) and beyond the
+  macrospin (R14, R15, R16). Each carries at least four paragraphs transcribed from the primary sources
+  and the engine's theory pages, two or more captioned equations, a hand-authored theme-aware diagram
+  drawn with the engine's own measured numbers where it shows a result, one honest callout and the
+  DOIs; seven references added to the citation base (Barros 2011, Ivanov 2021, Khaneja 2005, Caneva
+  2011, Engel 2023, the 2023 thermal-stability preprint, the amortized-operator preprint).
+- **Introduction at the floor.** Seven sections: the problem with the kickoff paper's verified numbers,
+  who asks and which page answers, the physics in three captioned equations, an eighteen-symbol
+  glossary, the nine-stage pipeline as an ordered list, the checks against other codes, and what is
+  exact, illustrative and not claimed; with an overview diagram of the product.
+- **Implementation tabbed.** Six groups with sub-tabs, eleven panels: the architecture with its diagram,
+  the engine and the modules this product calls, the two data contracts, the staged pipeline with the
+  result schema and the lane gate, the three checks against other codes (the live-lane parity, the
+  Spirit barrier, the VAMPIRE dynamics) and the deploy with its gates. `e2e/parity.mjs` opens the tabs
+  it reads.
+- **Benchmark tabbed.** Five tabs: optimal against static with an interactive uPlot chart of every
+  case's two costs and the reduction factor at the cursor, the method matrix, every method against the
+  closed-form oracle (a table derived from the same artifact), the release evidence, and what the number
+  is and is not. `e2e/benchmark.mjs` opens the tabs it reads.
+
 ## [0.16.000] - 2026-09-23
 
 The Spanish site, read the way a Spanish reader reads it, and three claims the data had outgrown.
