@@ -4,6 +4,12 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.18.002] - 2026-10-02
+
+### Added
+- **The MIT LICENSE file** (#63). The README declared MIT for the product and the engine, but the repository
+  carried no LICENSE file, so GitHub reported no licence. No code or data changed.
+
 ## [0.18.001] - 2026-09-26
 
 ### Fixed
