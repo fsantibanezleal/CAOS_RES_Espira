@@ -540,9 +540,12 @@ def _pulse_note(case: Case) -> str:
             "not drawn."
         )
     if case.primary_method == "R11":
+        # C05 replicates a published table at 1,000 copies per cell (_C05_COPIES); every other
+        # thermal case runs the 600-copy ensemble (_ENSEMBLE_COPIES). The note quoted 600 for both.
+        copies = "1,000" if case.slug == "prb107-biaxial-figures" else "600"
         return (
             "The drawn path is the zero-temperature optimal trajectory, which is the pulse under test. "
-            "The success rate comes from a stochastic ensemble of 600 copies at each point, whose "
+            f"The success rate comes from a stochastic ensemble of {copies} copies at each point, whose "
             "individual trajectories are not drawn."
         )
     if case.primary_method == "R15":

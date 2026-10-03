@@ -408,6 +408,12 @@ body,
   line-height: 1.45;
 }
 
+/* the negative control's row in the Benchmark reduction table carries its warning inline */
+.negative-control-tag {
+  color: var(--color-warn, #d97706);
+  font-size: 0.85em;
+}
+
 /* coverage matrix status badges */
 .status-baked {
   color: var(--color-good, #16a34a);

@@ -10,6 +10,7 @@ import type { ArtifactIndex, Benchmark as BenchmarkArtifact, CaseArtifact } from
 import { loadBenchmark, loadCase, loadIndex } from '../data/load';
 import { DataText, tr } from '../content/dataText';
 import { ReductionChart } from '../viz/ReductionChart';
+import { isNegativeControl } from '../data/negativeControl';
 import { useTheme } from '../theme';
 
 interface MethodSummary {
@@ -60,7 +61,12 @@ export function Benchmark(): React.JSX.Element {
 
   if (!index || !benchmark || artifacts.length === 0) return <p style={{ padding: 24 }}>{es ? 'Cargando...' : 'Loading...'}</p>;
 
-  const fieldCases = artifacts.filter((a) => a.observable.is_field_cost);
+  // The negative control (an antiferromagnet under the ferromagnetic model) is listed in the table with its
+  // warning, but it is neither counted in the summary nor plotted: its factor is not a result about a material.
+  const fieldCases = artifacts.filter((a) => a.observable.is_field_cost && !isNegativeControl(a));
+  const nonFieldCost = artifacts
+    .filter((a) => !a.observable.is_field_cost)
+    .sort((a, b) => a.case.code.localeCompare(b.case.code, 'en', { numeric: true }));
   const switched = fieldCases.filter((a) => a.static_baseline.static_switched);
   const factors = switched.map((a) => a.static_baseline.reduction_factor ?? 0).filter((f) => f > 0);
   // toFixed(0) printed the smallest factor, 3.35, as "3x"; three significant digits keep it readable.
@@ -96,16 +102,30 @@ export function Benchmark(): React.JSX.Element {
           <tbody>
             {artifacts.map((a) => {
               const sb = a.static_baseline;
+              const fieldCost = a.observable.is_field_cost;
+              const negative = isNegativeControl(a);
               return (
-                <tr key={a.case.slug} data-case={a.case.slug}>
+                <tr key={a.case.slug} data-case={a.case.slug} data-negative-control={negative ? 'true' : undefined}>
                   <td>
                     <code>{a.case.code}</code> <DataText text={a.case.title} />
+                    {negative && (
+                      <span className="negative-control-tag" role="note" data-testid="reduction-negative-control">
+                        {es
+                          ? ' · control negativo: el modelo de macrospin no se aplica a un antiferromagneto; estos números no son una predicción'
+                          : ' · negative control: the macrospin model does not apply to an antiferromagnet; these numbers are not a prediction'}
+                      </span>
+                    )}
                   </td>
                   <td>{tr(a.material.name, es)}</td>
-                  <td>{a.observable.is_field_cost ? sb.optimal_cost.toExponential(2) : tr(a.observable.label, es)}</td>
-                  <td>{sb.static_switched ? sb.static_cost.toExponential(2) : es ? 'sin inversión' : 'no reversal'}</td>
+                  <td>{fieldCost ? sb.optimal_cost.toExponential(2) : tr(a.observable.label, es)}</td>
+                  {/* A case that reports no field cost (C10 reports a peak field, C05 and C07 a success rate)
+                      has no field cost to set against the static protocol's: its static cost and factor are
+                      not shown. C10 used to read 9370x here, outside the range quoted above the chart. */}
+                  <td>{!fieldCost ? '-' : sb.static_switched ? sb.static_cost.toExponential(2) : es ? 'sin inversión' : 'no reversal'}</td>
                   {/* Only a static field that reversed the moment is a baseline to be reduced against. */}
-                  <td>{sb.static_switched && sb.reduction_factor ? `${Number(sb.reduction_factor.toPrecision(3))}x` : '-'}</td>
+                  <td data-testid="reduction-factor" data-case={a.case.slug}>
+                    {fieldCost && sb.static_switched && sb.reduction_factor ? `${Number(sb.reduction_factor.toPrecision(3))}x${negative ? '*' : ''}` : '-'}
+                  </td>
                 </tr>
               );
             })}
@@ -279,10 +299,21 @@ export function Benchmark(): React.JSX.Element {
           </li>
         </ul>
       </Callout>
-      <p>
+      {/* Read from the artifacts: this paragraph said "two cases" (C03, C07) while six declare an
+          observable that is not a field cost. */}
+      <p data-testid="non-field-cost-cases">
         {es
-          ? 'Dos casos no reportan un costo de campo y no aparecen en la curva: el oráculo de espín-órbita (C03) reporta una corriente media en unidades reducidas y el caso térmico (C07) una tasa de éxito. Ambos declaran su observable, y una compuerta del navegador falla la construcción si alguno se muestra alguna vez en T^2 s.'
-          : 'Two cases report no field cost and do not appear on the curve: the spin-orbit-torque oracle (C03) reports a mean current in reduced units and the thermal case (C07) a success rate. Both declare their observable, and a browser gate fails the build if either is ever shown in T^2 s.'}
+          ? `${nonFieldCost.length} casos no reportan un costo de campo y no aparecen en la curva ni tienen factor de reducción; cada uno declara su observable: `
+          : `${nonFieldCost.length} cases report no field cost, so they are neither on the curve nor given a reduction factor; each declares its observable: `}
+        {nonFieldCost.map((a, i) => (
+          <span key={a.case.slug}>
+            {i > 0 ? '; ' : ''}
+            <code>{a.case.code}</code> {tr(a.observable.label, es)}
+          </span>
+        ))}
+        {es
+          ? '. Una compuerta del navegador falla la construcción si alguno se muestra alguna vez en T^2 s.'
+          : '. A browser gate fails the build if any of them is ever shown in T^2 s.'}
       </p>
     </div>
   );

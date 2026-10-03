@@ -57,7 +57,7 @@
       "case": "prb107-biaxial-figures",
       "code": "C05",
       "manifest": "prb107-biaxial-figures.json",
-      "sha256": "56de9b14544a11cd55a01d8f8b8050873722dfdf93562fed1c3855acab6a5eae",
+      "sha256": "9879f50785e33402119adbc68ddd77807689219c368eb6562ee2155118a34379",
       "lane": "precompute",
       "completeness": {
         "expected": 7,
