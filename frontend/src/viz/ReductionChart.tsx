@@ -8,6 +8,7 @@ import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
 import type { CaseArtifact } from '../data/contract';
 import { recordAxisLabels } from './axisLabels';
+import { isNegativeControl } from '../data/negativeControl';
 
 const _MIN_HEIGHT = 300;
 const _Y_AXIS_PX = 78;
@@ -38,8 +39,11 @@ export function ReductionChart({ artifacts, theme, es }: Props): React.JSX.Eleme
 
   useEffect(() => {
     if (!ref.current || artifacts.length === 0) return;
-    // Only cases that report a field cost belong on a field-cost axis (the observable rule).
-    const rows = artifacts.filter((a) => a.observable.is_field_cost && Number.isFinite(a.static_baseline.optimal_cost));
+    // Only cases that report a field cost belong on a field-cost axis (the observable rule), and the negative
+    // control is never plotted beside the real materials: its factor is not a result about a material.
+    const rows = artifacts.filter(
+      (a) => a.observable.is_field_cost && !isNegativeControl(a) && Number.isFinite(a.static_baseline.optimal_cost),
+    );
     if (rows.length === 0) return;
     const x = rows.map((_r, i) => i + 1);
     const optimal = rows.map((r) => r.static_baseline.optimal_cost);
