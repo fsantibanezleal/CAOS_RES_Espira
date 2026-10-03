@@ -17,6 +17,7 @@ import { withUnit } from '../data/units';
 import { translateAxisLabel, translateCategory } from '../content/registry-es';
 import { DataText, tr } from '../content/dataText';
 import { useTheme } from '../theme';
+import { isNegativeControl } from '../data/negativeControl';
 
 const T = {
   en: {
@@ -113,6 +114,11 @@ const T = {
 
 function sci(x: number, d = 2): string {
   return x.toExponential(d);
+}
+
+/** A field amplitude in the unit a reader expects: millitesla below 1 T, tesla from 1 T up. */
+function fieldText(tesla: number): string {
+  return Math.abs(tesla) >= 1 ? `${tesla.toFixed(2)} T` : `${(tesla * 1e3).toFixed(2)} mT`;
 }
 
 /** A readable value for a quantity that may be a cost of 1e-11 or a success rate of 0.932. */
@@ -418,7 +424,7 @@ export function Workbench(): React.JSX.Element {
               ('negative-control') that the registry stopped using when its categories became A to F,
               so for every release since it never appeared on FePS3. It is keyed to the physics now:
               the material's magnetic order, which also covers any antiferromagnet added later. */}
-          {/antiferromagnet/i.test(artifact.material.family ?? '') && (
+          {isNegativeControl(artifact) && (
             <div className="negative-control" role="note" data-testid="negative-control">
               <strong>{t.negativeTitle}.</strong> {t.negativeBody}
             </div>
@@ -441,7 +447,8 @@ export function Workbench(): React.JSX.Element {
                   <dt>{t.overFloor}</dt>
                   <dd>{costRow.cost_over_floor?.toFixed(2) ?? '-'}</dd>
                   <dt>{t.meanField}</dt>
-                  <dd>{((costRow.mean_amplitude ?? 0) * 1e3).toFixed(2)} mT</dd>
+                  {/* Short switching times need fields of tens of tesla; "27272.40 mT" read as noise. */}
+                  <dd>{fieldText(costRow.mean_amplitude ?? 0)}</dd>
                 </>
               ) : (
                 costRow.field_cost_reference !== undefined && (
@@ -486,9 +493,15 @@ export function Workbench(): React.JSX.Element {
                 {/* A ratio against a static field that never reversed the moment is not a reduction: the
                     free macrospin read "0x" here (a factor of 0.036 against a failed protocol). A factor
                     below 10 also lost its digits to toFixed(0). */}
-                <dd data-testid="static-reduction">
-                  {sb.static_switched && sb.reduction_factor ? `${quantity(sb.reduction_factor)}x` : t.staticNoReverse}
-                </dd>
+                {/* A reduction is a ratio of two field costs; a case whose observable is not a field cost
+                    (C10 reports a peak field) has none to show, and read 9370x here. */}
+                {artifact.observable.is_field_cost ? (
+                  <dd data-testid="static-reduction">
+                    {sb.static_switched && sb.reduction_factor ? `${quantity(sb.reduction_factor)}x` : t.staticNoReverse}
+                  </dd>
+                ) : (
+                  <dd data-testid="static-reduction">-</dd>
+                )}
               </>
             )}
           </dl>
