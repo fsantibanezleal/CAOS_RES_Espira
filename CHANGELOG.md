@@ -4,6 +4,25 @@ All notable changes to Espira are documented here, newest on top. Versions use t
 form `X.XX.XXX`; while the parameter data is curated from published sources and the biaxial bake is
 not fully converged, the product stays in `0.x`.
 
+## [0.18.003] - 2026-10-03
+
+### Fixed
+- **C10 no longer shows a field-cost reduction (#66).** The Benchmark's reduction table and the Workbench
+  readout printed 9370x for C10, whose observable is the peak field, not a field cost; it sat outside the
+  3.35x to 365x range quoted above the chart. A reduction factor is now shown only for cases that report a
+  field cost.
+- **The negative control carries its warning on the Benchmark (#66).** C18 (FePS3) declares that its
+  numbers must never appear without the warning that the ferromagnetic macrospin model does not apply to an
+  antiferromagnet. Its table row now says so inline, and it is neither plotted on the reduction chart nor
+  counted in the summary range. The rule is the Workbench banner's: the material's magnetic order.
+- **C05's case text matches its record (#66).** The expectation quoted 94.9 and 96.7 per cent; the baked
+  record and the results page give 96.0 and 96.9. The pulse note said 600 copies per point; C05 runs 1,000
+  (`_C05_COPIES`). The registry text and the note were corrected and C05 rebaked in a sandbox: every number
+  agrees with the committed artifact within 1e-9, so the artifact was adopted with its new hash.
+- **The list of cases without a field cost is read from the artifacts.** The Benchmark said "two cases" (C03,
+  C07); six declare another observable (C03, C05, C07, C08, C10, C22).
+- **The mean field reads in tesla above 1 T.** Short switching times printed "27272.40 mT".
+
 ## [0.18.002] - 2026-10-02
 
 ### Added

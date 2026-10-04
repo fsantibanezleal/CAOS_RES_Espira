@@ -10,7 +10,7 @@ The lineage paper's own optimal control path for a biaxial particle, checked whe
 
 ## What a domain expert should see
 
-Measured 2026-09-22 over 1,000 copies per cell: at a barrier of thirty thermal energies, 94.9 per cent against a published 95.3 at damping 0.01 and 96.7 against 96.8 at 0.1, both inside the Monte-Carlo interval of about 1.3 points. The same protocol at a shorter equilibration reports a spurious 100 per cent at the lower damping, which is this case's own trap rather than the paper's: reaching a Boltzmann distribution takes a dissipation time, and that time is ten times longer at a tenth of the damping.
+Measured 2026-09-22 over 1,000 copies per cell: at a barrier of thirty thermal energies, 96.0 per cent against a published 95.3 at damping 0.01 and 96.9 against 96.8 at 0.1, both inside the Monte-Carlo interval of about 1.3 points. The same protocol at a shorter equilibration reports a spurious 100 per cent at the lower damping, which is this case's own trap rather than the paper's: reaching a Boltzmann distribution takes a dissipation time, and that time is ten times longer at a tenth of the damping.
 
 ## Kill criterion
 
