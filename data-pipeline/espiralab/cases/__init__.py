@@ -174,7 +174,7 @@ CASES: dict[str, Case] = {
         "the pulse with the noise on, and a final equilibration. Eight published numbers with a stated "
         "protocol are a better comparison than a digitized curve, and they need no digitizing.",
         expectation="Measured 2026-09-22 over 1,000 copies per cell: at a barrier of thirty thermal "
-        "energies, 94.9 per cent against a published 95.3 at damping 0.01 and 96.7 against 96.8 at 0.1, "
+        "energies, 96.0 per cent against a published 95.3 at damping 0.01 and 96.9 against 96.8 at 0.1, "
         "both inside the Monte-Carlo interval of about 1.3 points. The same protocol at a shorter "
         "equilibration reports a spurious 100 per cent at the lower damping, which is this case's own "
         "trap rather than the paper's: reaching a Boltzmann distribution takes a dissipation time, and "
